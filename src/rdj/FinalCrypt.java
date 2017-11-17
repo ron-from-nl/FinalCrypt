@@ -41,9 +41,10 @@ public class FinalCrypt
     private int dataBufferSize;
     private int cipherBufferSize;
     private int outputBufferSize;
+    private int printByteCounter = 0;
     private final String encoding = System.getProperty("file.encoding");
 
-    public FinalCrypt(Path ifp, Path cfp, Path ofp, boolean debug, boolean bin)
+    public FinalCrypt(Path ifp, Path cfp, Path ofp, boolean debug, boolean print, boolean bin, boolean dec, boolean hex, boolean chr)
     {        
             
 //        // Encryption Byte Test
@@ -59,10 +60,17 @@ public class FinalCrypt
         cipherBufferSize = bufferSize;
         outputBufferSize = bufferSize;        
 //        System.out.println(bufferSize);
-        bufferFiles(ifp, cfp, ofp, debug, bin);        
+
+        // Prints printByte Header ones
+        if ( print )
+        {
+            System.out.println("             Source               Cipher             Destination      ");
+            System.out.println("adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c");
+        }
+        bufferFiles(ifp, cfp, ofp, debug, print, bin, dec, hex, chr);        
     }
     
-    private void bufferFiles(Path inputFilePath, Path cipherFilePath, Path outputFilePath, boolean debug, boolean bin)
+    private void bufferFiles(Path inputFilePath, Path cipherFilePath, Path outputFilePath, boolean debug, boolean print, boolean bin, boolean dec, boolean hex, boolean chr)
     {
         boolean dataFileEnded = false;
         long dataChannelPos = 0;
@@ -96,7 +104,7 @@ public class FinalCrypt
                         
 
                         // Parse dataBuffer & cipherBuffer to cryptOutputBuffer and write to file
-                        outputBuffer = cryptOutputBuffer(dataBuffer, cipherBuffer, bin);
+                        outputBuffer = cryptOutputBuffer(dataBuffer, cipherBuffer, print, bin, dec, hex, chr);
                         
                         if (debug)
                         {
@@ -120,6 +128,11 @@ public class FinalCrypt
         } catch (IOException ex) { System.err.println("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex); }
     }
     
+    private String getBinaryString(Byte myByte) { return String.format("%8s", Integer.toBinaryString(myByte & 0xFF)).replace(' ', '0'); }
+    private String getDecString(Byte myByte) { return String.format("%3d", (myByte & 0xFF)).replace(" ", "0"); }
+    private String getHexString(Byte myByte, String digits) { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
+    private String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); } //  (myByte & 0xFF); }
+    
     private void printByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
         System.out.print(preFix + "C: ");
@@ -127,10 +140,116 @@ public class FinalCrypt
 //      for (byte mybyte: dataBuffer.array()) { System.out.print(Integer.toHexString(Byte.toUnsignedInt(mybyte) & 0xFF)); }
         System.out.println(" " + preFix + "Z: " + byteBuffer.limit());
     }
+
+    private void printByte(byte dataByte, byte cipherByte)
+    {
+        String adrhex = getHexString((byte)printByteCounter,"8");
+
+        String datbin = getBinaryString(dataByte);
+        String dathex = getHexString(dataByte, "2");
+        String datdec = getDecString(dataByte);
+        String datchr = getChar(dataByte);
+//        char datchr = getChar(dataByte);
+        
+        String cphbin = getBinaryString(cipherByte);
+        String cphhex = getHexString(cipherByte, "2");
+        String cphdec = getDecString(cipherByte);
+        String cphchr = getChar(cipherByte);
+//        char cphchr = getChar(cipherByte);
+        
+        int dum = 0; // DUM Data Unnegated Mask
+        int dnm = 0; // DNM Data Negated Mask
+        int dbm = 0; // DBM Data Blended Mask
+        int out = 0; // output
+                
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte
+        out = dbm;
+        
+        String outbin = getBinaryString((byte) (out & 0xFF));
+        String outhex = getHexString((byte) (out & 0xFF), "2");
+        String outdec = getDecString((byte) (out & 0xFF));
+        String outchr = getChar((byte) (out & 0xFF));
+//        char outchr = getChar((byte) (out & 0xFF));
+        
+//        System.out.println("             Source               Cipher             Destination      ");
+//        System.out.println("adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c");
+        System.out.print(adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
+        System.out.print                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
+        System.out.println               (outbin + " " +  outhex + " " + outdec + " " + outchr);
+        printByteCounter++;
+    }
     
-    private String getBinaryString(Byte myByte) { return String.format("%8s", Integer.toBinaryString(myByte & 0xFF)).replace(' ', '0'); }
+    private void printByteBinary(byte dataByte, byte cipherByte)
+    {
+        int dum = 0; // DUM Data Unnegated Mask
+        int dnm = 0; // DNM Data Negated Mask
+        int dbm = 0; // DBM Data Blended Mask
+                
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte        
+        System.out.println("\nDat = " + getBinaryString(dataByte));
+        System.out.println("Cph = " + getBinaryString(cipherByte));
+        System.out.println();
+        System.out.println("DUM  = " + getBinaryString((byte)dataByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum));
+        System.out.println("DNM  = " + getBinaryString((byte)~dataByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm));
+        System.out.println("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm));
+    }
     
-    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer, boolean bin)
+    private void printByteDecimal(byte dataByte, byte cipherByte)
+    {
+        int dum = 0; // DUM Data Unnegated Mask
+        int dnm = 0; // DNM Data Negated Mask
+        int dbm = 0; // DBM Data Blended Mask
+                
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte        
+        System.out.println("\nDat = " + getDecString(dataByte));
+        System.out.println("Cph = " + getDecString(cipherByte));
+        System.out.println();
+        System.out.println("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum));
+        System.out.println("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm));
+        System.out.println("DBM  = " + getDecString((byte)dum) + " & " + getDecString((byte)dnm) + " = " + getDecString((byte)dbm));
+    }
+    
+    private void printByteHexaDecimal(byte dataByte, byte cipherByte)
+    {
+        int dum = 0; // DUM Data Unnegated Mask
+        int dnm = 0; // DNM Data Negated Mask
+        int dbm = 0; // DBM Data Blended Mask
+                
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte        
+        System.out.println("\nDat = " + getHexString(dataByte,"2"));
+        System.out.println("Cph = " + getHexString(cipherByte,"2"));
+        System.out.println();
+        System.out.println("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2"));
+        System.out.println("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2"));
+        System.out.println("DBM  = " + getHexString((byte)dum,"2") + " & " + getHexString((byte)dnm,"2") + " = " + getHexString((byte)dbm,"2"));
+    }
+    
+    private void printByteChar(byte dataByte, byte cipherByte)
+    {
+        int dum = 0; // DUM Data Unnegated Mask
+        int dnm = 0; // DNM Data Negated Mask
+        int dbm = 0; // DBM Data Blended Mask
+                
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte        
+        System.out.println("\nDat = " + getChar(dataByte));
+        System.out.println("Cph = " + getChar(cipherByte));
+        System.out.println();
+        System.out.println("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum));
+        System.out.println("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm));
+        System.out.println("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm));
+    }
+    
+    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer, boolean print, boolean bin, boolean dec, boolean hex, boolean chr)
     {
         byte dataByte = 0;
         byte cipherByte = 0;
@@ -143,27 +262,14 @@ public class FinalCrypt
             outputByte = encryptByte(dataBuffer.get(dataBufferCount), cipherBuffer.get(dataBufferCount));
             outputBuffer.put(outputByte);
             if ( bin ) { this.printByteBinary(dataByte, cipherByte); }
+            if ( dec ) { this.printByteDecimal(dataByte, cipherByte); }
+            if ( hex ) { this.printByteHexaDecimal(dataByte, cipherByte); }
+            if ( chr ) { this.printByteChar(dataByte, cipherByte); }
+            if ( print ) { this.printByte(dataByte, cipherByte); }
         }
         outputBuffer.flip();
         
         return outputBuffer;
-    }
-    
-    private void printByteBinary(byte dataByte, byte cipherByte)
-    {
-        int dum = 0;  // DUM Data Unnegated Mask
-        int dnm = 0;       // DNM Data Negated Mask
-        int dbm = 0;    // DBM Data Blended Mask
-                
-        dum = dataByte & ~cipherByte;
-        dnm = ~dataByte & cipherByte;
-        dbm = dum + dnm; // outputByte        
-        System.out.println("\nDat = " + getBinaryString(dataByte));
-        System.out.println("Cph = " + getBinaryString(cipherByte));
-        System.out.println();
-        System.out.println("DUM  = " + getBinaryString((byte)dataByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum));
-        System.out.println("DNM  = " + getBinaryString((byte)~dataByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm));
-        System.out.println("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm));
     }
     
     private byte encryptByte(byte dataByte, byte cipherByte)
@@ -209,7 +315,7 @@ public class FinalCrypt
     
     public static void main(String[] args)
     {
-        boolean debug = false, bin = false, ifset = false, cfset = false, ofset = false;
+        boolean debug = false, print = false, bin = false, dec = false, hex = false, chr = false, ifset = false, cfset = false, ofset = false;
         boolean validInvocation = true;
 
         Path inputFilePath = null;
@@ -220,18 +326,23 @@ public class FinalCrypt
         {
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                     { usage(); }
             else if (( args[paramCnt].equals("-d")) || ( args[paramCnt].equals("--debug") ))                    { debug = true; }
+            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                    { print = true; }
             else if ( args[paramCnt].equals("--bin"))                                                           { bin = true; }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) ) { bufferSize = ( Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
-            else if ( args[paramCnt].equals("-i")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ifset = true; }  else { usage(); } }
-            else if ( args[paramCnt].equals("-c")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; } else { usage(); } }
-            else if ( args[paramCnt].equals("-o")) { if ( isValidFile(args[paramCnt+1], true, false, debug) )   { outputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ofset = true; } else { usage(); } }
+            else if ( args[paramCnt].equals("--dec"))                                                           { dec = true; }
+            else if ( args[paramCnt].equals("--hex"))                                                           { hex = true; }
+            else if ( args[paramCnt].equals("--chr"))                                                           { chr = true; }
+            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) ) { bufferSize = ( Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
+            else if ( args[paramCnt].equals("-i")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ifset = true; paramCnt++; }  else { usage(); } }
+            else if ( args[paramCnt].equals("-c")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; } else { usage(); } }
+            else if ( args[paramCnt].equals("-o")) { if ( isValidFile(args[paramCnt+1], true, false, debug) )   { outputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ofset = true; paramCnt++; } else { usage(); } }
+            else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
         if ( ! ifset ) { System.err.println("\nError: Missing parameter <-i \"inputfile\">"); usage(); }
         if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
         if ( ! ofset ) { System.err.println("\nError: Missing parameter <-o \"outputfile\">"); usage(); }
         
-        new FinalCrypt(inputFilePath, cipherFilePath, outputFilePath, debug, bin);
+        new FinalCrypt(inputFilePath, cipherFilePath, outputFilePath, debug, print, bin, dec, hex, chr);
     }
 
     private static void usage()
@@ -243,7 +354,11 @@ public class FinalCrypt
         System.out.println("Options:");
         System.out.println("            [-h] [--help]         Shows this help page.");
         System.out.println("            [-d] [--debug]        Enables debugging mode.");
+        System.out.println("            [-p] [--print]        Print overal data encryption.");
         System.out.println("            [--bin]               Print binary calculations.");
+        System.out.println("            [--dec]               Print decimal calculations.");
+        System.out.println("            [--hex]               Print hexadecimal calculations.");
+        System.out.println("            [--chr]               Print character calculations.");
         System.out.println("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
         System.out.println("Parameters:");
         System.out.println("            <-i \"inputfile\">      The datafile you want to encrypt.");
