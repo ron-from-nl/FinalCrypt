@@ -96,7 +96,7 @@ public class FinalCrypt
                         
 
                         // Parse dataBuffer & cipherBuffer to cryptOutputBuffer and write to file
-                        outputBuffer = cryptOutputBuffer(dataBuffer, cipherBuffer, print, bin, dec, hex, chr);
+                        outputBuffer = cryptOutputBuffer(dataBuffer, cipherBuffer);
                         
                         if (debug)
                         {
@@ -203,7 +203,7 @@ public class FinalCrypt
         System.out.println("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm));
     }
     
-    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer, boolean print, boolean bin, boolean dec, boolean hex, boolean chr)
+    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
     {
         byte dataByte = 0;
         byte cipherByte = 0;
@@ -293,6 +293,10 @@ public class FinalCrypt
         if ( ! ifset ) { System.err.println("\nError: Missing parameter <-i \"inputfile\">"); usage(); }
         if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
         if ( ! ofset ) { System.err.println("\nError: Missing parameter <-o \"outputfile\">"); usage(); }
+
+        if (inputFilePath.compareTo(cipherFilePath) == 0) { System.err.println("\nError: inputfile equal to cipherfile!"); usage(); }
+        if (inputFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: inputfile equal to outputfile!"); usage(); }
+        if (cipherFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: cipherfile equal to ouputfile!"); usage(); }
 
         FinalCrypt finalCrypt = new FinalCrypt();
         try { if ( Files.size(cipherFilePath) < bufferSize) { bufferSize = (int) (long) Files.size(cipherFilePath);} } catch (IOException ex) { System.out.println("Files.size(cfp)" + ex); }
