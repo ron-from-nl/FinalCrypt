@@ -16,16 +16,24 @@ import java.util.EnumSet;
 
 cd ../dist/;
 rm data**; clear;
-echo ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > data.orig;
+echo ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > data.txt;
 echo abcdefghijklstuvwxyz > cipher;
-java -jar FinalCrypt.jar -i data.orig -c cipher -o data.encr; 
-ls -l; cat data.orig; cat data.encr;
-java -jar FinalCrypt.jar -i data.encr -c cipher -o data.orig2; 
-ls -l; cat data.orig; cat data.orig2;
+java -jar FinalCrypt.jar -i data.txt -c cipher -o data.encr.txt; 
+ls -l; cat data.txt; cat data.encr.txt;
+java -jar FinalCrypt.jar -i data.encr.txt -c cipher -o data.decr.txt; 
+ls -l; cat data.txt; cat data.decr.txt;
 
 or
 
 clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --bin -i a -c b -o c
+
+or
+
+clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --print -i a -c b -o c
+
+or
+
+clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -jar FinalCrypt.jar --print -i a -c b -o c
 
 */
 
@@ -36,15 +44,15 @@ public class FinalCrypt
     static final String AUTHOR = "Ron de Jong";
     static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
     static final String VERSION = "1.0";
-    public boolean debug = false, print= false, bin = false, dec = false, hex = false, chr = false;
-    public static int bufferSize = 1024 * 1024; // Default 1MB
-    private int dataBufferSize;
-    private int cipherBufferSize;
-    private int outputBufferSize;
+    private boolean debug = false, print= false, bin = false, dec = false, hex = false, chr = false;
+    private int bufferSize = 1024 * 1024; // Default 1MB
+    private final int dataBufferSize;
+    private final int cipherBufferSize;
+    private final int outputBufferSize;
     private int printByteCounter = 0;
-    public Path inputFilePath = null;
-    public Path cipherFilePath = null;
-    public Path outputFilePath = null;
+    private Path inputFilePath = null;
+    private Path cipherFilePath = null;
+    private Path outputFilePath = null;
     private final String encoding = System.getProperty("file.encoding");
 
     public FinalCrypt()
@@ -55,13 +63,29 @@ public class FinalCrypt
         outputBufferSize = bufferSize;        
     }
     
+    public int getBufferSize()                          { return bufferSize; }
+    
+    public void setDebug(boolean debug)                 { this.debug = debug; }
+    public void setPrint(boolean print)                 { this.print = print; }
+    public void setBin(boolean bin)                     { this.bin = bin; }
+    public void setDec(boolean dec)                     { this.dec = dec; }
+    public void setHex(boolean hex)                     { this.hex = hex; }
+    public void setChr(boolean chr)                     { this.chr = chr; }
+    public void setBufferSize(int bufferSize)           { this.bufferSize = bufferSize; }
+    public void setInputFilePath(Path inputFilePath)    { this.inputFilePath = inputFilePath; }
+    public void setCipherFilePath(Path cipherFilePath)  { this.cipherFilePath = cipherFilePath; }
+    public void setOutputFilePath(Path outputFilePath)  { this.outputFilePath = outputFilePath; }
+    
     public void startEncrypting()
     {
         // Prints printByte Header ones
         if ( print )
         {
-            System.out.println("             Source               Cipher             Destination      ");
-            System.out.println("adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c");
+            System.out.println(" ----------------------------------------------------------------------");
+            System.out.println("|          |       Data        |      Cipher       |      Output       |");
+            System.out.println("| ---------|-------------------|-------------------|-------------------|");
+            System.out.println("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |");
+            System.out.println("|----------|-------------------|-------------------|-------------------|");
         }
 
         boolean dataFileEnded = false;
@@ -115,11 +139,52 @@ public class FinalCrypt
                     cipherChannel.close();
                     dataChannel.close();
                     
+                    if ( print ) { System.out.println(" ----------------------------------------------------------------------"); }
+                    
                 } catch (IOException ex) { System.err.println("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
             } catch (IOException ex) { System.err.println("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
         } catch (IOException ex) { System.err.println("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex); }
     }
     
+    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
+    {
+        byte dataByte = 0;
+        byte cipherByte = 0;
+        byte outputByte;
+        ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
+        for (int dataBufferCount = 0; dataBufferCount < dataBuffer.limit(); dataBufferCount++)
+        {
+            dataByte = dataBuffer.get(dataBufferCount);
+            cipherByte = cipherBuffer.get(dataBufferCount);
+            outputByte = encryptByte(dataBuffer.get(dataBufferCount), cipherBuffer.get(dataBufferCount));
+            outputBuffer.put(outputByte);
+        }
+        outputBuffer.flip();
+        
+        return outputBuffer;
+    }
+    
+    private byte encryptByte(byte dataByte, byte cipherByte)
+    {
+        int dum = 0;  // DUM Data Unnegated Mask
+        int dnm = 0;       // DNM Data Negated Mask
+        int dbm = 0;    // DBM Data Blended Mask
+        byte outputByte;
+
+        dum = dataByte & ~cipherByte;
+        dnm = ~dataByte & cipherByte;
+        dbm = dum + dnm; // outputByte        
+        outputByte = (byte)(dbm & 0xFF);
+        
+        if ( bin )      { printByteBinary(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( dec )      { printByteDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( hex )      { printByteHexaDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( chr )      { printByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( print )    { printByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        
+        return (byte)dbm; // outputByte
+    }
+
     private String getBinaryString(Byte myByte) { return String.format("%8s", Integer.toBinaryString(myByte & 0xFF)).replace(' ', '0'); }
     private String getDecString(Byte myByte) { return String.format("%3d", (myByte & 0xFF)).replace(" ", "0"); }
     private String getHexString(Byte myByte, String digits) { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
@@ -141,25 +206,22 @@ public class FinalCrypt
         String dathex = getHexString(dataByte, "2");
         String datdec = getDecString(dataByte);
         String datchr = getChar(dataByte);
-//        char datchr = getChar(dataByte);
         
         String cphbin = getBinaryString(cipherByte);
         String cphhex = getHexString(cipherByte, "2");
         String cphdec = getDecString(cipherByte);
         String cphchr = getChar(cipherByte);
-//        char cphchr = getChar(cipherByte);
         
-        String outbin = getBinaryString((byte) (dbm & 0xFF));
-        String outhex = getHexString((byte) (dbm & 0xFF), "2");
-        String outdec = getDecString((byte) (dbm & 0xFF));
-        String outchr = getChar((byte) (dbm & 0xFF));
-//        char outchr = getChar((byte) (out & 0xFF));
+        String outbin = getBinaryString(outputByte);
+        String outhex = getHexString(outputByte, "2");
+        String outdec = getDecString(outputByte);
+        String outchr = getChar(outputByte);
         
 //        System.out.println("             Source               Cipher             Destination      ");
 //        System.out.println("adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c");
-        System.out.print(adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
+        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
         System.out.print                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-        System.out.println               (outbin + " " +  outhex + " " + outdec + " " + outchr);
+        System.out.println               (outbin + " " +  outhex + " " + outdec + " " + outchr + " |");
         printByteCounter++;
     }
     
@@ -203,45 +265,6 @@ public class FinalCrypt
         System.out.println("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm));
     }
     
-    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
-    {
-        byte dataByte = 0;
-        byte cipherByte = 0;
-        byte outputByte;
-        ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
-        for (int dataBufferCount = 0; dataBufferCount < dataBuffer.limit(); dataBufferCount++)
-        {
-            dataByte = dataBuffer.get(dataBufferCount);
-            cipherByte = cipherBuffer.get(dataBufferCount);
-            outputByte = encryptByte(dataBuffer.get(dataBufferCount), cipherBuffer.get(dataBufferCount));
-            outputBuffer.put(outputByte);
-        }
-        outputBuffer.flip();
-        
-        return outputBuffer;
-    }
-    
-    private byte encryptByte(byte dataByte, byte cipherByte)
-    {
-        int dum = 0;  // DUM Data Unnegated Mask
-        int dnm = 0;       // DNM Data Negated Mask
-        int dbm = 0;    // DBM Data Blended Mask
-        byte outputByte;
-
-        dum = dataByte & ~cipherByte;
-        dnm = ~dataByte & cipherByte;
-        dbm = dum + dnm; // outputByte        
-        outputByte = (byte)(dbm & 0xFF);
-        
-        if ( bin )      { printByteBinary(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( dec )      { printByteDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( hex )      { printByteHexaDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( chr )      { printByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( print )    { printByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        
-        return (byte)dbm; // outputByte
-    }
-
     private static boolean isValidFile(String fileStr, boolean createFile, boolean mustHaveData, boolean debug)
     {
         boolean isValid = true;
@@ -273,7 +296,11 @@ public class FinalCrypt
         Path inputFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
-                
+        
+        // Load the FinalCrypt Objext
+        FinalCrypt finalCrypt = new FinalCrypt();
+
+        // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
         {
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                     { usage(); }
@@ -283,7 +310,7 @@ public class FinalCrypt
             else if ( args[paramCnt].equals("--dec"))                                                           { dec = true; }
             else if ( args[paramCnt].equals("--hex"))                                                           { hex = true; }
             else if ( args[paramCnt].equals("--chr"))                                                           { chr = true; }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) ) { bufferSize = ( Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
+            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
             else if ( args[paramCnt].equals("-i")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ifset = true; paramCnt++; }  else { usage(); } }
             else if ( args[paramCnt].equals("-c")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; } else { usage(); } }
             else if ( args[paramCnt].equals("-o")) { if ( isValidFile(args[paramCnt+1], true, false, debug) )   { outputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ofset = true; paramCnt++; } else { usage(); } }
@@ -298,8 +325,8 @@ public class FinalCrypt
         if (inputFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: inputfile equal to outputfile!"); usage(); }
         if (cipherFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: cipherfile equal to ouputfile!"); usage(); }
 
-        FinalCrypt finalCrypt = new FinalCrypt();
-        try { if ( Files.size(cipherFilePath) < bufferSize) { bufferSize = (int) (long) Files.size(cipherFilePath);} } catch (IOException ex) { System.out.println("Files.size(cfp)" + ex); }
+        // Set the Options
+        try { if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize()) { finalCrypt.setBufferSize((int) (long) Files.size(cipherFilePath));} } catch (IOException ex) { System.out.println("Files.size(cfp)" + ex); }
         finalCrypt.debug = debug;
         finalCrypt.print = print;
         finalCrypt.bin = bin;
@@ -307,10 +334,13 @@ public class FinalCrypt
         finalCrypt.hex = hex;
         finalCrypt.chr = chr;
         finalCrypt.chr = chr;
+
+        // Set the files
         finalCrypt.inputFilePath = inputFilePath;
         finalCrypt.cipherFilePath = cipherFilePath;
         finalCrypt.outputFilePath = outputFilePath;
         
+        // Start Encryption
         finalCrypt.startEncrypting();
     }
 
