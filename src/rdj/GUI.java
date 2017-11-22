@@ -7,7 +7,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class GUI extends javax.swing.JFrame
+public class GUI extends javax.swing.JFrame implements UI
 {
     File[] eFiles;
     File file;
@@ -273,85 +273,40 @@ public class GUI extends javax.swing.JFrame
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void log(String message)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void status(String status)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateEncryptionDiffStats(int value)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateTotalProgress(int value)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateFileProgress(int value)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateBufferProgress(int value)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
-
-
-//class JavaFileView extends FileView {
-//  Icon javaIcon = new MyIcon(Color.BLUE);
-//
-//  Icon classIcon = new MyIcon(Color.GREEN);
-//
-//  Icon htmlIcon = new MyIcon(Color.RED);
-//
-//  Icon jarIcon = new MyIcon(Color.PINK);
-//
-//  public String getName(File file) {
-//    String filename = file.getName();
-//    if (filename.endsWith(".java")) {
-//      String name = filename + " : " + file.length();
-//      return name;
-//    }
-//    return null;
-//  }
-//
-//  public String getTypeDescription(File file) {
-//    String typeDescription = null;
-//    String filename = file.getName().toLowerCase();
-//
-//    if (filename.endsWith(".java")) {
-//      typeDescription = "Java Source";
-//    } else if (filename.endsWith(".class")) {
-//      typeDescription = "Java Class File";
-//    } else if (filename.endsWith(".jar")) {
-//      typeDescription = "Java Archive";
-//    } else if (filename.endsWith(".html") || filename.endsWith(".htm")) {
-//      typeDescription = "Applet Loader";
-//    }
-//    return typeDescription;
-//  }
-//
-//  public Icon getIcon(File file) {
-//    if (file.isDirectory()) {
-//      return null;
-//    }
-//    Icon icon = null;
-//    String filename = file.getName().toLowerCase();
-//    if (filename.endsWith(".java")) {
-//      icon = javaIcon;
-//    } else if (filename.endsWith(".class")) {
-//      icon = classIcon;
-//    } else if (filename.endsWith(".jar")) {
-//      icon = jarIcon;
-//    } else if (filename.endsWith(".html") || filename.endsWith(".htm")) {
-//      icon = htmlIcon;
-//    }
-//    return icon;
-//  }
-//}
-//
-//class MyIcon implements Icon {
-//  Color myColor;
-//
-//  public MyIcon(Color myColor) {
-//    this.myColor = myColor;
-//  }
-//
-//  public int getIconWidth() {
-//    return 16;
-//  }
-//
-//  public int getIconHeight() {
-//    return 16;
-//  }
-//
-//  public void paintIcon(Component c, Graphics g, int x, int y) {
-//    g.setColor(myColor);
-//    g.drawRect(0, 0, 16, 16);
-//  }
-//
-////    @Override
-////    public void paintIcon(Component c, Graphics g, int x, int y)
-////    {
-////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-////    }
-//}

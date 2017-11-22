@@ -7,35 +7,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
-
-/* commandline test routine
-
-cd ../dist/;
-rm data**; clear;
-echo ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > data.txt;
-echo abcdefghijklstuvwxyz > cipher;
-java -jar FinalCrypt.jar -i data.txt -c cipher -o data.encr.txt; 
-ls -l; cat data.txt; cat data.encr.txt;
-java -jar FinalCrypt.jar -i data.encr.txt -c cipher -o data.decr.txt; 
-ls -l; cat data.txt; cat data.decr.txt;
-
-or
-
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --bin -i a -c b -o c
-
-or
-
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --print -i a -c b -o c
-
-or
-
-clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -jar FinalCrypt.jar --print -i a -c b -o c
-
-*/
 
 public class FinalCrypt
 {
@@ -44,122 +19,165 @@ public class FinalCrypt
     static final String AUTHOR = "Ron de Jong";
     static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
     static final String VERSION = "1.0";
-    private boolean debug = false, print= false, bin = false, dec = false, hex = false, chr = false;
+    private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
     private int bufferSize = 1024 * 1024; // Default 1MB
     private final int dataBufferSize;
     private final int cipherBufferSize;
     private final int outputBufferSize;
+    private final long bufferTotal = 0; // DNumber of buffers
     private int printByteCounter = 0;
-    private Path inputFilePath = null;
+    private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
+    private final long inputFileSize = 0;
+    private final long cipherFileSize = 0;
+    private final long outputFileSize = 0;
     private final String encoding = System.getProperty("file.encoding");
 
     public FinalCrypt()
     {        
-            
+        inputFilesPathList = new ArrayList<>();
         dataBufferSize = bufferSize;
         cipherBufferSize = bufferSize;
         outputBufferSize = bufferSize;        
     }
     
-    public int getBufferSize()                          { return bufferSize; }
+    public int getBufferSize()                                              { return bufferSize; }
     
-    public void setDebug(boolean debug)                 { this.debug = debug; }
-    public void setPrint(boolean print)                 { this.print = print; }
-    public void setBin(boolean bin)                     { this.bin = bin; }
-    public void setDec(boolean dec)                     { this.dec = dec; }
-    public void setHex(boolean hex)                     { this.hex = hex; }
-    public void setChr(boolean chr)                     { this.chr = chr; }
-    public void setBufferSize(int bufferSize)           { this.bufferSize = bufferSize; }
-    public void setInputFilePath(Path inputFilePath)    { this.inputFilePath = inputFilePath; }
-    public void setCipherFilePath(Path cipherFilePath)  { this.cipherFilePath = cipherFilePath; }
-    public void setOutputFilePath(Path outputFilePath)  { this.outputFilePath = outputFilePath; }
-    
-    public void startEncrypting()
-    {
-        // Prints printByte Header ones
-        if ( print )
-        {
-            System.out.println(" ----------------------------------------------------------------------");
-            System.out.println("|          |       Data        |      Cipher       |      Output       |");
-            System.out.println("| ---------|-------------------|-------------------|-------------------|");
-            System.out.println("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |");
-            System.out.println("|----------|-------------------|-------------------|-------------------|");
-        }
+    public boolean getDebug()                                               { return debug; }
+    public boolean getVerbose()                                             { return verbose; }
+    public boolean getPrint()                                               { return print; }
+    public boolean getTXT()                                                 { return txt; }
+    public boolean getBin()                                                 { return bin; }
+    public boolean getDec()                                                 { return dec; }
+    public boolean getHex()                                                 { return hex; }
+    public boolean getChr()                                                 { return chr; }
+    public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
+    public Path getCipherFilePath()                                         { return cipherFilePath; }
+    public Path getOutputFilePath()                                         { return outputFilePath; }
 
-        boolean dataFileEnded = false;
-        long dataChannelPos = 0;
-        long cipherChannelPos = 0;
-        
+    public void setDebug(boolean debug)                                     { this.debug = debug; }
+    public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
+    public void setPrint(boolean print)                                     { this.print = print; }
+    public void setTXT(boolean txt)                                         { this.txt = txt; }
+    public void setBin(boolean bin)                                         { this.bin = bin; }
+    public void setDec(boolean dec)                                         { this.dec = dec; }
+    public void setHex(boolean hex)                                         { this.hex = hex; }
+    public void setChr(boolean chr)                                         { this.chr = chr; }
+    public void setBufferSize(int bufferSize)                               { this.bufferSize = bufferSize; }
+    public void setInputFilesPathList(ArrayList<Path> inputFilesPathList)   { this.inputFilesPathList = inputFilesPathList; }
+    public void setCipherFilePath(Path cipherFilePath)                      { this.cipherFilePath = cipherFilePath; }
+    public void setOutputFilePath(Path outputFilePath)                      { this.outputFilePath = outputFilePath; }
+    
+    public void encryptFile()
+    {
         ByteBuffer dataBuffer =     ByteBuffer.allocate(dataBufferSize);   dataBuffer.clear();
         ByteBuffer cipherBuffer =   ByteBuffer.allocate(cipherBufferSize); cipherBuffer.clear();
         ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
-
-        // Open outputFile for writing
-        try (SeekableByteChannel outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
+        
+        for (Path inputFilePath:inputFilesPathList)
         {
-            //open dataFile
-            try (SeekableByteChannel dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+            boolean dataFileEnded = false;
+            long dataChannelPos = 0;
+            long cipherChannelPos = 0;
+            
+            outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
+//            if ( isValidFile(outputFilePath, true, false) )   {  } else { usage(); }
+
+            // Prints printByte Header ones
+            System.out.println("Encrypting file: " + inputFilePath.getFileName());
+            if ( print )
             {
-                // Open cipherFile
-                try (SeekableByteChannel cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                System.out.println(" ----------------------------------------------------------------------");
+                System.out.println("|          |       Data        |      Cipher       |      Output       |");
+                System.out.println("| ---------|-------------------|-------------------|-------------------|");
+                System.out.println("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |");
+                System.out.println("|----------|-------------------|-------------------|-------------------|");
+            }
+
+            // Open outputFile for writing
+            try (SeekableByteChannel outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
+            {
+                //open dataFile
+                try (SeekableByteChannel dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
                 {
-                    // Fill dataBuffer & cipherBuffer
-                    while ( ! dataFileEnded)
+                    // Open cipherFile
+                    try (SeekableByteChannel cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
                     {
-                        // Fill dataBuffer
-                        dataChannelPos = dataChannel.read(dataBuffer); dataBuffer.flip();
-                        if ( dataChannelPos == -1 ) { dataFileEnded = true; }
-                        if ( dataBuffer.limit() < dataBufferSize ) { dataFileEnded = true; }
-
-                        // Fill cipherBuffer
-                        cipherChannelPos = cipherChannel.read(cipherBuffer);
-                        if ( cipherChannelPos < cipherBufferSize ) { cipherChannel.position(0); cipherChannel.read(cipherBuffer); }
-                        cipherBuffer.flip();
-                        
-
-                        // Parse dataBuffer & cipherBuffer to cryptOutputBuffer and write to file
-                        outputBuffer = cryptOutputBuffer(dataBuffer, cipherBuffer);
-                        
-                        if (debug)
+                        // Fill dataBuffer & cipherBuffer
+                        while ( ! dataFileEnded)
                         {
-                            printByteBuffer("DB", dataBuffer);
-                            printByteBuffer("CB", cipherBuffer);
-                            printByteBuffer("OB", outputBuffer);
+                            // Fill dataBuffer
+                            dataChannelPos = dataChannel.read(dataBuffer); dataBuffer.flip();
+                            if ( dataChannelPos == -1 ) { dataFileEnded = true; }
+                            if ( dataBuffer.limit() < dataBufferSize ) { dataFileEnded = true; }
+
+                            // Fill cipherBuffer
+                            cipherChannelPos = cipherChannel.read(cipherBuffer);
+                            if ( cipherChannelPos < cipherBufferSize ) { cipherChannel.position(0); cipherChannel.read(cipherBuffer); }
+                            cipherBuffer.flip();
+
+
+                            // Parse dataBuffer & cipherBuffer to cryptOutputBuffer and write to file
+                            outputBuffer = encryptBuffer(dataBuffer, cipherBuffer);
+
+                            if (txt)
+                            {
+                                printByteBuffer("DB", dataBuffer);
+                                printByteBuffer("CB", cipherBuffer);
+                                printByteBuffer("OB", outputBuffer);
+                            }
+
+                            outputChannel.write(outputBuffer);
+
+                            outputBuffer.clear();
+                            dataBuffer.clear();
+                            cipherBuffer.clear();
                         }
-                        
-                        outputChannel.write(outputBuffer);
-                        
-                        outputBuffer.clear();
-                        dataBuffer.clear();
-                        cipherBuffer.clear();
-                    }
-                    outputChannel.close();
-                    cipherChannel.close();
+
+                        if ( print ) { System.out.println(" ----------------------------------------------------------------------\n"); }
+                        cipherChannel.close();
+                    } catch (IOException ex) { System.err.println("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
                     dataChannel.close();
-                    
-                    if ( print ) { System.out.println(" ----------------------------------------------------------------------"); }
-                    
-                } catch (IOException ex) { System.err.println("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
-            } catch (IOException ex) { System.err.println("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
-        } catch (IOException ex) { System.err.println("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex); }
+                } catch (IOException ex) { System.err.println("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
+                outputChannel.close();
+            } catch (IOException ex) { System.err.println("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex); }
+//            System.out.println();
+        }
     }
     
-    private ByteBuffer cryptOutputBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
+    private ByteBuffer encryptBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
     {
+        int dataTotal = 0;
+        int cipherTotal = 0;
+        int outputDiff = 0;
         byte dataByte = 0;
         byte cipherByte = 0;
         byte outputByte;
+        
         ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
         for (int dataBufferCount = 0; dataBufferCount < dataBuffer.limit(); dataBufferCount++)
         {
+            dataTotal += dataByte;
+            cipherTotal += cipherByte;
             dataByte = dataBuffer.get(dataBufferCount);
             cipherByte = cipherBuffer.get(dataBufferCount);
             outputByte = encryptByte(dataBuffer.get(dataBufferCount), cipherBuffer.get(dataBufferCount));
             outputBuffer.put(outputByte);
         }
         outputBuffer.flip();
+        // MD5Sum dataTotal XOR MD5Sum cipherTotal (Diff dataTot and cipherTot) 32 bit 4G
+        
+        outputDiff = dataTotal ^ cipherTotal;
+        
+        if (debug)
+        {
+            System.out.println(dataTotal);
+            System.out.println(cipherTotal);
+            System.out.println(outputDiff);
+//        MD5Converter.getMD5SumFromString(Integer.toString(dataTotal));
+//        MD5Converter.getMD5SumFromString(Integer.toString(cipherTotal));
+        }
         
         return outputBuffer;
     }
@@ -265,106 +283,23 @@ public class FinalCrypt
         System.out.println("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm));
     }
     
-    private static boolean isValidFile(String fileStr, boolean createFile, boolean mustHaveData, boolean debug)
+    public boolean isValidFile(Path path, boolean createFile, boolean mustHaveData)
     {
         boolean isValid = true;
         long fileSize = 0;
         LinkOption[] opt = new LinkOption[]{LinkOption.NOFOLLOW_LINKS};
-        Path path = Paths.get(System.getProperty("user.dir"), fileStr); // working dir
         
         if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { System.err.println("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage());} }
 
-        if (Files.exists(path, opt))    { if (debug) { System.out.println(path + " exists"); }}                 else { System.err.println(path + " does not exist!"); isValid = false; }
-        if (Files.isRegularFile(path))  { if (debug) { System.out.println("The checked file is regular."); }}   else { System.err.println("Error: The checked file is not regular!"); isValid = false; }
-        if (Files.isReadable(path))     { if (debug) { System.out.println("The checked file is readable."); }}  else { System.err.println("Error: The checked file is not readable!"); isValid = false; }
-        if (Files.isWritable(path))     { if (debug) { System.out.println("The checked file is writable."); }}  else { System.err.println("Error: The checked file is not writable!"); isValid = false; }
+        if (Files.exists(path, opt))    { if (verbose) { System.out.println(path + " exists"); }}                 else { System.err.println(path + " does not exist!"); isValid = false; }
+        if (Files.isRegularFile(path))  { if (verbose) { /*System.out.println("The checked file is regular."); */}}   else { System.err.println("Error: The checked file is not regular!"); isValid = false; }
+        if (Files.isReadable(path))     { if (verbose) { /*System.out.println("The checked file is readable."); */}}  else { System.err.println("Error: The checked file is not readable!"); isValid = false; }
+        if (Files.isWritable(path))     { if (verbose) { /*System.out.println("The checked file is writable."); */}}  else { System.err.println("Error: The checked file is not writable!"); isValid = false; }
         try { fileSize = Files.size(path); } catch (IOException ex) { System.err.println("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage()); }
-        if (debug) { System.out.println("The checked file has " + fileSize + " bytes of data."); }
+//        if (verbose) { System.out.println("The checked file has " + fileSize + " bytes of data."); }
         if (( mustHaveData ) && ( fileSize == 0 )) { System.err.println("Error: The checked file requires data!"); isValid = false; }
         
         return isValid;
-    }
-
-    private static boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
-    
-    public static void main(String[] args)
-    {
-        boolean ifset = false, cfset = false, ofset = false;
-        boolean debug = false, print= false, bin = false, dec = false, hex = false, chr = false;
-        boolean validInvocation = true;
-
-        Path inputFilePath = null;
-        Path cipherFilePath = null;
-        Path outputFilePath = null;
-        
-        // Load the FinalCrypt Objext
-        FinalCrypt finalCrypt = new FinalCrypt();
-
-        // Validate Parameters
-        for (int paramCnt=0; paramCnt < args.length; paramCnt++)
-        {
-            if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                     { usage(); }
-            else if (( args[paramCnt].equals("-d")) || ( args[paramCnt].equals("--debug") ))                    { debug = true; }
-            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                    { print = true; }
-            else if ( args[paramCnt].equals("--bin"))                                                           { bin = true; }
-            else if ( args[paramCnt].equals("--dec"))                                                           { dec = true; }
-            else if ( args[paramCnt].equals("--hex"))                                                           { hex = true; }
-            else if ( args[paramCnt].equals("--chr"))                                                           { chr = true; }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
-            else if ( args[paramCnt].equals("-i")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ifset = true; paramCnt++; }  else { usage(); } }
-            else if ( args[paramCnt].equals("-c")) { if ( isValidFile(args[paramCnt+1], false, true, debug) )   { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; } else { usage(); } }
-            else if ( args[paramCnt].equals("-o")) { if ( isValidFile(args[paramCnt+1], true, false, debug) )   { outputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); ofset = true; paramCnt++; } else { usage(); } }
-            else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
-        }
-        
-        if ( ! ifset ) { System.err.println("\nError: Missing parameter <-i \"inputfile\">"); usage(); }
-        if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
-        if ( ! ofset ) { System.err.println("\nError: Missing parameter <-o \"outputfile\">"); usage(); }
-
-        if (inputFilePath.compareTo(cipherFilePath) == 0) { System.err.println("\nError: inputfile equal to cipherfile!"); usage(); }
-        if (inputFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: inputfile equal to outputfile!"); usage(); }
-        if (cipherFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: cipherfile equal to ouputfile!"); usage(); }
-
-        // Set the Options
-        try { if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize()) { finalCrypt.setBufferSize((int) (long) Files.size(cipherFilePath));} } catch (IOException ex) { System.out.println("Files.size(cfp)" + ex); }
-        finalCrypt.debug = debug;
-        finalCrypt.print = print;
-        finalCrypt.bin = bin;
-        finalCrypt.dec = dec;
-        finalCrypt.hex = hex;
-        finalCrypt.chr = chr;
-        finalCrypt.chr = chr;
-
-        // Set the files
-        finalCrypt.inputFilePath = inputFilePath;
-        finalCrypt.cipherFilePath = cipherFilePath;
-        finalCrypt.outputFilePath = outputFilePath;
-        
-        // Start Encryption
-        finalCrypt.startEncrypting();
-    }
-
-    private static void usage()
-    {
-        String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
-
-        System.out.println();
-        System.out.println("Usage:   java -jar FinalCrypt.jar [options] <Parameters>\n");
-        System.out.println("Options:");
-        System.out.println("            [-h] [--help]         Shows this help page.");
-        System.out.println("            [-d] [--debug]        Enables debugging mode.");
-        System.out.println("            [-p] [--print]        Print overal data encryption.");
-        System.out.println("            [--bin]               Print binary calculations.");
-        System.out.println("            [--dec]               Print decimal calculations.");
-        System.out.println("            [--hex]               Print hexadecimal calculations.");
-        System.out.println("            [--chr]               Print character calculations.");
-        System.out.println("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
-        System.out.println("Parameters:");
-        System.out.println("            <-i \"inputfile\">      The datafile you want to encrypt.");
-        System.out.println("            <-c \"cipherfile\">     The file that encrypts your datafile. Keep cipherfile SECRET!!!");
-        System.out.println("            <-o \"outputfile\">     The encrypted datafile; (use cipherfile to also decrypt).\n");
-        System.out.println("Author: " + getAuthor() + " " + getCopyright() + "\n");
-        System.exit(1);
     }
     
     public static String getCopyright()                     { return COPYRIGHT; }
