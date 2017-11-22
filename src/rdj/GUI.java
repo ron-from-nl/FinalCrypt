@@ -5,7 +5,10 @@ import java.awt.Container;
 import java.io.File;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class GUI extends javax.swing.JFrame implements UI
 {
@@ -15,6 +18,12 @@ public class GUI extends javax.swing.JFrame implements UI
     public GUI()
     {
         initComponents();
+        try
+        { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
+        catch (ClassNotFoundException ex) { }
+        catch (InstantiationException ex) { }
+        catch (IllegalAccessException ex) { }
+        catch (UnsupportedLookAndFeelException ex) { }
         disableSomeComponents(inputFileChooser);
         disableSomeComponents(cipherFileChooser);
         eFiles = new File[1]; eFiles[0] = new File("rew");
@@ -26,37 +35,49 @@ public class GUI extends javax.swing.JFrame implements UI
     private void initComponents()
     {
 
-        jLabel1 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        logoLabel = new javax.swing.JLabel();
+        encryptTab = new javax.swing.JTabbedPane();
+        encryptPanel = new javax.swing.JPanel();
+        inputFilePane = new javax.swing.JPanel();
+        inputFileChooserLabel = new javax.swing.JLabel();
         inputFileChooser = new javax.swing.JFileChooser();
+        cipherFilePane = new javax.swing.JPanel();
+        cipherFileChooserLabel = new javax.swing.JLabel();
         cipherFileChooser = new javax.swing.JFileChooser();
+        logPane = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        bottomPanel = new javax.swing.JPanel();
+        buttonPanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        progressPanel = new javax.swing.JPanel();
+        FilesProgressBar = new javax.swing.JProgressBar();
+        FileProgressBar = new javax.swing.JProgressBar();
+        statusLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Ubuntu Light", 0, 36)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("FinalCrypt");
+        logoLabel.setFont(new java.awt.Font("Ubuntu Light", 0, 36)); // NOI18N
+        logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        logoLabel.setText("FinalCrypt");
+        logoLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jProgressBar1.setFocusable(false);
-        jProgressBar1.setStringPainted(true);
+        encryptTab.setBackground(new java.awt.Color(0, 0, 0));
+        encryptTab.setMinimumSize(new java.awt.Dimension(1000, 29));
+        encryptTab.setPreferredSize(new java.awt.Dimension(1000, 100));
 
-        jLabel3.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Select Data Files");
-        jLabel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        encryptPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        encryptPanel.setPreferredSize(new java.awt.Dimension(1000, 524));
+        encryptPanel.setLayout(new java.awt.GridLayout());
 
-        jLabel4.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Select Cipher File");
-        jLabel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        inputFilePane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        inputFileChooserLabel.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
+        inputFileChooserLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        inputFileChooserLabel.setText("Select Data Files");
+        inputFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setMultiSelectionEnabled(true);
@@ -75,7 +96,47 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
 
+        javax.swing.GroupLayout inputFilePaneLayout = new javax.swing.GroupLayout(inputFilePane);
+        inputFilePane.setLayout(inputFilePaneLayout);
+        inputFilePaneLayout.setHorizontalGroup(
+            inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 507, Short.MAX_VALUE)
+            .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(inputFilePaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(inputFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                    .addContainerGap()))
+        );
+        inputFilePaneLayout.setVerticalGroup(
+            inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 456, Short.MAX_VALUE)
+            .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(inputFilePaneLayout.createSequentialGroup()
+                    .addComponent(inputFileChooserLabel)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        encryptPanel.add(inputFilePane);
+
+        cipherFilePane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        cipherFileChooserLabel.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
+        cipherFileChooserLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cipherFileChooserLabel.setText("Select Cipher File");
+        cipherFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
         cipherFileChooser.setControlButtonsAreShown(false);
+        cipherFileChooser.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cipherFileChooserActionPerformed(evt);
+            }
+        });
         cipherFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener()
         {
             public void propertyChange(java.beans.PropertyChangeEvent evt)
@@ -84,77 +145,129 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Laksaman", 0, 24)); // NOI18N
-        jButton1.setText("Encrypt");
-        jButton1.setEnabled(false);
-
-        jButton2.setFont(new java.awt.Font("Laksaman", 0, 24)); // NOI18N
-        jButton2.setText("Stop");
-        jButton2.setEnabled(false);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inputFileChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(189, 189, 189)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(191, 191, 191))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        javax.swing.GroupLayout cipherFilePaneLayout = new javax.swing.GroupLayout(cipherFilePane);
+        cipherFilePane.setLayout(cipherFilePaneLayout);
+        cipherFilePaneLayout.setHorizontalGroup(
+            cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 507, Short.MAX_VALUE)
+            .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(cipherFilePaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(cipherFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                    .addContainerGap()))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-                    .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(12, 12, 12))
+        cipherFilePaneLayout.setVerticalGroup(
+            cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 456, Short.MAX_VALUE)
+            .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(cipherFilePaneLayout.createSequentialGroup()
+                    .addComponent(cipherFileChooserLabel)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        encryptPanel.add(cipherFilePane);
+
+        encryptTab.addTab("Encrypt", encryptPanel);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout logPaneLayout = new javax.swing.GroupLayout(logPane);
+        logPane.setLayout(logPaneLayout);
+        logPaneLayout.setHorizontalGroup(
+            logPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logPaneLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1021, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        logPaneLayout.setVerticalGroup(
+            logPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+        );
+
+        encryptTab.addTab("Log", logPane);
+
+        bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        buttonPanel.setLayout(new java.awt.GridLayout(1, 3));
+
+        jButton1.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        jButton1.setText("Encrypt");
+        buttonPanel.add(jButton1);
+
+        jButton2.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        jButton2.setText("Pause");
+        buttonPanel.add(jButton2);
+
+        jButton3.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        jButton3.setText("Stop");
+        buttonPanel.add(jButton3);
+
+        progressPanel.setLayout(new java.awt.GridLayout(3, 0));
+        progressPanel.add(FilesProgressBar);
+        progressPanel.add(FileProgressBar);
+
+        statusLabel.setBackground(new java.awt.Color(255, 0, 0));
+        statusLabel.setForeground(new java.awt.Color(50, 50, 50));
+        statusLabel.setText("Status");
+        statusLabel.setBorder(null);
+        progressPanel.add(statusLabel);
+
+        javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
+        bottomPanel.setLayout(bottomPanelLayout);
+        bottomPanelLayout.setHorizontalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bottomPanelLayout.createSequentialGroup()
+                    .addGap(3, 3, 3)
+                    .addComponent(progressPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(3, 3, 3)))
+        );
+        bottomPanelLayout.setVerticalGroup(
+            bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bottomPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(82, Short.MAX_VALUE))
+            .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
+                    .addContainerGap(64, Short.MAX_VALUE)
+                    .addComponent(progressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(logoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(encryptTab, javax.swing.GroupLayout.DEFAULT_SIZE, 1027, Short.MAX_VALUE)
+                        .addGap(6, 6, 6))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(logoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(encryptTab, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -174,9 +287,14 @@ public class GUI extends javax.swing.JFrame implements UI
 //        textArea.setText("cmd        " + evt.getActionCommand() + "par " + evt.paramString() + "\n");
     }//GEN-LAST:event_inputFileChooserActionPerformed
 
+    private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cipherFileChooserActionPerformed
+    {//GEN-HEADEREND:event_cipherFileChooserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cipherFileChooserActionPerformed
+
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
     {//GEN-HEADEREND:event_cipherFileChooserPropertyChange
-        
+        // TODO add your handling code here:
     }//GEN-LAST:event_cipherFileChooserPropertyChange
 
     /**
@@ -252,6 +370,10 @@ public class GUI extends javax.swing.JFrame implements UI
                 ((JLabel)cmp).setVisible(false);                
 //                return true;
             }
+            if (cmp instanceof JRadioButton)
+            {
+                if (   ! ((JRadioButton)cmp).isSelected()   )  { ((JRadioButton)cmp).setSelected(true); }
+            }
             if (cmp instanceof Container)
             {
                 if(disableSomeComponents((Container) cmp)) return true;
@@ -261,16 +383,27 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar FileProgressBar;
+    private javax.swing.JProgressBar FilesProgressBar;
+    private javax.swing.JPanel bottomPanel;
+    private javax.swing.JPanel buttonPanel;
     private javax.swing.JFileChooser cipherFileChooser;
+    private javax.swing.JLabel cipherFileChooserLabel;
+    private javax.swing.JPanel cipherFilePane;
+    private javax.swing.JPanel encryptPanel;
+    private javax.swing.JTabbedPane encryptTab;
     private javax.swing.JFileChooser inputFileChooser;
+    private javax.swing.JLabel inputFileChooserLabel;
+    private javax.swing.JPanel inputFilePane;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JPanel logPane;
+    private javax.swing.JLabel logoLabel;
+    private javax.swing.JPanel progressPanel;
+    private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override
