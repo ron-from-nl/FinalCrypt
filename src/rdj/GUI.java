@@ -515,15 +515,6 @@ public class GUI extends javax.swing.JFrame implements UI
         // Resize file Buffers to size smalles file
         try 
         {
-            if ( Files.size(finalCrypt.getCipherFilePath()) < Files.size(finalCrypt.getCipherFilePath()))
-            {
-                
-            }
-            else
-            {
-                
-            }
-            
             if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
             {
                 finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
