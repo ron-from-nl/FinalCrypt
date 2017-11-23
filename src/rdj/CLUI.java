@@ -31,6 +31,7 @@ public class CLUI implements UI
         
         // Load the FinalCrypt Objext
         FinalCrypt finalCrypt = new FinalCrypt(this);
+        finalCrypt.start();
 
         // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)

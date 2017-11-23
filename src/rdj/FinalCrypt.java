@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
 
-public class FinalCrypt
+public class FinalCrypt extends Thread
 {
     static final String COMPANYNAME = "GPLv3";
     static final String PRODUCTNAME = "FinalCrypt";
@@ -20,11 +20,13 @@ public class FinalCrypt
     static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
     static final String VERSION = "1.0";
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
+
     private int bufferSize = 1024 * 1024; // Default 1MB
-    private final int dataBufferSize;
-    private final int cipherBufferSize;
-    private final int outputBufferSize;
-    private final long bufferTotal = 0; // DNumber of buffers
+    private int inputFileBufferSize;
+    private int cipherFileBufferSize;
+    private int outputFileBufferSize;
+    private long bufferTotal = 0; // DNumber of buffers
+
     private int printAddressByteCounter = 0;
     public int filesBytesTotal = 0;
     public int fileBytesTotal = 0;
@@ -44,11 +46,13 @@ public class FinalCrypt
     
 
     public FinalCrypt(UI ui)
-    {        
+    {    
+        super("FinalCryptThread");
+        
         inputFilesPathList = new ArrayList<>();
-        dataBufferSize = bufferSize;
-        cipherBufferSize = bufferSize;
-        outputBufferSize = bufferSize;        
+        inputFileBufferSize = bufferSize;
+        cipherFileBufferSize = bufferSize;
+        outputFileBufferSize = bufferSize;        
         this.ui = ui;
     }
     
@@ -74,16 +78,22 @@ public class FinalCrypt
     public void setDec(boolean dec)                                         { this.dec = dec; }
     public void setHex(boolean hex)                                         { this.hex = hex; }
     public void setChr(boolean chr)                                         { this.chr = chr; }
-    public void setBufferSize(int bufferSize)                               { this.bufferSize = bufferSize; }
+    public void setBufferSize(int bufferSize)                               
+    {
+        this.bufferSize = bufferSize;
+        this.inputFileBufferSize = this.bufferSize; 
+        this.cipherFileBufferSize = this.bufferSize; 
+        this.outputFileBufferSize = this.bufferSize;
+    }
     public void setInputFilesPathList(ArrayList<Path> inputFilesPathList)   { this.inputFilesPathList = inputFilesPathList; }
     public void setCipherFilePath(Path cipherFilePath)                      { this.cipherFilePath = cipherFilePath; }
     public void setOutputFilePath(Path outputFilePath)                      { this.outputFilePath = outputFilePath; }
     
     public void encryptFiles()
     {
-        final ByteBuffer inputFileBuffer =     ByteBuffer.allocate(dataBufferSize);   inputFileBuffer.clear();
-        final ByteBuffer cipherFileBuffer =   ByteBuffer.allocate(cipherBufferSize); cipherFileBuffer.clear();
-        ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputBufferSize); outputFileBuffer.clear();
+        ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
+        ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
+        ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
         
         // Get the all files size total
         
@@ -161,11 +171,11 @@ public class FinalCrypt
                                 // Fill inputFileBuffer
                                 inputFileChannelPos = inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip();
                                 if ( inputFileChannelPos == -1 ) { inputFileEnded = true; }
-                                if ( inputFileBuffer.limit() < dataBufferSize ) { inputFileEnded = true; }
+                                if ( inputFileBuffer.limit() < inputFileBufferSize ) { inputFileEnded = true; }
 
                                 // Fill cipherFileBuffer
                                 cipherFileChannelPos = cipherFileChannel.read(cipherFileBuffer);
-                                if ( cipherFileChannelPos < cipherBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
+                                if ( cipherFileChannelPos < cipherFileBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
                                 cipherFileBuffer.flip();
 
 
@@ -208,7 +218,7 @@ public class FinalCrypt
         byte cipherByte = 0;
         byte outputByte;
         
-        ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputBufferSize); outputFileBuffer.clear();
+        ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
         for (int inputFileBufferCount = 0; inputFileBufferCount < inputFileBuffer.limit(); inputFileBufferCount++)
         {
             inputTotal += inputByte;
@@ -362,4 +372,15 @@ public class FinalCrypt
     public static String getVersion()                       { return VERSION; }
     public static String getProcuct()                       { return PRODUCTNAME; }
     public static String getCompany()                       { return COMPANYNAME; }
-}
+
+    @Override
+    @SuppressWarnings("empty-statement")
+    public void run()
+    {
+//	do
+//        {
+//            try { Thread.sleep(1000); } catch (InterruptedException error) { };
+//        }
+//	while(keepRunning);
+//	return;
+    }}

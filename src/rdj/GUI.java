@@ -5,6 +5,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
@@ -24,11 +26,11 @@ public class GUI extends javax.swing.JFrame implements UI
     {
         gui = this;
         
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
                 
                 
         initComponents();
@@ -51,10 +53,11 @@ public class GUI extends javax.swing.JFrame implements UI
 //        disableSomeComponents(cipherFileChooser);
         
         finalCrypt = new FinalCrypt(gui);
+        finalCrypt.start();
         
         
-            }
-        });
+//            }
+//        });
         
     }
 
@@ -509,6 +512,26 @@ public class GUI extends javax.swing.JFrame implements UI
         finalCrypt.setInputFilesPathList(inputFilesPathList);
         finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
  
+        // Resize file Buffers to size smalles file
+        try 
+        {
+            if ( Files.size(finalCrypt.getCipherFilePath()) < Files.size(finalCrypt.getCipherFilePath()))
+            {
+                
+            }
+            else
+            {
+                
+            }
+            
+            if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
+            {
+                finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
+                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
+            }
+        }
+        catch (IOException ex) { error("Files.size(cfp)" + ex); }
+
         filesProgressBar.setValue(0);
         fileProgressBar.setValue(0);
         
@@ -821,7 +844,7 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    synchronized public void updateProgress(final int filesProgress, final int fileProgress)
+    public void updateProgress(final int filesProgress, final int fileProgress)
     {
 //        Thread updateProgressThread = new Thread(new Runnable()
 //        {
@@ -829,27 +852,33 @@ public class GUI extends javax.swing.JFrame implements UI
 //            @SuppressWarnings({"static-access"})
 //            public void run()
 //            {
-                filesProgressBar.setValue(filesProgress);
-                fileProgressBar.setValue(fileProgress);
-//                log(filesProgress+"\n");
+//                filesProgressBar.setValue(filesProgress);
+//                fileProgressBar.setValue(fileProgress);
 //            }
 //        });
 //        updateProgressThread.setName("updateProgressThread");
 //        updateProgressThread.setDaemon(true);
+//        updateProgressThread.setPriority(Thread.MAX_PRIORITY);
 //        updateProgressThread.start();
     
-//        SwingUtilities.invokeLater(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                final JFrame frame = new JFrame();
-//                frame.setTitle("Test Frame");
-//                frame.setSize(600, 400);
-//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//                frame.setVisible(true);
-//            }
-//        });
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                filesProgressBar.setValue(filesProgress);
+//                fileProgressBar.setValue(fileProgress);
+            }
+        });
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+//                filesProgressBar.setValue(filesProgress);
+                fileProgressBar.setValue(fileProgress);
+            }
+        });
     }
 
     @Override
