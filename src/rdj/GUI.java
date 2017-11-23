@@ -18,19 +18,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class GUI extends javax.swing.JFrame implements UI
 {
     FinalCrypt finalCrypt;
+    GUI gui;
 
     public GUI()
     {
+        gui = this;
         
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
             public void run()
             {
+                
+                
         initComponents();
-            }
-        });
-        
 //        initComponents();
         try
         { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
@@ -49,7 +50,12 @@ public class GUI extends javax.swing.JFrame implements UI
 //        disableSomeComponents(inputFileChooser);
 //        disableSomeComponents(cipherFileChooser);
         
-        finalCrypt = new FinalCrypt(this);
+        finalCrypt = new FinalCrypt(gui);
+        
+        
+            }
+        });
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -859,6 +865,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 filesProgressBar.setValue(0);
                 fileProgressBar.setValue(0);
                 inputFileChooser.rescanCurrentDirectory();
+                cipherFileChooser.rescanCurrentDirectory();
             }
         });
         encryptionEndedThread.setName("updateProgressThread");
