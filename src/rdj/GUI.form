@@ -3,6 +3,9 @@
 <Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[1039, 709]"/>
+    </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -28,7 +31,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="encryptTab" pref="1027" max="32767" attributes="0"/>
+                      <Component id="tab" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -43,11 +46,11 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <Component id="logoLabel" min="-2" pref="53" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="encryptTab" pref="493" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="tab" pref="497" max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="bottomPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -67,10 +70,15 @@
         </Property>
       </Properties>
     </Component>
-    <Container class="javax.swing.JTabbedPane" name="encryptTab">
+    <Container class="javax.swing.JTabbedPane" name="tab">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+          <FontInfo relative="true">
+            <Font component="tab" property="font" relativeSize="true" size="4"/>
+          </FontInfo>
         </Property>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[1000, 29]"/>
@@ -118,13 +126,13 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="507" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="557" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="inputFileChooserLabel" max="32767" attributes="0"/>
-                                  <Component id="inputFileChooser" pref="495" max="32767" attributes="0"/>
+                                  <Component id="inputFileChooser" pref="545" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -163,6 +171,8 @@
                 <Component class="javax.swing.JFileChooser" name="inputFileChooser">
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
+                    <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Right mousclick for Refresh"/>
                     <Property name="multiSelectionEnabled" type="boolean" value="true"/>
                   </Properties>
                   <Events>
@@ -184,13 +194,13 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="507" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="557" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="cipherFileChooserLabel" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="cipherFileChooser" alignment="0" pref="495" max="32767" attributes="0"/>
+                                  <Component id="cipherFileChooser" alignment="0" pref="545" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -229,6 +239,8 @@
                 <Component class="javax.swing.JFileChooser" name="cipherFileChooser">
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
+                    <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cipherFileChooserActionPerformed"/>
@@ -252,28 +264,37 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jScrollPane1" pref="1021" max="32767" attributes="0"/>
+                      <Component id="logScroller" pref="1120" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="464" max="32767" attributes="0"/>
+                  <Component id="logScroller" alignment="0" pref="464" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+            <Container class="javax.swing.JScrollPane" name="logScroller">
+              <Properties>
+                <Property name="autoscrolls" type="boolean" value="true"/>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Default Cursor"/>
+                </Property>
+              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTextArea" name="jTextArea1">
+                <Component class="javax.swing.JTextArea" name="logTextArea">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Courier 10 Pitch" size="18" style="0"/>
+                    </Property>
                     <Property name="rows" type="int" value="5"/>
                   </Properties>
                 </Component>
@@ -297,7 +318,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="buttonPanel" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="buttonPanel1" max="32767" attributes="0"/>
+                      <Component id="buttonPanel2" pref="1110" max="32767" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
@@ -311,14 +335,16 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="buttonPanel" min="-2" pref="53" max="-2" attributes="0"/>
-                  <EmptySpace pref="82" max="32767" attributes="0"/>
+                  <Component id="buttonPanel1" min="-2" pref="46" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="buttonPanel2" min="-2" pref="35" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="64" max="32767" attributes="0"/>
+                      <EmptySpace pref="99" max="32767" attributes="0"/>
                       <Component id="progressPanel" min="-2" pref="71" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -327,35 +353,146 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="buttonPanel">
+        <Container class="javax.swing.JPanel" name="buttonPanel1">
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="3"/>
             <Property name="rows" type="int" value="1"/>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="encryptButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arimo" size="18" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Encrypt"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="encryptButtonActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="pauseButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arimo" size="18" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Pause"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="stopButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arimo" size="18" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Stop"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="buttonPanel2">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+            <Property name="columns" type="int" value="3"/>
+            <Property name="rows" type="int" value="1"/>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JToggleButton" name="logButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Log"/>
+                <Property name="toolTipText" type="java.lang.String" value="Enable Data Logging"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="logButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="printButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Print"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Overal Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="textButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Text"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Text Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="textButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="binButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Bin"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Binary Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="decButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Dec"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Decimal Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="decButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="hexButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Hex"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Hexadecimal Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hexButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="charButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Char"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Character Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="charButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="verboseButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Verbose"/>
+                <Property name="toolTipText" type="java.lang.String" value="Logs more run details"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="verboseButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="debugButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Debug"/>
+                <Property name="toolTipText" type="java.lang.String" value="Log Debug Data"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JSlider" name="bufferSlider">
+              <Properties>
+                <Property name="minimum" type="int" value="1"/>
+                <Property name="paintLabels" type="boolean" value="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Sets buffersize in MB"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -367,9 +504,9 @@
             <Property name="rows" type="int" value="3"/>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JProgressBar" name="FilesProgressBar">
+            <Component class="javax.swing.JProgressBar" name="filesProgressBar">
             </Component>
-            <Component class="javax.swing.JProgressBar" name="FileProgressBar">
+            <Component class="javax.swing.JProgressBar" name="fileProgressBar">
             </Component>
             <Component class="javax.swing.JLabel" name="statusLabel">
               <Properties>

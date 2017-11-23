@@ -2,18 +2,21 @@ package rdj;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 public class GUI extends javax.swing.JFrame implements UI
 {
-    File[] eFiles;
-    File file;
+    FinalCrypt finalCrypt;
 
     public GUI()
     {
@@ -24,10 +27,18 @@ public class GUI extends javax.swing.JFrame implements UI
         catch (InstantiationException ex) { }
         catch (IllegalAccessException ex) { }
         catch (UnsupportedLookAndFeelException ex) { }
+        
+        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+        int winWidth = (int)getWidth();
+        int winHeight = (int)getHeight();
+        int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
+        int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
+        setLocation(posX, posY);
+
         disableSomeComponents(inputFileChooser);
         disableSomeComponents(cipherFileChooser);
-        eFiles = new File[1]; eFiles[0] = new File("rew");
-        file = new File("qwe");
+        
+        finalCrypt = new FinalCrypt(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -36,7 +47,7 @@ public class GUI extends javax.swing.JFrame implements UI
     {
 
         logoLabel = new javax.swing.JLabel();
-        encryptTab = new javax.swing.JTabbedPane();
+        tab = new javax.swing.JTabbedPane();
         encryptPanel = new javax.swing.JPanel();
         inputFilePane = new javax.swing.JPanel();
         inputFileChooserLabel = new javax.swing.JLabel();
@@ -45,28 +56,41 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooserLabel = new javax.swing.JLabel();
         cipherFileChooser = new javax.swing.JFileChooser();
         logPane = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        logScroller = new javax.swing.JScrollPane();
+        logTextArea = new javax.swing.JTextArea();
         bottomPanel = new javax.swing.JPanel();
-        buttonPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        buttonPanel1 = new javax.swing.JPanel();
+        encryptButton = new javax.swing.JButton();
+        pauseButton = new javax.swing.JButton();
+        stopButton = new javax.swing.JButton();
+        buttonPanel2 = new javax.swing.JPanel();
+        logButton = new javax.swing.JToggleButton();
+        printButton = new javax.swing.JToggleButton();
+        textButton = new javax.swing.JToggleButton();
+        binButton = new javax.swing.JToggleButton();
+        decButton = new javax.swing.JToggleButton();
+        hexButton = new javax.swing.JToggleButton();
+        charButton = new javax.swing.JToggleButton();
+        verboseButton = new javax.swing.JToggleButton();
+        debugButton = new javax.swing.JToggleButton();
+        bufferSlider = new javax.swing.JSlider();
         progressPanel = new javax.swing.JPanel();
-        FilesProgressBar = new javax.swing.JProgressBar();
-        FileProgressBar = new javax.swing.JProgressBar();
+        filesProgressBar = new javax.swing.JProgressBar();
+        fileProgressBar = new javax.swing.JProgressBar();
         statusLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1039, 709));
 
         logoLabel.setFont(new java.awt.Font("Ubuntu Light", 0, 36)); // NOI18N
         logoLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         logoLabel.setText("FinalCrypt");
         logoLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        encryptTab.setBackground(new java.awt.Color(0, 0, 0));
-        encryptTab.setMinimumSize(new java.awt.Dimension(1000, 29));
-        encryptTab.setPreferredSize(new java.awt.Dimension(1000, 100));
+        tab.setBackground(new java.awt.Color(0, 0, 0));
+        tab.setFont(tab.getFont().deriveFont(tab.getFont().getSize()+4f));
+        tab.setMinimumSize(new java.awt.Dimension(1000, 29));
+        tab.setPreferredSize(new java.awt.Dimension(1000, 100));
 
         encryptPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         encryptPanel.setPreferredSize(new java.awt.Dimension(1000, 524));
@@ -80,6 +104,8 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         inputFileChooser.setControlButtonsAreShown(false);
+        inputFileChooser.setCurrentDirectory(null);
+        inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.addActionListener(new java.awt.event.ActionListener()
         {
@@ -100,13 +126,13 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFilePane.setLayout(inputFilePaneLayout);
         inputFilePaneLayout.setHorizontalGroup(
             inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 507, Short.MAX_VALUE)
+            .addGap(0, 557, Short.MAX_VALUE)
             .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(inputFilePaneLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(inputFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                        .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         inputFilePaneLayout.setVerticalGroup(
@@ -130,6 +156,8 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         cipherFileChooser.setControlButtonsAreShown(false);
+        cipherFileChooser.setCurrentDirectory(null);
+        cipherFileChooser.setToolTipText("");
         cipherFileChooser.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -149,13 +177,13 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFilePane.setLayout(cipherFilePaneLayout);
         cipherFilePaneLayout.setHorizontalGroup(
             cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 507, Short.MAX_VALUE)
+            .addGap(0, 557, Short.MAX_VALUE)
             .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(cipherFilePaneLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(cipherFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                        .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         cipherFilePaneLayout.setVerticalGroup(
@@ -171,46 +199,174 @@ public class GUI extends javax.swing.JFrame implements UI
 
         encryptPanel.add(cipherFilePane);
 
-        encryptTab.addTab("Encrypt", encryptPanel);
+        tab.addTab("Encrypt", encryptPanel);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        logScroller.setAutoscrolls(true);
+        logScroller.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        logTextArea.setColumns(20);
+        logTextArea.setFont(new java.awt.Font("Courier 10 Pitch", 0, 18)); // NOI18N
+        logTextArea.setRows(5);
+        logScroller.setViewportView(logTextArea);
 
         javax.swing.GroupLayout logPaneLayout = new javax.swing.GroupLayout(logPane);
         logPane.setLayout(logPaneLayout);
         logPaneLayout.setHorizontalGroup(
             logPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logPaneLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1021, Short.MAX_VALUE)
+                .addComponent(logScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 1120, Short.MAX_VALUE)
                 .addContainerGap())
         );
         logPaneLayout.setVerticalGroup(
             logPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+            .addComponent(logScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
 
-        encryptTab.addTab("Log", logPane);
+        tab.addTab("Log", logPane);
 
         bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        buttonPanel.setLayout(new java.awt.GridLayout(1, 3));
+        buttonPanel1.setLayout(new java.awt.GridLayout(1, 3));
 
-        jButton1.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
-        jButton1.setText("Encrypt");
-        buttonPanel.add(jButton1);
+        encryptButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        encryptButton.setText("Encrypt");
+        encryptButton.setEnabled(false);
+        encryptButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                encryptButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel1.add(encryptButton);
 
-        jButton2.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
-        jButton2.setText("Pause");
-        buttonPanel.add(jButton2);
+        pauseButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        pauseButton.setText("Pause");
+        pauseButton.setEnabled(false);
+        buttonPanel1.add(pauseButton);
 
-        jButton3.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
-        jButton3.setText("Stop");
-        buttonPanel.add(jButton3);
+        stopButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
+        stopButton.setText("Stop");
+        stopButton.setEnabled(false);
+        buttonPanel1.add(stopButton);
+
+        buttonPanel2.setLayout(new java.awt.GridLayout(1, 3));
+
+        logButton.setText("Log");
+        logButton.setToolTipText("Enable Data Logging");
+        logButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                logButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(logButton);
+
+        printButton.setText("Print");
+        printButton.setToolTipText("Log Overal Data");
+        printButton.setEnabled(false);
+        printButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                printButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(printButton);
+
+        textButton.setText("Text");
+        textButton.setToolTipText("Log Text Data");
+        textButton.setEnabled(false);
+        textButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                textButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(textButton);
+
+        binButton.setText("Bin");
+        binButton.setToolTipText("Log Binary Data");
+        binButton.setEnabled(false);
+        binButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                binButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(binButton);
+
+        decButton.setText("Dec");
+        decButton.setToolTipText("Log Decimal Data");
+        decButton.setEnabled(false);
+        decButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                decButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(decButton);
+
+        hexButton.setText("Hex");
+        hexButton.setToolTipText("Log Hexadecimal Data");
+        hexButton.setEnabled(false);
+        hexButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                hexButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(hexButton);
+
+        charButton.setText("Char");
+        charButton.setToolTipText("Log Character Data");
+        charButton.setEnabled(false);
+        charButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                charButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(charButton);
+
+        verboseButton.setText("Verbose");
+        verboseButton.setToolTipText("Logs more run details");
+        verboseButton.setEnabled(false);
+        verboseButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                verboseButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(verboseButton);
+
+        debugButton.setText("Debug");
+        debugButton.setToolTipText("Log Debug Data");
+        debugButton.setEnabled(false);
+        debugButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                debugButtonActionPerformed(evt);
+            }
+        });
+        buttonPanel2.add(debugButton);
+
+        bufferSlider.setMinimum(1);
+        bufferSlider.setPaintLabels(true);
+        bufferSlider.setToolTipText("Sets buffersize in MB");
+        buttonPanel2.add(bufferSlider);
 
         progressPanel.setLayout(new java.awt.GridLayout(3, 0));
-        progressPanel.add(FilesProgressBar);
-        progressPanel.add(FileProgressBar);
+        progressPanel.add(filesProgressBar);
+        progressPanel.add(fileProgressBar);
 
         statusLabel.setBackground(new java.awt.Color(255, 0, 0));
         statusLabel.setForeground(new java.awt.Color(50, 50, 50));
@@ -224,7 +380,9 @@ public class GUI extends javax.swing.JFrame implements UI
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buttonPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1110, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bottomPanelLayout.createSequentialGroup()
@@ -234,13 +392,15 @@ public class GUI extends javax.swing.JFrame implements UI
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bottomPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(82, Short.MAX_VALUE))
+                .addComponent(buttonPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(83, 83, 83))
             .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                    .addContainerGap(64, Short.MAX_VALUE)
+                    .addContainerGap(99, Short.MAX_VALUE)
                     .addComponent(progressPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap()))
         );
@@ -254,7 +414,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(encryptTab, javax.swing.GroupLayout.DEFAULT_SIZE, 1027, Short.MAX_VALUE)
+                        .addComponent(tab, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(6, 6, 6))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -265,7 +425,7 @@ public class GUI extends javax.swing.JFrame implements UI
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(logoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(encryptTab, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addComponent(tab, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -276,30 +436,207 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_inputFileChooserPropertyChange
     {//GEN-HEADEREND:event_inputFileChooserPropertyChange
-        File[] files = inputFileChooser.getSelectedFiles();
-//        String str = new String("\n");
-//        for (File file:files) { str += file.getName() + "\n";}
-//        textArea.setText("PROP        " + evt.getPropertyName() + " OLD " + evt.getOldValue() + " NEW " + evt.getNewValue() + " length " + files.length + " files: " + str + "\n");
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if (
+                    ( inputFileChooser.getSelectedFiles().length > 0 ) && 
+                    ( cipherFileChooser.getSelectedFile().length() > (long)0 )
+               )
+            { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
+        }
     }//GEN-LAST:event_inputFileChooserPropertyChange
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
     {//GEN-HEADEREND:event_inputFileChooserActionPerformed
-//        textArea.setText("cmd        " + evt.getActionCommand() + "par " + evt.paramString() + "\n");
     }//GEN-LAST:event_inputFileChooserActionPerformed
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cipherFileChooserActionPerformed
     {//GEN-HEADEREND:event_cipherFileChooserActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_cipherFileChooserActionPerformed
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
     {//GEN-HEADEREND:event_cipherFileChooserPropertyChange
-        // TODO add your handling code here:
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if ( 
+                    ( inputFileChooser.getSelectedFiles().length > 0 ) && 
+                    ( cipherFileChooser.getSelectedFile().length() > (long)0 )
+               ) 
+            { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
+        }
     }//GEN-LAST:event_cipherFileChooserPropertyChange
 
-    /**
-     * @param args the command line arguments
-     */
+    private void encryptButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_encryptButtonActionPerformed
+    {//GEN-HEADEREND:event_encryptButtonActionPerformed
+        Path outputFilePath = null;
+
+        ArrayList<Path> inputFilesPathList = new ArrayList<>();
+
+        // Add the inputFilesPath to List from inputFileChooser
+        for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+
+        // Validate and create output files
+        for(Path inputFilePathItem : inputFilesPathList)
+        {
+            
+            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); }
+            
+            // Compare inputfile to cipherfile
+            if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
+
+            // Validate output file
+            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
+            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
+        }
+                
+        finalCrypt.setInputFilesPathList(inputFilesPathList);
+        finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
+ 
+        filesProgressBar.setValue(0);
+        fileProgressBar.setValue(0);
+        
+        finalCrypt.encryptFiles();
+    }//GEN-LAST:event_encryptButtonActionPerformed
+
+    public void setProgressBarsMax(int filesMax, int fileMax)
+    {        
+//        filesProgressBar.setMaximum(finalCrypt.filesBytesTotal);
+//        fileProgressBar.setMaximum(finalCrypt.fileBytesTotal);
+        filesProgressBar.setMaximum(filesMax);
+        fileProgressBar.setMaximum(fileMax);
+    }
+    
+    private void logButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_logButtonActionPerformed
+    {//GEN-HEADEREND:event_logButtonActionPerformed
+        printButton.setEnabled(logButton.isSelected());
+        textButton.setEnabled(logButton.isSelected());
+        binButton.setEnabled(logButton.isSelected());
+        decButton.setEnabled(logButton.isSelected());
+        hexButton.setEnabled(logButton.isSelected());
+        charButton.setEnabled(logButton.isSelected());
+        verboseButton.setEnabled(logButton.isSelected());
+        debugButton.setEnabled(logButton.isSelected());
+        tab.setSelectedIndex((logButton.isSelected()) ? 1 : 0);
+        setOptions();
+    }//GEN-LAST:event_logButtonActionPerformed
+
+    private void printButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_printButtonActionPerformed
+    {//GEN-HEADEREND:event_printButtonActionPerformed
+//        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_printButtonActionPerformed
+
+    private void textButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_textButtonActionPerformed
+    {//GEN-HEADEREND:event_textButtonActionPerformed
+        printButton.setSelected(false);
+//        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_textButtonActionPerformed
+
+    private void binButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_binButtonActionPerformed
+    {//GEN-HEADEREND:event_binButtonActionPerformed
+        printButton.setSelected(false);
+        textButton.setSelected(false);
+//        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_binButtonActionPerformed
+
+    private void decButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_decButtonActionPerformed
+    {//GEN-HEADEREND:event_decButtonActionPerformed
+        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+//        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_decButtonActionPerformed
+
+    private void hexButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_hexButtonActionPerformed
+    {//GEN-HEADEREND:event_hexButtonActionPerformed
+        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+//        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_hexButtonActionPerformed
+
+    private void charButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_charButtonActionPerformed
+    {//GEN-HEADEREND:event_charButtonActionPerformed
+//        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+//        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_charButtonActionPerformed
+
+    private void verboseButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_verboseButtonActionPerformed
+    {//GEN-HEADEREND:event_verboseButtonActionPerformed
+        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+//        verboseButton.setSelected(false);
+        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_verboseButtonActionPerformed
+
+    private void debugButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_debugButtonActionPerformed
+    {//GEN-HEADEREND:event_debugButtonActionPerformed
+        printButton.setSelected(false);
+        textButton.setSelected(false);
+        binButton.setSelected(false);
+        decButton.setSelected(false);
+        hexButton.setSelected(false);
+        charButton.setSelected(false);
+        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
+        setOptions();
+    }//GEN-LAST:event_debugButtonActionPerformed
+
+    private void setOptions()
+    {
+        finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
+        finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
+        finalCrypt.setTXT(logButton.isSelected() & textButton.isSelected());
+        finalCrypt.setBin(logButton.isSelected() & binButton.isSelected());
+        finalCrypt.setDec(logButton.isSelected() & decButton.isSelected());
+        finalCrypt.setHex(logButton.isSelected() & hexButton.isSelected());
+        finalCrypt.setChr(logButton.isSelected() & charButton.isSelected());
+        finalCrypt.setVerbose(logButton.isSelected() & verboseButton.isSelected());
+        finalCrypt.setDebug(logButton.isSelected() & debugButton.isSelected());
+    }
+    
     public static void main(String args[])
     {
         /* Set the Nimbus look and feel */
@@ -343,103 +680,183 @@ public class GUI extends javax.swing.JFrame implements UI
         });
     }
     
-    public boolean disableSomeComponents(Container c)
+    public boolean disableSomeComponents(Container container)
     {
-    
-        Component[] cmps = c.getComponents();
-        for (Component cmp : cmps)
+        Component[] components = container.getComponents();
+        for (Component component : components)
         {
-            if (cmp instanceof JTextField)
+            if (component instanceof JTextField)
             {
-                ((JTextField)cmp).setEnabled(false);
-                ((JTextField)cmp).setVisible(false);                
+                ((JTextField)component).setEnabled(false);
+                ((JTextField)component).setVisible(false);                
 //                return true;
             }
-            if (cmp instanceof JComboBox)
+            if (component instanceof JComboBox)
             {
-                if ( ((JComboBox)cmp).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
+                if ( ((JComboBox)component).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
                 {
-                    ((JComboBox)cmp).setEnabled(false);
-                    ((JComboBox)cmp).setVisible(false);                
+                    ((JComboBox)component).setEnabled(false);
+                    ((JComboBox)component).setVisible(false);                
                 }
 //                return true;
             }
-            if (cmp instanceof JLabel)
+            if (component instanceof JLabel)
             {
-                ((JLabel)cmp).setEnabled(false);
-                ((JLabel)cmp).setVisible(false);                
+                ((JLabel)component).setEnabled(false);
+                ((JLabel)component).setVisible(false);                
 //                return true;
             }
-            if (cmp instanceof JRadioButton)
+            if (component instanceof JToggleButton)
             {
-                if (   ! ((JRadioButton)cmp).isSelected()   )  { ((JRadioButton)cmp).setSelected(true); }
+                if (   ! ((JToggleButton)component).isSelected()   )
+                {
+                    ((JToggleButton)component).doClick();
+                }
             }
-            if (cmp instanceof Container)
+            if (component instanceof Container)
             {
-                if(disableSomeComponents((Container) cmp)) return true;
+                if(disableSomeComponents((Container) component)) return true;
             }
         }
         return false;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JProgressBar FileProgressBar;
-    private javax.swing.JProgressBar FilesProgressBar;
+    private javax.swing.JToggleButton binButton;
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JPanel buttonPanel;
+    private javax.swing.JSlider bufferSlider;
+    private javax.swing.JPanel buttonPanel1;
+    private javax.swing.JPanel buttonPanel2;
+    private javax.swing.JToggleButton charButton;
     private javax.swing.JFileChooser cipherFileChooser;
     private javax.swing.JLabel cipherFileChooserLabel;
     private javax.swing.JPanel cipherFilePane;
+    private javax.swing.JToggleButton debugButton;
+    private javax.swing.JToggleButton decButton;
+    private javax.swing.JButton encryptButton;
     private javax.swing.JPanel encryptPanel;
-    private javax.swing.JTabbedPane encryptTab;
+    private javax.swing.JProgressBar fileProgressBar;
+    private javax.swing.JProgressBar filesProgressBar;
+    private javax.swing.JToggleButton hexButton;
     private javax.swing.JFileChooser inputFileChooser;
     private javax.swing.JLabel inputFileChooserLabel;
     private javax.swing.JPanel inputFilePane;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel logPane;
+    private javax.swing.JScrollPane logScroller;
+    private javax.swing.JTextArea logTextArea;
     private javax.swing.JLabel logoLabel;
+    private javax.swing.JButton pauseButton;
+    private javax.swing.JToggleButton printButton;
     private javax.swing.JPanel progressPanel;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.JButton stopButton;
+    private javax.swing.JTabbedPane tab;
+    private javax.swing.JToggleButton textButton;
+    private javax.swing.JToggleButton verboseButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void log(String message)
+    public void log(final String message)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        logTextArea.append(message);
+        Thread logThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                logScroller.getVerticalScrollBar().setValue(logScroller.getVerticalScrollBar().getMaximum());
+            }
+        });
+        logThread.setName("updateProgressThread");
+        logThread.setDaemon(false);
+        logThread.start();
     }
 
     @Override
-    public void status(String status)
+    public void error(final String message)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        status(message);
     }
 
     @Override
-    public void updateEncryptionDiffStats(int value)
+    synchronized public void status(final String status)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        statusLabel.setText(status);
+        log(status);
     }
 
     @Override
-    public void updateTotalProgress(int value)
+    synchronized public void updateEncryptionDiffStats(final int value)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Thread updateGraphThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+            }
+        });
+        updateGraphThread.setName("updateProgressThread");
+        updateGraphThread.setDaemon(true);
+        updateGraphThread.start();
     }
 
     @Override
-    public void updateFileProgress(int value)
+    synchronized public void updateProgress(final int filesProgress, final int fileProgress)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Thread updateProgressThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                filesProgressBar.setValue(filesProgress);
+                fileProgressBar.setValue(fileProgress);
+//                log(filesProgress+"\n");
+            }
+        });
+        updateProgressThread.setName("updateProgressThread");
+        updateProgressThread.setDaemon(true);
+        updateProgressThread.start();
     }
 
     @Override
-    public void updateBufferProgress(int value)
+    synchronized public void encryptionEnded()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Thread encryptionEndedThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                status("Encryption Finished\n");
+                filesProgressBar.setValue(0);
+                fileProgressBar.setValue(0);
+                inputFileChooser.rescanCurrentDirectory();
+            }
+        });
+        encryptionEndedThread.setName("updateProgressThread");
+        encryptionEndedThread.setDaemon(true);
+        encryptionEndedThread.start();
     }
 
+    @Override
+    synchronized public void updateProgressMax(final int filesProgressMax, final int fileProgressMax)
+    {
+        Thread updateProgressMaxThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                filesProgressBar.setMaximum(filesProgressMax);
+                fileProgressBar.setMaximum(fileProgressMax);
+            }
+        });
+        updateProgressMaxThread.setName("updateProgressThread");
+        updateProgressMaxThread.setDaemon(true);
+        updateProgressMaxThread.start();
+    }
 }
