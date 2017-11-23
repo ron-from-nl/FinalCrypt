@@ -10,33 +10,15 @@ import static rdj.FinalCrypt.getCopyright;
 
 /* commandline test routine
 
-cd ../dist/;
-rm data**; clear;
-echo ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > data.txt;
-echo abcdefghijklstuvwxyz > cipher;
-java -jar FinalCrypt.jar -i data.txt -c cipher -o data.encr.txt; 
-ls -l; cat data.txt; cat data.encr.txt;
-java -jar FinalCrypt.jar -i data.encr.txt -c cipher -o data.decr.txt; 
-ls -l; cat data.txt; cat data.decr.txt;
-
-or
-
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --bin -i a -c b -o c
-
-or
-
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --print -i a -c b -o c
-
-or
-
-clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -jar FinalCrypt.jar --print -i a -c b -o c
+clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --bin -i a -c b
+clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -cp FinalCrypt.jar CLUI --print -i a -c b
+clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar CLUI --print -i a -c b
 
 */
 
 public class CLUI implements UI
 {
-
-    public static void main(String[] args)
+    public CLUI(String[] args)
     {
         boolean ifset = false, cfset = false;
         boolean validInvocation = true;
@@ -48,7 +30,7 @@ public class CLUI implements UI
         
         
         // Load the FinalCrypt Objext
-        FinalCrypt finalCrypt = new FinalCrypt();
+        FinalCrypt finalCrypt = new FinalCrypt(this);
 
         // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
@@ -75,6 +57,7 @@ public class CLUI implements UI
         if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
 
 
+        // Validate and create output files
         for(Path inputFilePathItem : inputFilesPathList)
         {
             if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { System.err.println("\nError input"); usage(); }
@@ -86,23 +69,18 @@ public class CLUI implements UI
         
         if ( ! finalCrypt.isValidFile(cipherFilePath, false, true) )   { usage(); }
 
-//        if (inputFilePath.compareTo(cipherFilePath) == 0) { System.err.println("\nError: inputfile equal to cipherfile!"); usage(); }
-//        if (inputFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: inputfile equal to outputfile!"); usage(); }
-//        if (cipherFilePath.compareTo(outputFilePath) == 0) { System.err.println("\nError: cipherfile equal to ouputfile!"); usage(); }
-
         // Set the Options
+        
+        // Limit buffersize to cipherfile size
         try 
         {
             if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())
             {
                 finalCrypt.setBufferSize((int) (long) Files.size(cipherFilePath));
-                if ( finalCrypt.getVerbose() ) { System.out.println("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
+                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
             }
         }
-        catch (IOException ex)
-        {
-                System.out.println("Files.size(cfp)" + ex);
-        }
+        catch (IOException ex) { error("Files.size(cfp)" + ex); }
         
         // Set the files
         finalCrypt.setInputFilesPathList(inputFilesPathList);
@@ -112,13 +90,17 @@ public class CLUI implements UI
         if ( finalCrypt.getVerbose() )
         {
             System.out.println("Info: Buffersize set to: " + finalCrypt.getBufferSize());
-            for(Path inputFilePathItem : inputFilesPathList) { System.out.println("Info: Inputfile set: " + inputFilePathItem.getFileName()); }
-            System.out.println("Info: Cipherfile set: " + cipherFilePath.getFileName());
-//            System.out.println("Info: Outputfile set: " + outputFilePath.getFileName());
+            for(Path inputFilePathItem : finalCrypt.getInputFilesPathList()) { log("Info: Inputfile set: " + inputFilePathItem.getFileName()); }
+            log("Info: Cipherfile set: " + finalCrypt.getCipherFilePath());
         }
         
         // Start Encryption
-        finalCrypt.encryptFile();
+        finalCrypt.encryptFiles();
+    }
+
+    public static void main(String[] args)
+    {
+        new CLUI(args);
     }
     
     private static boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
@@ -150,36 +132,40 @@ public class CLUI implements UI
     @Override
     public void log(String message)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(message);
+    }
+
+    @Override
+    public void error(String message)
+    {
+        status(message);
     }
 
     @Override
     public void status(String status)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log(status);
     }
 
     @Override
     public void updateEncryptionDiffStats(int value)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void updateTotalProgress(int value)
+    public void updateProgress(int filesProgress, int fileProgress)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
+    }
+    
+    @Override
+    public void encryptionEnded()
+    {
+        // Wrap up
     }
 
     @Override
-    public void updateFileProgress(int value)
+    public void updateProgressMax(int filesProgressMax, int fileProgressMax)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void updateBufferProgress(int value)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

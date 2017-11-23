@@ -3,7 +3,6 @@ package rdj;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -11,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.TimerTask;
 
 public class FinalCrypt
 {
@@ -25,7 +25,11 @@ public class FinalCrypt
     private final int cipherBufferSize;
     private final int outputBufferSize;
     private final long bufferTotal = 0; // DNumber of buffers
-    private int printByteCounter = 0;
+    private int printAddressByteCounter = 0;
+    public int filesBytesTotal = 0;
+    public int fileBytesTotal = 0;
+    private int filesBytesEncrypted = 0;
+    private int fileBytesEncrypted = 0;
     private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
@@ -33,13 +37,19 @@ public class FinalCrypt
     private final long cipherFileSize = 0;
     private final long outputFileSize = 0;
     private final String encoding = System.getProperty("file.encoding");
+    private final UI ui;
+    
+    private TimerTask updateProgressTask;
+    private java.util.Timer updateProgressTaskTimer;
+    
 
-    public FinalCrypt()
+    public FinalCrypt(UI ui)
     {        
         inputFilesPathList = new ArrayList<>();
         dataBufferSize = bufferSize;
         cipherBufferSize = bufferSize;
         outputBufferSize = bufferSize;        
+        this.ui = ui;
     }
     
     public int getBufferSize()                                              { return bufferSize; }
@@ -69,120 +79,163 @@ public class FinalCrypt
     public void setCipherFilePath(Path cipherFilePath)                      { this.cipherFilePath = cipherFilePath; }
     public void setOutputFilePath(Path outputFilePath)                      { this.outputFilePath = outputFilePath; }
     
-    public void encryptFile()
+    public void encryptFiles()
     {
-        ByteBuffer dataBuffer =     ByteBuffer.allocate(dataBufferSize);   dataBuffer.clear();
-        ByteBuffer cipherBuffer =   ByteBuffer.allocate(cipherBufferSize); cipherBuffer.clear();
-        ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
+        final ByteBuffer inputFileBuffer =     ByteBuffer.allocate(dataBufferSize);   inputFileBuffer.clear();
+        final ByteBuffer cipherFileBuffer =   ByteBuffer.allocate(cipherBufferSize); cipherFileBuffer.clear();
+        ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputBufferSize); outputFileBuffer.clear();
         
+        // Get the all files size total
+        
+        // Reset the Bytes Progress Counters
+        filesBytesEncrypted = 0;
+        fileBytesEncrypted = 0;
+
+        // Get files bytes total
         for (Path inputFilePath:inputFilesPathList)
         {
-            boolean dataFileEnded = false;
-            long dataChannelPos = 0;
-            long cipherChannelPos = 0;
-            
-            outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
-//            if ( isValidFile(outputFilePath, true, false) )   {  } else { usage(); }
+            try { filesBytesTotal += Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
+        }
 
-            // Prints printByte Header ones
-            System.out.println("Encrypting file: " + inputFilePath.getFileName());
-            if ( print )
+        // Setup the progress timer & task
+        updateProgressTask = new TimerTask()
+        {
+            @Override public void run()
             {
-                System.out.println(" ----------------------------------------------------------------------");
-                System.out.println("|          |       Data        |      Cipher       |      Output       |");
-                System.out.println("| ---------|-------------------|-------------------|-------------------|");
-                System.out.println("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |");
-                System.out.println("|----------|-------------------|-------------------|-------------------|");
-            }
-
-            // Open outputFile for writing
-            try (SeekableByteChannel outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
-            {
-                //open dataFile
-                try (SeekableByteChannel dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+                Thread updateProgressThread = new Thread(new Runnable()
                 {
-                    // Open cipherFile
-                    try (SeekableByteChannel cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    @Override
+                    @SuppressWarnings({"static-access"})
+                    public void run()
                     {
-                        // Fill dataBuffer & cipherBuffer
-                        while ( ! dataFileEnded)
+                        ui.updateProgress(filesBytesEncrypted, fileBytesEncrypted);
+                    }
+                });
+                updateProgressThread.setName("updateProgressThread");
+                updateProgressThread.setDaemon(true);
+                updateProgressThread.start();
+            }
+        };
+        updateProgressTaskTimer = new java.util.Timer();
+        updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
+
+        // Encrypt File in Files loop
+        for (Path inputFilePath:inputFilesPathList)
+        {
+            if ((inputFilePath.compareTo(cipherFilePath) != 0))
+            {
+                fileBytesEncrypted = 0;
+
+                boolean inputFileEnded = false;
+                long inputFileChannelPos = 0;
+                long cipherFileChannelPos = 0;
+
+                // Get the filesize total
+                try { fileBytesTotal += Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
+                ui.updateProgressMax(filesBytesTotal, filesBytesTotal);
+                outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
+
+                // Prints printByte Header ones
+                ui.status("Encrypting file: " + inputFilePath.getFileName() + "\n");
+                if ( print )
+                {
+                    ui.log(" ----------------------------------------------------------------------\n");
+                    ui.log("|          |       Input       |      Cipher       |      Output       |\n");
+                    ui.log("| ---------|-------------------|-------------------|-------------------|\n");
+                    ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
+                    ui.log("|----------|-------------------|-------------------|-------------------|\n");
+                }
+
+                // Open outputFile for writing
+                try (SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
+                {
+                    //open dataFile
+                    try (SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    {
+                        // Open cipherFile
+                        try (SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
                         {
-                            // Fill dataBuffer
-                            dataChannelPos = dataChannel.read(dataBuffer); dataBuffer.flip();
-                            if ( dataChannelPos == -1 ) { dataFileEnded = true; }
-                            if ( dataBuffer.limit() < dataBufferSize ) { dataFileEnded = true; }
-
-                            // Fill cipherBuffer
-                            cipherChannelPos = cipherChannel.read(cipherBuffer);
-                            if ( cipherChannelPos < cipherBufferSize ) { cipherChannel.position(0); cipherChannel.read(cipherBuffer); }
-                            cipherBuffer.flip();
-
-
-                            // Parse dataBuffer & cipherBuffer to cryptOutputBuffer and write to file
-                            outputBuffer = encryptBuffer(dataBuffer, cipherBuffer);
-
-                            if (txt)
+                            // Fill dataBuffer & cipherBuffer
+                            while ( ! inputFileEnded )
                             {
-                                printByteBuffer("DB", dataBuffer);
-                                printByteBuffer("CB", cipherBuffer);
-                                printByteBuffer("OB", outputBuffer);
+                                // Fill inputFileBuffer
+                                inputFileChannelPos = inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip();
+                                if ( inputFileChannelPos == -1 ) { inputFileEnded = true; }
+                                if ( inputFileBuffer.limit() < dataBufferSize ) { inputFileEnded = true; }
+
+                                // Fill cipherFileBuffer
+                                cipherFileChannelPos = cipherFileChannel.read(cipherFileBuffer);
+                                if ( cipherFileChannelPos < cipherBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
+                                cipherFileBuffer.flip();
+
+
+                                // Parse inputFileBuffer & cipherFileBuffer to outputFileBuffer and write to file
+                                outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
+
+                                if (txt)
+                                {
+                                    printByteBuffer("DB", inputFileBuffer);
+                                    printByteBuffer("CB", cipherFileBuffer);
+                                    printByteBuffer("OB", outputFileBuffer);
+                                }
+
+                                outputFileChannel.write(outputFileBuffer);
+
+                                outputFileBuffer.clear();
+                                inputFileBuffer.clear();
+                                cipherFileBuffer.clear();
                             }
 
-                            outputChannel.write(outputBuffer);
-
-                            outputBuffer.clear();
-                            dataBuffer.clear();
-                            cipherBuffer.clear();
-                        }
-
-                        if ( print ) { System.out.println(" ----------------------------------------------------------------------\n"); }
-                        cipherChannel.close();
-                    } catch (IOException ex) { System.err.println("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
-                    dataChannel.close();
-                } catch (IOException ex) { System.err.println("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex); }
-                outputChannel.close();
-            } catch (IOException ex) { System.err.println("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex); }
-//            System.out.println();
+                            if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
+                            cipherFileChannel.close();
+                        } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+                        inputFileChannel.close();
+                    } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+                    outputFileChannel.close();
+                } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
+            }
         }
+        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
+        ui.encryptionEnded();
     }
     
-    private ByteBuffer encryptBuffer(ByteBuffer dataBuffer, ByteBuffer cipherBuffer)
+    private ByteBuffer encryptBuffer(ByteBuffer inputFileBuffer, ByteBuffer cipherFileBuffer)
     {
-        int dataTotal = 0;
+        int inputTotal = 0;
         int cipherTotal = 0;
         int outputDiff = 0;
-        byte dataByte = 0;
+        byte inputByte = 0;
         byte cipherByte = 0;
         byte outputByte;
         
-        ByteBuffer outputBuffer =   ByteBuffer.allocate(outputBufferSize); outputBuffer.clear();
-        for (int dataBufferCount = 0; dataBufferCount < dataBuffer.limit(); dataBufferCount++)
+        ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputBufferSize); outputFileBuffer.clear();
+        for (int inputFileBufferCount = 0; inputFileBufferCount < inputFileBuffer.limit(); inputFileBufferCount++)
         {
-            dataTotal += dataByte;
+            inputTotal += inputByte;
             cipherTotal += cipherByte;
-            dataByte = dataBuffer.get(dataBufferCount);
-            cipherByte = cipherBuffer.get(dataBufferCount);
-            outputByte = encryptByte(dataBuffer.get(dataBufferCount), cipherBuffer.get(dataBufferCount));
-            outputBuffer.put(outputByte);
+            inputByte = inputFileBuffer.get(inputFileBufferCount);
+            cipherByte = cipherFileBuffer.get(inputFileBufferCount);
+            outputByte = encryptByte(inputFileBuffer.get(inputFileBufferCount), cipherFileBuffer.get(inputFileBufferCount));
+            outputFileBuffer.put(outputByte);
         }
-        outputBuffer.flip();
+        outputFileBuffer.flip();
         // MD5Sum dataTotal XOR MD5Sum cipherTotal (Diff dataTot and cipherTot) 32 bit 4G
         
-        outputDiff = dataTotal ^ cipherTotal;
+        outputDiff = inputTotal ^ cipherTotal;
         
         if (debug)
         {
-            System.out.println(dataTotal);
-            System.out.println(cipherTotal);
-            System.out.println(outputDiff);
+            ui.log(Integer.toString(inputTotal));
+            ui.log(Integer.toString(cipherTotal));
+            ui.log(Integer.toString(outputDiff));
 //        MD5Converter.getMD5SumFromString(Integer.toString(dataTotal));
 //        MD5Converter.getMD5SumFromString(Integer.toString(cipherTotal));
         }
         
-        return outputBuffer;
+        return outputFileBuffer;
     }
     
-    private byte encryptByte(byte dataByte, byte cipherByte)
+    private byte encryptByte(final byte dataByte, final byte cipherByte)
     {
         int dum = 0;  // DUM Data Unnegated Mask
         int dnm = 0;       // DNM Data Negated Mask
@@ -194,11 +247,15 @@ public class FinalCrypt
         dbm = dum + dnm; // outputByte        
         outputByte = (byte)(dbm & 0xFF);
         
-        if ( bin )      { printByteBinary(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( dec )      { printByteDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( hex )      { printByteHexaDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( chr )      { printByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( print )    { printByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( bin )      { logByteBinary(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( dec )      { logByteDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( hex )      { logByteHexaDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( chr )      { logByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+        if ( print )    { logByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
+
+        // Increment Byte Progress Counters 
+        filesBytesEncrypted++;
+        fileBytesEncrypted++;
         
         return (byte)dbm; // outputByte
     }
@@ -210,15 +267,15 @@ public class FinalCrypt
     
     private void printByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
-        System.out.print(preFix + "C: ");
-        System.out.print(Charset.forName(encoding).decode(byteBuffer)); byteBuffer.flip();
+        ui.log(preFix + "C: ");
+//        ui.log(Charset.forName(encoding).decode(byteBuffer)); byteBuffer.flip();
 //      for (byte mybyte: dataBuffer.array()) { System.out.print(Integer.toHexString(Byte.toUnsignedInt(mybyte) & 0xFF)); }
-        System.out.println(" " + preFix + "Z: " + byteBuffer.limit());
+        ui.log(" " + preFix + "Z: " + byteBuffer.limit());
     }
 
-    private void printByte(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByte(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        String adrhex = getHexString((byte)printByteCounter,"8");
+        String adrhex = getHexString((byte)printAddressByteCounter,"8");
 
         String datbin = getBinaryString(dataByte);
         String dathex = getHexString(dataByte, "2");
@@ -235,52 +292,50 @@ public class FinalCrypt
         String outdec = getDecString(outputByte);
         String outchr = getChar(outputByte);
         
-//        System.out.println("             Source               Cipher             Destination      ");
-//        System.out.println("adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c");
-        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
-        System.out.print                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-        System.out.println               (outbin + " " +  outhex + " " + outdec + " " + outchr + " |");
-        printByteCounter++;
+        ui.log("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
+        ui.log                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
+        ui.log                 (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\n");
+        printAddressByteCounter++;
     }
     
-    private void printByteBinary(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByteBinary(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        System.out.println("\nDat = " + getBinaryString(dataByte));
-        System.out.println("Cph = " + getBinaryString(cipherByte));
-        System.out.println();
-        System.out.println("DUM  = " + getBinaryString((byte)dataByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum));
-        System.out.println("DNM  = " + getBinaryString((byte)~dataByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm));
-        System.out.println("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm));
+        ui.log("\nDat = " + getBinaryString(dataByte) + "\n");
+        ui.log("Cph = " + getBinaryString(cipherByte) + "\n");
+        ui.log("\n");
+        ui.log("DUM  = " + getBinaryString((byte)dataByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum) + "\n");
+        ui.log("DNM  = " + getBinaryString((byte)~dataByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm) + "\n");
+        ui.log("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm) + "\n");
     }
     
-    private void printByteDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByteDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        System.out.println("\nDat = " + getDecString(dataByte));
-        System.out.println("Cph = " + getDecString(cipherByte));
-        System.out.println();
-        System.out.println("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum));
-        System.out.println("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm));
-        System.out.println("DBM  = " + getDecString((byte)dum) + " & " + getDecString((byte)dnm) + " = " + getDecString((byte)dbm));
+        ui.log("\nDat = " + getDecString(dataByte) + "\n");
+        ui.log("Cph = " + getDecString(cipherByte) + "\n");
+        ui.log("\n");
+        ui.log("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum) + "\n");
+        ui.log("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm) + "\n");
+        ui.log("DBM  = " + getDecString((byte)dum) + " & " + getDecString((byte)dnm) + " = " + getDecString((byte)dbm) + "\n");
     }
     
-    private void printByteHexaDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByteHexaDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        System.out.println("\nDat = " + getHexString(dataByte,"2"));
-        System.out.println("Cph = " + getHexString(cipherByte,"2"));
-        System.out.println();
-        System.out.println("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2"));
-        System.out.println("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2"));
-        System.out.println("DBM  = " + getHexString((byte)dum,"2") + " & " + getHexString((byte)dnm,"2") + " = " + getHexString((byte)dbm,"2"));
+        ui.log("\nDat = " + getHexString(dataByte,"2") + "\n");
+        ui.log("Cph = " + getHexString(cipherByte,"2") + "\n");
+        ui.log("\n");
+        ui.log("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2") + "\n");
+        ui.log("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2") + "\n");
+        ui.log("DBM  = " + getHexString((byte)dum,"2") + " & " + getHexString((byte)dnm,"2") + " = " + getHexString((byte)dbm,"2") + "\n");
     }
     
-    private void printByteChar(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByteChar(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        System.out.println("\nDat = " + getChar(dataByte));
-        System.out.println("Cph = " + getChar(cipherByte));
-        System.out.println();
-        System.out.println("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum));
-        System.out.println("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm));
-        System.out.println("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm));
+        ui.log("\nDat = " + getChar(dataByte) + "\n");
+        ui.log("Cph = " + getChar(cipherByte) + "\n");
+        ui.log("\n");
+        ui.log("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum) + "\n");
+        ui.log("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm) + "\n");
+        ui.log("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm) + "\n");
     }
     
     public boolean isValidFile(Path path, boolean createFile, boolean mustHaveData)
@@ -289,15 +344,15 @@ public class FinalCrypt
         long fileSize = 0;
         LinkOption[] opt = new LinkOption[]{LinkOption.NOFOLLOW_LINKS};
         
-        if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { System.err.println("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage());} }
+        if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { ui.error("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage() + "\n");} }
 
-        if (Files.exists(path, opt))    { if (verbose) { System.out.println(path + " exists"); }}                 else { System.err.println(path + " does not exist!"); isValid = false; }
-        if (Files.isRegularFile(path))  { if (verbose) { /*System.out.println("The checked file is regular."); */}}   else { System.err.println("Error: The checked file is not regular!"); isValid = false; }
-        if (Files.isReadable(path))     { if (verbose) { /*System.out.println("The checked file is readable."); */}}  else { System.err.println("Error: The checked file is not readable!"); isValid = false; }
-        if (Files.isWritable(path))     { if (verbose) { /*System.out.println("The checked file is writable."); */}}  else { System.err.println("Error: The checked file is not writable!"); isValid = false; }
-        try { fileSize = Files.size(path); } catch (IOException ex) { System.err.println("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage()); }
-//        if (verbose) { System.out.println("The checked file has " + fileSize + " bytes of data."); }
-        if (( mustHaveData ) && ( fileSize == 0 )) { System.err.println("Error: The checked file requires data!"); isValid = false; }
+        if (Files.exists(path, opt))    { if (verbose) { ui.log(path + " exists.\n"); }}                   else { ui.error(path + " does not exist!" + "\n"); isValid = false; }
+        if (Files.isRegularFile(path))  { if (verbose) { /*ui.log("The checked file is regular.\n"); */}}   else { ui.error("Error: The checked file is not regular!" + "\n"); isValid = false; }
+        if (Files.isReadable(path))     { if (verbose) { /*ui.log("The checked file is readable.\n"); */}}  else { ui.error("Error: The checked file is not readable!" + "\n"); isValid = false; }
+        if (Files.isWritable(path))     { if (verbose) { /*ui.log("The checked file is writable.\n"); */}}  else { ui.error("Error: The checked file is not writable!" + "\n"); isValid = false; }
+        try { fileSize = Files.size(path); } catch (IOException ex) { ui.error("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage() + "\n"); }
+//        if (verbose) { ui.log("The checked file has " + fileSize + " bytes of data."); }
+        if (( mustHaveData ) && ( fileSize == 0 )) { ui.error("Error: The checked file requires data!\n"); isValid = false; }
         
         return isValid;
     }
