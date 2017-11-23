@@ -11,6 +11,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -20,7 +21,17 @@ public class GUI extends javax.swing.JFrame implements UI
 
     public GUI()
     {
+        
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
         initComponents();
+            }
+        });
+        
+//        initComponents();
         try
         { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
         catch (ClassNotFoundException ex) { }
@@ -35,8 +46,8 @@ public class GUI extends javax.swing.JFrame implements UI
         int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
         setLocation(posX, posY);
 
-        disableSomeComponents(inputFileChooser);
-        disableSomeComponents(cipherFileChooser);
+//        disableSomeComponents(inputFileChooser);
+//        disableSomeComponents(cipherFileChooser);
         
         finalCrypt = new FinalCrypt(this);
     }
@@ -436,14 +447,14 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_inputFileChooserPropertyChange
     {//GEN-HEADEREND:event_inputFileChooserPropertyChange
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if (
                     ( inputFileChooser.getSelectedFiles().length > 0 ) && 
                     ( cipherFileChooser.getSelectedFile().length() > (long)0 )
                )
             { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
-        }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_inputFileChooserPropertyChange
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
@@ -456,14 +467,14 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
     {//GEN-HEADEREND:event_cipherFileChooserPropertyChange
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if ( 
                     ( inputFileChooser.getSelectedFiles().length > 0 ) && 
                     ( cipherFileChooser.getSelectedFile().length() > (long)0 )
                ) 
             { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
-        }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_cipherFileChooserPropertyChange
 
     private void encryptButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_encryptButtonActionPerformed
@@ -806,20 +817,33 @@ public class GUI extends javax.swing.JFrame implements UI
     @Override
     synchronized public void updateProgress(final int filesProgress, final int fileProgress)
     {
-        Thread updateProgressThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
+//        Thread updateProgressThread = new Thread(new Runnable()
+//        {
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
                 filesProgressBar.setValue(filesProgress);
                 fileProgressBar.setValue(fileProgress);
 //                log(filesProgress+"\n");
-            }
-        });
-        updateProgressThread.setName("updateProgressThread");
-        updateProgressThread.setDaemon(true);
-        updateProgressThread.start();
+//            }
+//        });
+//        updateProgressThread.setName("updateProgressThread");
+//        updateProgressThread.setDaemon(true);
+//        updateProgressThread.start();
+    
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                final JFrame frame = new JFrame();
+//                frame.setTitle("Test Frame");
+//                frame.setSize(600, 400);
+//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                frame.setVisible(true);
+//            }
+//        });
     }
 
     @Override
