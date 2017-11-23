@@ -114,6 +114,7 @@ public class CLUI implements UI
         System.out.println("Options:");
         System.out.println("            [-h] [--help]         Shows this help page.");
         System.out.println("            [-d] [--debug]        Enables debugging mode.");
+        System.out.println("            [-v] [--verbose]      Enables verbose mode.");
         System.out.println("            [-p] [--print]        Print overal data encryption.");
         System.out.println("            [--txt]               Print text calculations.");
         System.out.println("            [--bin]               Print binary calculations.");
