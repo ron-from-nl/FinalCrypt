@@ -28,10 +28,10 @@ public class FinalCrypt extends Thread
     private long bufferTotal = 0; // DNumber of buffers
 
     private int printAddressByteCounter = 0;
-    public int filesBytesTotal = 0;
-    public int fileBytesTotal = 0;
-    private int filesBytesEncrypted = 0;
-    private int fileBytesEncrypted = 0;
+    public long filesBytesTotal = 0;
+    public long fileBytesTotal = 0;
+    private long filesBytesEncrypted = 0;
+    private long fileBytesEncrypted = 0;
     private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
@@ -94,6 +94,7 @@ public class FinalCrypt extends Thread
         // Get the all files size total
         
         // Reset the Bytes Progress Counters
+        filesBytesTotal = 0;
         filesBytesEncrypted = 0;
         fileBytesEncrypted = 0;
 
@@ -115,7 +116,9 @@ public class FinalCrypt extends Thread
                     @SuppressWarnings({"static-access"})
                     public void run()
                     {
-                        ui.updateProgress(filesBytesEncrypted, fileBytesEncrypted);
+                        if (debug) { ui.log("files " + ((int) (filesBytesEncrypted /(filesBytesTotal/1000L))) + " " + Long.toString(filesBytesEncrypted) + " / (" + (filesBytesTotal/1000L) + ") (" + filesBytesTotal + "/" + 1000L + ") \n"     ); }
+                        if (debug) { ui.log("file  " + ((int) (fileBytesEncrypted /(fileBytesTotal/1000L))) + " " + Long.toString(fileBytesEncrypted) + " / (" + (fileBytesTotal/1000L) + ") (" + fileBytesTotal + "/" + 1000L + ") \n"     ); }
+                        ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/1000L)), (int) (fileBytesEncrypted /(fileBytesTotal/1000L)));
                     }
                 });
                 updateProgressThread.setName("updateProgressThread");
@@ -137,13 +140,12 @@ public class FinalCrypt extends Thread
 
                 // Get the filesize total
                 try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
-                ui.updateProgressMax(filesBytesTotal, fileBytesTotal);
                 if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
                 
                 outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
 
                 // Prints printByte Header ones
-                ui.status("Encrypting file: " + inputFilePath.getFileName() + "\n");
+                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + this.getCipherFilePath().getFileName() + "\n");
                 if ( print )
                 {
                     ui.log(" ----------------------------------------------------------------------\n");
@@ -217,8 +219,8 @@ public class FinalCrypt extends Thread
                 } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
 //            }
 //        });
-//        encryptFilesThread.setName("updateProgressThread");
-//        encryptFilesThread.setDaemon(true);
+//        encryptFilesThread.setName("encryptFilesThread");
+//        encryptFilesThread.setDaemon(false);
 //        encryptFilesThread.start();
             }
         }
@@ -252,9 +254,9 @@ public class FinalCrypt extends Thread
         
         if (debug)
         {
-            ui.log(Integer.toString(inputTotal));
-            ui.log(Integer.toString(cipherTotal));
-            ui.log(Integer.toString(outputDiff));
+//            ui.log(Integer.toString(inputTotal) + "\n");
+//            ui.log(Integer.toString(cipherTotal) + "\n");
+//            ui.log(Integer.toString(outputDiff) + "\n");
 //        MD5Converter.getMD5SumFromString(Integer.toString(dataTotal));
 //        MD5Converter.getMD5SumFromString(Integer.toString(cipherTotal));
         }
@@ -265,8 +267,8 @@ public class FinalCrypt extends Thread
     private byte encryptByte(final byte dataByte, final byte cipherByte)
     {
         int dum = 0;  // DUM Data Unnegated Mask
-        int dnm = 0;       // DNM Data Negated Mask
-        int dbm = 0;    // DBM Data Blended Mask
+        int dnm = 0;  // DNM Data Negated Mask
+        int dbm = 0;  // DBM Data Blended Mask
         byte outputByte;
 
         dum = dataByte & ~cipherByte;
@@ -274,11 +276,11 @@ public class FinalCrypt extends Thread
         dbm = dum + dnm; // outputByte        
         outputByte = (byte)(dbm & 0xFF);
         
+        if ( print )    { logByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
         if ( bin )      { logByteBinary(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
         if ( dec )      { logByteDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
         if ( hex )      { logByteHexaDecimal(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
         if ( chr )      { logByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
-        if ( print )    { logByte(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
 
         // Increment Byte Progress Counters 
         filesBytesEncrypted++;

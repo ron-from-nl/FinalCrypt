@@ -377,11 +377,13 @@ public class GUI extends javax.swing.JFrame implements UI
 
         progressPanel.setLayout(new java.awt.GridLayout(3, 0));
 
+        filesProgressBar.setMaximum(1000);
         filesProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         filesProgressBar.setDoubleBuffered(true);
         filesProgressBar.setStringPainted(true);
         progressPanel.add(filesProgressBar);
 
+        fileProgressBar.setMaximum(1000);
         fileProgressBar.setDoubleBuffered(true);
         fileProgressBar.setStringPainted(true);
         progressPanel.add(fileProgressBar);
@@ -817,33 +819,15 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    synchronized public void updateProgressMax(final int filesProgressMax, final int fileProgressMax)
-    {
-        Thread updateProgressMaxThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-                filesProgressBar.setMaximum(filesProgressMax);
-                fileProgressBar.setMaximum(fileProgressMax);
-            }
-        });
-        updateProgressMaxThread.setName("updateProgressThread");
-        updateProgressMaxThread.setDaemon(true);
-        updateProgressMaxThread.start();
-    }
-
-    @Override
-    synchronized public void updateProgress(final int filesProgress, final int fileProgress)
+    synchronized public void updateProgress(final int filesPromille, final int filePromille)
     {
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
             public void run()
             {
-                filesProgressBar.setValue(filesProgress);
-                fileProgressBar.setValue(fileProgress);
+                filesProgressBar.setValue(filesPromille);
+                fileProgressBar.setValue(filePromille);
             }
         });
     }

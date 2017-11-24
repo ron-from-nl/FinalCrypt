@@ -165,9 +165,4 @@ public class CLUI implements UI
     {
         log("Encryption Finished\n");
     }
-
-    @Override
-    public void updateProgressMax(int filesProgressMax, int fileProgressMax)
-    {
-    }
 }
