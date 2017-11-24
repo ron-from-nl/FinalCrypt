@@ -127,7 +127,7 @@ public class FinalCrypt extends Thread
         updateProgressTaskTimer.scheduleAtFixedRate(updateProgressTask, 0L, 100L);
 //        updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 
-        // Encrypt File in Files loop
+        // Encrypt Files loop
         for (Path inputFilePath:inputFilesPathList)
         {
             if ((inputFilePath.compareTo(cipherFilePath) != 0))

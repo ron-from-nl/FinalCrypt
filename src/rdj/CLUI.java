@@ -91,7 +91,7 @@ public class CLUI implements UI
         
         if ( finalCrypt.getVerbose() )
         {
-            System.out.println("Info: Buffersize set to: " + finalCrypt.getBufferSize());
+            log("Info: Buffersize set to: " + finalCrypt.getBufferSize());
             for(Path inputFilePathItem : finalCrypt.getInputFilesPathList()) { log("Info: Inputfile set: " + inputFilePathItem.getFileName() + "\n"); }
             log("Info: Cipherfile set: " + finalCrypt.getCipherFilePath() + "\n");
         }
@@ -105,30 +105,29 @@ public class CLUI implements UI
         new CLUI(args);
     }
     
-    private static boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
+    private boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
-    private static void usage()
+    private void usage()
     {
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
 
-        System.out.println();
-        System.out.println("Usage:   java -jar FinalCrypt.jar [options] <Parameters>\n");
-        System.out.println("Options:");
-        System.out.println("            [-h] [--help]         Shows this help page.");
-        System.out.println("            [-d] [--debug]        Enables debugging mode.");
-        System.out.println("            [-v] [--verbose]      Enables verbose mode.");
-        System.out.println("            [-p] [--print]        Print overal data encryption.");
-        System.out.println("            [--txt]               Print text calculations.");
-        System.out.println("            [--bin]               Print binary calculations.");
-        System.out.println("            [--dec]               Print decimal calculations.");
-        System.out.println("            [--hex]               Print hexadecimal calculations.");
-        System.out.println("            [--chr]               Print character calculations.");
-        System.out.println("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
-        System.out.println("Parameters:");
-        System.out.println("            <-i \"inputfile\">      The datafile you want to encrypt.");
-        System.out.println("            <-c \"cipherfile\">     The file that encrypts your datafile. Keep cipherfile SECRET!!!");
-        System.out.println("            <-o \"outputfile\">     The encrypted datafile; (use cipherfile to also decrypt).\n");
-        System.out.println("Author: " + getAuthor() + " " + getCopyright() + "\n");
+        log("\n");
+        log("Usage:   java -jar FinalCrypt.jar [options] <Parameters>\n");
+        log("Options:");
+        log("            [-h] [--help]         Shows this help page.\n");
+        log("            [-d] [--debug]        Enables debugging mode.\n");
+        log("            [-v] [--verbose]      Enables verbose mode.\n");
+        log("            [-p] [--print]        Print overal data encryption.\n");
+        log("            [--txt]               Print text calculations.\n");
+        log("            [--bin]               Print binary calculations.\n");
+        log("            [--dec]               Print decimal calculations.\n");
+        log("            [--hex]               Print hexadecimal calculations.\n");
+        log("            [--chr]               Print character calculations.\n");
+        log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
+        log("Parameters:\n");
+        log("            <-i \"inputfile\">      The datafile you want to encrypt.\n");
+        log("            <-c \"cipherfile\">     The file that encrypts your datafile. Keep cipherfile SECRET!!!\n\n");
+        log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);
     }
 
