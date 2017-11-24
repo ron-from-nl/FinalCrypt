@@ -580,7 +580,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void charButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_charButtonActionPerformed
     {//GEN-HEADEREND:event_charButtonActionPerformed
-//        printButton.setSelected(false);
+        printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
         decButton.setSelected(false);
