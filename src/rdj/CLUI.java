@@ -10,14 +10,15 @@ import static rdj.FinalCrypt.getCopyright;
 
 /* commandline test routine
 
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -jar FinalCrypt.jar --bin -i a -c b
-clear; echo -n -e \\x05 > a; echo -n -e \\x03 > b; java -cp FinalCrypt.jar CLUI --print -i a -c b
-clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar CLUI --print -i a -c b
+clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -jar FinalCrypt.jar
+clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --print -i 1 -c 2
+clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar rdj/CLUI --print -i a -c b
 
 */
 
 public class CLUI implements UI
 {
+    FinalCrypt finalCrypt;
     public CLUI(String[] args)
     {
         boolean ifset = false, cfset = false;
@@ -30,7 +31,7 @@ public class CLUI implements UI
         
         
         // Load the FinalCrypt Objext
-        FinalCrypt finalCrypt = new FinalCrypt(this);
+        finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
 
         // Validate Parameters
@@ -61,11 +62,11 @@ public class CLUI implements UI
         // Validate and create output files
         for(Path inputFilePathItem : inputFilesPathList)
         {
-            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { System.err.println("\nError input"); usage(); }
-            if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { System.err.println("\nError: inputfile equal to cipherfile!"); usage(); }
+            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
+            if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
 
             outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { System.err.println("\nError cipher"); usage(); }
+            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); usage(); }
         }
         
         if ( ! finalCrypt.isValidFile(cipherFilePath, false, true) )   { usage(); }
@@ -78,10 +79,10 @@ public class CLUI implements UI
             if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())
             {
                 finalCrypt.setBufferSize((int) (long) Files.size(cipherFilePath));
-                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
+                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize() + "\n"); }
             }
         }
-        catch (IOException ex) { error("Files.size(cfp)" + ex); }
+        catch (IOException ex) { error("if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())" + ex + "\n"); }
         
         // Set the files
         finalCrypt.setInputFilesPathList(inputFilesPathList);
@@ -91,8 +92,8 @@ public class CLUI implements UI
         if ( finalCrypt.getVerbose() )
         {
             System.out.println("Info: Buffersize set to: " + finalCrypt.getBufferSize());
-            for(Path inputFilePathItem : finalCrypt.getInputFilesPathList()) { log("Info: Inputfile set: " + inputFilePathItem.getFileName()); }
-            log("Info: Cipherfile set: " + finalCrypt.getCipherFilePath());
+            for(Path inputFilePathItem : finalCrypt.getInputFilesPathList()) { log("Info: Inputfile set: " + inputFilePathItem.getFileName() + "\n"); }
+            log("Info: Cipherfile set: " + finalCrypt.getCipherFilePath() + "\n");
         }
         
         // Start Encryption
@@ -134,7 +135,7 @@ public class CLUI implements UI
     @Override
     public void log(String message)
     {
-        System.out.println(message);
+        System.out.print(message);
     }
 
     @Override
@@ -157,13 +158,13 @@ public class CLUI implements UI
     @Override
     public void updateProgress(int filesProgress, int fileProgress)
     {
-        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
+//        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }
     
     @Override
     public void encryptionEnded()
     {
-        // Wrap up
+        log("Encryption Finished\n");
     }
 
     @Override

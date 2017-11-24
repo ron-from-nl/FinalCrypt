@@ -91,10 +91,6 @@ public class FinalCrypt extends Thread
     
     public void encryptFiles()
     {
-        ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
-        ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-        ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
-        
         // Get the all files size total
         
         // Reset the Bytes Progress Counters
@@ -105,7 +101,8 @@ public class FinalCrypt extends Thread
         for (Path inputFilePath:inputFilesPathList)
         {
             try { filesBytesTotal += Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
-        }
+        } 
+        if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the progress timer & task
         updateProgressTask = new TimerTask()
@@ -127,7 +124,8 @@ public class FinalCrypt extends Thread
             }
         };
         updateProgressTaskTimer = new java.util.Timer();
-        updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
+        updateProgressTaskTimer.scheduleAtFixedRate(updateProgressTask, 0L, 100L);
+//        updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 
         // Encrypt File in Files loop
         for (Path inputFilePath:inputFilesPathList)
@@ -136,13 +134,12 @@ public class FinalCrypt extends Thread
             {
                 fileBytesEncrypted = 0;
 
-                boolean inputFileEnded = false;
-                long inputFileChannelPos = 0;
-                long cipherFileChannelPos = 0;
 
                 // Get the filesize total
-                try { fileBytesTotal += Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
-                ui.updateProgressMax(filesBytesTotal, filesBytesTotal);
+                try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
+                ui.updateProgressMax(filesBytesTotal, fileBytesTotal);
+                if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
+                
                 outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
 
                 // Prints printByte Header ones
@@ -156,14 +153,29 @@ public class FinalCrypt extends Thread
                     ui.log("|----------|-------------------|-------------------|-------------------|\n");
                 }
 
+                final ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
+                final ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
+//                final ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();                
+//                final ByteBuffer outputFileBuffer;
+
+//        Does not work for CLUI but it does work for GUI :-(
+//        Thread encryptFilesThread = new Thread(new Runnable()
+//        {
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
+                boolean inputFileEnded = false;
+                long inputFileChannelPos = 0;
+                long cipherFileChannelPos = 0;
                 // Open outputFile for writing
-                try (SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
+                try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)))
                 {
                     //open dataFile
-                    try (SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
                     {
                         // Open cipherFile
-                        try (SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                        try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
                         {
                             // Fill dataBuffer & cipherBuffer
                             while ( ! inputFileEnded )
@@ -180,13 +192,13 @@ public class FinalCrypt extends Thread
 
 
                                 // Parse inputFileBuffer & cipherFileBuffer to outputFileBuffer and write to file
-                                outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
+                                ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
 
                                 if (txt)
                                 {
-                                    printByteBuffer("DB", inputFileBuffer);
-                                    printByteBuffer("CB", cipherFileBuffer);
-                                    printByteBuffer("OB", outputFileBuffer);
+                                    logByteBuffer("DB", inputFileBuffer);
+                                    logByteBuffer("CB", cipherFileBuffer);
+                                    logByteBuffer("OB", outputFileBuffer);
                                 }
 
                                 outputFileChannel.write(outputFileBuffer);
@@ -203,6 +215,11 @@ public class FinalCrypt extends Thread
                     } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
                     outputFileChannel.close();
                 } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
+//            }
+//        });
+//        encryptFilesThread.setName("updateProgressThread");
+//        encryptFilesThread.setDaemon(true);
+//        encryptFilesThread.start();
             }
         }
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
@@ -275,12 +292,10 @@ public class FinalCrypt extends Thread
     private String getHexString(Byte myByte, String digits) { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
     private String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
-    private void printByteBuffer(String preFix, ByteBuffer byteBuffer)
+    private void logByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
         ui.log(preFix + "C: ");
-//        ui.log(Charset.forName(encoding).decode(byteBuffer)); byteBuffer.flip();
-//      for (byte mybyte: dataBuffer.array()) { System.out.print(Integer.toHexString(Byte.toUnsignedInt(mybyte) & 0xFF)); }
-        ui.log(" " + preFix + "Z: " + byteBuffer.limit());
+        ui.log(" " + preFix + "Z: " + byteBuffer.limit() + "\n");
     }
 
     private void logByte(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
@@ -308,20 +323,24 @@ public class FinalCrypt extends Thread
         printAddressByteCounter++;
     }
     
-    private void logByteBinary(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
+    private void logByteBinary(byte inputByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\nDat = " + getBinaryString(dataByte) + "\n");
-        ui.log("Cph = " + getBinaryString(cipherByte) + "\n");
         ui.log("\n");
-        ui.log("DUM  = " + getBinaryString((byte)dataByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum) + "\n");
-        ui.log("DNM  = " + getBinaryString((byte)~dataByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm) + "\n");
+        ui.log("Input  = " + getBinaryString(inputByte) + "\n");
+        ui.log("Cipher = " + getBinaryString(cipherByte) + "\n");
+        ui.log("Output = " + getBinaryString(outputByte) + "\n");
+        ui.log("\n");
+        ui.log("DUM  = " + getBinaryString((byte)inputByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum) + "\n");
+        ui.log("DNM  = " + getBinaryString((byte)~inputByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm) + "\n");
         ui.log("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm) + "\n");
     }
     
     private void logByteDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\nDat = " + getDecString(dataByte) + "\n");
-        ui.log("Cph = " + getDecString(cipherByte) + "\n");
+        ui.log("\n");
+        ui.log("Input  = " + getDecString(dataByte) + "\n");
+        ui.log("Cipher = " + getDecString(cipherByte) + "\n");
+        ui.log("Output = " + getDecString(outputByte) + "\n");
         ui.log("\n");
         ui.log("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum) + "\n");
         ui.log("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm) + "\n");
@@ -330,8 +349,10 @@ public class FinalCrypt extends Thread
     
     private void logByteHexaDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\nDat = " + getHexString(dataByte,"2") + "\n");
-        ui.log("Cph = " + getHexString(cipherByte,"2") + "\n");
+        ui.log("\n");
+        ui.log("Input  = " + getHexString(dataByte,"2") + "\n");
+        ui.log("Cipher = " + getHexString(cipherByte,"2") + "\n");
+        ui.log("Output = " + getHexString(outputByte,"2") + "\n");
         ui.log("\n");
         ui.log("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2") + "\n");
         ui.log("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2") + "\n");
@@ -340,8 +361,10 @@ public class FinalCrypt extends Thread
     
     private void logByteChar(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\nDat = " + getChar(dataByte) + "\n");
-        ui.log("Cph = " + getChar(cipherByte) + "\n");
+        ui.log("\n");
+        ui.log("Input  = " + getChar(dataByte) + "\n");
+        ui.log("Cipher = " + getChar(cipherByte) + "\n");
+        ui.log("Output = " + getChar(outputByte) + "\n");
         ui.log("\n");
         ui.log("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum) + "\n");
         ui.log("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm) + "\n");
