@@ -443,6 +443,7 @@
             </Component>
             <Component class="javax.swing.JSlider" name="bufferSlider">
               <Properties>
+                <Property name="maximum" type="int" value="1000"/>
                 <Property name="minimum" type="int" value="1"/>
                 <Property name="paintLabels" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" value="Sets buffersize in MB"/>

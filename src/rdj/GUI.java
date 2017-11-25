@@ -26,28 +26,72 @@ public class GUI extends javax.swing.JFrame implements UI
     {
         gui = this;
         
-        initComponents();
-
-        try
-        { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
-        catch (ClassNotFoundException ex) { }
-        catch (InstantiationException ex) { }
-        catch (IllegalAccessException ex) { }
-        catch (UnsupportedLookAndFeelException ex) { }
         
-        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
-        int winWidth = (int)getWidth();
-        int winHeight = (int)getHeight();
-        int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
-        int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
-        setLocation(posX, posY);
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                initComponents();
+                try
+                { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
+                catch (ClassNotFoundException ex) { }
+                catch (InstantiationException ex) { }
+                catch (IllegalAccessException ex) { }
+                catch (UnsupportedLookAndFeelException ex) { }
+
+                Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+                int winWidth = (int)getWidth();
+                int winHeight = (int)getHeight();
+                int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
+                int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
+                setLocation(posX, posY);
+                finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+            }
+        });
+        
+
+
+
+
+//        initComponents();
+//        try
+//        { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
+//        catch (ClassNotFoundException ex) { }
+//        catch (InstantiationException ex) { }
+//        catch (IllegalAccessException ex) { }
+//        catch (UnsupportedLookAndFeelException ex) { }
+//
+//        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+//        int winWidth = (int)getWidth();
+//        int winHeight = (int)getHeight();
+//        int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
+//        int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
+//        setLocation(posX, posY);
+////        finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+//
+//        Thread fctread = new Thread(new Runnable()
+//        {
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
+//                finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+//            }
+//        });
+//        fctread.setName("updateProgressThread");
+//        fctread.setDaemon(true);
+//        fctread.start();
+
+        
 
 //        disableSomeComponents(inputFileChooser);
 //        disableSomeComponents(cipherFileChooser);
         
-        finalCrypt = new FinalCrypt(gui);
-        finalCrypt.setPriority(Thread.NORM_PRIORITY);
-        finalCrypt.start();
+//        finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+//        finalCrypt.setPriority(Thread.MIN_PRIORITY);
+//        finalCrypt.setPriority(Thread.NORM_PRIORITY);
+//        finalCrypt.start();
         
     }
 
@@ -368,6 +412,7 @@ public class GUI extends javax.swing.JFrame implements UI
         });
         buttonPanel2.add(debugButton);
 
+        bufferSlider.setMaximum(1000);
         bufferSlider.setMinimum(1);
         bufferSlider.setPaintLabels(true);
         bufferSlider.setToolTipText("Sets buffersize in MB");
@@ -490,7 +535,8 @@ public class GUI extends javax.swing.JFrame implements UI
         filesProgressBar.setValue(0);
         fileProgressBar.setValue(0);
         
-        finalCrypt.encryptFiles();
+        //        finalCrypt.encryptFiles();
+        try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
     }//GEN-LAST:event_encryptButtonActionPerformed
 
     public void setProgressBarsMax(int filesMax, int fileMax)
@@ -782,6 +828,12 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
+    public void println(String message)
+    {
+        System.out.println(message);
+    }
+
+    @Override
     synchronized public void updateEncryptionDiffStats(final int value)
     {
         Thread updateGraphThread = new Thread(new Runnable()
@@ -819,16 +871,23 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    synchronized public void updateProgress(final int filesPromille, final int filePromille)
+     public void updateProgress(final int filesPromille, final int filePromille)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+                if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesPromille+ "%"); }
+                if (finalCrypt.getDebug()) { System.out.println("Progress File : " + filePromille+ "%"); }
+//                if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
+//                if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
                 filesProgressBar.setValue(filesPromille);
                 fileProgressBar.setValue(filePromille);
-            }
-        });
+//                bufferSlider.setValue(filesPromille);
+//                    status(Integer.toString(filePromille));
+//                statusLabel.setText(Integer.toString(filePromille));
+//            }
+//        });
     }
 }

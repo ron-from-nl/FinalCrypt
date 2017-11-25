@@ -31,8 +31,13 @@ public class CLUI implements UI
         
         
         // Load the FinalCrypt Objext
-        finalCrypt = new FinalCrypt(this);
-        finalCrypt.start();
+        finalCrypt = new FinalCrypt(this); try
+        {
+//            finalCrypt.doInBackground();
+//        finalCrypt.start();
+        } catch (Exception ex)
+        {
+        }
 
         // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
@@ -97,7 +102,8 @@ public class CLUI implements UI
         }
         
         // Start Encryption
-        finalCrypt.encryptFiles();
+//        finalCrypt.encryptFiles();
+        finalCrypt.doInBackground();
     }
 
     public static void main(String[] args)
@@ -147,6 +153,12 @@ public class CLUI implements UI
     public void status(String status)
     {
         log(status);
+    }
+
+    @Override
+    public void println(String message)
+    {
+        System.out.println(message);
     }
 
     @Override
