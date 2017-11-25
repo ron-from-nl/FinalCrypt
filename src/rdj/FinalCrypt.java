@@ -107,7 +107,8 @@ public class FinalCrypt  extends SwingWorker
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the Progress timer & task
-        updateProgressTask = new TimerTask() { @Override public void run() { ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/1000L)), (int) (fileBytesEncrypted /(fileBytesTotal/1000L))); }};
+//        updateProgressTask = new TimerTask() { @Override public void run() { ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/1000L)), (int) (fileBytesEncrypted /(fileBytesTotal/1000L))); }};
+        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 
         // Encrypt Files loop
@@ -157,7 +158,6 @@ public class FinalCrypt  extends SwingWorker
                     inputFileChannel.position(inputFileChannelPos); if (debug) { ui.println("\nInp Ch Pos: " + Long.toString(inputFileChannelPos)); }
                     inputFileChannelPos += inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); //inputFileChannelPos = inputFileChannel.position();
                     if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
-//                                if ( inputFileBuffer.limit() < inputFileBufferSize ) { inputFileEnded = true; }
                     inputFileChannel.close();
                 } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
 

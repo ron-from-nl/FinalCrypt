@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -25,13 +28,12 @@ public class GUI extends javax.swing.JFrame implements UI
     public GUI()
     {
         gui = this;
-        
-        
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
+                
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
                 initComponents();
                 try
                 { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
@@ -46,53 +48,42 @@ public class GUI extends javax.swing.JFrame implements UI
                 int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
                 int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
                 setLocation(posX, posY);
-                finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
-            }
-        });
-        
+                
+                finalCrypt = new FinalCrypt(gui);
+                finalCrypt.addPropertyChangeListener(new PropertyChangeListener()
+                {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent pcEvt)
+                    {
+                        if (pcEvt.getPropertyName().equals("state"))
+                        {
+                            if (pcEvt.getNewValue() == SwingWorker.StateValue.DONE)
+                            {
+                                done();
+//                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
+                            }
+                            else if (pcEvt.getNewValue() == SwingWorker.StateValue.STARTED)
+                            {
+                                start();
+//                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
+                            }
+                            else { log("PropertyChange: " + pcEvt.getPropertyName() + " getNewValue: " + pcEvt.getNewValue());}
+                        }
+                        else if (pcEvt.getPropertyName().equals("progress"))
+                        {
+                            setProgress((Integer)pcEvt.getNewValue());
+                        }
+                        else { log("PropertyChange:" + pcEvt.getPropertyName());}
+                    }
+                });
 
-
-
-
-//        initComponents();
-//        try
-//        { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
-//        catch (ClassNotFoundException ex) { }
-//        catch (InstantiationException ex) { }
-//        catch (IllegalAccessException ex) { }
-//        catch (UnsupportedLookAndFeelException ex) { }
-//
-//        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
-//        int winWidth = (int)getWidth();
-//        int winHeight = (int)getHeight();
-//        int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
-//        int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
-//        setLocation(posX, posY);
-////        finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
-//
-//        Thread fctread = new Thread(new Runnable()
-//        {
-//            @Override
-//            @SuppressWarnings({"static-access"})
-//            public void run()
-//            {
-//                finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+                try { finalCrypt.execute(); } catch (Exception ex) { log(ex.getMessage()); }
 //            }
 //        });
-//        fctread.setName("updateProgressThread");
-//        fctread.setDaemon(true);
-//        fctread.start();
-
         
 
 //        disableSomeComponents(inputFileChooser);
 //        disableSomeComponents(cipherFileChooser);
-        
-//        finalCrypt = new FinalCrypt(gui); //try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
-//        finalCrypt.setPriority(Thread.MIN_PRIORITY);
-//        finalCrypt.setPriority(Thread.NORM_PRIORITY);
-//        finalCrypt.start();
-        
     }
 
     @SuppressWarnings("unchecked")
@@ -422,13 +413,11 @@ public class GUI extends javax.swing.JFrame implements UI
 
         progressPanel.setLayout(new java.awt.GridLayout(3, 0));
 
-        filesProgressBar.setMaximum(1000);
         filesProgressBar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         filesProgressBar.setDoubleBuffered(true);
         filesProgressBar.setStringPainted(true);
         progressPanel.add(filesProgressBar);
 
-        fileProgressBar.setMaximum(1000);
         fileProgressBar.setDoubleBuffered(true);
         fileProgressBar.setStringPainted(true);
         progressPanel.add(fileProgressBar);
@@ -871,23 +860,47 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-     public void updateProgress(final int filesPromille, final int filePromille)
+    public void updateProgress(final int filesPromille, final int filePromille)
     {
-//        SwingUtilities.invokeLater(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
                 if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesPromille+ "%"); }
                 if (finalCrypt.getDebug()) { System.out.println("Progress File : " + filePromille+ "%"); }
 //                if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
 //                if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
                 filesProgressBar.setValue(filesPromille);
                 fileProgressBar.setValue(filePromille);
-//                bufferSlider.setValue(filesPromille);
-//                    status(Integer.toString(filePromille));
-//                statusLabel.setText(Integer.toString(filePromille));
-//            }
-//        });
     }
+     
+     
+   public void setProgress(Integer newValue) 
+   {
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + newValue+ "%"); }
+                if (finalCrypt.getDebug()) { System.out.println("Progress File : " + newValue+ "%"); }
+                if (finalCrypt.getDebug()) { status("Progress Files: " + newValue+ "%"); }
+                filesProgressBar.setValue(newValue);
+//                fileProgressBar.setValue(newValue);
+            }
+        });
+   }
+
+   public void start() 
+   {
+       System.out.println("GUI.start()");
+       filesProgressBar.setValue(0);
+   }
+
+   public void done()
+   {
+       System.out.println("GUI.done()");
+      filesProgressBar.setValue(0);
+      
+//      new Timer(TIMER_DELAY, new ActionListener()
+//      {
+//          @Override public void actionPerformed(ActionEvent e) { Window win = SwingUtilities.getWindowAncestor(mainPanel); win.dispose(); }
+//      }) {{setRepeats(false);}}.start();
+   }     
 }
