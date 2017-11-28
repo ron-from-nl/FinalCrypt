@@ -230,19 +230,16 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void pauseButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked pauseButtonAction!");
     }
     
     @FXML
     private void stopButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked stopButtonAction!");
     }
     
     @FXML
     private void logButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked logButtonAction!");
         printButton.setDisable(!logButton.isSelected());
         textButton.setDisable(!logButton.isSelected());
         binButton.setDisable(!logButton.isSelected());
@@ -259,7 +256,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void printButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked printButtonAction!");
 //        printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -274,7 +270,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void textButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked textButtonAction!");
         printButton.setSelected(false);
 //        textButton.setSelected(false);
         binButton.setSelected(false);
@@ -289,7 +284,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void binButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked binButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
 //        binButton.setSelected(false);
@@ -304,7 +298,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void decButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked decButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -319,7 +312,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void hexButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked hexButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -334,7 +326,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void charButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked charButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -349,7 +340,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void verboseButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked verboseButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -364,7 +354,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void debugButtonAction(ActionEvent event)
     {
-        System.out.println("You clicked debugButtonAction!");
         printButton.setSelected(false);
         textButton.setSelected(false);
         binButton.setSelected(false);
@@ -428,23 +417,23 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void updateProgress(int filesProgressPercent, int fileProgressPercent)
     {
-        Thread updateProgressThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
+//        Thread updateProgressThread = new Thread(new Runnable()
+//        {
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
                 if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesProgressPercent / 100.0 + "%"); }
                 if (finalCrypt.getDebug()) { System.out.println("Progress File : " + fileProgressPercent / 100.0 + "%"); }
         //        if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
         //        if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
                 filesProgressBar.setProgress((double)filesProgressPercent / 100.0);
                 fileProgressBar.setProgress((double)fileProgressPercent / 100.0);
-            }
-        });
-        updateProgressThread.setName("updateProgressThread");
-        updateProgressThread.setDaemon(true);
-        updateProgressThread.start();
+//            }
+//        });
+//        updateProgressThread.setName("updateProgressThread");
+//        updateProgressThread.setDaemon(true);
+//        updateProgressThread.start();
     }
 
     @Override
