@@ -1,11 +1,31 @@
+/*
+ * Copyright (C) 2017 ron
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *
+ * @author Ron de Jong ronuitzaandam@gmail.com
+ */
+
 package rdj;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -50,34 +69,38 @@ public class GUI extends javax.swing.JFrame implements UI
                 setLocation(posX, posY);
                 
                 finalCrypt = new FinalCrypt(gui);
-                finalCrypt.addPropertyChangeListener(new PropertyChangeListener()
-                {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent pcEvt)
-                    {
-                        if (pcEvt.getPropertyName().equals("state"))
-                        {
-                            if (pcEvt.getNewValue() == SwingWorker.StateValue.DONE)
-                            {
-                                done();
-//                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
-                            }
-                            else if (pcEvt.getNewValue() == SwingWorker.StateValue.STARTED)
-                            {
-                                start();
-//                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
-                            }
-                            else { log("PropertyChange: " + pcEvt.getPropertyName() + " getNewValue: " + pcEvt.getNewValue());}
-                        }
-                        else if (pcEvt.getPropertyName().equals("progress"))
-                        {
-                            setProgress((Integer)pcEvt.getNewValue());
-                        }
-                        else { log("PropertyChange:" + pcEvt.getPropertyName());}
-                    }
-                });
-
-                try { finalCrypt.execute(); } catch (Exception ex) { log(ex.getMessage()); }
+                finalCrypt.start();
+                
+////              SwingWorker version of FinalCrypt
+//                finalCrypt.execute();
+//                finalCrypt.addPropertyChangeListener(new PropertyChangeListener()
+//                {
+//                    @Override
+//                    public void propertyChange(PropertyChangeEvent pcEvt)
+//                    {
+//                        if (pcEvt.getPropertyName().equals("state"))
+//                        {
+//                            if (pcEvt.getNewValue() == SwingWorker.StateValue.DONE)
+//                            {
+//                                done();
+////                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
+//                            }
+//                            else if (pcEvt.getNewValue() == SwingWorker.StateValue.STARTED)
+//                            {
+//                                start();
+////                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
+//                            }
+//                            else { log("PropertyChange: " + pcEvt.getPropertyName() + " getNewValue: " + pcEvt.getNewValue());}
+//                        }
+//                        else if (pcEvt.getPropertyName().equals("progress"))
+//                        {
+//                            setProgress((Integer)pcEvt.getNewValue());
+//                        }
+//                        else { log("PropertyChange:" + pcEvt.getPropertyName());}
+//                    }
+//                });
+//
+//                try { finalCrypt.execute(); } catch (Exception ex) { log(ex.getMessage()); }
 //            }
 //        });
         
@@ -93,10 +116,10 @@ public class GUI extends javax.swing.JFrame implements UI
 
         tab = new javax.swing.JTabbedPane();
         encryptPanel = new javax.swing.JPanel();
-        inputFilePane = new javax.swing.JPanel();
+        inputFilePanel = new javax.swing.JPanel();
         inputFileChooserLabel = new javax.swing.JLabel();
         inputFileChooser = new javax.swing.JFileChooser();
-        cipherFilePane = new javax.swing.JPanel();
+        cipherFilePanel = new javax.swing.JPanel();
         cipherFileChooserLabel = new javax.swing.JLabel();
         cipherFileChooser = new javax.swing.JFileChooser();
         logPane = new javax.swing.JPanel();
@@ -125,7 +148,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FinalCrypt");
-        setMinimumSize(new java.awt.Dimension(1039, 709));
+        setMinimumSize(new java.awt.Dimension(1040, 700));
         setPreferredSize(new java.awt.Dimension(1200, 800));
 
         tab.setBackground(new java.awt.Color(0, 0, 0));
@@ -137,7 +160,7 @@ public class GUI extends javax.swing.JFrame implements UI
         encryptPanel.setPreferredSize(new java.awt.Dimension(1000, 524));
         encryptPanel.setLayout(new java.awt.GridLayout(1, 0));
 
-        inputFilePane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        inputFilePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         inputFileChooserLabel.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
         inputFileChooserLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -163,33 +186,33 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
 
-        javax.swing.GroupLayout inputFilePaneLayout = new javax.swing.GroupLayout(inputFilePane);
-        inputFilePane.setLayout(inputFilePaneLayout);
-        inputFilePaneLayout.setHorizontalGroup(
-            inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout inputFilePanelLayout = new javax.swing.GroupLayout(inputFilePanel);
+        inputFilePanel.setLayout(inputFilePanelLayout);
+        inputFilePanelLayout.setHorizontalGroup(
+            inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 606, Short.MAX_VALUE)
-            .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(inputFilePaneLayout.createSequentialGroup()
+            .addGroup(inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(inputFilePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(inputFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
                     .addContainerGap()))
         );
-        inputFilePaneLayout.setVerticalGroup(
-            inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        inputFilePanelLayout.setVerticalGroup(
+            inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 574, Short.MAX_VALUE)
-            .addGroup(inputFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(inputFilePaneLayout.createSequentialGroup()
+            .addGroup(inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(inputFilePanelLayout.createSequentialGroup()
                     .addComponent(inputFileChooserLabel)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
-        encryptPanel.add(inputFilePane);
+        encryptPanel.add(inputFilePanel);
 
-        cipherFilePane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        cipherFilePanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         cipherFileChooserLabel.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
         cipherFileChooserLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -214,31 +237,31 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
 
-        javax.swing.GroupLayout cipherFilePaneLayout = new javax.swing.GroupLayout(cipherFilePane);
-        cipherFilePane.setLayout(cipherFilePaneLayout);
-        cipherFilePaneLayout.setHorizontalGroup(
-            cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout cipherFilePanelLayout = new javax.swing.GroupLayout(cipherFilePanel);
+        cipherFilePanel.setLayout(cipherFilePanelLayout);
+        cipherFilePanelLayout.setHorizontalGroup(
+            cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 606, Short.MAX_VALUE)
-            .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(cipherFilePaneLayout.createSequentialGroup()
+            .addGroup(cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(cipherFilePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(cipherFileChooserLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE))
                     .addContainerGap()))
         );
-        cipherFilePaneLayout.setVerticalGroup(
-            cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        cipherFilePanelLayout.setVerticalGroup(
+            cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 574, Short.MAX_VALUE)
-            .addGroup(cipherFilePaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(cipherFilePaneLayout.createSequentialGroup()
+            .addGroup(cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(cipherFilePanelLayout.createSequentialGroup()
                     .addComponent(cipherFileChooserLabel)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
-        encryptPanel.add(cipherFilePane);
+        encryptPanel.add(cipherFilePanel);
 
         tab.addTab("Encrypt", encryptPanel);
 
@@ -524,8 +547,10 @@ public class GUI extends javax.swing.JFrame implements UI
         filesProgressBar.setValue(0);
         fileProgressBar.setValue(0);
         
-        //        finalCrypt.encryptFiles();
-        try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+        finalCrypt.encryptFiles();
+                
+////  SwingWorker version of FinalCrypt
+//    try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
     }//GEN-LAST:event_encryptButtonActionPerformed
 
     public void setProgressBarsMax(int filesMax, int fileMax)
@@ -657,7 +682,6 @@ public class GUI extends javax.swing.JFrame implements UI
     private void setOptions()
     {
         finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
-        finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
         finalCrypt.setTXT(logButton.isSelected() & textButton.isSelected());
         finalCrypt.setBin(logButton.isSelected() & binButton.isSelected());
         finalCrypt.setDec(logButton.isSelected() & decButton.isSelected());
@@ -760,7 +784,7 @@ public class GUI extends javax.swing.JFrame implements UI
     private javax.swing.JToggleButton charButton;
     private javax.swing.JFileChooser cipherFileChooser;
     private javax.swing.JLabel cipherFileChooserLabel;
-    private javax.swing.JPanel cipherFilePane;
+    private javax.swing.JPanel cipherFilePanel;
     private javax.swing.JToggleButton debugButton;
     private javax.swing.JToggleButton decButton;
     private javax.swing.JButton encryptButton;
@@ -770,7 +794,7 @@ public class GUI extends javax.swing.JFrame implements UI
     private javax.swing.JToggleButton hexButton;
     private javax.swing.JFileChooser inputFileChooser;
     private javax.swing.JLabel inputFileChooserLabel;
-    private javax.swing.JPanel inputFilePane;
+    private javax.swing.JPanel inputFilePanel;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel logPane;
     private javax.swing.JScrollPane logScroller;
@@ -859,20 +883,21 @@ public class GUI extends javax.swing.JFrame implements UI
         encryptionEndedThread.start();
     }
 
+    // Threaded version of FinalCrypt
     @Override
-    public void updateProgress(final int filesPromille, final int filePromille)
+    public void updateProgress(final int filesProgressPercent, final int fileProgressPercent)
     {
-                if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesPromille+ "%"); }
-                if (finalCrypt.getDebug()) { System.out.println("Progress File : " + filePromille+ "%"); }
+                if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesProgressPercent+ "%"); }
+                if (finalCrypt.getDebug()) { System.out.println("Progress File : " + fileProgressPercent+ "%"); }
 //                if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
 //                if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
-                filesProgressBar.setValue(filesPromille);
-                fileProgressBar.setValue(filePromille);
+                filesProgressBar.setValue(filesProgressPercent);
+                fileProgressBar.setValue(fileProgressPercent);
     }
      
-     
-   public void setProgress(Integer newValue) 
-   {
+//  SwingWorker version of FinalCrypt     
+    public void setProgress(Integer newValue) 
+    {
         SwingUtilities.invokeLater(new Runnable()
         {
             @Override
@@ -885,7 +910,7 @@ public class GUI extends javax.swing.JFrame implements UI
 //                fileProgressBar.setValue(newValue);
             }
         });
-   }
+    }
 
    public void start() 
    {

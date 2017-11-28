@@ -1,3 +1,25 @@
+/*
+ * Copyright (C) 2017 ron
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *
+ * @author Ron de Jong ronuitzaandam@gmail.com
+ */
+
 package rdj;
 
 import java.io.IOException;
@@ -31,13 +53,11 @@ public class CLUI implements UI
         
         
         // Load the FinalCrypt Objext
-        finalCrypt = new FinalCrypt(this); try
-        {
-//            finalCrypt.doInBackground();
-//        finalCrypt.start();
-        } catch (Exception ex)
-        {
-        }
+        finalCrypt = new FinalCrypt(this);
+        finalCrypt.start();
+        
+////      SwingWorker version of FinalCrype
+//        finalCrypt.execute();
 
         // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
@@ -52,7 +72,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )    { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
+            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
 
             // File Parameters
             else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
@@ -102,8 +122,9 @@ public class CLUI implements UI
         }
         
         // Start Encryption
-//        finalCrypt.encryptFiles();
-        finalCrypt.doInBackground();
+        finalCrypt.encryptFiles();
+//      SwingWorker version of FinalCrypt
+//        finalCrypt.doInBackground();
     }
 
     public static void main(String[] args)

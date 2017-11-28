@@ -1,3 +1,25 @@
+/*
+ * Copyright (C) 2017 ron
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *
+ * @author Ron de Jong ronuitzaandam@gmail.com
+ */
+
 package rdj;
 
 import java.io.IOException;
@@ -11,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
-import javax.swing.SwingWorker;
 
-public class FinalCrypt  extends SwingWorker
+//public class FinalCrypt  extends SwingWorker
+public class FinalCrypt  extends Thread
 {
     static final String COMPANYNAME = "GPLv3";
     static final String PRODUCTNAME = "FinalCrypt";
@@ -107,8 +129,8 @@ public class FinalCrypt  extends SwingWorker
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the Progress timer & task
-//        updateProgressTask = new TimerTask() { @Override public void run() { ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/1000L)), (int) (fileBytesEncrypted /(fileBytesTotal/1000L))); }};
-        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
+        updateProgressTask = new TimerTask() { @Override public void run() { ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100.0)), (int) (fileBytesEncrypted /(fileBytesTotal/100.0))); }};
+//        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 
         // Encrypt Files loop
@@ -146,7 +168,7 @@ public class FinalCrypt  extends SwingWorker
 //                final ByteBuffer outputFileBuffer;
 
                     
-                    
+
                     
             // Open and close files after every bufferrun. Interrupted file I/O does not help GUI responsiveness
             while ( ! inputFileEnded )
@@ -422,22 +444,23 @@ public class FinalCrypt  extends SwingWorker
     public static String getProcuct()                       { return PRODUCTNAME; }
     public static String getCompany()                       { return COMPANYNAME; }
 
-//    @Override
-//    @SuppressWarnings("empty-statement")
-//    public void run()
-//    {
-////	do
-////        {
-////            try { Thread.sleep(1000); } catch (InterruptedException error) { };
-////        }
-////	while(keepRunning);
-////	return;
-//    }
-
     @Override
-    protected Object doInBackground()
+    @SuppressWarnings("empty-statement")
+    public void run()
     {
-        this.encryptFiles();
-        return this;
+//	do
+//        {
+//            try { Thread.sleep(1000); } catch (InterruptedException error) { };
+//        }
+//	while(keepRunning);
+//	return;
     }
+
+////  SwingWorker version    
+//    @Override
+//    protected Object doInBackground()
+//    {
+//        this.encryptFiles();
+//        return this;
+//    }
 }
