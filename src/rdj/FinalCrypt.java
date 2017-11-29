@@ -148,8 +148,25 @@ public class FinalCrypt  extends Thread
                 // Get the filesize total
                 try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
                 if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
+
+//              a       a.bit
+//              a.bit   a.bit.bit.bit
+//              a.txt   a.txt.bit.txt        
                 
-                outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
+                String suffix = new String("");
+                String extension = new String("");
+                
+                if (inputFilePath.getFileName().toString().contains("."))
+                {
+                    extension = inputFilePath.getFileName().toString().substring(inputFilePath.getFileName().toString().lastIndexOf('.'), inputFilePath.getFileName().toString().length());
+                    suffix = ".bit" + extension; // bit stands for Brigit, Bridge It and Bit (& Bytes) 
+                }
+                else
+                {
+                    suffix = ".bit";
+                }
+                outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + suffix);
+                
                 try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
 
 //              Status

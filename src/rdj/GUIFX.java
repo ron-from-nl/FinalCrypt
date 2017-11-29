@@ -203,9 +203,9 @@ public class GUIFX extends Application implements UI, Initializable
                     if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
                     if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
 
-                    // Validate output file
-                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
+//                    // Validate output file
+//                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
+//                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); }
                 }
 
                 finalCrypt.setInputFilesPathList(inputFilesPathList);

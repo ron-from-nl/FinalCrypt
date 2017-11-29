@@ -90,8 +90,8 @@ public class CLUI implements UI
             if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
             if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
 
-            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); usage(); }
+//            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
+//            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); usage(); }
         }
         
         if ( ! finalCrypt.isValidFile(cipherFilePath, false, true) )   { usage(); }
