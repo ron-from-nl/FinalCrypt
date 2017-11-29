@@ -116,6 +116,7 @@ public class FinalCrypt  extends Thread
         
     public void encryptFiles()
     {
+        ui.encryptionStarted();
         // Get the all files size total
         
         // Reset the Bytes Progress Counters
