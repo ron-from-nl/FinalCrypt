@@ -94,10 +94,10 @@ public class FinalCrypt  extends Thread
     public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
     public Path getCipherFilePath()                                         { return cipherFilePath; }
     public Path getOutputFilePath()                                         { return outputFilePath; }
-    public long getFilesBytesEncrypted()                                    { return filesBytesEncrypted; }
     public long getFileBytesEncrypted()                                     { return fileBytesEncrypted; }
-    public long getFilesBytesTotal()                                        { return filesBytesTotal; }
+    public long getFilesBytesEncrypted()                                    { return filesBytesEncrypted; }
     public long getFileBytesTotal()                                         { return fileBytesTotal; }
+    public long getFilesBytesTotal()                                        { return filesBytesTotal; }
     
     public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
@@ -134,7 +134,7 @@ public class FinalCrypt  extends Thread
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the Progress timer & task
-        updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100.0)), (int) (fileBytesEncrypted /(fileBytesTotal/100.0))); }};
+        updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (fileBytesEncrypted /(fileBytesTotal/100.0)), (int) (filesBytesEncrypted /(filesBytesTotal/100.0))); }};
 //        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 
@@ -143,6 +143,7 @@ public class FinalCrypt  extends Thread
         {
             if ((inputFilePath.compareTo(cipherFilePath) != 0))
             {
+                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
                 fileBytesEncrypted = 0;
 
                 // Get the filesize total
@@ -174,8 +175,10 @@ public class FinalCrypt  extends Thread
 
                     
 
+
+
                     
-            // Open and close files after every bufferrun. Interrupted file I/O does not help GUI responsiveness
+            // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
             while ( ! inputFileEnded )
             {
                 //open inputFile

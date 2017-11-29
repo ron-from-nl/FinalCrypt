@@ -185,12 +185,12 @@
                         </GridPane>
                         <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="filesProgressBar" layoutY="6.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="fileProgressBar" layoutY="5.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
