@@ -117,6 +117,7 @@ public class GUIFX extends Application implements UI, Initializable
         Scene scene = new Scene(root);
         
         stage.setScene(scene);
+        stage.setTitle("FinalCrypt");
         stage.show();
     }
 
