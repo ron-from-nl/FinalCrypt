@@ -40,7 +40,7 @@
                                           </AnchorPane>
                                           <AnchorPane prefHeight="396.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane prefHeight="356.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="inputFileSwingNode" />
                                                    </children>
@@ -66,7 +66,7 @@
                                           </AnchorPane>
                                           <AnchorPane prefHeight="396.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane prefHeight="356.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="cipherFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
                                                    </children>
@@ -95,9 +95,9 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <AnchorPane maxHeight="190.0" minHeight="153.0" prefHeight="190.0" prefWidth="1237.0">
+            <AnchorPane maxHeight="196.0" minHeight="153.0" prefHeight="173.0" prefWidth="1100.0">
                <children>
-                  <VBox prefHeight="190.0" prefWidth="1237.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="BOTTOM_CENTER" prefHeight="196.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <GridPane minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
                           <columnConstraints>
