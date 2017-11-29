@@ -127,8 +127,6 @@ public class GUI extends javax.swing.JFrame implements UI
         bottomPanel = new javax.swing.JPanel();
         buttonPanel1 = new javax.swing.JPanel();
         encryptButton = new javax.swing.JButton();
-        pauseButton = new javax.swing.JButton();
-        stopButton = new javax.swing.JButton();
         buttonPanel2 = new javax.swing.JPanel();
         logButton = new javax.swing.JToggleButton();
         printButton = new javax.swing.JToggleButton();
@@ -293,16 +291,6 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
         buttonPanel1.add(encryptButton);
-
-        pauseButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
-        pauseButton.setText("Pause");
-        pauseButton.setEnabled(false);
-        buttonPanel1.add(pauseButton);
-
-        stopButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
-        stopButton.setText("Stop");
-        stopButton.setEnabled(false);
-        buttonPanel1.add(stopButton);
 
         bottomPanel.add(buttonPanel1);
 
@@ -485,43 +473,54 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void encryptButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_encryptButtonActionPerformed
     {//GEN-HEADEREND:event_encryptButtonActionPerformed
-        Path outputFilePath = null;
-
-        // Add the inputFilesPath to List from inputFileChooser
-        ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-        // Validate and create output files
-        for(Path inputFilePathItem : inputFilesPathList)
+        Thread encryptThread = new Thread(new Runnable()
         {
-            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
-            if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
-
-            // Validate output file
-            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
-        }
-                
-        finalCrypt.setInputFilesPathList(inputFilesPathList);
-        finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
- 
-        // Resize file Buffers
-        try 
-        {
-            if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
             {
-                finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
-                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
-            }
-        }
-        catch (IOException ex) { error("Files.size(cfp)" + ex); }
+                    Path outputFilePath = null;
 
-        filesProgressBar.setValue(0);
-        fileProgressBar.setValue(0);
-        
-        finalCrypt.encryptFiles();
-                
-////  SwingWorker version of FinalCrypt
-//    try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+                    // Add the inputFilesPath to List from inputFileChooser
+                    ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+
+                    // Validate and create output files
+                    for(Path inputFilePathItem : inputFilesPathList)
+                    {
+                        if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
+                        if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
+
+                        // Validate output file
+                        outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
+                        if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
+                    }
+
+                    finalCrypt.setInputFilesPathList(inputFilesPathList);
+                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
+
+                    // Resize file Buffers
+                    try 
+                    {
+                        if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
+                        {
+                            finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
+                            if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
+                        }
+                    }
+                    catch (IOException ex) { error("Files.size(cfp)" + ex); }
+
+                    filesProgressBar.setValue(0);
+                    fileProgressBar.setValue(0);
+
+                    finalCrypt.encryptFiles();
+
+            ////  SwingWorker version of FinalCrypt
+            //    try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+            }
+        });
+        encryptThread.setName("encryptThread");
+        encryptThread.setDaemon(true);
+        encryptThread.start();
     }//GEN-LAST:event_encryptButtonActionPerformed
 
     public void setProgressBarsMax(int filesMax, int fileMax)
@@ -770,11 +769,9 @@ public class GUI extends javax.swing.JFrame implements UI
     private javax.swing.JPanel logPane;
     private javax.swing.JScrollPane logScroller;
     private javax.swing.JTextArea logTextArea;
-    private javax.swing.JButton pauseButton;
     private javax.swing.JToggleButton printButton;
     private javax.swing.JPanel progressPanel;
     private javax.swing.JLabel statusLabel;
-    private javax.swing.JButton stopButton;
     private javax.swing.JTabbedPane tab;
     private javax.swing.JToggleButton textButton;
     private javax.swing.JToggleButton verboseButton;
@@ -834,8 +831,10 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    public void encryptionStarted() {
+    public void encryptionStarted()
+    {
         status("Encryption Started\n");
+        encryptButton.setEnabled(false);
         filesProgressBar.setValue(0);
         fileProgressBar.setValue(0);
         inputFileChooser.rescanCurrentDirectory();
@@ -857,19 +856,12 @@ public class GUI extends javax.swing.JFrame implements UI
 //  SwingWorker version of FinalCrypt     
     public void setProgress(Integer newValue) 
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
                 if (finalCrypt.getDebug()) { println("Progress Files: " + newValue + "%\n"); }
                 if (finalCrypt.getDebug()) { println("Progress File : " + newValue + "%\n"); }
 //                if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
 //                if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
                 filesProgressBar.setValue(newValue);
 //                fileProgressBar.setValue(newValue);
-            }
-        });
     }
 
     @Override
@@ -882,6 +874,7 @@ public class GUI extends javax.swing.JFrame implements UI
 //            public void run()
 //            {
                 status("Encryption Finished\n");
+                encryptButton.setEnabled(true);
                 if (finalCrypt.getDebug()) { println("Progress Files: " +   (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal() / 100.0)) + "%"); }
                 if (finalCrypt.getDebug()) { println("Progress File : " +   (int)(finalCrypt.getFileBytesEncrypted()  / (finalCrypt.getFileBytesTotal()  / 100.0)) + "%"); }
                 if (finalCrypt.getDebug()) { log("Progress Files: " +       (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal() / 100.0)) + "%\n"); }

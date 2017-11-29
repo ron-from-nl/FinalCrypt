@@ -102,28 +102,20 @@
                         <GridPane minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button fx:id="encryptButton" maxHeight="35.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="35.0" prefWidth="119.0" text="Encrypt" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="pauseButton" maxHeight="40.0" mnemonicParsing="false" onAction="#pauseButtonAction" text="Pause" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Button>
-                              <Button fx:id="stopButton" maxHeight="40.0" mnemonicParsing="false" onAction="#stopButtonAction" text="Stop" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Button>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="encryptButton" maxHeight="35.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
                            </children>
                         </GridPane>
                         <GridPane prefHeight="30.0" prefWidth="1237.0">

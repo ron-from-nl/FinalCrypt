@@ -68,10 +68,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Button encryptButton;
     @FXML
-    private Button pauseButton;
-    @FXML
-    private Button stopButton;
-    @FXML
     private ToggleButton logButton;
     @FXML
     private ToggleButton printButton;
@@ -183,59 +179,61 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptButtonAction(ActionEvent event)
     {
-        status("Encryption started");
-//        finalCrypt = new FinalCrypt((UI)guifx);
-//        finalCrypt = new FinalCrypt(this);
-//        finalCrypt.start();
-        
-        Path outputFilePath = null;
-
-        // Add the inputFilesPath to List from inputFileChooser
-        ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-        // Validate and create output files
-        for(Path inputFilePathItem : inputFilesPathList)
+        Thread encryptThread = new Thread(new Runnable()
         {
-            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
-            if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
-
-            // Validate output file
-            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
-        }
-                
-        finalCrypt.setInputFilesPathList(inputFilesPathList);
-        finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
- 
-        // Resize file Buffers
-        try 
-        {
-            if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
             {
-                finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
-                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
-            }
-        }
-        catch (IOException ex) { error("Files.size(cfp)" + ex); }
+                    status("Encryption started");
+            //        finalCrypt = new FinalCrypt((UI)guifx);
+            //        finalCrypt = new FinalCrypt(this);
+            //        finalCrypt.start();
 
-        filesProgressBar.setProgress(0.0);
-        fileProgressBar.setProgress(0.0);
-        
-        finalCrypt.encryptFiles();
-                
-////  SwingWorker version of FinalCrypt
-//    try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+                    Path outputFilePath = null;
+
+                    // Add the inputFilesPath to List from inputFileChooser
+                    ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+
+                    // Validate and create output files
+                    for(Path inputFilePathItem : inputFilesPathList)
+                    {
+                        if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
+                        if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
+
+                        // Validate output file
+                        outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
+                        if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error cipher\n"); }
+                    }
+
+                    finalCrypt.setInputFilesPathList(inputFilesPathList);
+                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
+
+                    // Resize file Buffers
+                    try 
+                    {
+                        if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
+                        {
+                            finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
+                            if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
+                        }
+                    }
+                    catch (IOException ex) { error("Files.size(cfp)" + ex); }
+
+                    filesProgressBar.setProgress(0.0);
+                    fileProgressBar.setProgress(0.0);
+
+                    finalCrypt.encryptFiles();
+
+            ////  SwingWorker version of FinalCrypt
+            //    try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
+            }
+        });
+        encryptThread.setName("encryptThread");
+        encryptThread.setDaemon(true);
+        encryptThread.start();
     }
     
-    @FXML
-    private void pauseButtonAction(ActionEvent event)
-    {
-    }
-    
-    @FXML
-    private void stopButtonAction(ActionEvent event)
-    {
-    }
     
     @FXML
     private void logButtonAction(ActionEvent event)
@@ -389,30 +387,30 @@ public class GUIFX extends Application implements UI, Initializable
 ////                logScroller.getVerticalScrollBar().setValue(logScroller.getVerticalScrollBar().getMaximum());
 //            }
 //        });
-//        logThread.setName("updateProgressThread");
+//        logThread.setName("encryptThread");
 //        logThread.setDaemon(false);
 //        logThread.start();
     }
 
     @Override
-    public void error(String message) {
-        status(message);
-    }
+    public void error(String message) { status(message); }
 
     @Override
-    public void status(String status) {
+    public void status(String status)
+    {
         statusLabel.setText(status);
         log(status);
     }
 
     @Override
-    public void println(String message) {
-        System.out.println(message);
+    public void println(String message) { System.out.println(message);
     }
 
     @Override
-    public void encryptionStarted() {
+    public void encryptionStarted()
+    {
         status("Encryption Started\n");
+        encryptButton.setDisable(true);
         filesProgressBar.setProgress(0.0);
         fileProgressBar.setProgress(0.0);
         inputFileChooser.rescanCurrentDirectory();
@@ -420,34 +418,26 @@ public class GUIFX extends Application implements UI, Initializable
     }
     
     @Override
-    public void encryptionGraph(int value) {
+    public void encryptionGraph(int value)
+    {
     }
 
     @Override
     public void encryptionProgress(int filesProgressPercent, int fileProgressPercent)
     {
-//        Thread updateProgressThread = new Thread(new Runnable()
-//        {
-//            @Override
-//            @SuppressWarnings({"static-access"})
-//            public void run()
-//            {
-                if (finalCrypt.getDebug()) { println("Progress Files: " + filesProgressPercent / 100.0 + " factor"); }
-                if (finalCrypt.getDebug()) { println("Progress File : " + fileProgressPercent / 100.0  + " factor"); }
-        //        if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
-        //        if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
-                filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui
-                fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
-//            }
-//        });
-//        updateProgressThread.setName("updateProgressThread");
-//        updateProgressThread.setDaemon(true);
-//        updateProgressThread.start();
+        if (finalCrypt.getDebug()) { println("Progress Files: " + filesProgressPercent / 100.0 + " factor"); }
+        if (finalCrypt.getDebug()) { println("Progress File : " + fileProgressPercent / 100.0  + " factor"); }
+//        if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
+//        if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
+        filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui
+        fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
     }
 
     @Override
-    public void encryptionEnded() {
+    public void encryptionEnded()
+    {
         status("Encryption Finished\n");
+        encryptButton.setDisable(false);
         if (finalCrypt.getDebug()) { println("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor"); }
         if (finalCrypt.getDebug()) { println("Progress File : " + (finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()) + " factor"); }
         if (finalCrypt.getDebug()) { log("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor\n"); }
