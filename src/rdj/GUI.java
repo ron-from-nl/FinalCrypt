@@ -148,7 +148,7 @@ public class GUI extends javax.swing.JFrame implements UI
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FinalCrypt");
         setMinimumSize(new java.awt.Dimension(1040, 700));
-        setPreferredSize(new java.awt.Dimension(1200, 800));
+        setPreferredSize(new java.awt.Dimension(1100, 700));
 
         tab.setBackground(new java.awt.Color(0, 0, 0));
         tab.setFont(tab.getFont().deriveFont(tab.getFont().getSize()+4f));
