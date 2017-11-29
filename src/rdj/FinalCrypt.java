@@ -143,7 +143,6 @@ public class FinalCrypt  extends Thread
         {
             if ((inputFilePath.compareTo(cipherFilePath) != 0))
             {
-                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
                 fileBytesEncrypted = 0;
 
                 // Get the filesize total
@@ -153,8 +152,10 @@ public class FinalCrypt  extends Thread
                 outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + ".dat");
                 try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
 
-                // Prints printByte Header ones
-                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + this.getCipherFilePath().getFileName() + "\n");
+//              Status
+                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
+
+                // Prints printByte Header ones                
                 if ( print )
                 {
                     ui.log(" ----------------------------------------------------------------------\n");

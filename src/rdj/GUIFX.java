@@ -129,7 +129,7 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.setFocusable(true);
-        inputFileChooser.setFont(new Font("Arimo", Font.PLAIN, 8));
+        inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() { public void propertyChange(java.beans.PropertyChangeEvent evt) { inputFileChooserPropertyChange(evt); } });
         
         cipherFileChooser = new JFileChooser();
@@ -137,7 +137,7 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);
         cipherFileChooser.setFocusable(true);
-        cipherFileChooser.setFont(new Font("Arimo", Font.PLAIN, 12));
+        cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         cipherFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() { public void propertyChange(java.beans.PropertyChangeEvent evt) { cipherFileChooserPropertyChange(evt); } });
         
         inputFileSwingNode.setContent(inputFileChooser);
@@ -377,7 +377,8 @@ public class GUIFX extends Application implements UI, Initializable
     }
     
     @Override
-    public void log(String message) {
+    public void log(String message)
+    {
         Platform.runLater(new Runnable()
         {
             @Override public void run()

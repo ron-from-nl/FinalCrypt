@@ -160,6 +160,11 @@
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
                     <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font component="inputFileChooser" property="font" relativeSize="false" size="10"/>
+                      </FontInfo>
+                    </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Right mousclick for Refresh"/>
                     <Property name="multiSelectionEnabled" type="boolean" value="true"/>
                   </Properties>
@@ -228,6 +233,11 @@
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
                     <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font component="cipherFileChooser" property="font" relativeSize="false" size="10"/>
+                      </FontInfo>
+                    </Property>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
                   </Properties>
                   <Events>

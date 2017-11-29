@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.embed.swing.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
@@ -33,7 +35,7 @@
                                              <children>
                                                 <Label fx:id="inputFileChooserLabel" alignment="CENTER" contentDisplay="CENTER" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" text="Select the files you want to encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <font>
-                                                      <Font size="22.0" />
+                                                      <Font name="Open Sans" size="18.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -59,7 +61,7 @@
                                              <children>
                                                 <Label fx:id="cipherFileChooserLabel" alignment="CENTER" contentDisplay="CENTER" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" text="Select your secret cipher file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <font>
-                                                      <Font size="22.0" />
+                                                      <Font name="Open Sans" size="18.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -95,9 +97,9 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <AnchorPane maxHeight="196.0" minHeight="153.0" prefHeight="173.0" prefWidth="1100.0">
+            <AnchorPane maxHeight="196.0" minHeight="100.0" prefHeight="120.0" prefWidth="1100.0">
                <children>
-                  <VBox alignment="BOTTOM_CENTER" prefHeight="196.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="BOTTOM_CENTER" prefHeight="120.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <GridPane minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
                           <columnConstraints>
@@ -111,10 +113,16 @@
                                  <children>
                                     <Button fx:id="encryptButton" maxHeight="35.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
-                                          <Font size="18.0" />
+                                          <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </Button>
                                  </children>
+                                 <effect>
+                                    <DropShadow />
+                                 </effect>
+                                 <opaqueInsets>
+                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                 </opaqueInsets>
                               </AnchorPane>
                            </children>
                         </GridPane>
@@ -183,19 +191,22 @@
                               <Slider fx:id="bufferSlider" GridPane.columnIndex="9" />
                            </children>
                         </GridPane>
-                        <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" prefHeight="30.0" prefWidth="1000.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="20.0" minHeight="20.0" prefHeight="20.0" prefWidth="1237.0">
                            <children>
-                              <Label fx:id="statusLabel" layoutX="30.0" layoutY="13.0" prefHeight="40.0" prefWidth="1000.0" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Label fx:id="statusLabel" layoutX="30.0" layoutY="13.0" maxHeight="20.0" minHeight="20.0" prefHeight="20.0" prefWidth="1100.0" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font name="Open Sans" size="12.0" />
+                                 </font></Label>
                            </children>
                         </AnchorPane>
                      </children>

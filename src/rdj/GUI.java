@@ -167,6 +167,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setCurrentDirectory(null);
+        inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.addActionListener(new java.awt.event.ActionListener() {
@@ -215,6 +216,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setCurrentDirectory(null);
+        cipherFileChooser.setFont(cipherFileChooser.getFont().deriveFont((float)10));
         cipherFileChooser.setToolTipText("");
         cipherFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
