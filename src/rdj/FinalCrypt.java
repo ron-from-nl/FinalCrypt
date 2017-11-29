@@ -94,7 +94,11 @@ public class FinalCrypt  extends Thread
     public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
     public Path getCipherFilePath()                                         { return cipherFilePath; }
     public Path getOutputFilePath()                                         { return outputFilePath; }
-
+    public long getFilesBytesEncrypted()                                    { return filesBytesEncrypted; }
+    public long getFileBytesEncrypted()                                     { return fileBytesEncrypted; }
+    public long getFilesBytesTotal()                                        { return filesBytesTotal; }
+    public long getFileBytesTotal()                                         { return fileBytesTotal; }
+    
     public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
     public void setPrint(boolean print)                                     { this.print = print; }
@@ -178,7 +182,7 @@ public class FinalCrypt  extends Thread
                 try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
                 {
                     // Fill up inputFileBuffer
-                    inputFileChannel.position(inputFileChannelPos); if (debug) { ui.println("\nInp Ch Pos: " + Long.toString(inputFileChannelPos)); }
+                    inputFileChannel.position(inputFileChannelPos); if (debug & verbose) { ui.println("\nInput  Channel Pos: " + Long.toString(inputFileChannelPos)); }
                     inputFileChannelPos += inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); //inputFileChannelPos = inputFileChannel.position();
                     if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
                     inputFileChannel.close();
@@ -188,7 +192,7 @@ public class FinalCrypt  extends Thread
                 try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
                 {
                     // Fill up cipherFileBuffer
-                    cipherFileChannel.position(cipherFileChannelPos); if (debug) { ui.println("Cip Ch Pos: " + Long.toString(cipherFileChannelPos)); }
+                    cipherFileChannel.position(cipherFileChannelPos); if (debug & verbose) { ui.println("Cipher Channel Pos: " + Long.toString(cipherFileChannelPos)); }
                     cipherFileChannelRead = cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;//cipherFileChannelPos = cipherFileChannel.position();
                     if ( cipherFileChannelRead < cipherFileBufferSize ) { cipherFileChannelPos = 0; cipherFileChannel.position(0); cipherFileChannelRead += cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;}
                     cipherFileBuffer.flip();

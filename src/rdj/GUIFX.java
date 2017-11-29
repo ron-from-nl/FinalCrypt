@@ -262,8 +262,8 @@ public class GUIFX extends Application implements UI, Initializable
         decButton.setSelected(false);
         hexButton.setSelected(false);
         charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
@@ -276,8 +276,8 @@ public class GUIFX extends Application implements UI, Initializable
         decButton.setSelected(false);
         hexButton.setSelected(false);
         charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
@@ -290,8 +290,8 @@ public class GUIFX extends Application implements UI, Initializable
         decButton.setSelected(false);
         hexButton.setSelected(false);
         charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
@@ -304,8 +304,8 @@ public class GUIFX extends Application implements UI, Initializable
 //        decButton.setSelected(false);
         hexButton.setSelected(false);
         charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
@@ -318,8 +318,8 @@ public class GUIFX extends Application implements UI, Initializable
         decButton.setSelected(false);
 //        hexButton.setSelected(false);
         charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
@@ -332,35 +332,35 @@ public class GUIFX extends Application implements UI, Initializable
         decButton.setSelected(false);
         hexButton.setSelected(false);
 //        charButton.setSelected(false);
-        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        verboseButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
     @FXML
     private void verboseButtonAction(ActionEvent event)
     {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
+//        printButton.setSelected(false);
+//        textButton.setSelected(false);
+//        binButton.setSelected(false);
+//        decButton.setSelected(false);
+//        hexButton.setSelected(false);
+//        charButton.setSelected(false);
 //        verboseButton.setSelected(false);
-        debugButton.setSelected(false);
+//        debugButton.setSelected(false);
         setOptions();
     }
     
     @FXML
     private void debugButtonAction(ActionEvent event)
     {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
-        verboseButton.setSelected(false);
+//        printButton.setSelected(false);
+//        textButton.setSelected(false);
+//        binButton.setSelected(false);
+//        decButton.setSelected(false);
+//        hexButton.setSelected(false);
+//        charButton.setSelected(false);
+//        verboseButton.setSelected(false);
 //        debugButton.setSelected(false);
         setOptions();
     }
@@ -432,12 +432,12 @@ public class GUIFX extends Application implements UI, Initializable
 //            @SuppressWarnings({"static-access"})
 //            public void run()
 //            {
-                if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesProgressPercent / 100.0 + "%"); }
-                if (finalCrypt.getDebug()) { System.out.println("Progress File : " + fileProgressPercent / 100.0 + "%"); }
+                if (finalCrypt.getDebug()) { println("Progress Files: " + filesProgressPercent / 100.0 + " factor"); }
+                if (finalCrypt.getDebug()) { println("Progress File : " + fileProgressPercent / 100.0  + " factor"); }
         //        if (finalCrypt.getDebug()) { log("files " + filesPromille + "\n"); }
         //        if (finalCrypt.getDebug()) { log("file " + filePromille + "\n"); }
-                filesProgressBar.setProgress((double)filesProgressPercent / 100.0);
-                fileProgressBar.setProgress((double)fileProgressPercent / 100.0);
+                filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui
+                fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
 //            }
 //        });
 //        updateProgressThread.setName("updateProgressThread");
@@ -448,6 +448,12 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void encryptionEnded() {
         status("Encryption Finished\n");
+        if (finalCrypt.getDebug()) { println("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor"); }
+        if (finalCrypt.getDebug()) { println("Progress File : " + (finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()) + " factor"); }
+        if (finalCrypt.getDebug()) { log("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor\n"); }
+        if (finalCrypt.getDebug()) { log("Progress File : " + (finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()) + " factor\n"); }
+        filesProgressBar.setProgress((finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal())); // 50% becomes 0.5
+        fileProgressBar.setProgress((finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()));
         inputFileChooser.rescanCurrentDirectory();
         cipherFileChooser.rescanCurrentDirectory();
     }
