@@ -28,7 +28,8 @@ public interface UI
     public void error(String message);
     public void status(String status);
     public void println(String message);
-    public void updateEncryptionDiffStats(int value);
-    public void updateProgress(int filesProgressPercent, int fileProgressPercent);
+    public void encryptionGraph(int value);
+    public void encryptionProgress(int filesProgressPercent, int fileProgressPercent);
     public void encryptionEnded();
+    public void encryptionStarted();
 }

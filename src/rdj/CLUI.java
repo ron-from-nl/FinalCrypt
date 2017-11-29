@@ -183,12 +183,18 @@ public class CLUI implements UI
     }
 
     @Override
-    public void updateEncryptionDiffStats(int value)
+    public void encryptionGraph(int value)
     {
     }
 
     @Override
-    public void updateProgress(int filesProgress, int fileProgress)
+    public void encryptionStarted() 
+    {
+        log("Encryption Started\n");
+    }
+
+    @Override
+    public void encryptionProgress(int filesProgress, int fileProgress)
     {
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }

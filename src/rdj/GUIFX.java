@@ -411,11 +411,20 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @Override
-    public void updateEncryptionDiffStats(int value) {
+    public void encryptionStarted() {
+        status("Encryption Started\n");
+        filesProgressBar.setProgress(0.0);
+        fileProgressBar.setProgress(0.0);
+        inputFileChooser.rescanCurrentDirectory();
+        cipherFileChooser.rescanCurrentDirectory();
+    }
+    
+    @Override
+    public void encryptionGraph(int value) {
     }
 
     @Override
-    public void updateProgress(int filesProgressPercent, int fileProgressPercent)
+    public void encryptionProgress(int filesProgressPercent, int fileProgressPercent)
     {
 //        Thread updateProgressThread = new Thread(new Runnable()
 //        {
@@ -439,10 +448,8 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void encryptionEnded() {
         status("Encryption Finished\n");
-        filesProgressBar.setProgress(0.0);
-        fileProgressBar.setProgress(0.0);
         inputFileChooser.rescanCurrentDirectory();
         cipherFileChooser.rescanCurrentDirectory();
     }
-    
+
 }

@@ -129,7 +129,7 @@ public class FinalCrypt  extends Thread
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the Progress timer & task
-        updateProgressTask = new TimerTask() { @Override public void run() { ui.updateProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100.0)), (int) (fileBytesEncrypted /(fileBytesTotal/100.0))); }};
+        updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100.0)), (int) (fileBytesEncrypted /(fileBytesTotal/100.0))); }};
 //        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
 

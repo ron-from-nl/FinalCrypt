@@ -847,7 +847,7 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    synchronized public void updateEncryptionDiffStats(final int value)
+    synchronized public void encryptionGraph(final int value)
     {
         Thread updateGraphThread = new Thread(new Runnable()
         {
@@ -863,29 +863,17 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
-    synchronized public void encryptionEnded()
-    {
-        Thread encryptionEndedThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-                status("Encryption Finished\n");
-                filesProgressBar.setValue(0);
-                fileProgressBar.setValue(0);
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
-            }
-        });
-        encryptionEndedThread.setName("updateProgressThread");
-        encryptionEndedThread.setDaemon(true);
-        encryptionEndedThread.start();
+    public void encryptionStarted() {
+        status("Encryption Started\n");
+        filesProgressBar.setValue(0);
+        fileProgressBar.setValue(0);
+        inputFileChooser.rescanCurrentDirectory();
+        cipherFileChooser.rescanCurrentDirectory();
     }
 
     // Threaded version of FinalCrypt
     @Override
-    public void updateProgress(final int filesProgressPercent, final int fileProgressPercent)
+    public void encryptionProgress(final int filesProgressPercent, final int fileProgressPercent)
     {
                 if (finalCrypt.getDebug()) { System.out.println("Progress Files: " + filesProgressPercent+ "%"); }
                 if (finalCrypt.getDebug()) { System.out.println("Progress File : " + fileProgressPercent+ "%"); }
@@ -912,20 +900,43 @@ public class GUI extends javax.swing.JFrame implements UI
         });
     }
 
-   public void start() 
-   {
-       System.out.println("GUI.start()");
-       filesProgressBar.setValue(0);
-   }
+    @Override
+    synchronized public void encryptionEnded()
+    {
+        Thread encryptionEndedThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                status("Encryption Finished\n");
+                filesProgressBar.setValue(0);
+                fileProgressBar.setValue(0);
+                inputFileChooser.rescanCurrentDirectory();
+                cipherFileChooser.rescanCurrentDirectory();
+            }
+        });
+        encryptionEndedThread.setName("updateProgressThread");
+        encryptionEndedThread.setDaemon(true);
+        encryptionEndedThread.start();
+    }
 
-   public void done()
-   {
-       System.out.println("GUI.done()");
-      filesProgressBar.setValue(0);
-      
-//      new Timer(TIMER_DELAY, new ActionListener()
-//      {
-//          @Override public void actionPerformed(ActionEvent e) { Window win = SwingUtilities.getWindowAncestor(mainPanel); win.dispose(); }
-//      }) {{setRepeats(false);}}.start();
-   }     
+//// SwingWorker Method
+//   public void start() 
+//   {
+//       System.out.println("GUI.start()");
+//       filesProgressBar.setValue(0);
+//   }
+
+//// SwingWorker Method
+//   public void done()
+//   {
+//       System.out.println("GUI.done()");
+//      filesProgressBar.setValue(0);
+//      
+////      new Timer(TIMER_DELAY, new ActionListener()
+////      {
+////          @Override public void actionPerformed(ActionEvent e) { Window win = SwingUtilities.getWindowAncestor(mainPanel); win.dispose(); }
+////      }) {{setRepeats(false);}}.start();
+//   }     
 }
