@@ -442,6 +442,8 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_inputFileChooserPropertyChange
     {//GEN-HEADEREND:event_inputFileChooserPropertyChange
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if (
@@ -462,6 +464,8 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
     {//GEN-HEADEREND:event_cipherFileChooserPropertyChange
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if ( 

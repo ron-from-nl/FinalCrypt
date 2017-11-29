@@ -149,6 +149,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
     {                                                    
+        this.fileProgressBar.setProgress(0);
+        this.filesProgressBar.setProgress(0);
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if (
@@ -162,6 +164,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
     {                                                     
+        this.fileProgressBar.setProgress(0);
+        this.filesProgressBar.setProgress(0);
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if ( 
