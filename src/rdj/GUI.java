@@ -24,14 +24,15 @@ package rdj;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import javafx.application.Platform;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -165,10 +166,12 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooserLabel.setText("Select the files you want to encrypt");
         inputFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        inputFileChooser.setDialogType(javax.swing.JFileChooser.CUSTOM_DIALOG);
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setCurrentDirectory(null);
         inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
+        inputFileChooser.setFocusable(false);
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,6 +181,11 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 inputFileChooserPropertyChange(evt);
+            }
+        });
+        inputFileChooser.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                inputFileChooserKeyPressed(evt);
             }
         });
 
@@ -218,6 +226,7 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooser.setCurrentDirectory(null);
         cipherFileChooser.setFont(cipherFileChooser.getFont().deriveFont((float)10));
         cipherFileChooser.setToolTipText("");
+        cipherFileChooser.setFocusable(false);
         cipherFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cipherFileChooserActionPerformed(evt);
@@ -458,10 +467,33 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
     {//GEN-HEADEREND:event_inputFileChooserActionPerformed
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
+        if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+        {
+            if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+            {
+                for (File file:inputFileChooser.getSelectedFiles()) 
+                {
+                    try { Desktop.getDesktop().open(file); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage()); }
+                }
+            }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_inputFileChooserActionPerformed
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cipherFileChooserActionPerformed
     {//GEN-HEADEREND:event_cipherFileChooserActionPerformed
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
+        if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if ( cipherFileChooser.getSelectedFile().isFile() ) 
+            {
+                try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage()); }
+            }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_cipherFileChooserActionPerformed
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
@@ -656,6 +688,35 @@ public class GUI extends javax.swing.JFrame implements UI
 //        debugButton.setSelected(false);
         setOptions();
     }//GEN-LAST:event_debugButtonActionPerformed
+
+    private void inputFileChooserKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputFileChooserKeyPressed
+            status(KeyEvent.getKeyText(evt.getKeyCode()));
+        if (evt.getKeyCode() == KeyEvent.VK_DELETE)
+        {
+            status(KeyEvent.getKeyText(evt.getKeyCode()));
+        }
+
+        if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+        {
+            if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+            {
+                for (File file:inputFileChooser.getSelectedFiles()) 
+                {
+                    try
+                    {
+                        if (Files.deleteIfExists(file.toPath()))
+                        {
+                            status("File: " + file.getName() + " deleted");
+                        }
+                        else
+                        {
+                            status("File: " + file.getName() + " not deleted");
+                        }
+                    } catch (IOException ex) { error("Error: Files.delete(file.toPath()); " + ex.getMessage()); }
+                }
+            }
+        }
+    }//GEN-LAST:event_inputFileChooserKeyPressed
 
     private void setOptions()
     {

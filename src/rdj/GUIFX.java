@@ -22,7 +22,9 @@
 
 package rdj;
 
+import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -49,6 +51,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -107,6 +111,8 @@ public class GUIFX extends Application implements UI, Initializable
     private SwingNode cipherFileSwingNode;
     @FXML
     private ToggleButton debugButton;
+    private JMenuItem deleteMenuItem;
+    private JPopupMenu popupMenu;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -131,7 +137,33 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
-        inputFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() { public void propertyChange(java.beans.PropertyChangeEvent evt) { inputFileChooserPropertyChange(evt); } });
+        inputFileChooser.addPropertyChangeListener
+        (
+            // New Object
+            new java.beans.PropertyChangeListener()
+            {
+                // New Method
+                @Override
+                public void propertyChange(java.beans.PropertyChangeEvent evt) 
+                {
+                    inputFileChooserPropertyChange(evt);
+                } 
+            }
+        );
+
+        inputFileChooser.addActionListener
+        (
+            // New Object
+            new ActionListener() 
+            {
+                // New Methid
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    inputFileChooserActionPerformed(evt);
+                }
+            }
+        );
         
         cipherFileChooser = new JFileChooser();
         cipherFileChooser.setControlButtonsAreShown(false);
@@ -139,17 +171,44 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileChooser.setMultiSelectionEnabled(false);
         cipherFileChooser.setFocusable(true);
         cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
-        cipherFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() { public void propertyChange(java.beans.PropertyChangeEvent evt) { cipherFileChooserPropertyChange(evt); } });
+        cipherFileChooser.addPropertyChangeListener
+        (
+            new java.beans.PropertyChangeListener() 
+            {
+                @Override
+                public void propertyChange(java.beans.PropertyChangeEvent evt)
+                {
+                    cipherFileChooserPropertyChange(evt);
+                } 
+            }
+        );
         
+        cipherFileChooser.addActionListener
+        (
+            // New Object
+            new ActionListener() 
+            {
+                // New Methid
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt)
+                {
+                    cipherFileChooserActionPerformed(evt);
+                }
+            }
+        );
+
+        
+//      Put FileChoosers into SwingNodes        
         inputFileSwingNode.setContent(inputFileChooser);
         cipherFileSwingNode.setContent(cipherFileChooser);   
         
         finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
-    }    
-
+    }
+    
+//  FileChooser Listener methods
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
-    {                                                    
+    {                                                            
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
@@ -162,7 +221,25 @@ public class GUIFX extends Application implements UI, Initializable
         } else { encryptButton.setDisable(true); }
     }                                               
 
+    private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
+    {                                                     
+        this.fileProgressBar.setProgress(0);
+        this.filesProgressBar.setProgress(0);
+        if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+        {
+            if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+            {
+                for (File file:inputFileChooser.getSelectedFiles()) 
+                {
+                    try { Desktop.getDesktop().open(file); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage()); }
+                }
+            }
+        } else { encryptButton.setDisable(true); }
+    }                                                
 
+    
+    
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
     {                                                     
         this.fileProgressBar.setProgress(0);
@@ -176,6 +253,20 @@ public class GUIFX extends Application implements UI, Initializable
             { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }
         } else { encryptButton.setDisable(true); }
     }                                                
+
+    private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
+    {                                                      
+        this.fileProgressBar.setProgress(0);
+        this.filesProgressBar.setProgress(0);
+        if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if ( cipherFileChooser.getSelectedFile().isFile() ) 
+            {
+                try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage()); }
+            }
+        } else { encryptButton.setDisable(true); }
+    }                                                 
 
     public static void main(String[] args)
     {
@@ -248,8 +339,7 @@ public class GUIFX extends Application implements UI, Initializable
         charButton.setDisable(!logButton.isSelected());
         verboseButton.setDisable(!logButton.isSelected());
         debugButton.setDisable(!logButton.isSelected());
-//        tab.setSelectedIndex((logButton.isSelected()) ? 1 : 0);
-//        encryptTab.tab.setSelectedIndex((logButton.isSelected()) ? 1 : 0);
+        tab.getSelectionModel().select((logButton.isSelected()) ? 1 : 0);
         setOptions();
     }
     
