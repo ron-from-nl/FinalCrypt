@@ -24,6 +24,7 @@ package rdj;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -112,7 +115,8 @@ public class GUI extends javax.swing.JFrame implements UI
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         tab = new javax.swing.JTabbedPane();
         encryptPanel = new javax.swing.JPanel();
@@ -170,13 +174,17 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
-        inputFileChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        inputFileChooser.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 inputFileChooserActionPerformed(evt);
             }
         });
-        inputFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+        inputFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
                 inputFileChooserPropertyChange(evt);
             }
         });
@@ -218,13 +226,17 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooser.setCurrentDirectory(null);
         cipherFileChooser.setFont(cipherFileChooser.getFont().deriveFont((float)10));
         cipherFileChooser.setToolTipText("");
-        cipherFileChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cipherFileChooser.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 cipherFileChooserActionPerformed(evt);
             }
         });
-        cipherFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+        cipherFileChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener()
+        {
+            public void propertyChange(java.beans.PropertyChangeEvent evt)
+            {
                 cipherFileChooserPropertyChange(evt);
             }
         });
@@ -288,8 +300,10 @@ public class GUI extends javax.swing.JFrame implements UI
         encryptButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
         encryptButton.setText("Encrypt");
         encryptButton.setEnabled(false);
-        encryptButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        encryptButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 encryptButtonActionPerformed(evt);
             }
         });
@@ -301,8 +315,10 @@ public class GUI extends javax.swing.JFrame implements UI
 
         logButton.setText("Log");
         logButton.setToolTipText("Enable Data Logging");
-        logButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        logButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 logButtonActionPerformed(evt);
             }
         });
@@ -311,8 +327,10 @@ public class GUI extends javax.swing.JFrame implements UI
         printButton.setText("Print");
         printButton.setToolTipText("Log Overal Data");
         printButton.setEnabled(false);
-        printButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        printButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 printButtonActionPerformed(evt);
             }
         });
@@ -321,8 +339,10 @@ public class GUI extends javax.swing.JFrame implements UI
         textButton.setText("Text");
         textButton.setToolTipText("Log Text Data");
         textButton.setEnabled(false);
-        textButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        textButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 textButtonActionPerformed(evt);
             }
         });
@@ -331,8 +351,10 @@ public class GUI extends javax.swing.JFrame implements UI
         binButton.setText("Bin");
         binButton.setToolTipText("Log Binary Data");
         binButton.setEnabled(false);
-        binButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        binButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 binButtonActionPerformed(evt);
             }
         });
@@ -341,8 +363,10 @@ public class GUI extends javax.swing.JFrame implements UI
         decButton.setText("Dec");
         decButton.setToolTipText("Log Decimal Data");
         decButton.setEnabled(false);
-        decButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        decButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 decButtonActionPerformed(evt);
             }
         });
@@ -351,8 +375,10 @@ public class GUI extends javax.swing.JFrame implements UI
         hexButton.setText("Hex");
         hexButton.setToolTipText("Log Hexadecimal Data");
         hexButton.setEnabled(false);
-        hexButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        hexButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 hexButtonActionPerformed(evt);
             }
         });
@@ -361,8 +387,10 @@ public class GUI extends javax.swing.JFrame implements UI
         charButton.setText("Char");
         charButton.setToolTipText("Log Character Data");
         charButton.setEnabled(false);
-        charButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        charButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 charButtonActionPerformed(evt);
             }
         });
@@ -371,8 +399,10 @@ public class GUI extends javax.swing.JFrame implements UI
         verboseButton.setText("Verbose");
         verboseButton.setToolTipText("Logs more run details");
         verboseButton.setEnabled(false);
-        verboseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        verboseButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 verboseButtonActionPerformed(evt);
             }
         });
@@ -381,8 +411,10 @@ public class GUI extends javax.swing.JFrame implements UI
         debugButton.setText("Debug");
         debugButton.setToolTipText("Log Debug Data");
         debugButton.setEnabled(false);
-        debugButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        debugButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 debugButtonActionPerformed(evt);
             }
         });
@@ -458,10 +490,33 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
     {//GEN-HEADEREND:event_inputFileChooserActionPerformed
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
+        if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+        {
+            if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+            {
+                for (File file:inputFileChooser.getSelectedFiles()) 
+                {
+                    try { Desktop.getDesktop().open(file); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage()); }
+                }
+            }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_inputFileChooserActionPerformed
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_cipherFileChooserActionPerformed
     {//GEN-HEADEREND:event_cipherFileChooserActionPerformed
+        this.fileProgressBar.setValue(0);
+        this.filesProgressBar.setValue(0);
+        if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if ( cipherFileChooser.getSelectedFile().isFile() ) 
+            {
+                try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage()); }
+            }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_cipherFileChooserActionPerformed
 
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)//GEN-FIRST:event_cipherFileChooserPropertyChange
