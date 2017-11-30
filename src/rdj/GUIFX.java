@@ -164,7 +164,6 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         );
-        
         cipherFileChooser = new JFileChooser();
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
