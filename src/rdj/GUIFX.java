@@ -249,7 +249,7 @@ public class GUIFX extends Application implements UI, Initializable
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete file(s)?", "Choose", JOptionPane.YES_NO_OPTION);
+        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
         if (selectedOption == JOptionPane.YES_OPTION)
         {
             if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
@@ -269,7 +269,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void cipherFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete file(s)?", "Choose", JOptionPane.YES_NO_OPTION);
+        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
         if (selectedOption == JOptionPane.YES_OPTION)
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
