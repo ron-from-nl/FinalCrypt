@@ -22,6 +22,7 @@
 
 package rdj;
 
+import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -260,8 +261,8 @@ public class GUIFX extends Application implements UI, Initializable
                     {
                         try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                     }
-                    inputFileChooser.rescanCurrentDirectory();
-                    cipherFileChooser.rescanCurrentDirectory();
+                    inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                    cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 }
             }
         }        
@@ -276,8 +277,8 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 File file = cipherFileChooser.getSelectedFile();
                 try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
+                inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
         }
     }                                               
@@ -471,6 +472,7 @@ public class GUIFX extends Application implements UI, Initializable
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
 
+                encryptionStarted();
                 finalCrypt.encryptFiles();
 
 ////                SwingWorker version of FinalCrypt
@@ -640,14 +642,30 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void status(String status)
     {
-        Platform.runLater(new Runnable()
+
+
+
+        PlatformImpl.runAndWait(new Runnable()
         {
-            @Override public void run()
+            @Override
+//            @SuppressWarnings({"static-access"})
+            public void run()
             {
                 statusLabel.setText(status);
                 log(status);
             }
         });
+
+
+
+//        Platform.runLater(new Runnable()
+//        {
+//            @Override public void run()
+//            {
+//                statusLabel.setText(status);
+//                log(status);
+//            }
+//        });
     }
 
     @Override
@@ -706,7 +724,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @Override
-    public void encryptionEnded()
+    public void encryptionFinished()
     {
         Platform.runLater(new Runnable()
         {
@@ -720,8 +738,8 @@ public class GUIFX extends Application implements UI, Initializable
                 if ((finalCrypt.getDebug()) && (finalCrypt.getFilesBytesTotal() != 0))  { log("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor\n"); }
                 if (finalCrypt.getFileBytesTotal() != 0)                                { fileProgressBar.setProgress((finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal())); }
                 if (finalCrypt.getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal())); } // 50% becomes 0.5
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
+                inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
         });
     }    

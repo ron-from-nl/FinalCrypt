@@ -122,6 +122,7 @@ public class CLUI implements UI
         }
         
         // Start Encryption
+        this.encryptionStarted();
         finalCrypt.encryptFiles();
 //      SwingWorker version of FinalCrypt
 //        finalCrypt.doInBackground();
@@ -190,7 +191,7 @@ public class CLUI implements UI
     @Override
     public void encryptionStarted() 
     {
-        log("Encryption Started\n");
+        status("Encryption Started\n");
     }
 
     @Override
@@ -200,8 +201,8 @@ public class CLUI implements UI
     }
     
     @Override
-    public void encryptionEnded()
+    public void encryptionFinished()
     {
-        log("Encryption Finished\n");
+        status("Encryption Finished\n");
     }
 }

@@ -22,6 +22,7 @@
 
 package rdj;
 
+import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -29,9 +30,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
@@ -491,8 +495,8 @@ public class GUI extends javax.swing.JFrame implements UI
                     {
                         try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                     }
-                    inputFileChooser.rescanCurrentDirectory();
-                    cipherFileChooser.rescanCurrentDirectory();
+                    inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                    cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 }
             }
         }        
@@ -507,8 +511,8 @@ public class GUI extends javax.swing.JFrame implements UI
             {
                 File file = cipherFileChooser.getSelectedFile();
                 try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
+                inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
         }
     }                                               
@@ -691,6 +695,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 fileProgressBar.setValue(0);
                 filesProgressBar.setValue(0);
 
+                encryptionStarted();
                 finalCrypt.encryptFiles();
 
 ////                SwingWorker version of FinalCrypt
@@ -947,51 +952,51 @@ public class GUI extends javax.swing.JFrame implements UI
     @Override
     public void log(final String message)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 logTextArea.append(message);
                 logScroller.getVerticalScrollBar().setValue(logScroller.getVerticalScrollBar().getMaximum());
-            }
-        });
+//            }
+//        });
     }
 
     @Override
     public void error(final String message)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 status(message);
-            }
-        });
+//            }
+//        });
     }
 
     @Override
     synchronized public void status(final String status)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 statusLabel.setText(status);
                 log(status);
-            }
-        });
+//            }
+//        });
     }
-
+        
     @Override
     public void println(String message)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 System.out.println(message);
-            }
-        });
+//            }
+//        });
     }
 
     @Override
@@ -1008,57 +1013,57 @@ public class GUI extends javax.swing.JFrame implements UI
     @Override
     public void encryptionStarted()
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 status("Encryption Started\n");
                 encryptButton.setEnabled(false);
                 fileProgressBar.setValue(0);
                 filesProgressBar.setValue(0);
                 inputFileChooser.rescanCurrentDirectory();
                 cipherFileChooser.rescanCurrentDirectory();
-            }
-        });
+//            }
+//        });
     }
 
     // Threaded version of FinalCrypt
     @Override
     public void encryptionProgress(final int fileProgressPercent, final int filesProgressPercent)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 if (finalCrypt.getDebug()) { println("Progress File : " + fileProgressPercent + "%\n"); }
                 if (finalCrypt.getDebug()) { println("Progress Files: " + filesProgressPercent + "%\n"); }
                 fileProgressBar.setValue(fileProgressPercent);
                 filesProgressBar.setValue(filesProgressPercent);
-            }
-        });
+//            }
+//        });
     }
      
 //  SwingWorker version of FinalCrypt     
     public void setProgress(Integer newValue) 
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
 //                if (finalCrypt.getDebug()) { println("Progress File : " + newValue + "%\n"); }
                 if (finalCrypt.getDebug()) { println("Progress Files: " + newValue + "%\n"); }
                 fileProgressBar.setValue(newValue);
-            }
-        });
+//            }
+//        });
     }
 
     @Override
-    synchronized public void encryptionEnded()
+    synchronized public void encryptionFinished()
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
                 status("Encryption Finished\n");
                 encryptButton.setEnabled(true);
                 if ((finalCrypt.getDebug()) && (finalCrypt.getFileBytesTotal() != 0))   { println("Progress File : " +  (int)(finalCrypt.getFileBytesEncrypted()  / (finalCrypt.getFileBytesTotal()  / 100.0)) + "%"); }
@@ -1068,10 +1073,10 @@ public class GUI extends javax.swing.JFrame implements UI
                 
                 if (finalCrypt.getFileBytesTotal() != 0)    fileProgressBar.setValue(                                   (int)(finalCrypt.getFileBytesEncrypted() /  (finalCrypt.getFileBytesTotal() / 100.0)));
                 if (finalCrypt.getFilesBytesTotal() != 0)   filesProgressBar.setValue(                                  (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal()  / 100.0)));
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
-            }
-        });
+                inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+//            }
+//        });
     }
 
 //// SwingWorker Method

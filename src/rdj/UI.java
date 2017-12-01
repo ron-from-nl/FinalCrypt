@@ -30,6 +30,6 @@ public interface UI
     public void println(String message);
     public void encryptionGraph(int value);
     public void encryptionProgress(int filesProgressPercent, int fileProgressPercent);
-    public void encryptionEnded();
+    public void encryptionFinished();
     public void encryptionStarted();
 }

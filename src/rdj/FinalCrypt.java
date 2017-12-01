@@ -22,6 +22,8 @@
 
 package rdj;
 
+import com.sun.javafx.application.PlatformImpl;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
+import javafx.application.Platform;
 
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
@@ -120,7 +123,7 @@ public class FinalCrypt  extends Thread
         
     public void encryptFiles()
     {
-        ui.encryptionStarted();
+//        ui.encryptionStarted();
         // Get the all files size total
         
         // Reset the Bytes Progress Counters
@@ -172,6 +175,8 @@ public class FinalCrypt  extends Thread
                     try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
 
     //              Status
+    
+        
                     ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
 
                     // Prints printByte Header ones                
@@ -297,7 +302,7 @@ public class FinalCrypt  extends Thread
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
-        ui.encryptionEnded();
+        ui.encryptionFinished();
     }
     
     private ByteBuffer encryptBuffer(ByteBuffer inputFileBuffer, ByteBuffer cipherFileBuffer)
