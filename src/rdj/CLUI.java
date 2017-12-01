@@ -123,9 +123,8 @@ public class CLUI implements UI
         
         // Start Encryption
         this.encryptionStarted();
-        finalCrypt.encryptFiles();
-//      SwingWorker version of FinalCrypt
-//        finalCrypt.doInBackground();
+//        finalCrypt.encryptSelection();
+          finalCrypt.encryptSelection(inputFilesPathList, cipherFilePath);
     }
 
     public static void main(String[] args)

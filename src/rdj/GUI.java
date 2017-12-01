@@ -491,10 +491,14 @@ public class GUI extends javax.swing.JFrame implements UI
             {
                 if ( inputFileChooser.getSelectedFiles().length > 0 ) 
                 {
-                    for (File file:inputFileChooser.getSelectedFiles()) 
-                    {
-                        try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
-                    }
+                    ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
+                    boolean delete = true;
+                    String wildcard = "*";
+                      finalCrypt.deleteSelection(pathList, delete, wildcard);
+//                    for (File file:inputFileChooser.getSelectedFiles()) 
+//                    {
+//                        try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+//                    }
                     inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                     cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 }
@@ -696,7 +700,8 @@ public class GUI extends javax.swing.JFrame implements UI
                 filesProgressBar.setValue(0);
 
                 encryptionStarted();
-                finalCrypt.encryptFiles();
+//                finalCrypt.encryptSelection();
+                finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
 
 ////                SwingWorker version of FinalCrypt
 //                try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
