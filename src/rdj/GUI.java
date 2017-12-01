@@ -198,7 +198,6 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooser.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
         inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
-        inputFileChooser.setFocusable(false);
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -254,7 +253,6 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooser.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
         cipherFileChooser.setFont(cipherFileChooser.getFont().deriveFont((float)10));
         cipherFileChooser.setToolTipText("");
-        cipherFileChooser.setFocusable(false);
         cipherFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cipherFileChooserActionPerformed(evt);
@@ -668,7 +666,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 // Validate and create output files
                 for(Path inputFilePathItem : inputFilesPathList)
                 {
-                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
+                    finalCrypt.isValidFile(inputFilePathItem, false, true);
                     if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
 
 //                    // Validate output file

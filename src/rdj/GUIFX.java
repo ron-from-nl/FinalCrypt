@@ -173,6 +173,7 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        inputFileChooser.setFocusable(true);
         inputFileChooser.addPropertyChangeListener
         (
             // New Object
@@ -207,6 +208,7 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileChooser.setFocusable(true);
         cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         cipherFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        cipherFileChooser.setFocusable(true);
         cipherFileChooser.addPropertyChangeListener
         (
             new java.beans.PropertyChangeListener() 
@@ -444,7 +446,7 @@ public class GUIFX extends Application implements UI, Initializable
                 // Validate and create output files
                 for(Path inputFilePathItem : inputFilesPathList)
                 {
-                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); } // Compare inputfile to cipherfile
+                    finalCrypt.isValidFile(inputFilePathItem, false, true);
                     if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
 
 //                    // Validate output file

@@ -167,7 +167,6 @@
                       </FontInfo>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Right mousclick for Refresh"/>
-                    <Property name="focusable" type="boolean" value="false"/>
                     <Property name="multiSelectionEnabled" type="boolean" value="true"/>
                   </Properties>
                   <Events>
@@ -243,7 +242,6 @@
                       </FontInfo>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value=""/>
-                    <Property name="focusable" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cipherFileChooserActionPerformed"/>
