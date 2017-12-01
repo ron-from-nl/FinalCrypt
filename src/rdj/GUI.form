@@ -158,9 +158,9 @@
                 </Component>
                 <Component class="javax.swing.JFileChooser" name="inputFileChooser">
                   <Properties>
-                    <Property name="dialogType" type="int" value="2"/>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
                     <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="fileSelectionMode" type="int" value="2"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                       <FontInfo relative="true">
                         <Font component="inputFileChooser" property="font" relativeSize="false" size="10"/>
@@ -236,6 +236,7 @@
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
                     <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="fileSelectionMode" type="int" value="2"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                       <FontInfo relative="true">
                         <Font component="cipherFileChooser" property="font" relativeSize="false" size="10"/>

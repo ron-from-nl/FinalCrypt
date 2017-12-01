@@ -141,102 +141,103 @@ public class FinalCrypt  extends Thread
         // Encrypt Files loop
         for (Path inputFilePath:inputFilesPathList)
         {
-            if ((inputFilePath.compareTo(cipherFilePath) != 0))
+            if (! Files.isDirectory(inputFilePath))
             {
-                fileBytesEncrypted = 0;
-
-                // Get the filesize total
-                try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
-                if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
-
-//              a       a.bit
-//              a.bit   a.bit.bit.bit
-//              a.txt   a.txt.bit.txt        
-                
-                String suffix = new String("");
-                String extension = new String("");
-                
-                if (inputFilePath.getFileName().toString().contains("."))
+                if ((inputFilePath.compareTo(cipherFilePath) != 0))
                 {
-                    extension = inputFilePath.getFileName().toString().substring(inputFilePath.getFileName().toString().lastIndexOf('.'), inputFilePath.getFileName().toString().length());
-                    suffix = ".bit" + extension; // bit stands for Brigit, Bridge It and Bit (& Bytes) 
+                    fileBytesEncrypted = 0;
+
+                    // Get the filesize total
+                    try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
+                    if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
+
+    //              a       a.bit
+    //              a.bit   a.bit.bit.bit
+    //              a.txt   a.txt.bit.txt        
+
+                    String suffix = new String("");
+                    String extension = new String("");
+
+                    if (inputFilePath.getFileName().toString().contains("."))
+                    {
+                        extension = inputFilePath.getFileName().toString().substring(inputFilePath.getFileName().toString().lastIndexOf('.'), inputFilePath.getFileName().toString().length());
+                        suffix = ".bit" + extension; // bit stands for Brigit, Bridge It and Bit (& Bytes) 
+                    }
+                    else
+                    {
+                        suffix = ".bit";
+                    }
+                    outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + suffix);
+
+                    try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
+
+    //              Status
+                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
+
+                    // Prints printByte Header ones                
+                    if ( print )
+                    {
+                        ui.log(" ----------------------------------------------------------------------\n");
+                        ui.log("|          |       Input       |      Cipher       |      Output       |\n");
+                        ui.log("| ---------|-------------------|-------------------|-------------------|\n");
+                        ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
+                        ui.log("|----------|-------------------|-------------------|-------------------|\n");
+                    }
+
+                boolean inputFileEnded = false;
+                long inputFileChannelPos = 0;
+                long cipherFileChannelPos = 0;                
+                long cipherFileChannelRead = 0;                
+                final ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
+                final ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
+    //            final ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();                
+    //                final ByteBuffer outputFileBuffer;
+
+
+
+
+
+
+                // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
+                while ( ! inputFileEnded )
+                {
+                    //open inputFile
+                    try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    {
+                        // Fill up inputFileBuffer
+                        inputFileChannel.position(inputFileChannelPos); if (debug & verbose) { ui.println("\nInput  Channel Pos: " + Long.toString(inputFileChannelPos)); }
+                        inputFileChannelPos += inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); //inputFileChannelPos = inputFileChannel.position();
+                        if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
+                        inputFileChannel.close();
+                    } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+
+                    // Open cipherFile
+                    try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    {
+                        // Fill up cipherFileBuffer
+                        cipherFileChannel.position(cipherFileChannelPos); if (debug & verbose) { ui.println("Cipher Channel Pos: " + Long.toString(cipherFileChannelPos)); }
+                        cipherFileChannelRead = cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;//cipherFileChannelPos = cipherFileChannel.position();
+                        if ( cipherFileChannelRead < cipherFileBufferSize ) { cipherFileChannelPos = 0; cipherFileChannel.position(0); cipherFileChannelRead += cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;}
+                        cipherFileBuffer.flip();
+
+                        cipherFileChannel.close();
+                    } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+
+                    // Open outputFile for writing
+                    try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
+                    {
+                        // Encrypt inputBuffer and fill up outputBuffer
+                        ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
+                        outputFileChannel.write(outputFileBuffer);
+                        outputFileBuffer.clear();
+                        inputFileBuffer.clear();
+                        cipherFileBuffer.clear();
+
+                        if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
+                        outputFileChannel.close();
+                    } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
                 }
-                else
-                {
-                    suffix = ".bit";
-                }
-                outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName() + suffix);
-                
-                try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
-
-//              Status
-                ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
-
-                // Prints printByte Header ones                
-                if ( print )
-                {
-                    ui.log(" ----------------------------------------------------------------------\n");
-                    ui.log("|          |       Input       |      Cipher       |      Output       |\n");
-                    ui.log("| ---------|-------------------|-------------------|-------------------|\n");
-                    ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
-                    ui.log("|----------|-------------------|-------------------|-------------------|\n");
-                }
-
-            boolean inputFileEnded = false;
-            long inputFileChannelPos = 0;
-            long cipherFileChannelPos = 0;                
-            long cipherFileChannelRead = 0;                
-            final ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
-            final ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-//            final ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();                
-//                final ByteBuffer outputFileBuffer;
-
-                    
-
-
-
-                    
-            // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
-            while ( ! inputFileEnded )
-            {
-                //open inputFile
-                try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
-                {
-                    // Fill up inputFileBuffer
-                    inputFileChannel.position(inputFileChannelPos); if (debug & verbose) { ui.println("\nInput  Channel Pos: " + Long.toString(inputFileChannelPos)); }
-                    inputFileChannelPos += inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); //inputFileChannelPos = inputFileChannel.position();
-                    if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
-                    inputFileChannel.close();
-                } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-
-                // Open cipherFile
-                try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-                {
-                    // Fill up cipherFileBuffer
-                    cipherFileChannel.position(cipherFileChannelPos); if (debug & verbose) { ui.println("Cipher Channel Pos: " + Long.toString(cipherFileChannelPos)); }
-                    cipherFileChannelRead = cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;//cipherFileChannelPos = cipherFileChannel.position();
-                    if ( cipherFileChannelRead < cipherFileBufferSize ) { cipherFileChannelPos = 0; cipherFileChannel.position(0); cipherFileChannelRead += cipherFileChannel.read(cipherFileBuffer); cipherFileChannelPos += cipherFileChannelRead;}
-                    cipherFileBuffer.flip();
-
-                    cipherFileChannel.close();
-                } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-
-                // Open outputFile for writing
-                try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
-                {
-                    // Encrypt inputBuffer and fill up outputBuffer
-                    ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
-                    outputFileChannel.write(outputFileBuffer);
-                    outputFileBuffer.clear();
-                    inputFileBuffer.clear();
-                    cipherFileBuffer.clear();
-
-                    if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
-                    outputFileChannel.close();
-                } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
-            }
-            if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
-                
+                if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
 
 
 
@@ -244,57 +245,56 @@ public class FinalCrypt  extends Thread
 
 
 
-//                // Open outputFile for writing
-//                try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
-//                {
-//                    //open dataFile
-//                    try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
-//                    {
-//                        // Open cipherFile
-//                        try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-//                        {
-//                            // Fill dataBuffer & cipherBuffer (Every run (..Channel.read() fills up the entire buffer)
-//                            while ( ! inputFileEnded )
-//                            {
-//                                // Fill up inputFileBuffer
-//                                if (debug) { ui.println("\nInp Ch Pos: " + Long.toString(inputFileChannel.position())); }
-//                                inputFileChannelPos = inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip();
-//                                if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
-////                                if ( inputFileBuffer.limit() < inputFileBufferSize ) { inputFileEnded = true; }
-//
-//                                // Fill up cipherFileBuffer
-//                                if (debug) { ui.println("Cip Ch Pos: " + Long.toString(cipherFileChannel.position())); }
-//                                cipherFileChannelPos = cipherFileChannel.read(cipherFileBuffer);
-//                                if ( cipherFileChannelPos < cipherFileBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
-//                                cipherFileBuffer.flip();
-//
-//
-//                                // Encrypt inputBuffer and fill up outputBuffer
-//                                ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
-//                                outputFileChannel.write(outputFileBuffer);
-//
-//                                if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
-//
-//                                outputFileBuffer.clear();
-//                                inputFileBuffer.clear();
-//                                cipherFileBuffer.clear();
-//                            }
-//
-//                            if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
-//                            cipherFileChannel.close();
-//                        } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-//                        inputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-//                    outputFileChannel.close();
-//                } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
-                
-                
-                
-                
-                
-                
-                
-            } // input != cipher
+
+    //                // Open outputFile for writing
+    //                try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
+    //                {
+    //                    //open dataFile
+    //                    try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+    //                    {
+    //                        // Open cipherFile
+    //                        try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+    //                        {
+    //                            // Fill dataBuffer & cipherBuffer (Every run (..Channel.read() fills up the entire buffer)
+    //                            while ( ! inputFileEnded )
+    //                            {
+    //                                // Fill up inputFileBuffer
+    //                                if (debug) { ui.println("\nInp Ch Pos: " + Long.toString(inputFileChannel.position())); }
+    //                                inputFileChannelPos = inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip();
+    //                                if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
+    ////                                if ( inputFileBuffer.limit() < inputFileBufferSize ) { inputFileEnded = true; }
+    //
+    //                                // Fill up cipherFileBuffer
+    //                                if (debug) { ui.println("Cip Ch Pos: " + Long.toString(cipherFileChannel.position())); }
+    //                                cipherFileChannelPos = cipherFileChannel.read(cipherFileBuffer);
+    //                                if ( cipherFileChannelPos < cipherFileBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
+    //                                cipherFileBuffer.flip();
+    //
+    //
+    //                                // Encrypt inputBuffer and fill up outputBuffer
+    //                                ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
+    //                                outputFileChannel.write(outputFileBuffer);
+    //
+    //                                if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
+    //
+    //                                outputFileBuffer.clear();
+    //                                inputFileBuffer.clear();
+    //                                cipherFileBuffer.clear();
+    //                            }
+    //
+    //                            if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
+    //                            cipherFileChannel.close();
+    //                        } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+    //                        inputFileChannel.close();
+    //                    } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+    //                    outputFileChannel.close();
+    //                } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
+
+
+
+
+                } // input != cipher
+            } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
         ui.encryptionEnded();
