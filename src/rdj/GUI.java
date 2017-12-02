@@ -513,8 +513,13 @@ public class GUI extends javax.swing.JFrame implements UI
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
             {
-                File file = cipherFileChooser.getSelectedFile();
-                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+                ArrayList<Path> pathList = finalCrypt.getPathList(cipherFileChooser.getSelectedFiles());
+                boolean delete = true;
+                String wildcard = "*";
+                finalCrypt.deleteSelection(pathList, delete, wildcard);
+
+//                File file = cipherFileChooser.getSelectedFile();
+//                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }

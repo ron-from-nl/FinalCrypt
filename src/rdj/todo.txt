@@ -1,2 +1,2 @@
-Recursive Delete for cipherFileChooser                      (see: GUI/GUIFX.inputFileDeleteButtonActionPerformed() )
+Recursive Delete done                      (see: GUI/GUIFX.inputFileDeleteButtonActionPerformed() )
 Recursive Encryption by means of FinalCrypt.getPathList     (convert GUI/GUIFX.inputFileList to largerlist before sending to FinalCrypt.encryptSelection)

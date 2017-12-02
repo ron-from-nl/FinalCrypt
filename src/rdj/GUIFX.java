@@ -260,7 +260,7 @@ public class GUIFX extends Application implements UI, Initializable
                     ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
                     boolean delete = true;
                     String wildcard = "*";
-                      finalCrypt.deleteSelection(pathList, delete, wildcard);
+                    finalCrypt.deleteSelection(pathList, delete, wildcard);
 //                    for (File file:inputFileChooser.getSelectedFiles()) 
 //                    {
 //                        try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
@@ -279,8 +279,14 @@ public class GUIFX extends Application implements UI, Initializable
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
             {
-                File file = cipherFileChooser.getSelectedFile();
-                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+                ArrayList<Path> pathList = new ArrayList<Path>();
+                pathList.add(cipherFileChooser.getSelectedFile().toPath());
+                boolean delete = true;
+                String wildcard = "*";
+                finalCrypt.deleteSelection(pathList, delete, wildcard);
+
+//                File file = cipherFileChooser.getSelectedFile();
+//                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
