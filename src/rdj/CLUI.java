@@ -22,6 +22,7 @@
 
 package rdj;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -85,7 +86,15 @@ public class CLUI implements UI
 
 
         // Validate and create output files
-        for(Path inputFilePathItem : inputFilesPathList)
+//                Add the inputFilesPath to List from inputFileChooser
+
+
+//      Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
+        ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, "*");
+
+//        for(Path inputFilePathItem : inputFilesPathList)
+//        for(Path inputFilePathItem : finalCrypt.getExtendedPathList(inputFilesPathList, "*"))
+        for(Path inputFilePathItem : finalCrypt.getExtendedPathList(inputFilesPathListExtended, "*"))
         {
             if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
             if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
@@ -110,7 +119,8 @@ public class CLUI implements UI
         catch (IOException ex) { error("if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())" + ex + "\n"); }
         
         // Set the files
-        finalCrypt.setInputFilesPathList(inputFilesPathList);
+//        finalCrypt.setInputFilesPathList(inputFilesPathList);
+        finalCrypt.setInputFilesPathList(inputFilesPathListExtended);
         finalCrypt.setCipherFilePath(cipherFilePath);
 //        finalCrypt.setOutputFilePath(outputFilePath);
         
@@ -152,7 +162,7 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
         log("Parameters:\n");
-        log("            <-i \"inputfile\">      The datafile you want to encrypt.\n");
+        log("            <-i \"file / Dir\">     The file or dir you want to encrypt (directory encrypts recursive!).\n");
         log("            <-c \"cipherfile\">     The file that encrypts your datafile. Keep cipherfile SECRET!!!\n\n");
         log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);

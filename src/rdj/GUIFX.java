@@ -28,7 +28,6 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -55,13 +54,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 public class GUIFX extends Application implements UI, Initializable
@@ -123,6 +117,8 @@ public class GUIFX extends Application implements UI, Initializable
     private ToggleButton debugButton;
     private JButton inputFileDeleteButton;
     private JButton cipherFileDeleteButton;
+    private boolean hasEncryptableItem;
+    private boolean hasCipherItem;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -259,11 +255,12 @@ public class GUIFX extends Application implements UI, Initializable
                 {
                     ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
                     boolean delete = true;
+                    boolean returnpathlist = false;
                     String wildcard = "*";
-                    finalCrypt.deleteSelection(pathList, delete, wildcard);
-//                    for (File file:inputFileChooser.getSelectedFiles()) 
+                    finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+//                    for (File path:inputFileChooser.getSelectedFiles()) 
 //                    {
-//                        try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+//                        try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
 //                    }
                     inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                     cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
@@ -279,14 +276,15 @@ public class GUIFX extends Application implements UI, Initializable
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
             {
-                ArrayList<Path> pathList = new ArrayList<Path>();
+                ArrayList<Path> pathList = new ArrayList<>();
                 pathList.add(cipherFileChooser.getSelectedFile().toPath());
                 boolean delete = true;
+                boolean returnpathlist = false;
                 String wildcard = "*";
-                finalCrypt.deleteSelection(pathList, delete, wildcard);
+                finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
 
-//                File file = cipherFileChooser.getSelectedFile();
-//                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+//                File path = cipherFileChooser.getSelectedFile();
+//                try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
@@ -298,26 +296,21 @@ public class GUIFX extends Application implements UI, Initializable
     {                                                            
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
+        hasEncryptableItem = false;
         
-        boolean hasEncryptableItem = false;
-        boolean hasCipherItem = false;
-
-        // En/Disable FileChooser deletebutton
+//      En/Disable FileChooser deletebutton
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null)) {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
-        
-        
-        // En/Disable encryptButton        
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
+//      En/Disable hasEncryptableItems
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
-            for (File file:inputFileChooser.getSelectedFiles())
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
             {
-                if (Files.isRegularFile(file.toPath())) { hasEncryptableItem = true; }
+                if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
-            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
-            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }
-        } else { encryptButton.setDisable(true); }
-    }                                               
-
+        }
+        checkEncryptionReady();
+    }
+    
 //  FileChooser Listener methods
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
     {                                                     
@@ -336,29 +329,39 @@ public class GUIFX extends Application implements UI, Initializable
         } else { encryptButton.setDisable(true); }
     }                                                
 
-    
+/////////////////////////////////////////////////////////////////////////////////////////////
     
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
     {                                                     
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
 
-        boolean hasEncryptableItem = false;
-        boolean hasCipherItem = false;
-
         // En/Disable FileChooser deletebutton
         if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null)) {cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false);}
+        // En/Disable hasCipherItem
+        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if (
+                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) &&
+                    (cipherFileChooser.getSelectedFile().length() > 0)
+               )
+            { hasCipherItem = true; } else { hasCipherItem = false; }
+        }
         
+        checkEncryptionReady();
+    }                                                
+
+    private void checkEncryptionReady()
+    {
+        // En/Disable encryptButton        
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
-            for (File file:inputFileChooser.getSelectedFiles())
-            {
-                if (Files.isRegularFile(file.toPath())) { hasEncryptableItem = true; }
-            }
+            
+//            CipherFile
             File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
             if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }
         } else { encryptButton.setDisable(true); }
-    }                                                
+    }
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      
@@ -397,14 +400,14 @@ public class GUIFX extends Application implements UI, Initializable
             // Add Delete button
             if (component instanceof JButton)
             {
-                if (((JButton) component).getActionCommand().toString().equalsIgnoreCase("New Folder"))
+                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
                 {
 //                    component.getParent().add(this.inputFileDeleteButton);
-                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); };
+                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
                 }
             }
             
-//            // Remove the file textfield
+//            // Remove the path textfield
 //            if (component instanceof JTextField)
 //            {
 //                ((JTextField)component).setEnabled(false);
@@ -451,8 +454,14 @@ public class GUIFX extends Application implements UI, Initializable
                 status("Validating files\n");
                 Path outputFilePath = null;
 
-                // Add the inputFilesPath to List from inputFileChooser
-                ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+//                // Add the inputFilesPath to List from inputFileChooser
+//                ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+
+//                Add the inputFilesPath to List from inputFileChooser
+                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*");
+
+                // makes double additions
+//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
 
                 // Validate and create output files
                 for(Path inputFilePathItem : inputFilesPathList)
@@ -460,7 +469,7 @@ public class GUIFX extends Application implements UI, Initializable
                     finalCrypt.isValidFile(inputFilePathItem, false, true);
                     if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
 
-//                    // Validate output file
+//                    // Validate output path
 //                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
 //                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); }
                 }
@@ -468,7 +477,7 @@ public class GUIFX extends Application implements UI, Initializable
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
 
-                // Resize file Buffers
+                // Resize path Buffers
                 try 
                 {
                     if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())

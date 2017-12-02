@@ -493,11 +493,12 @@ public class GUI extends javax.swing.JFrame implements UI
                 {
                     ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
                     boolean delete = true;
+                    boolean returnpathlist = false;
                     String wildcard = "*";
-                      finalCrypt.deleteSelection(pathList, delete, wildcard);
-//                    for (File file:inputFileChooser.getSelectedFiles()) 
+                      finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+//                    for (File path:inputFileChooser.getSelectedFiles()) 
 //                    {
-//                        try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+//                        try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
 //                    }
                     inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                     cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
@@ -513,13 +514,15 @@ public class GUI extends javax.swing.JFrame implements UI
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
             {
-                ArrayList<Path> pathList = finalCrypt.getPathList(cipherFileChooser.getSelectedFiles());
+                ArrayList<Path> pathList = new ArrayList<Path>();
+                pathList.add(cipherFileChooser.getSelectedFile().toPath());
                 boolean delete = true;
+                boolean returnpathlist = false;
                 String wildcard = "*";
-                finalCrypt.deleteSelection(pathList, delete, wildcard);
+                finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
 
-//                File file = cipherFileChooser.getSelectedFile();
-//                try { Files.delete(file.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
+//                File path = cipherFileChooser.getSelectedFile();
+//                try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
@@ -541,9 +544,10 @@ public class GUI extends javax.swing.JFrame implements UI
         // En/Disable encryptButton        
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
-            for (File file:inputFileChooser.getSelectedFiles())
+//            for (File path:inputFileChooser.getSelectedFiles())
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
             {
-                if (Files.isRegularFile(file.toPath())) { hasEncryptableItem = true; }
+                if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
             File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
             if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
@@ -627,7 +631,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 }
             }
             
-//            // Remove the file textfield
+//            // Remove the path textfield
 //            if (component instanceof JTextField)
 //            {
 //                ((JTextField)component).setEnabled(false);
@@ -673,16 +677,23 @@ public class GUI extends javax.swing.JFrame implements UI
                 status("Validating files\n");
                 Path outputFilePath = null;
 
-                // Add the inputFilesPath to List from inputFileChooser
-                ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+//                // Add the inputFilesPath to List from inputFileChooser
+//                ArrayList<Path> inputFilesPathList = new ArrayList<>(); 
+//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
 
+
+//                Add the inputFilesPath to List from inputFileChooser
+                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*");
+//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
+
+                
                 // Validate and create output files
                 for(Path inputFilePathItem : inputFilesPathList)
                 {
                     finalCrypt.isValidFile(inputFilePathItem, false, true);
-                    if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
+                    if ( inputFilePathItem.toAbsolutePath().compareTo(cipherFileChooser.getSelectedFile().toPath().toAbsolutePath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
 
-//                    // Validate output file
+//                    // Validate output path
 //                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
 //                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); }
                 }
@@ -690,7 +701,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
 
-                // Resize file Buffers
+                // Resize path Buffers
                 try 
                 {
                     if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
@@ -854,19 +865,19 @@ public class GUI extends javax.swing.JFrame implements UI
 //        {
 //            if ( inputFileChooser.getSelectedFiles().length > 0 ) 
 //            {
-//                for (File file:inputFileChooser.getSelectedFiles()) 
+//                for (File path:inputFileChooser.getSelectedFiles()) 
 //                {
 //                    try
 //                    {
-//                        if (Files.deleteIfExists(file.toPath()))
+//                        if (Files.deleteIfExists(path.toPath()))
 //                        {
-//                            status("File: " + file.getName() + " deleted");
+//                            status("File: " + path.getName() + " deleted");
 //                        }
 //                        else
 //                        {
-//                            status("File: " + file.getName() + " not deleted");
+//                            status("File: " + path.getName() + " not deleted");
 //                        }
-//                    } catch (IOException ex) { error("Error: Files.delete(file.toPath()); " + ex.getMessage()); }
+//                    } catch (IOException ex) { error("Error: Files.delete(path.toPath()); " + ex.getMessage()); }
 //                }
 //            }
 //        }
