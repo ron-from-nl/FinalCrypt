@@ -33,7 +33,7 @@
                                        <children>
                                           <AnchorPane maxHeight="40.0" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0">
                                              <children>
-                                                <Label fx:id="inputFileChooserLabel" alignment="CENTER" contentDisplay="CENTER" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" text="Select the files you want to encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <Label fx:id="inputFileChooserLabel" alignment="CENTER" contentDisplay="CENTER" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" text="Select the items you want to encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <font>
                                                       <Font name="Open Sans" size="18.0" />
                                                    </font>

@@ -194,7 +194,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
         inputFileChooserLabel.setFont(new java.awt.Font("Open Sans", 0, 18)); // NOI18N
         inputFileChooserLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        inputFileChooserLabel.setText("Select the files you want to encrypt");
+        inputFileChooserLabel.setText("Select the items you want to encrypt");
         inputFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         inputFileChooser.setControlButtonsAreShown(false);
