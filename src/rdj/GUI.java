@@ -87,6 +87,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 });
         
                 initComponents();
+                
                 try
                 { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
                 catch (ClassNotFoundException ex) { }
@@ -100,6 +101,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
                 int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
                 setLocation(posX, posY);
+                this.setSize(screenDim);
                 
                 finalCrypt = new FinalCrypt(gui);
                 finalCrypt.start();
@@ -495,11 +497,7 @@ public class GUI extends javax.swing.JFrame implements UI
                     boolean delete = true;
                     boolean returnpathlist = false;
                     String wildcard = "*";
-                      finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-//                    for (File path:inputFileChooser.getSelectedFiles()) 
-//                    {
-//                        try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
-//                    }
+                    finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
                     inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                     cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 }
@@ -520,9 +518,6 @@ public class GUI extends javax.swing.JFrame implements UI
                 boolean returnpathlist = false;
                 String wildcard = "*";
                 finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-
-//                File path = cipherFileChooser.getSelectedFile();
-//                try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }

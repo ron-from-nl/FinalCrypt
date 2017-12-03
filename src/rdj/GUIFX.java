@@ -54,8 +54,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 public class GUIFX extends Application implements UI, Initializable
@@ -130,6 +133,7 @@ public class GUIFX extends Application implements UI, Initializable
         
         stage.setScene(scene);
         stage.setTitle("FinalCrypt");
+        stage.setMaximized(true);
         stage.show();
     }
 
@@ -245,9 +249,10 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
-    {                                                            
-        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
+    {
+      int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
         if (selectedOption == JOptionPane.YES_OPTION)
+//        if (dialog.selectedOption == JOptionPane.YES_OPTION)
         {
             if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
             {
@@ -258,10 +263,6 @@ public class GUIFX extends Application implements UI, Initializable
                     boolean returnpathlist = false;
                     String wildcard = "*";
                     finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-//                    for (File path:inputFileChooser.getSelectedFiles()) 
-//                    {
-//                        try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
-//                    }
                     inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                     cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 }
@@ -282,9 +283,6 @@ public class GUIFX extends Application implements UI, Initializable
                 boolean returnpathlist = false;
                 String wildcard = "*";
                 finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-
-//                File path = cipherFileChooser.getSelectedFile();
-//                try { Files.delete(path.toPath()); } catch (IOException ex) { error("Error: Directory NOT empty!\n"); }
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }
