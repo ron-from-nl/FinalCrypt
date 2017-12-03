@@ -1,4 +1,0 @@
-Recursive Delete done                      (see: GUI/GUIFX.inputFileDeleteButtonActionPerformed() )
-Recursive Encryption by means of FinalCrypt.getPathList     (convert GUI/GUIFX.inputFileList to largerlist before sending to FinalCrypt.encryptSelection)
-negate 0 bytes on cipherfile
-trace double encryption
