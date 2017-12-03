@@ -167,7 +167,6 @@ public class FinalCrypt  extends Thread
                     int lastDotPos = inputFilePath.getFileName().toString().lastIndexOf('.'); // -1 no extension
                     int lastPos = inputFilePath.getFileName().toString().length();
                     if (lastDotPos != -1) { extension = inputFilePath.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
-                    ui.status("Extension " + extension + "\n");
 
 //                    outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString().replace(extension, ".") + prefix + extension + suffix);
                     if (!extension.equals(suffix))  { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString() + suffix); }   // Add    .bit
