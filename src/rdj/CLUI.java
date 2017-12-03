@@ -150,7 +150,8 @@ public class CLUI implements UI
 
         log("\n");
         log("Usage:   java -cp FinalCrypt.jar rdj/CLUI [options] <Parameters>\n");
-        log("Options:");
+        log("\n");
+        log("Options:\n");
         log("            [-h] [--help]         Shows this help page.\n");
         log("            [-d] [--debug]        Enables debugging mode.\n");
         log("            [-v] [--verbose]      Enables verbose mode.\n");
@@ -162,8 +163,14 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
         log("Parameters:\n");
-        log("            <-i \"dir/file\">     The dir or file you want to encrypt (dir encrypt recursively!).\n");
-        log("            <-c \"cipherfile\">   The file that encrypts your file(s). Keep cipherfile SECRET!\n\n");
+        log("            <-i \"dir/file\">       The dir or file you want to encrypt (dir encrypt recursively!).\n");
+        log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
+        log("Examples:\n");
+        log("            # Encrypts myfile with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c myphotofile.jpg\n");
+        log("\n");
+        log("            # Encrypts myfile and all content in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n\n");
         log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);
     }
