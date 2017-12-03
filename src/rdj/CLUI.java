@@ -94,14 +94,13 @@ public class CLUI implements UI
 
 //        for(Path inputFilePathItem : inputFilesPathList)
 //        for(Path inputFilePathItem : finalCrypt.getExtendedPathList(inputFilesPathList, "*"))
-        for(Path inputFilePathItem : finalCrypt.getExtendedPathList(inputFilesPathListExtended, "*"))
-        {
-            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
-            if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
-
-//            outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-//            if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); usage(); }
-        }
+//        for(Path inputFilePathItem : finalCrypt.getExtendedPathList(inputFilesPathListExtended, "*"))
+//        for(Path inputFilePathItem : inputFilesPathListExtended)
+//        {
+//            System.err.println("Path: " + inputFilePathItem.getFileName());
+//            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
+//            if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
+//        }
         
         if ( ! finalCrypt.isValidFile(cipherFilePath, false, true) )   { usage(); }
 
@@ -120,9 +119,8 @@ public class CLUI implements UI
         
         // Set the files
 //        finalCrypt.setInputFilesPathList(inputFilesPathList);
-        finalCrypt.setInputFilesPathList(inputFilesPathListExtended);
-        finalCrypt.setCipherFilePath(cipherFilePath);
-//        finalCrypt.setOutputFilePath(outputFilePath);
+//        finalCrypt.setInputFilesPathList(inputFilesPathListExtended);
+//        finalCrypt.setCipherFilePath(cipherFilePath);
         
         if ( finalCrypt.getVerbose() )
         {
@@ -134,7 +132,7 @@ public class CLUI implements UI
         // Start Encryption
         this.encryptionStarted();
 //        finalCrypt.encryptSelection();
-          finalCrypt.encryptSelection(inputFilesPathList, cipherFilePath);
+          finalCrypt.encryptSelection(inputFilesPathListExtended, cipherFilePath);
     }
 
     public static void main(String[] args)
