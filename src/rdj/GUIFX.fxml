@@ -137,43 +137,42 @@
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <ToggleButton fx:id="logButton" mnemonicParsing="false" onAction="#logButtonAction" prefHeight="88.0" prefWidth="413.0" text="Log">
+                              <ToggleButton fx:id="logButton" mnemonicParsing="false" onAction="#logButtonAction" onMouseClicked="#onLogButtonClicked" prefHeight="88.0" prefWidth="413.0" text="Log">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="printButton" disable="true" mnemonicParsing="false" onAction="#printButtonAction" prefHeight="88.0" prefWidth="413.0" text="Print" GridPane.columnIndex="1">
+                              <ToggleButton fx:id="printButton" disable="true" mnemonicParsing="false" onAction="#printButtonAction" prefHeight="88.0" prefWidth="413.0" text="Print" visible="false" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="textButton" disable="true" mnemonicParsing="false" onAction="#textButtonAction" prefHeight="88.0" prefWidth="413.0" text="Text" GridPane.columnIndex="2">
+                              <ToggleButton fx:id="textButton" disable="true" mnemonicParsing="false" onAction="#textButtonAction" prefHeight="88.0" prefWidth="413.0" text="Text" visible="false" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="binButton" disable="true" mnemonicParsing="false" onAction="#binButtonAction" prefHeight="88.0" prefWidth="413.0" text="Binary" GridPane.columnIndex="3">
+                              <ToggleButton fx:id="binButton" disable="true" mnemonicParsing="false" onAction="#binButtonAction" prefHeight="88.0" prefWidth="413.0" text="Binary" visible="false" GridPane.columnIndex="3">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="decButton" disable="true" mnemonicParsing="false" onAction="#decButtonAction" prefHeight="88.0" prefWidth="413.0" text="Decimal" GridPane.columnIndex="4">
+                              <ToggleButton fx:id="decButton" disable="true" mnemonicParsing="false" onAction="#decButtonAction" prefHeight="88.0" prefWidth="413.0" text="Decimal" visible="false" GridPane.columnIndex="4">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="hexButton" disable="true" mnemonicParsing="false" onAction="#hexButtonAction" prefHeight="88.0" prefWidth="413.0" text="Hexadecimal" GridPane.columnIndex="5">
+                              <ToggleButton fx:id="hexButton" disable="true" mnemonicParsing="false" onAction="#hexButtonAction" prefHeight="88.0" prefWidth="413.0" text="Hexadecimal" visible="false" GridPane.columnIndex="5">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="charButton" disable="true" mnemonicParsing="false" onAction="#charButtonAction" prefHeight="88.0" prefWidth="413.0" text="Char" GridPane.columnIndex="6">
+                              <ToggleButton fx:id="charButton" disable="true" mnemonicParsing="false" onAction="#charButtonAction" prefHeight="88.0" prefWidth="413.0" text="Char" visible="false" GridPane.columnIndex="6">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
@@ -188,7 +187,6 @@
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <Slider fx:id="bufferSlider" GridPane.columnIndex="9" />
                            </children>
                         </GridPane>
                         <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">

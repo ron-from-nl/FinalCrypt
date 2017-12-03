@@ -22,20 +22,18 @@
 
 package rdj;
 
-import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.scene.input.MouseButton;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
@@ -89,6 +87,13 @@ public class GUI extends javax.swing.JFrame implements UI
                 });
         
                 initComponents();
+                
+                printButton.setVisible(false);
+                textButton.setVisible(false);
+                binButton.setVisible(false);
+                decButton.setVisible(false);
+                hexButton.setVisible(false);
+                charButton.setVisible(false);
                 
                 try
                 { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
@@ -174,7 +179,6 @@ public class GUI extends javax.swing.JFrame implements UI
         charButton = new javax.swing.JToggleButton();
         verboseButton = new javax.swing.JToggleButton();
         debugButton = new javax.swing.JToggleButton();
-        bufferSlider = new javax.swing.JSlider();
         progressPanel = new javax.swing.JPanel();
         fileProgressBar = new javax.swing.JProgressBar();
         filesProgressBar = new javax.swing.JProgressBar();
@@ -344,6 +348,11 @@ public class GUI extends javax.swing.JFrame implements UI
 
         logButton.setText("Log");
         logButton.setToolTipText("Enable Data Logging");
+        logButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logButtonMouseClicked(evt);
+            }
+        });
         logButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logButtonActionPerformed(evt);
@@ -430,12 +439,6 @@ public class GUI extends javax.swing.JFrame implements UI
             }
         });
         buttonPanel2.add(debugButton);
-
-        bufferSlider.setMaximum(1000);
-        bufferSlider.setMinimum(1);
-        bufferSlider.setPaintLabels(true);
-        bufferSlider.setToolTipText("Sets buffersize in MB");
-        buttonPanel2.add(bufferSlider);
 
         bottomPanel.add(buttonPanel2);
 
@@ -531,19 +534,24 @@ public class GUI extends javax.swing.JFrame implements UI
         this.fileProgressBar.setValue(0);
         this.filesProgressBar.setValue(0);
 
+        boolean hasEncryptableItem = false;
+        boolean hasCipherItem = false;
+
         // En/Disable FileChooser deletebutton
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
         
-//      En/Disable hasEncryptableItems
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
+        // En/Disable encryptButton        
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
+//            for (File path:inputFileChooser.getSelectedFiles())
             for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
             {
                 if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
-        }
-        checkEncryptionReady();
+            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
+            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_inputFileChooserPropertyChange
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
@@ -593,17 +601,15 @@ public class GUI extends javax.swing.JFrame implements UI
            )
         { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
 
-        // En/Disable hasCipherItem
-        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
-            if (
-                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) &&
-                    (cipherFileChooser.getSelectedFile().length() > 0)
-               )
-            { hasCipherItem = true; } else { hasCipherItem = false; }
-        }
-        
-        checkEncryptionReady();
+            for (File file:inputFileChooser.getSelectedFiles())
+            {
+                if (Files.isRegularFile(file.toPath())) { hasEncryptableItem = true; }
+            }
+            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
+            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
+        } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_cipherFileChooserPropertyChange
 
     private void checkEncryptionReady()
@@ -896,6 +902,18 @@ public class GUI extends javax.swing.JFrame implements UI
 //        }
     }//GEN-LAST:event_inputFileChooserKeyPressed
 
+    private void logButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logButtonMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3)
+        {
+            printButton.setVisible(!printButton.isVisible());
+            textButton.setVisible(!textButton.isVisible());
+            binButton.setVisible(!binButton.isVisible());
+            decButton.setVisible(!decButton.isVisible());
+            hexButton.setVisible(!hexButton.isVisible());
+            charButton.setVisible(!charButton.isVisible());
+        }
+    }//GEN-LAST:event_logButtonMouseClicked
+
     private void setOptions()
     {
         finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
@@ -954,7 +972,6 @@ public class GUI extends javax.swing.JFrame implements UI
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton binButton;
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JSlider bufferSlider;
     private javax.swing.JPanel buttonPanel1;
     private javax.swing.JPanel buttonPanel2;
     private javax.swing.JToggleButton charButton;

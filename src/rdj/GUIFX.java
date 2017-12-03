@@ -52,6 +52,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -97,8 +99,6 @@ public class GUIFX extends Application implements UI, Initializable
     private ToggleButton charButton;
     @FXML
     private ToggleButton verboseButton;
-    @FXML
-    private Slider bufferSlider;
     @FXML
     private ProgressBar filesProgressBar;
     @FXML
@@ -772,4 +772,17 @@ public class GUIFX extends Application implements UI, Initializable
             }
         });
     }    
+
+    @FXML
+    private void onLogButtonClicked(MouseEvent event) {
+        if (event.getButton() == MouseButton.SECONDARY)
+        {
+            printButton.setVisible(!printButton.isVisible());
+            textButton.setVisible(!textButton.isVisible());
+            binButton.setVisible(!binButton.isVisible());
+            decButton.setVisible(!decButton.isVisible());
+            hexButton.setVisible(!hexButton.isVisible());
+            charButton.setVisible(!charButton.isVisible());
+        }
+    }
 }

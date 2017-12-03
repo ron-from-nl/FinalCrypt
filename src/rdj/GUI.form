@@ -353,6 +353,7 @@
                 <Property name="toolTipText" type="java.lang.String" value="Enable Data Logging"/>
               </Properties>
               <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="logButtonMouseClicked"/>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="logButtonActionPerformed"/>
               </Events>
             </Component>
@@ -435,14 +436,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="debugButtonActionPerformed"/>
               </Events>
-            </Component>
-            <Component class="javax.swing.JSlider" name="bufferSlider">
-              <Properties>
-                <Property name="maximum" type="int" value="1000"/>
-                <Property name="minimum" type="int" value="1"/>
-                <Property name="paintLabels" type="boolean" value="true"/>
-                <Property name="toolTipText" type="java.lang.String" value="Sets buffersize in MB"/>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>
