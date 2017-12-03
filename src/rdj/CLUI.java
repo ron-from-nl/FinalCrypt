@@ -162,8 +162,8 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
         log("Parameters:\n");
-        log("            <-i \"file / Dir\">     The file or dir you want to encrypt (directory encrypts recursive!).\n");
-        log("            <-c \"cipherfile\">     The file that encrypts your datafile. Keep cipherfile SECRET!!!\n\n");
+        log("            <-i \"dir/file\">     The dir or file you want to encrypt (directories encrypt recursively!).\n");
+        log("            <-c \"cipherfile\">   The file that encrypts your file(s). Keep cipherfile SECRET!!!\n\n");
         log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);
     }
