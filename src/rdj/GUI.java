@@ -507,7 +507,7 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void cipherFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
+        int selectedOption = JOptionPane.showConfirmDialog(this.getParent(), "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
         if (selectedOption == JOptionPane.YES_OPTION)
         {
             if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
@@ -560,7 +560,7 @@ public class GUI extends javax.swing.JFrame implements UI
                 for (File file:inputFileChooser.getSelectedFiles()) 
                 {
                     try { Desktop.getDesktop().open(file); }
-                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage()); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\n"); }
                 }
             }
         } else { encryptButton.setEnabled(false); }
@@ -575,7 +575,7 @@ public class GUI extends javax.swing.JFrame implements UI
             if ( cipherFileChooser.getSelectedFile().isFile() ) 
             {
                 try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage()); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\n"); }
             }
         } else { encryptButton.setEnabled(false); }
     }//GEN-LAST:event_cipherFileChooserActionPerformed
@@ -705,7 +705,7 @@ public class GUI extends javax.swing.JFrame implements UI
                         if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
                     }
                 }
-                catch (IOException ex) { error("Files.size(cfp)" + ex); }
+                catch (IOException ex) { error("Files.size(cfp)" + ex + "\n"); }
 
                 fileProgressBar.setValue(0);
                 filesProgressBar.setValue(0);
@@ -872,7 +872,7 @@ public class GUI extends javax.swing.JFrame implements UI
 //                        {
 //                            status("File: " + path.getName() + " not deleted");
 //                        }
-//                    } catch (IOException ex) { error("Error: Files.delete(path.toPath()); " + ex.getMessage()); }
+//                    } catch (IOException ex) { error("Error: Files.delete(path.toPath()); " + ex.getMessage() + "\n"); }
 //                }
 //            }
 //        }

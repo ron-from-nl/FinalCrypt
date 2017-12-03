@@ -57,9 +57,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -122,14 +124,15 @@ public class GUIFX extends Application implements UI, Initializable
     private JButton cipherFileDeleteButton;
     private boolean hasEncryptableItem;
     private boolean hasCipherItem;
+    private Object root;
     
     @Override
     public void start(Stage stage) throws Exception
     {
         guifx = this;
         this.stage = stage;
-        Parent root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
-        Scene scene = new Scene(root);
+        root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
+        Scene scene = new Scene((Parent)root);
         
         stage.setScene(scene);
         stage.setTitle("FinalCrypt");
@@ -244,13 +247,13 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileSwingNode.setContent(cipherFileChooser);   
         
         finalCrypt = new FinalCrypt(this);
-        finalCrypt.start();
+        finalCrypt.start();          
     }
     
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {
-      int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
+      int selectedOption = JOptionPane.showConfirmDialog((Component) root, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
         if (selectedOption == JOptionPane.YES_OPTION)
 //        if (dialog.selectedOption == JOptionPane.YES_OPTION)
         {
@@ -321,7 +324,7 @@ public class GUIFX extends Application implements UI, Initializable
                 for (File file:inputFileChooser.getSelectedFiles()) 
                 {
                     try { Desktop.getDesktop().open(file); }
-                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage()); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\n"); }
                 }
             }
         } else { encryptButton.setDisable(true); }
@@ -370,7 +373,7 @@ public class GUIFX extends Application implements UI, Initializable
             if ( cipherFileChooser.getSelectedFile().isFile() ) 
             {
                 try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage()); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\n"); }
             }
         } else { encryptButton.setDisable(true); }
     }                                                 
@@ -484,7 +487,7 @@ public class GUIFX extends Application implements UI, Initializable
                         if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
                     }
                 }
-                catch (IOException ex) { error("Files.size(cfp)" + ex); }
+                catch (IOException ex) { error("Files.size(cfp)" + ex + "\n"); }
 
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
