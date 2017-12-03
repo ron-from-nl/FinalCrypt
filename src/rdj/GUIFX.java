@@ -361,17 +361,7 @@ public class GUIFX extends Application implements UI, Initializable
         checkEncryptionReady();
     }                                                
 
-    private void checkEncryptionReady()
-    {
-        // En/Disable encryptButton        
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
-        {
-            
-//            CipherFile
-            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
-            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }
-        } else { encryptButton.setDisable(true); }
-    }
+    private void checkEncryptionReady() { if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }}
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      

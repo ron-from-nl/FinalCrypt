@@ -1,3 +1,4 @@
 Cant delete file or dir
 optionpane below panel
 Win full screen
+equalize GUI inputFileChooserPropertyChange

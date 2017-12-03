@@ -158,7 +158,7 @@ public class FinalCrypt  extends Thread
                     fileBytesEncrypted = 0;
 
                     // Get the filesize total
-                    try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage()+ "\n"); }
+                    try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
                     if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
 
                     String prefix = new String("bit");
@@ -173,7 +173,7 @@ public class FinalCrypt  extends Thread
                     else                            { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString().replace(suffix, "")); }               // Remove .bit
 
                     
-                    try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex); }
+                    try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex + "\n"); }
 
     //              Status
     
