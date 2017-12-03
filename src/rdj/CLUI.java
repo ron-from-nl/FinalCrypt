@@ -149,7 +149,7 @@ public class CLUI implements UI
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
 
         log("\n");
-        log("Usage:   java -jar FinalCrypt.jar [options] <Parameters>\n");
+        log("Usage:   java -cp FinalCrypt.jar rdj/CLUI [options] <Parameters>\n");
         log("Options:");
         log("            [-h] [--help]         Shows this help page.\n");
         log("            [-d] [--debug]        Enables debugging mode.\n");
@@ -162,8 +162,8 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
         log("Parameters:\n");
-        log("            <-i \"dir/file\">     The dir or file you want to encrypt (directories encrypt recursively!).\n");
-        log("            <-c \"cipherfile\">   The file that encrypts your file(s). Keep cipherfile SECRET!!!\n\n");
+        log("            <-i \"dir/file\">     The dir or file you want to encrypt (dir encrypt recursively!).\n");
+        log("            <-c \"cipherfile\">   The file that encrypts your file(s). Keep cipherfile SECRET!\n\n");
         log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);
     }
