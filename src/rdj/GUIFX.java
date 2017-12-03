@@ -300,7 +300,7 @@ public class GUIFX extends Application implements UI, Initializable
         hasEncryptableItem = false;
         
 //      En/Disable FileChooser deletebutton
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null)) {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0)) {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
 //      En/Disable hasEncryptableItems
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
@@ -338,7 +338,16 @@ public class GUIFX extends Application implements UI, Initializable
         this.filesProgressBar.setProgress(0);
 
         // En/Disable FileChooser deletebutton
-        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null)) {cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false);}
+        if (
+                (cipherFileChooser != null) &&
+                (cipherFileChooser.getSelectedFile() != null) &&
+                (
+                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) ||
+                    (Files.isDirectory(cipherFileChooser.getSelectedFile().toPath()))
+                ) 
+           )
+        { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
+        
         // En/Disable hasCipherItem
         if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
         {

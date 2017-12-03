@@ -49,6 +49,8 @@ public class GUI extends javax.swing.JFrame implements UI
     GUI gui;
     private JButton cipherFileDeleteButton;
     private JButton inputFileDeleteButton;
+    private boolean hasEncryptableItem;
+    private boolean hasCipherItem;
 
     public GUI()
     {
@@ -529,24 +531,19 @@ public class GUI extends javax.swing.JFrame implements UI
         this.fileProgressBar.setValue(0);
         this.filesProgressBar.setValue(0);
 
-        boolean hasEncryptableItem = false;
-        boolean hasCipherItem = false;
-
         // En/Disable FileChooser deletebutton
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
         
-        // En/Disable encryptButton        
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
+//      En/Disable hasEncryptableItems
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
-//            for (File path:inputFileChooser.getSelectedFiles())
             for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
             {
                 if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
-            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
-            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
-        } else { encryptButton.setEnabled(false); }
+        }
+        checkEncryptionReady();
     }//GEN-LAST:event_inputFileChooserPropertyChange
 
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputFileChooserActionPerformed
@@ -585,22 +582,43 @@ public class GUI extends javax.swing.JFrame implements UI
         this.fileProgressBar.setValue(0);
         this.filesProgressBar.setValue(0);
 
-        boolean hasEncryptableItem = false;
-        boolean hasCipherItem = false;
-
         // En/Disable FileChooser deletebutton
-        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null)) {cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false);}
+        if (
+                (cipherFileChooser != null) &&
+                (cipherFileChooser.getSelectedFile() != null) &&
+                (
+                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) ||
+                    (Files.isDirectory(cipherFileChooser.getSelectedFile().toPath()))
+                ) 
+           )
+        { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
 
+        // En/Disable hasCipherItem
+        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        {
+            if (
+                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) &&
+                    (cipherFileChooser.getSelectedFile().length() > 0)
+               )
+            { hasCipherItem = true; } else { hasCipherItem = false; }
+        }
+        
+        checkEncryptionReady();
+    }//GEN-LAST:event_cipherFileChooserPropertyChange
+
+    private void checkEncryptionReady()
+    {
+        // En/Disable encryptButton        
         if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
-            for (File file:inputFileChooser.getSelectedFiles())
-            {
-                if (Files.isRegularFile(file.toPath())) { hasEncryptableItem = true; }
-            }
+            hasCipherItem = true;
+//            CipherFile
             File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
             if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
         } else { encryptButton.setEnabled(false); }
-    }//GEN-LAST:event_cipherFileChooserPropertyChange
+    }
+
+
 
     public boolean disableSomeComponents(Container container, boolean inputFileChooserContainer)
     {
