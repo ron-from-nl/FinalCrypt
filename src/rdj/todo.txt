@@ -1,3 +1,1 @@
-optionpane below panel
-dialog
-I/O interruption
+.bit filter button
