@@ -89,7 +89,7 @@
                            <children>
                               <TextArea fx:id="logTextArea" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Cousine" size="20.0" />
+                                    <Font name="Cousine" size="14.0" />
                                  </font></TextArea>
                            </children>
                         </AnchorPane>

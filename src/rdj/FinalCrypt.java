@@ -178,7 +178,8 @@ public class FinalCrypt  extends Thread
     //              Status
     
         
-                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
+//                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
+                    ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + "\n");
 
                     // Prints printByte Header ones                
                     if ( print )
@@ -252,7 +253,7 @@ public class FinalCrypt  extends Thread
                         
                         
                         
-//                    // Open outputFile for writing
+ //                    // Open outputFile for writing
 //                    try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
 //                    {
 //                        //open dataFile
@@ -299,11 +300,12 @@ public class FinalCrypt  extends Thread
 
                         
 //                  Delete the original
-                    try { if (Files.size(inputFilePath) == Files.size(outputFilePath)) { Files.deleteIfExists(inputFilePath); }
-                    } catch (IOException ex) { ui.error("Error: Files.size(inputFilePath) == Files.size(outputFilePath): " + ex + "\n"); }
+                    long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
+                    long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
+                    if ( ( inputfilesize != 0 ) && (inputfilesize == outputfilesize) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }
 
-                
-
+                    
+                    
                 } // input != cipher
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
