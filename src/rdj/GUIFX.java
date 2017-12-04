@@ -44,10 +44,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -56,14 +58,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import static javax.swing.WindowConstants.HIDE_ON_CLOSE;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -253,43 +250,70 @@ public class GUIFX extends Application implements UI, Initializable
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {
-      int selectedOption = JOptionPane.showConfirmDialog((Component) root, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
-        if (selectedOption == JOptionPane.YES_OPTION)
-//        if (dialog.selectedOption == JOptionPane.YES_OPTION)
+//      int selectedOption = JOptionPane.showConfirmDialog((Component) root, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
+//        if (selectedOption == JOptionPane.YES_OPTION)
+        
+        PlatformImpl.runAndWait(new Runnable()
         {
-            if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+            @Override
+//            @SuppressWarnings({"static-access"})
+            public void run()
             {
-                if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+                String itemword = "";
+                if ( inputFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
+                else if ( inputFileChooser.getSelectedFiles().length > 1 )  { itemword = "items"; }
+                String selection = "Delete " + inputFileChooser.getSelectedFiles().length + " selected " + itemword + "?";
+                Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES)
                 {
-                    ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
-                    boolean delete = true;
-                    boolean returnpathlist = false;
-                    String wildcard = "*";
-                    finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-                    inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
-                    cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                    if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
+                    {
+                        if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+                        {
+                            ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
+                            boolean delete = true;
+                            boolean returnpathlist = false;
+                            String wildcard = "*";
+                            finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+                            inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                            cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                        }
+                    }
                 }
             }
-        }        
+        });
     }                                               
 
     private void cipherFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-        int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
-        if (selectedOption == JOptionPane.YES_OPTION)
+        PlatformImpl.runAndWait(new Runnable()
         {
-            if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
+            @Override
+//            @SuppressWarnings({"static-access"})
+            public void run()
             {
-                ArrayList<Path> pathList = new ArrayList<>();
-                pathList.add(cipherFileChooser.getSelectedFile().toPath());
-                boolean delete = true;
-                boolean returnpathlist = false;
-                String wildcard = "*";
-                finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
-                inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
-                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+//                int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
+//                if (selectedOption == JOptionPane.YES_OPTION)
+//                {           
+//                }
+                String selection = "Delete 1 selected item?";
+                Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES)
+                {
+                    if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
+                    {
+                        ArrayList<Path> pathList = new ArrayList<>();
+                        pathList.add(cipherFileChooser.getSelectedFile().toPath());
+                        boolean delete = true;
+                        boolean returnpathlist = false;
+                        String wildcard = "*";
+                        finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+                        inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
+                        cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                    }
+                }
             }
-        }
+        });
     }                                               
 
 //  FileChooser Listener methods
