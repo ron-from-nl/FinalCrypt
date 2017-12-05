@@ -248,12 +248,12 @@ public class GUI extends javax.swing.JFrame implements UI
         );
         inputFilePanelLayout.setVerticalGroup(
             inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 574, Short.MAX_VALUE)
+            .addGap(0, 606, Short.MAX_VALUE)
             .addGroup(inputFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(inputFilePanelLayout.createSequentialGroup()
                     .addComponent(inputFileChooserLabel)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                    .addComponent(inputFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -296,12 +296,12 @@ public class GUI extends javax.swing.JFrame implements UI
         );
         cipherFilePanelLayout.setVerticalGroup(
             cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 574, Short.MAX_VALUE)
+            .addGap(0, 606, Short.MAX_VALUE)
             .addGroup(cipherFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(cipherFilePanelLayout.createSequentialGroup()
                     .addComponent(cipherFileChooserLabel)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                    .addComponent(cipherFileChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -327,7 +327,7 @@ public class GUI extends javax.swing.JFrame implements UI
         );
         logPaneLayout.setVerticalGroup(
             logPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(logScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 582, Short.MAX_VALUE)
+            .addComponent(logScroller, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
         );
 
         tab.addTab("Log", logPane);
@@ -335,11 +335,17 @@ public class GUI extends javax.swing.JFrame implements UI
         bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         bottomPanel.setLayout(new java.awt.GridLayout(3, 0));
 
+        buttonPanel1.setMaximumSize(new java.awt.Dimension(32767, 20));
+        buttonPanel1.setMinimumSize(new java.awt.Dimension(89, 20));
+        buttonPanel1.setPreferredSize(new java.awt.Dimension(89, 20));
         buttonPanel1.setLayout(new java.awt.GridLayout(1, 3));
 
         encryptButton.setFont(new java.awt.Font("Arimo", 0, 18)); // NOI18N
         encryptButton.setText("Encrypt");
         encryptButton.setEnabled(false);
+        encryptButton.setMaximumSize(new java.awt.Dimension(89, 20));
+        encryptButton.setMinimumSize(new java.awt.Dimension(89, 20));
+        encryptButton.setPreferredSize(new java.awt.Dimension(89, 20));
         encryptButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 encryptButtonActionPerformed(evt);
@@ -484,9 +490,9 @@ public class GUI extends javax.swing.JFrame implements UI
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tab, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                .addComponent(tab, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 

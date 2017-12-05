@@ -137,8 +137,10 @@ public class FinalCrypt  extends Thread
         filesBytesEncrypted = 0;
         fileBytesEncrypted = 0;
 
+
+        
         // Get files bytes total
-        for (Path inputFilePath:inputFilesPathList) { try { filesBytesTotal += Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
+        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { filesBytesTotal += Files.size(inputFilePath); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
 
         // Setup the Progress timer & task
@@ -489,6 +491,14 @@ public class FinalCrypt  extends Thread
         try { fileSize = Files.size(path); } catch (IOException ex) { ui.error("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage() + "\n"); }
 //        if (verbose) { ui.log("The checked file has " + fileSize + " bytes of data."); }
         if (( mustHaveData ) && ( fileSize == 0 )) { ui.error("Error: The checked file requires data!\n"); isValid = false; }
+        
+        return isValid;
+    }
+
+    public boolean isValidDir(Path path)
+    {
+        boolean isValid = true;
+        if (Files.exists(path))    { if (verbose) { ui.log(path + " exists.\n"); }} else { ui.error("Item: " + path + " does not exist!" + "\n"); isValid = false; }
         
         return isValid;
     }
