@@ -85,26 +85,14 @@ public class CLUI implements UI
         if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
 
 
-        // Validate and create output files
-//                Add the inputFilesPath to List from inputFileChooser
-
-//        for(Path inputFilePathItem : inputFilesPathList)
-//        {
-//            error("Path: " + inputFilePathItem.getFileName() + "\n");
-//            if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
-////            if ( inputFilePathItem.compareTo(cipherFilePath) == 0)      { error("Error: inputfile equal to cipherfile!\n"); usage(); }
-//        }
-
 //      Check the inputFileList created by the parameters
         for(Path inputFilePathItem : inputFilesPathList)
         {
             if (Files.exists(inputFilePathItem))
             {
-//                error(inputFilePathItem.getFileName() +  " exist\n");
                 if ( finalCrypt.isValidDir(inputFilePathItem) )
-//                if ( Files.isDirectory(inputFilePath) )
                 {
-                    error("Input parameter: " + inputFilePathItem + " exist\n");
+                    status("Input parameter: " + inputFilePathItem + " exist\n");
                 }
                 else
                 {
@@ -114,27 +102,20 @@ public class CLUI implements UI
             else
             { 
                     error("Input parameter: " + inputFilePathItem + " does not exists\n"); usage();
-            }
-            
-            
-            
-            
-//            if (Files.notExists(inputFilePathItem))
-//            {
-//                if ( finalCrypt.isValidDir(inputFilePathItem) )
-//                {
-//                    error(inputFilePathItem + " Valid Dir\n");
-//                }
-//                else
-//                {
-//                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { error("Error input\n"); usage(); }
-//                }
-//            }
-//            else
-//            {
-//                { error("Error: input parameter: " + inputFilePathItem + " does not exist\n"); usage(); }
-//            }
+            }            
         }
+
+//      Check the cipherFile created by the parameters
+        if (Files.exists(cipherFilePath))
+        {
+            if ( finalCrypt.isValidFile(cipherFilePath, false, true) ) {} else   { usage(); }
+        }
+        else
+        { 
+            error("Cipher parameter: " + cipherFilePath + " does not exists\n"); usage();
+        }            
+
+
 
 //      All is well, now convert small parameter list into recusive list
 //      Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
