@@ -145,7 +145,6 @@ public class FinalCrypt  extends Thread
 
         // Setup the Progress timer & task
         updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (fileBytesEncrypted /(fileBytesTotal/100.0)), (int) (filesBytesEncrypted /(filesBytesTotal/100.0))); }};
-//        updateProgressTask = new TimerTask() { @Override public void run() { setProgress( (int) (filesBytesEncrypted /(filesBytesTotal/100L))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
 
         // Encrypt Files loop

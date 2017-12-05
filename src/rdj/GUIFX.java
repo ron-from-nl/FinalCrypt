@@ -26,6 +26,7 @@ import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,6 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
@@ -59,7 +62,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 public class GUIFX extends Application implements UI, Initializable
@@ -133,6 +135,8 @@ public class GUIFX extends Application implements UI, Initializable
         
         stage.setScene(scene);
         stage.setTitle("FinalCrypt");
+        stage.setMinWidth(1100);
+        stage.setMinHeight(700);
         stage.setMaximized(true);
         stage.show();
     }
@@ -167,15 +171,22 @@ public class GUIFX extends Application implements UI, Initializable
         });
         
         
-        inputFileChooser = new JFileChooser();
-        inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+//        inputFileChooser = new JFileChooser();
+//        FileChooserUI ifcUI = inputFileChooser.getUI();
+//        try{
+//            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
+//            method.setAccessible(true);
+//            method.invoke(inputFileChooser, ifcUI);
+//        } catch (Exception ex) { /*catch whatever you want and handle it however you want*/ }
+//        inputFileChooser.setPreferredSize(new Dimension(800,600));
+//        inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        inputFileChooser.setFocusable(true);
         inputFileChooser.addPropertyChangeListener
         (
             // New Object
@@ -203,15 +214,20 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         );
-        cipherFileChooser = new JFileChooser();
-        cipherFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+//        FileChooserUI cfcUI = cipherFileChooser.getUI();
+//        try{
+//            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
+//            method.setAccessible(true);
+//            method.invoke(cipherFileChooser, cfcUI);
+//        } catch (Exception ex) { /*catch whatever you want and handle it however you want*/ }
+//        cipherFileChooser.setPreferredSize(new Dimension(800,600));
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);
         cipherFileChooser.setFocusable(true);
         cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         cipherFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        cipherFileChooser.setFocusable(true);
         cipherFileChooser.addPropertyChangeListener
         (
             new java.beans.PropertyChangeListener() 
@@ -238,9 +254,11 @@ public class GUIFX extends Application implements UI, Initializable
             }
         );
         
-        disableSomeComponents(inputFileChooser, true);
-        disableSomeComponents(cipherFileChooser, false);
-        
+//        disable(inputFileChooser, false);
+        inputFileChooserComponentAlteration(inputFileChooser);
+        cipherFileChooserComponentAlteration(cipherFileChooser);
+
+
 //      Put FileChoosers into SwingNodes        
         inputFileSwingNode.setContent(inputFileChooser);
         cipherFileSwingNode.setContent(cipherFileChooser);   
@@ -409,19 +427,31 @@ public class GUIFX extends Application implements UI, Initializable
         launch(args);
     }
 
-    public boolean disableSomeComponents(Container container, boolean inputFileChooserContainer)
+    public boolean inputFileChooserComponentAlteration(Container container)
     {
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-            // Click "details view" ToggleButton
+//            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
             {
                 if (   ! ((JToggleButton)component).isSelected()   )
                 {
-                    ((JToggleButton)component).doClick();
+                    TimerTask updateProgressTask = new TimerTask() { @Override public void run()
+                    {
+                        ((JToggleButton)component).doClick();
+                    }};
+                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
                 }
             }
+//            // Click "details view" ToggleButton
+//            if (component instanceof JToggleButton)
+//            {
+//                if (   ! ((JToggleButton)component).isSelected()   )
+//                {
+//                    ((JToggleButton)component).doClick();
+//                }
+//            }
             
             // Add Delete button
             if (component instanceof JButton)
@@ -429,7 +459,8 @@ public class GUIFX extends Application implements UI, Initializable
                 if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
                 {
 //                    component.getParent().add(this.inputFileDeleteButton);
-                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
+//                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
+                    component.getParent().add(this.inputFileDeleteButton);
                 }
             }
             
@@ -462,7 +493,71 @@ public class GUIFX extends Application implements UI, Initializable
             
             if (component instanceof Container)
             {
-                if( disableSomeComponents((Container) component, inputFileChooserContainer) ) return true;
+                if( inputFileChooserComponentAlteration((Container) component) ) return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean cipherFileChooserComponentAlteration(Container container)
+    {
+        Component[] components = container.getComponents();
+        for (Component component : components)
+        {
+//            // Click "details view" ToggleButton
+            if (component instanceof JToggleButton)
+            {
+                if (   ! ((JToggleButton)component).isSelected()   )
+                {
+                    TimerTask updateProgressTask = new TimerTask() { @Override public void run()
+                    {
+                        ((JToggleButton)component).doClick();
+                    }};
+                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
+                }
+            }
+            
+            // Add Delete button
+            if (component instanceof JButton)
+            {
+                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
+                {
+//                    component.getParent().add(this.inputFileDeleteButton);
+//                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
+                    component.getParent().add(this.cipherFileDeleteButton);
+                }
+            }
+            
+//            // Remove the path textfield
+//            if (component instanceof JTextField)
+//            {
+//                ((JTextField)component).setEnabled(false);
+//                ((JTextField)component).setVisible(false);                
+////                return true;
+//            }
+//            
+//            // Remove the lower filefilter box
+//            if (component instanceof JComboBox)
+//            {
+//                if ( ((JComboBox)component).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
+//                {
+//                    ((JComboBox)component).setEnabled(false);
+//                    ((JComboBox)component).setVisible(false);                
+//                }
+////                return true;
+//            }
+//            
+//            // Remove the lower labels
+//            if (component instanceof JLabel)
+//            {
+//                ((JLabel)component).setEnabled(false);
+//                ((JLabel)component).setVisible(false);                
+////                return true;
+//            }
+            
+            if (component instanceof Container)
+            {
+                if( cipherFileChooserComponentAlteration((Container) component) ) return true;
             }
         }
         return false;
@@ -790,7 +885,8 @@ public class GUIFX extends Application implements UI, Initializable
     }    
 
     @FXML
-    private void onLogButtonClicked(MouseEvent event) {
+    private void onLogButtonClicked(MouseEvent event)
+    {
         if (event.getButton() == MouseButton.SECONDARY)
         {
             printButton.setVisible(!printButton.isVisible());

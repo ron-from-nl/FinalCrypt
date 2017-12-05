@@ -1,4 +1,6 @@
 .bit filter button
-chooser set working dir
-inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
-cipherFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+chooser filesystemview update
+progressBar percentage
+file throughput 134 MB/Sec
+file progressbar smaller filesize than totalfilesize on 8GB files
+cipherFileChooser not focusable

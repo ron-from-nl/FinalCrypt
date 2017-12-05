@@ -170,6 +170,9 @@
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" value="Right mousclick for Refresh"/>
                     <Property name="multiSelectionEnabled" type="boolean" value="true"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[800, 262]"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputFileChooserActionPerformed"/>

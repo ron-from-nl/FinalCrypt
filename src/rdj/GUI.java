@@ -28,12 +28,15 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseButton;
@@ -150,8 +153,8 @@ public class GUI extends javax.swing.JFrame implements UI
 //        });
         
 
-        disableSomeComponents(inputFileChooser, true);
-        disableSomeComponents(cipherFileChooser, false);
+        inputFileChooserComponentAlteration(inputFileChooser);
+        cipherFileChooserComponentAlteration(cipherFileChooser);
     }
 
     @SuppressWarnings("unchecked")
@@ -214,6 +217,7 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
+        inputFileChooser.setPreferredSize(new java.awt.Dimension(800, 262));
         inputFileChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inputFileChooserActionPerformed(evt);
@@ -636,27 +640,32 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void checkEncryptionReady() { if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }}
 
-    public boolean disableSomeComponents(Container container, boolean inputFileChooserContainer)
+    public boolean inputFileChooserComponentAlteration(Container container)
     {
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-            // Click "details view" ToggleButton
+//            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
             {
                 if (   ! ((JToggleButton)component).isSelected()   )
                 {
-                    ((JToggleButton)component).doClick();
+//                    TimerTask updateProgressTask = new TimerTask() { @Override public void run()
+//                    {
+                        ((JToggleButton)component).doClick();
+//                    }};
+//                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
                 }
             }
             
             // Add Delete button
             if (component instanceof JButton)
             {
-                if (((JButton) component).getActionCommand().toString().equalsIgnoreCase("New Folder"))
+                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
                 {
 //                    component.getParent().add(this.inputFileDeleteButton);
-                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); };
+//                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
+                    component.getParent().add(this.inputFileDeleteButton);
                 }
             }
             
@@ -689,7 +698,71 @@ public class GUI extends javax.swing.JFrame implements UI
             
             if (component instanceof Container)
             {
-                if( disableSomeComponents((Container) component, inputFileChooserContainer) ) return true;
+                if( inputFileChooserComponentAlteration((Container) component) ) return false;
+            }
+        }
+        return false;
+    }
+
+    public boolean cipherFileChooserComponentAlteration(Container container)
+    {
+        Component[] components = container.getComponents();
+        for (Component component : components)
+        {
+//            // Click "details view" ToggleButton
+            if (component instanceof JToggleButton)
+            {
+                if (   ! ((JToggleButton)component).isSelected()   )
+                {
+//                    TimerTask updateProgressTask = new TimerTask() { @Override public void run()
+//                    {
+                        ((JToggleButton)component).doClick();
+//                    }};
+//                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
+                }
+            }
+            
+            // Add Delete button
+            if (component instanceof JButton)
+            {
+                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
+                {
+//                    component.getParent().add(this.inputFileDeleteButton);
+//                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
+                    component.getParent().add(this.cipherFileDeleteButton);
+                }
+            }
+            
+//            // Remove the path textfield
+//            if (component instanceof JTextField)
+//            {
+//                ((JTextField)component).setEnabled(false);
+//                ((JTextField)component).setVisible(false);                
+////                return true;
+//            }
+//            
+//            // Remove the lower filefilter box
+//            if (component instanceof JComboBox)
+//            {
+//                if ( ((JComboBox)component).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
+//                {
+//                    ((JComboBox)component).setEnabled(false);
+//                    ((JComboBox)component).setVisible(false);                
+//                }
+////                return true;
+//            }
+//            
+//            // Remove the lower labels
+//            if (component instanceof JLabel)
+//            {
+//                ((JLabel)component).setEnabled(false);
+//                ((JLabel)component).setVisible(false);                
+////                return true;
+//            }
+            
+            if (component instanceof Container)
+            {
+                if( cipherFileChooserComponentAlteration((Container) component) ) return true;
             }
         }
         return false;
