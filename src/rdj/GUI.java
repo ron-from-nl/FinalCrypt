@@ -209,7 +209,7 @@ public class GUI extends javax.swing.JFrame implements UI
         inputFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         inputFileChooser.setControlButtonsAreShown(false);
-        inputFileChooser.setCurrentDirectory(null);
+        inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         inputFileChooser.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
         inputFileChooser.setFont(inputFileChooser.getFont().deriveFont((float)10));
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
@@ -264,7 +264,7 @@ public class GUI extends javax.swing.JFrame implements UI
         cipherFileChooserLabel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         cipherFileChooser.setControlButtonsAreShown(false);
-        cipherFileChooser.setCurrentDirectory(null);
+        cipherFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         cipherFileChooser.setFileSelectionMode(javax.swing.JFileChooser.FILES_AND_DIRECTORIES);
         cipherFileChooser.setFont(cipherFileChooser.getFont().deriveFont((float)10));
         cipherFileChooser.setToolTipText("");

@@ -168,6 +168,7 @@ public class GUIFX extends Application implements UI, Initializable
         
         
         inputFileChooser = new JFileChooser();
+        inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
@@ -203,6 +204,7 @@ public class GUIFX extends Application implements UI, Initializable
             }
         );
         cipherFileChooser = new JFileChooser();
+        cipherFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);

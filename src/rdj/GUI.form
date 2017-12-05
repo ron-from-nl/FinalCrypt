@@ -159,7 +159,9 @@
                 <Component class="javax.swing.JFileChooser" name="inputFileChooser">
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
-                    <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+                    </Property>
                     <Property name="fileSelectionMode" type="int" value="2"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                       <FontInfo relative="true">
@@ -234,7 +236,9 @@
                 <Component class="javax.swing.JFileChooser" name="cipherFileChooser">
                   <Properties>
                     <Property name="controlButtonsAreShown" type="boolean" value="false"/>
-                    <Property name="currentDirectory" type="java.io.File" value="null"/>
+                    <Property name="currentDirectory" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new File(System.getProperty(&quot;user.dir&quot;))" type="code"/>
+                    </Property>
                     <Property name="fileSelectionMode" type="int" value="2"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
                       <FontInfo relative="true">

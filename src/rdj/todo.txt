@@ -1,1 +1,4 @@
 .bit filter button
+chooser set working dir
+inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+cipherFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
