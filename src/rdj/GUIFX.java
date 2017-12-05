@@ -171,8 +171,8 @@ public class GUIFX extends Application implements UI, Initializable
         });
         
         
-        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-//        inputFileChooser = new JFileChooser();
+//        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+        inputFileChooser = new JFileChooser();
 //        FileChooserUI ifcUI = inputFileChooser.getUI();
 //        try{
 //            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
@@ -214,7 +214,8 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         );
-        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+//        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+        cipherFileChooser = new JFileChooser();
 //        FileChooserUI cfcUI = cipherFileChooser.getUI();
 //        try{
 //            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
@@ -777,14 +778,20 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @Override
-    public void error(String message) { status(message); }
+    public void error(String message)
+    {
+        Platform.runLater(new Runnable()
+        {
+            @Override public void run()
+            {
+                status(message);
+            }
+        });
+    }
 
     @Override
     public void status(String status)
     {
-
-
-
         PlatformImpl.runAndWait(new Runnable()
         {
             @Override
@@ -795,7 +802,6 @@ public class GUIFX extends Application implements UI, Initializable
                 log(status);
             }
         });
-
 
 
 //        Platform.runLater(new Runnable()
@@ -815,7 +821,7 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
-        System.out.println(message);
+                System.out.println(message);
             }
         });
     }

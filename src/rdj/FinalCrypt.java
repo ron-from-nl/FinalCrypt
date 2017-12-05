@@ -40,8 +40,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
@@ -60,10 +58,10 @@ public class FinalCrypt  extends Thread
     private long bufferTotal = 0; // DNumber of buffers
 
     private int printAddressByteCounter = 0;
-    public long filesBytesTotal = 0;
     public long fileBytesTotal = 0;
-    private long filesBytesEncrypted = 0;
+    public long filesBytesTotal = 0;
     private long fileBytesEncrypted = 0;
+    private long filesBytesEncrypted = 0;
     private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
@@ -157,7 +155,7 @@ public class FinalCrypt  extends Thread
                     fileBytesEncrypted = 0;
 
                     // Get the filesize total
-                    try { fileBytesTotal = (int)Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
+                    try { fileBytesTotal = Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
                     if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
 
                     String prefix = new String("bit");
@@ -178,7 +176,7 @@ public class FinalCrypt  extends Thread
     
         
 //                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
-                    ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + "\n");
+                    ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + " ");
 
                     // Prints printByte Header ones                
                     if ( print )
@@ -202,7 +200,7 @@ public class FinalCrypt  extends Thread
 
 
 
-
+                    double start = System.currentTimeMillis();
 
                     // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
                     while ( ! inputFileEnded )
@@ -248,8 +246,12 @@ public class FinalCrypt  extends Thread
                     }
                     if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
 
-
-                        
+                    double end = System.currentTimeMillis();
+                    double diff = (( (double)fileBytesEncrypted / ((end - start)/1000f))/ 1000000f);
+                    
+                    String throughput = String.format("%.1f", diff);
+//                    ui.status(" (" + (fileBytesEncrypted / (endCal.getTimeInMillis() - endCal.getTimeInMillis())) + ")\n");
+                    ui.status(" (" + throughput + " MB/Sec)\n");
                         
                         
  //                    // Open outputFile for writing
@@ -380,7 +382,7 @@ public class FinalCrypt  extends Thread
     public void deleteSelection(ArrayList<Path> inputFilesPathList, boolean delete, boolean returnpathlist, String wildcard)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(delete, returnpathlist, wildcard);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, delete, returnpathlist, wildcard);
         for (Path path:inputFilesPathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
@@ -540,7 +542,7 @@ public class FinalCrypt  extends Thread
         ArrayList<Path> pathList = new ArrayList<>();
         
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(false, true, wildcard);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, wildcard);
         try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
         pathList = mySimpleFileVisitor.getPathList();
 
@@ -564,18 +566,21 @@ public class FinalCrypt  extends Thread
 // override only methods of our need (SimpleFileVisitor is a full blown class)
 class MySimpleFileVisitor extends SimpleFileVisitor<Path>
 {
+    private final UI ui;
     private final PathMatcher matcher;
     private final boolean delete; 
     private final boolean returnpathlist; 
     private final ArrayList<Path> pathList;
 
 //  Default CONSTRUCTOR
-    public MySimpleFileVisitor(boolean delete, boolean returnpathlist, String wildcard) // "*.txt"
+    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String wildcard) // "*.txt"
     {
+        this.ui = ui;
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + wildcard);
         this.delete = delete;
         this.returnpathlist = returnpathlist;
         pathList = new ArrayList<Path>();
+        
     }
    
     @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
@@ -594,7 +599,8 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
                 {
 //                  System.out.println("Removing filtered file: " + path.toRealPath().toString());
                     Files.delete(path);
-                } catch (IOException ex) { System.out.println("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex); }
+//                } catch (IOException ex) { System.out.println("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex); }
+                } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); }
             }
             
             else if (returnpathlist)
@@ -609,8 +615,9 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFileFailed(Path file, IOException exc)
     {
-        System.out.println("Failed file: " + file.toString() + " due to: " + exc);
-        return FileVisitResult.CONTINUE;
+//        System.out.println("Error: visitFileFailed: " + file.toString() + " due to: " + exc);
+        ui.error("Error: visitFileFailed: " + exc + "\n");
+        return FileVisitResult.SKIP_SIBLINGS;
     }
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
@@ -621,7 +628,8 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
             {
 //                    System.out.println("Removing leaving filtered directory: " + path.getFileName());
                 Files.delete(path);
-            } catch (IOException ex) { System.out.println("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex); } }
+//            } catch (IOException ex) { System.out.println("Error: postVisitDirectory: " + path.toString() + " due to: " + ex); } }
+            } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex + "\n"); } }
         else if (returnpathlist)    {     }
         else                        {     }
         return FileVisitResult.CONTINUE;
