@@ -134,7 +134,7 @@ public class GUIFX extends Application implements UI, Initializable
         Scene scene = new Scene((Parent)root);
         
         stage.setScene(scene);
-        stage.setTitle("FinalCrypt");
+        stage.setTitle(FinalCrypt.getProcuct() + " " + FinalCrypt.getVersion());
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         stage.setMaximized(true);
@@ -345,7 +345,9 @@ public class GUIFX extends Application implements UI, Initializable
         hasEncryptableItem = false;
         
 //      En/Disable FileChooser deletebutton
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0)) {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0))
+        {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
+
 //      En/Disable hasEncryptableItems
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
@@ -573,7 +575,6 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-                status("Validating files\n");
                 Path outputFilePath = null;
 
 //                // Add the inputFilesPath to List from inputFileChooser
@@ -833,7 +834,6 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
-                status("Encryption Started\n");
                 encryptButton.setDisable(true);
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
@@ -876,7 +876,6 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
-                status("Encryption Finished\n");
                 encryptButton.setDisable(false);
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }

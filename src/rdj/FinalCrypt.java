@@ -44,11 +44,11 @@ import java.util.TimerTask;
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
 {
-    static final String COMPANYNAME = "GPLv3";
-    static final String PRODUCTNAME = "FinalCrypt";
-    static final String AUTHOR = "Ron de Jong";
-    static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
-    static final String VERSION = "1.0";
+    private static final String COMPANYNAME = "GPLv3";
+    private static final String PRODUCTNAME = "FinalCrypt";
+    private static final String AUTHOR = "Ron de Jong";
+    private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
+    private static final String VERSION = "1.1";
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
     private int bufferSize = 1024 * 1024; // Default 1MB
@@ -127,30 +127,23 @@ public class FinalCrypt  extends Thread
     public void setCipherFilePath(Path cipherFilePath)                      { this.cipherFilePath = cipherFilePath; }
     public void setOutputFilePath(Path outputFilePath)                      { this.outputFilePath = outputFilePath; }
         
-//    public void encryptSelection()
     public void encryptSelection(ArrayList<Path> inputFilesPathList, Path cipherFilePath)
     {
-        // Get the all files size total
         
-        // Reset the Bytes Progress Counters
-//        fileBytesTotal = 0;
-//        filesBytesTotal = 0;
-//        filesBytesEncrypted = 0;
-//        fileBytesEncrypted = 0;
+        stats.reset();
 
-
-        
         // Get files bytes total
-        stats.setFilesTotal(inputFilesPathList.size());
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { stats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
         if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + stats.getFilesBytesTotal() + " bytes\n"); }
 
+        stats.setFilesTotal(inputFilesPathList.size());
+        ui.status(stats.getEncryptionStartSummary());
+        
         // Setup the Progress timer & task
         updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (stats.getFileBytesEncrypted() /( stats.getFileBytesTotal()/100.0)), (int) (stats.getFilesBytesEncrypted() /(stats.getFilesBytesTotal()/100.0))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
 
 //      Start Files Encryption Clock
-        double filesStartEpoch = System.currentTimeMillis();
         stats.setFilesStartEpoch();
         
         // Encrypt Files loop
@@ -202,11 +195,6 @@ public class FinalCrypt  extends Thread
                     long cipherFileChannelRead = 0;                
                     final ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
                     final ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-        //            final ByteBuffer outputFileBuffer = ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();                
-        //                final ByteBuffer outputFileBuffer;
-
-
-
 
                     stats.setFileStartEpoch();
 
@@ -257,22 +245,19 @@ public class FinalCrypt  extends Thread
                     stats.setFileEndEpoch();
 //                    fileDiffEpoch = (( (double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch)/1000f))/ 1000000f);
 //                    String throughput = String.format("%.1f", fileDiffEpoch);
-                    ui.status(stats.getFileThroughPut());
+                    ui.status(stats.getFileBytesThroughPut());
                     stats.addFilesEncrypted(1);
                         
 //                  Delete the original
                     long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
                     long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
                     if ( ( inputfilesize != 0 ) && (inputfilesize == outputfilesize) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }
-
-                    
                     
                 } // input != cipher
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
 
-         stats.setFilesEndEpoch();
-//         filesDiffEpoch = (( (double)filesBytesEncrypted / ((filesEndEpoch - filesStartEpoch)/1000f))/ 1000000f);
+        stats.setFilesEndEpoch();
         ui.status(stats.getEncryptionEndSummary());
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
@@ -303,14 +288,14 @@ public class FinalCrypt  extends Thread
         
         outputDiff = inputTotal ^ cipherTotal;
         
-        if (debug)
-        {
+//        if (debug)
+//        {
 //            ui.log(Integer.toString(inputTotal) + "\n");
 //            ui.log(Integer.toString(cipherTotal) + "\n");
 //            ui.log(Integer.toString(outputDiff) + "\n");
 //        MD5Converter.getMD5SumFromString(Integer.toString(dataTotal));
 //        MD5Converter.getMD5SumFromString(Integer.toString(cipherTotal));
-        }
+//        }
         
         return outputFileBuffer;
     }

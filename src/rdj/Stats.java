@@ -16,6 +16,10 @@
  */
 package rdj;
 
+import java.awt.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Stats
 {
 //  Files
@@ -104,43 +108,82 @@ public class Stats
 //  Stats
     
 //  File Stats
-    public String getFileThroughPut()                               
+    public String getFileBytesThroughPut()                               
     {
         String returnString = new String();
-        double fileDiffEpoch = (( (double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch)/1000f))/ 1000000f);
-        String throughput = String.format("%.1f", fileDiffEpoch);
-        returnString = " (" + throughput + " MB/Sec)\n";
+        double throughput = ( ((double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch))) * 1000 ); // *1000 from mSec to Sec
+        String throughputString = String.format("%.1f", throughput);
+        returnString = " (" + getHumanSize(throughput,1) + "/Sec)\n";
         
         return returnString;
     }
     
 //  Files Stats
-    public String getFilesThroughPut()                               
+    public String getFilesBytesThroughPut()                               
     {
         String returnString = new String();
-        double filesDiffEpoch = (( (double)filesBytesEncrypted / ((filesEndEpoch - filesStartEpoch)/1000f))/ 1000000f);
-        String throughput = String.format("%.1f", filesDiffEpoch);
-        returnString = " (average: " + throughput + "MB/Sec)\n";
-        
-        return returnString;
-    }
-    
-    public String getEncryptionEndSummary()                               
-    {
-        String returnString = "Encrypted " + filesEncrypted + " / " + filesTotal + " files totally " + filesBytesEncrypted + "MB / " + filesBytesEncrypted + "MB finished in " + ((filesEndEpoch - filesStartEpoch)/1000)  + " seconds " + getFilesThroughPut() + "\n";
+        double throughput = ( ((double)filesBytesEncrypted / ((filesEndEpoch - filesStartEpoch))) * 1000 ); // *1000 from mSec to Sec
+        String throughputString = String.format("%.1f", throughput);
+        returnString = " (average: " + getHumanSize(throughput,1) + "/Sec)\n";
         
         return returnString;
     }
     
     public String getEncryptionStartSummary()                               
     {
-        String returnString = "Encrypting " + filesTotal + " files totally " + filesBytesEncrypted + "MB\n";
+        String returnString = "Encryption starting: " + filesTotal + " files totally " + getHumanSize(filesBytesTotal,1) + "\n";
         
         return returnString;
     }
     
-
-//Encrypting 2569 files totally 300MB 
-//Encrypting 2565 files totally 300MB finished in 6 seconds (average: 50MB/Sec)    
-
+    public String getEncryptionEndSummary()                               
+    {
+//        String returnString = "Encrypted " + filesEncrypted + " / " + filesTotal + " files totally " + String.format("%.1f", (double)(filesBytesEncrypted/(1024*1024))) + "MB / " + String.format("%.1f", (filesBytesTotal/(1024*1024))) + "MB finished in " + ((filesEndEpoch - filesStartEpoch)/1000)  + " seconds " + getFilesBytesThroughPut() + "\n";
+        String returnString = "Encryption finished: " + filesEncrypted + " / " + filesTotal + " files totally " + getHumanSize(filesBytesEncrypted,1) + " / " + getHumanSize(filesBytesTotal,1) + " finished in " + ((filesEndEpoch - filesStartEpoch)/1000)  + " seconds " + getFilesBytesThroughPut() + "\n";
+        
+        return returnString;
+    }
+    
+    private static String getHumanSize(double value,int decimals)
+    {
+        int x = 0;
+        long factor;
+        double newValue = value;
+        String returnString = new String("");
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZB","EB","PB","TB","GB","MB","KB","Bytes"));
+        for (factor = 70; factor > 0; factor -= 10)
+        {
+            if ((value / Math.pow(2, factor)) > 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
+        }
+        if (factor == 0) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%." + decimals + "f", (newValue)) + " " + magnitude.get(x); }
+        return returnString;
+    }
+    
+    public void reset()
+    {
+        filesEncrypted = 0;
+        filesTotal = 0;
+        fileBytesEncrypted = 0;
+        fileBytesTotal = 0;
+        filesBytesEncrypted = 0;
+        filesBytesTotal = 0;
+        fileStartEpoch = 0;
+        fileEndEpoch = 0;
+        filesStartEpoch = 0;
+        filesEndEpoch = 0;
+    }
+    
+//    public static void main(String[] args)
+//    {
+//        System.out.println(getHumanSize(12l));
+//        System.out.println(getHumanSize(13000l));
+//        System.out.println(getHumanSize(14000000l));
+//        System.out.println(getHumanSize(15000000000l));
+//        System.out.println(getHumanSize(16000000000000l));
+//        System.out.println(getHumanSize(17000000000000000l));
+//        System.out.println(getHumanSize(1800000000000000000l));
+//    }
 }
+
+//Encryption finished: 153 / 153 files totally 23,5 MB / 23,5 MB finished in 3 seconds  (average: 7,6 MB/Sec)
+//Encryption starting: 153 files totally 23,5 MB

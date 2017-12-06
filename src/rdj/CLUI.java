@@ -185,7 +185,7 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypts myfile and all content in mydir with myphotofile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n\n");
-        log("Author: " + getAuthor() + " " + getCopyright() + "\n\n");
+        log(FinalCrypt.getProcuct() + " "+FinalCrypt.getVersion() +" Author: " + getAuthor() + " " + getCopyright() + "\n\n");
         System.exit(1);
     }
 
@@ -221,7 +221,6 @@ public class CLUI implements UI
     @Override
     public void encryptionStarted() 
     {
-        status("Encryption Started\n");
     }
 
     @Override
@@ -233,6 +232,5 @@ public class CLUI implements UI
     @Override
     public void encryptionFinished()
     {
-        status("Encryption Finished\n");
     }
 }

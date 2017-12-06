@@ -1,0 +1,20 @@
+Todo
+
+cipherFileChooser not focusable
+progressBar percentage
+.bit filter button
+
+Doing
+=============================================================================
+
+
+=============================================================================
+Done
+
+Set Product & Version in all interfaces
+Add SI Prefix calculation to statistics
+Removed inputFile selection bug
+
+Committed
+
+

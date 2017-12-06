@@ -22,24 +22,17 @@
 
 package rdj;
 
-import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.input.MouseButton;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
@@ -54,12 +47,12 @@ public class GUI extends javax.swing.JFrame implements UI
     private JButton cipherFileDeleteButton;
     private JButton inputFileDeleteButton;
     private boolean hasEncryptableItem;
-    private boolean hasCipherItem;
+    private boolean hasCipherItem = false;
 
     public GUI()
     {
         gui = this;
-                
+
 //        SwingUtilities.invokeLater(new Runnable()
 //        {
 //            @Override
@@ -91,8 +84,9 @@ public class GUI extends javax.swing.JFrame implements UI
                         cipherFileDeleteButtonActionPerformed(evt);
                     }
                 });
-        
-                initComponents();
+
+                initComponents();  
+                this.setTitle(FinalCrypt.getProcuct() + " " + FinalCrypt.getVersion());
                 
                 printButton.setVisible(false);
                 textButton.setVisible(false);
@@ -193,6 +187,7 @@ public class GUI extends javax.swing.JFrame implements UI
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("FinalCrypt");
         setMinimumSize(new java.awt.Dimension(1040, 700));
+        setName("frame"); // NOI18N
         setPreferredSize(new java.awt.Dimension(1100, 700));
 
         tab.setBackground(new java.awt.Color(0, 0, 0));
@@ -313,7 +308,7 @@ public class GUI extends javax.swing.JFrame implements UI
         logScroller.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         logTextArea.setColumns(20);
-        logTextArea.setFont(new java.awt.Font("Courier 10 Pitch", 0, 14)); // NOI18N
+        logTextArea.setFont(new java.awt.Font("Cousine", 0, 14)); // NOI18N
         logTextArea.setRows(5);
         logScroller.setViewportView(logTextArea);
 
@@ -562,23 +557,20 @@ public class GUI extends javax.swing.JFrame implements UI
     {//GEN-HEADEREND:event_inputFileChooserPropertyChange
         this.fileProgressBar.setValue(0);
         this.filesProgressBar.setValue(0);
-
-         hasEncryptableItem = false;
+        hasEncryptableItem = false;
 
         // En/Disable FileChooser deletebutton
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0)) {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
-        
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0))
+        {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
+
         // En/Disable encryptButton        
-        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0))
         {
-//            for (File path:inputFileChooser.getSelectedFiles())
             for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
             {
                 if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
-//            File file = cipherFileChooser.getSelectedFile(); if (Files.isRegularFile(file.toPath())) { hasCipherItem = true; }
-//            if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setEnabled(true); } else { encryptButton.setEnabled(false); }
-        } // else { encryptButton.setEnabled(false); }
+        }
         checkEncryptionReady();
     }//GEN-LAST:event_inputFileChooserPropertyChange
 
@@ -617,7 +609,6 @@ public class GUI extends javax.swing.JFrame implements UI
     {//GEN-HEADEREND:event_cipherFileChooserPropertyChange
         this.fileProgressBar.setValue(0);
         this.filesProgressBar.setValue(0);
-        hasCipherItem = false;
         
         // En/Disable FileChooser deletebutton
         if (
@@ -631,13 +622,16 @@ public class GUI extends javax.swing.JFrame implements UI
         { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
         
         // En/Disable hasCipherItem
-        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+        if ((inputFileChooser != null) && (cipherFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if (
-                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath()))
+                    (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) &&
+                    (cipherFileChooser.getSelectedFile().length() > 0)
                )
-            { hasCipherItem = true; } else { hasCipherItem = false; }
-        } else { hasCipherItem = false; }
+            { 
+                hasCipherItem = true; 
+            } else { hasCipherItem = false; }
+        }
         
         checkEncryptionReady();
     }//GEN-LAST:event_cipherFileChooserPropertyChange
@@ -780,7 +774,6 @@ public class GUI extends javax.swing.JFrame implements UI
             @SuppressWarnings({"static-access"})
             public void run()
             {
-                status("Validating files\n");
                 Path outputFilePath = null;
 
 //                // Add the inputFilesPath to List from inputFileChooser
@@ -1138,6 +1131,22 @@ public class GUI extends javax.swing.JFrame implements UI
     }
 
     @Override
+    public void encryptionStarted()
+    {
+//        SwingUtilities.invokeLater(new Runnable()
+//        {
+//            public void run()
+//            {
+                encryptButton.setEnabled(false);
+                fileProgressBar.setValue(0);
+                filesProgressBar.setValue(0);
+                inputFileChooser.rescanCurrentDirectory();
+                cipherFileChooser.rescanCurrentDirectory();
+//            }
+//        });
+    }
+
+    @Override
     synchronized public void encryptionGraph(final int value)
     {
         SwingUtilities.invokeLater(new Runnable()
@@ -1146,23 +1155,6 @@ public class GUI extends javax.swing.JFrame implements UI
             {
             }
         });
-    }
-
-    @Override
-    public void encryptionStarted()
-    {
-//        SwingUtilities.invokeLater(new Runnable()
-//        {
-//            public void run()
-//            {
-                status("Encryption Started\n");
-                encryptButton.setEnabled(false);
-                fileProgressBar.setValue(0);
-                filesProgressBar.setValue(0);
-                inputFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
-//            }
-//        });
     }
 
     // Threaded version of FinalCrypt
@@ -1181,19 +1173,19 @@ public class GUI extends javax.swing.JFrame implements UI
 //        });
     }
      
-//  SwingWorker version of FinalCrypt     
-    public void setProgress(Integer newValue) 
-    {
-//        SwingUtilities.invokeLater(new Runnable()
-//        {
-//            public void run()
-//            {
-//                if (finalCrypt.getDebug()) { println("Progress File : " + newValue + "%\n"); }
-                if (finalCrypt.getDebug()) { println("Progress Files: " + newValue + "%\n"); }
-                fileProgressBar.setValue(newValue);
-//            }
-//        });
-    }
+////  SwingWorker version of FinalCrypt     
+//    public void setProgress(Integer newValue) 
+//    {
+////        SwingUtilities.invokeLater(new Runnable()
+////        {
+////            public void run()
+////            {
+////                if (finalCrypt.getDebug()) { println("Progress File : " + newValue + "%\n"); }
+//                if (finalCrypt.getDebug()) { println("Progress Files: " + newValue + "%\n"); }
+//                fileProgressBar.setValue(newValue);
+////            }
+////        });
+//    }
 
     @Override
     synchronized public void encryptionFinished()
@@ -1202,7 +1194,6 @@ public class GUI extends javax.swing.JFrame implements UI
 //        {
 //            public void run()
 //            {
-                status("Encryption Finished\n");
                 encryptButton.setEnabled(true);
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " +  (int)(finalCrypt.getStats().getFileBytesEncrypted()  / (finalCrypt.getStats().getFileBytesTotal()  / 100.0)) + "%"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " +  (int)(finalCrypt.getStats().getFilesBytesEncrypted() / (finalCrypt.getStats().getFilesBytesTotal() / 100.0)) + "%"); }

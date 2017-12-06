@@ -1,7 +1,0 @@
-cipherFileChooser not focusable
-progressBar percentage
-.bit filter button
-Total bytes at start
-Total byte at end
-Encrypting 2569 files totally 300MB 
-Encrypting 2565 files totally 300MB finished in 6 seconds (average: 50MB/Sec)
