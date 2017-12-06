@@ -58,10 +58,10 @@ public class FinalCrypt  extends Thread
     private long bufferTotal = 0; // DNumber of buffers
 
     private int printAddressByteCounter = 0;
-    public long fileBytesTotal = 0;
-    public long filesBytesTotal = 0;
-    private long fileBytesEncrypted = 0;
-    private long filesBytesEncrypted = 0;
+//    public long fileBytesTotal = 0;
+//    public long filesBytesTotal = 0;
+//    private long fileBytesEncrypted = 0;
+//    private long filesBytesEncrypted = 0;
     private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
@@ -74,6 +74,7 @@ public class FinalCrypt  extends Thread
     
     private TimerTask updateProgressTask;
     private java.util.Timer updateProgressTaskTimer;
+    private final Stats stats;
     
 
     public FinalCrypt(UI ui)
@@ -86,6 +87,7 @@ public class FinalCrypt  extends Thread
         outputFileBufferSize = bufferSize;        
         this.ui = ui;
         fc = this;
+        stats = new Stats();
     }
     
     public int getBufferSize()                                              { return bufferSize; }
@@ -101,10 +103,10 @@ public class FinalCrypt  extends Thread
     public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
     public Path getCipherFilePath()                                         { return cipherFilePath; }
     public Path getOutputFilePath()                                         { return outputFilePath; }
-    public long getFileBytesEncrypted()                                     { return fileBytesEncrypted; }
-    public long getFilesBytesEncrypted()                                    { return filesBytesEncrypted; }
-    public long getFileBytesTotal()                                         { return fileBytesTotal; }
-    public long getFilesBytesTotal()                                        { return filesBytesTotal; }
+//    public long getFileBytesEncrypted()                                     { return fileBytesEncrypted; }
+//    public long getFilesBytesEncrypted()                                    { return filesBytesEncrypted; }
+//    public long getFileBytesTotal()                                         { return fileBytesTotal; }
+//    public long getFilesBytesTotal()                                        { return filesBytesTotal; }
     
     public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
@@ -128,25 +130,29 @@ public class FinalCrypt  extends Thread
 //    public void encryptSelection()
     public void encryptSelection(ArrayList<Path> inputFilesPathList, Path cipherFilePath)
     {
-//        ui.encryptionStarted();
         // Get the all files size total
         
         // Reset the Bytes Progress Counters
-        fileBytesTotal = 0;
-        filesBytesTotal = 0;
-        filesBytesEncrypted = 0;
-        fileBytesEncrypted = 0;
+//        fileBytesTotal = 0;
+//        filesBytesTotal = 0;
+//        filesBytesEncrypted = 0;
+//        fileBytesEncrypted = 0;
 
 
         
         // Get files bytes total
-        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { filesBytesTotal += Files.size(inputFilePath); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
-        if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + filesBytesTotal + " bytes\n"); }
+        stats.setFilesTotal(inputFilesPathList.size());
+        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { stats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
+        if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + stats.getFilesBytesTotal() + " bytes\n"); }
 
         // Setup the Progress timer & task
-        updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (fileBytesEncrypted /(fileBytesTotal/100.0)), (int) (filesBytesEncrypted /(filesBytesTotal/100.0))); }};
+        updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (stats.getFileBytesEncrypted() /( stats.getFileBytesTotal()/100.0)), (int) (stats.getFilesBytesEncrypted() /(stats.getFilesBytesTotal()/100.0))); }};
         updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
 
+//      Start Files Encryption Clock
+        double filesStartEpoch = System.currentTimeMillis();
+        stats.setFilesStartEpoch();
+        
         // Encrypt Files loop
         fileloop: for (Path inputFilePath:inputFilesPathList)
         {
@@ -154,11 +160,11 @@ public class FinalCrypt  extends Thread
             {
                 if ((inputFilePath.compareTo(cipherFilePath) != 0))
                 {
-                    fileBytesEncrypted = 0;
+                    stats.setFileBytesEncrypted(0);
 
                     // Get the filesize total
-                    try { fileBytesTotal = Files.size(inputFilePath); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
-                    if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + fileBytesTotal + " bytes\n"); }
+                    try { stats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
+                    if (verbose) { ui.log("Inputfile: " + inputFilePath.getFileName() + " size: " + stats.getFileBytesTotal() + " bytes\n"); }
 
                     String prefix = new String("bit");
                     String suffix = new String(".bit");
@@ -202,7 +208,7 @@ public class FinalCrypt  extends Thread
 
 
 
-                    double start = System.currentTimeMillis();
+                    stats.setFileStartEpoch();
 
                     // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
                     while ( ! inputFileEnded )
@@ -248,59 +254,11 @@ public class FinalCrypt  extends Thread
                     }
                     if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
 
-                    double end = System.currentTimeMillis();
-                    double diff = (( (double)fileBytesEncrypted / ((end - start)/1000f))/ 1000000f);
-                    
-                    String throughput = String.format("%.1f", diff);
-//                    ui.status(" (" + (fileBytesEncrypted / (endCal.getTimeInMillis() - endCal.getTimeInMillis())) + ")\n");
-                    ui.status(" (" + throughput + " MB/Sec)\n");
-                        
-                        
- //                    // Open outputFile for writing
-//                    try (final SeekableByteChannel outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
-//                    {
-//                        //open dataFile
-//                        try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
-//                        {
-//                            // Open cipherFile
-//                            try (final SeekableByteChannel cipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-//                            {
-//                                // Fill dataBuffer & cipherBuffer (Every run (..Channel.read() fills up the entire buffer)
-//                                while ( ! inputFileEnded )
-//                                {
-//                                    // Fill up inputFileBuffer
-//                                    if (debug) { ui.println("\nInp Ch Pos: " + Long.toString(inputFileChannel.position())); }
-//                                    inputFileChannelPos = inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip();
-//                                    if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
-//    //                                if ( inputFileBuffer.limit() < inputFileBufferSize ) { inputFileEnded = true; }
-//
-//                                    // Fill up cipherFileBuffer
-//                                    if (debug) { ui.println("Cip Ch Pos: " + Long.toString(cipherFileChannel.position())); }
-//                                    cipherFileChannelPos = cipherFileChannel.read(cipherFileBuffer);
-//                                    if ( cipherFileChannelPos < cipherFileBufferSize ) { cipherFileChannel.position(0); cipherFileChannel.read(cipherFileBuffer); }
-//                                    cipherFileBuffer.flip();
-//
-//
-//                                    // Encrypt inputBuffer and fill up outputBuffer
-//                                    ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
-//                                    outputFileChannel.write(outputFileBuffer);
-//
-//                                    if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
-//
-//                                    outputFileBuffer.clear();
-//                                    inputFileBuffer.clear();
-//                                    cipherFileBuffer.clear();
-//                                }
-//
-//                                if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
-//                                cipherFileChannel.close();
-//                            } catch (IOException ex) { ui.error("cipherChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-//                            inputFileChannel.close();
-//                        } catch (IOException ex) { ui.error("dataChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
-//                        outputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("outputChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
-
-
+                    stats.setFileEndEpoch();
+//                    fileDiffEpoch = (( (double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch)/1000f))/ 1000000f);
+//                    String throughput = String.format("%.1f", fileDiffEpoch);
+                    ui.status(stats.getFileThroughPut());
+                    stats.addFilesEncrypted(1);
                         
 //                  Delete the original
                     long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
@@ -312,6 +270,11 @@ public class FinalCrypt  extends Thread
                 } // input != cipher
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
+
+         stats.setFilesEndEpoch();
+//         filesDiffEpoch = (( (double)filesBytesEncrypted / ((filesEndEpoch - filesStartEpoch)/1000f))/ 1000000f);
+        ui.status(stats.getEncryptionEndSummary());
+
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
         ui.encryptionFinished();
     }
@@ -374,8 +337,8 @@ public class FinalCrypt  extends Thread
         if ( chr )      { logByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
 
         // Increment Byte Progress Counters 
-        filesBytesEncrypted++;
-        fileBytesEncrypted++;
+        stats.addFilesBytesEncrypted(1);
+        stats.addFileBytesEncrypted(1);
         
         return (byte)dbm; // outputByte
     }
@@ -564,6 +527,7 @@ public class FinalCrypt  extends Thread
     public static String getVersion()                       { return VERSION; }
     public static String getProcuct()                       { return PRODUCTNAME; }
     public static String getCompany()                       { return COMPANYNAME; }
+    public Stats getStats()                                 { return stats; }
 
 //  Class Extends Thread
     @Override

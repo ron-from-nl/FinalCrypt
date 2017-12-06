@@ -878,12 +878,12 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 status("Encryption Finished\n");
                 encryptButton.setDisable(false);
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()) + " factor"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal()) + " factor\n"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFilesBytesTotal() != 0))  { log("Progress Files: " + (finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal()) + " factor\n"); }
-                if (finalCrypt.getFileBytesTotal() != 0)                                { fileProgressBar.setProgress((finalCrypt.getFileBytesEncrypted() / finalCrypt.getFileBytesTotal())); }
-                if (finalCrypt.getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getFilesBytesEncrypted() / finalCrypt.getFilesBytesTotal())); } // 50% becomes 0.5
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { log("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor\n"); }
+                if (finalCrypt.getStats().getFileBytesTotal() != 0)                                { fileProgressBar.setProgress((finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal())); }
+                if (finalCrypt.getStats().getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal())); } // 50% becomes 0.5
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
             }

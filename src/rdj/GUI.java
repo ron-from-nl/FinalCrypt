@@ -1204,13 +1204,13 @@ public class GUI extends javax.swing.JFrame implements UI
 //            {
                 status("Encryption Finished\n");
                 encryptButton.setEnabled(true);
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFileBytesTotal() != 0))   { println("Progress File : " +  (int)(finalCrypt.getFileBytesEncrypted()  / (finalCrypt.getFileBytesTotal()  / 100.0)) + "%"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFilesBytesTotal() != 0))  { println("Progress Files: " +  (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal() / 100.0)) + "%"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFileBytesTotal() != 0))   { log("Progress File : " +      (int)(finalCrypt.getFileBytesEncrypted()  / (finalCrypt.getFileBytesTotal()  / 100.0)) + "%\n"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getFilesBytesTotal() != 0))  { log("Progress Files: " +      (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal() / 100.0)) + "%\n"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " +  (int)(finalCrypt.getStats().getFileBytesEncrypted()  / (finalCrypt.getStats().getFileBytesTotal()  / 100.0)) + "%"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " +  (int)(finalCrypt.getStats().getFilesBytesEncrypted() / (finalCrypt.getStats().getFilesBytesTotal() / 100.0)) + "%"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " +      (int)(finalCrypt.getStats().getFileBytesEncrypted()  / (finalCrypt.getStats().getFileBytesTotal()  / 100.0)) + "%\n"); }
+                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { log("Progress Files: " +      (int)(finalCrypt.getStats().getFilesBytesEncrypted() / (finalCrypt.getStats().getFilesBytesTotal() / 100.0)) + "%\n"); }
                 
-                if (finalCrypt.getFileBytesTotal() != 0)    fileProgressBar.setValue(                                   (int)(finalCrypt.getFileBytesEncrypted() /  (finalCrypt.getFileBytesTotal() / 100.0)));
-                if (finalCrypt.getFilesBytesTotal() != 0)   filesProgressBar.setValue(                                  (int)(finalCrypt.getFilesBytesEncrypted() / (finalCrypt.getFilesBytesTotal()  / 100.0)));
+                if (finalCrypt.getStats().getFileBytesTotal() != 0)    fileProgressBar.setValue(                                   (int)(finalCrypt.getStats().getFileBytesEncrypted() /  (finalCrypt.getStats().getFileBytesTotal() / 100.0)));
+                if (finalCrypt.getStats().getFilesBytesTotal() != 0)   filesProgressBar.setValue(                                  (int)(finalCrypt.getStats().getFilesBytesEncrypted() / (finalCrypt.getStats().getFilesBytesTotal()  / 100.0)));
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
 //            }
