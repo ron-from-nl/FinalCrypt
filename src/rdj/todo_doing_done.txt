@@ -1,6 +1,6 @@
 Todo
 
-cipherFileChooser not focusable
+binary bitmask demo
 progressBar percentage
 .bit filter button
 
@@ -8,13 +8,15 @@ Doing
 =============================================================================
 
 
+
 =============================================================================
 Done
 
-Set Product & Version in all interfaces
-Add SI Prefix calculation to statistics
-Removed inputFile selection bug
 
 Committed
 
-
+Cleanup interface file validation
+Improved set and correct buffersize
+Set Product & Version in all interfaces
+Add SI Prefix calculation to statistics
+Removed inputFile selection bug

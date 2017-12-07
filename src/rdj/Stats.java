@@ -144,7 +144,7 @@ public class Stats
         return returnString;
     }
     
-    private static String getHumanSize(double value,int decimals)
+    public static String getHumanSize(double value,int decimals)
     {
         int x = 0;
         long factor;
@@ -153,7 +153,7 @@ public class Stats
         ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZB","EB","PB","TB","GB","MB","KB","Bytes"));
         for (factor = 70; factor > 0; factor -= 10)
         {
-            if ((value / Math.pow(2, factor)) > 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
+            if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
         }
         if (factor == 0) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%." + decimals + "f", (newValue)) + " " + magnitude.get(x); }
         return returnString;

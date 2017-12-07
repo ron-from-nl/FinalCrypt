@@ -22,7 +22,6 @@
 
 package rdj;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,6 +55,7 @@ public class CLUI implements UI
         // Load the FinalCrypt Objext
         finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
+        finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
         
 ////      SwingWorker version of FinalCrype
 //        finalCrypt.execute();
@@ -73,7 +73,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 * 1024); paramCnt++; } else { System.err.println("\nError: Invalid Option Value [-b size]"); usage(); }}
+            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
             else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
@@ -81,8 +81,8 @@ public class CLUI implements UI
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
-        if ( ! ifset ) { System.err.println("\nError: Missing parameter <-i \"inputfile\">"); usage(); }
-        if ( ! cfset ) { System.err.println("\nError: Missing parameter <-c \"cipherfile\">"); usage(); }
+        if ( ! ifset ) { error("\nError: Missing parameter <-i \"inputfile\">" + "\n"); usage(); }
+        if ( ! cfset ) { error("\nError: Missing parameter <-c \"cipherfile\">" + "\n"); usage(); }
 
 
 //      Check the inputFileList created by the parameters
@@ -92,7 +92,7 @@ public class CLUI implements UI
             {
                 if ( finalCrypt.isValidDir(inputFilePathItem) )
                 {
-                    status("Input parameter: " + inputFilePathItem + " exist\n");
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n"); }
                 }
                 else
                 {
@@ -108,7 +108,11 @@ public class CLUI implements UI
 //      Check the cipherFile created by the parameters
         if (Files.exists(cipherFilePath))
         {
-            if ( finalCrypt.isValidFile(cipherFilePath, false, true) ) {} else   { usage(); }
+            if ( finalCrypt.isValidFile(cipherFilePath, false, true) )
+            {
+                finalCrypt.setCipherFilePath(cipherFilePath);
+                if (finalCrypt.getVerbose()) { status("Cipher parameter: " + finalCrypt.getCipherFilePath() + " exist\n"); }
+            } else { usage(); }
         }
         else
         { 
@@ -122,33 +126,22 @@ public class CLUI implements UI
         ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, "*");
         // Set the Options
         
-        // Limit buffersize to cipherfile size
-        try 
+        // Set Buffer Size
+//        finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault()); // set in the options
+        int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+        if ( cipherSize < finalCrypt.getBufferSize())
         {
-            if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())
-            {
-                finalCrypt.setBufferSize((int) (long) Files.size(cipherFilePath));
-                if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize() + "\n"); }
-            }
+            finalCrypt.setBufferSize(cipherSize);
+            status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
         }
-        catch (IOException ex) { error("if ( Files.size(cipherFilePath) < finalCrypt.getBufferSize())" + ex + "\n"); }
-        
-        // Set the files
-//        finalCrypt.setInputFilesPathList(inputFilesPathList);
-//        finalCrypt.setInputFilesPathList(inputFilesPathListExtended);
-//        finalCrypt.setCipherFilePath(cipherFilePath);
-        
-        if ( finalCrypt.getVerbose() )
+        else
         {
-            log("Info: Buffersize set to: " + finalCrypt.getBufferSize());
-            for(Path inputFilePathItem : finalCrypt.getInputFilesPathList()) { log("Info: Inputfile set: " + inputFilePathItem.getFileName() + "\n"); }
-            log("Info: Cipherfile set: " + finalCrypt.getCipherFilePath() + "\n");
+            status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
         }
         
         // Start Encryption
         this.encryptionStarted();
-//        finalCrypt.encryptSelection();
-          finalCrypt.encryptSelection(inputFilesPathListExtended, cipherFilePath);
+        finalCrypt.encryptSelection(inputFilesPathListExtended, cipherFilePath);
     }
 
     public static void main(String[] args)
@@ -175,7 +168,7 @@ public class CLUI implements UI
         log("            [--dec]               Print decimal calculations.\n");
         log("            [--hex]               Print hexadecimal calculations.\n");
         log("            [--chr]               Print character calculations.\n");
-        log("            [-b size]             Changes default I/O buffer size (size = MB) (default 1MB).\n");
+        log("            [-b size]             Changes default I/O buffer size (size = KB) (default 1024 KB).\n");
         log("Parameters:\n");
         log("            <-i \"dir/file\">       The dir or file you want to encrypt (dir encrypt recursively!).\n");
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
@@ -210,7 +203,7 @@ public class CLUI implements UI
     @Override
     public void println(String message)
     {
-        System.out.println(message);
+        System.out.println(message + "\n");
     }
 
     @Override

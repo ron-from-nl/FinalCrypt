@@ -26,7 +26,6 @@ import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -107,12 +106,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     FinalCrypt finalCrypt;
     GUIFX guifx;
-//    private SwingNode cipherFileChooserSwingNode;
     private JFileChooser inputFileChooser;
     private JFileChooser cipherFileChooser;
-//    private SwingNode swingNode2;
-//    private StackPane stackPane;
-//    private StackPane inputFileChooserStackPane;
     @FXML
     private SwingNode inputFileSwingNode;
     @FXML
@@ -173,14 +168,6 @@ public class GUIFX extends Application implements UI, Initializable
         
 //        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
         inputFileChooser = new JFileChooser();
-//        FileChooserUI ifcUI = inputFileChooser.getUI();
-//        try{
-//            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
-//            method.setAccessible(true);
-//            method.invoke(inputFileChooser, ifcUI);
-//        } catch (Exception ex) { /*catch whatever you want and handle it however you want*/ }
-//        inputFileChooser.setPreferredSize(new Dimension(800,600));
-//        inputFileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
@@ -216,13 +203,6 @@ public class GUIFX extends Application implements UI, Initializable
         );
 //        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
         cipherFileChooser = new JFileChooser();
-//        FileChooserUI cfcUI = cipherFileChooser.getUI();
-//        try{
-//            Method method = JComponent.class.getDeclaredMethod("setUI", javax.swing.plaf.ComponentUI.class);
-//            method.setAccessible(true);
-//            method.invoke(cipherFileChooser, cfcUI);
-//        } catch (Exception ex) { /*catch whatever you want and handle it however you want*/ }
-//        cipherFileChooser.setPreferredSize(new Dimension(800,600));
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);
@@ -271,13 +251,9 @@ public class GUIFX extends Application implements UI, Initializable
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {
-//      int selectedOption = JOptionPane.showConfirmDialog((Component) root, "Delete selected items?", "Choose", JOptionPane.YES_NO_OPTION);
-//        if (selectedOption == JOptionPane.YES_OPTION)
-        
         PlatformImpl.runAndWait(new Runnable()
         {
             @Override
-//            @SuppressWarnings({"static-access"})
             public void run()
             {
                 String itemword = "";
@@ -313,10 +289,6 @@ public class GUIFX extends Application implements UI, Initializable
 //            @SuppressWarnings({"static-access"})
             public void run()
             {
-//                int selectedOption = JOptionPane.showConfirmDialog(null, "Delete selected item?", "Choose", JOptionPane.YES_NO_OPTION);
-//                if (selectedOption == JOptionPane.YES_OPTION)
-//                {           
-//                }
                 String selection = "Delete 1 selected item?";
                 Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES)
@@ -440,6 +412,7 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 if (   ! ((JToggleButton)component).isSelected()   )
                 {
+                    // Needs a delay for proper column width 
                     TimerTask updateProgressTask = new TimerTask() { @Override public void run()
                     {
                         ((JToggleButton)component).doClick();
@@ -447,22 +420,12 @@ public class GUIFX extends Application implements UI, Initializable
                     Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
                 }
             }
-//            // Click "details view" ToggleButton
-//            if (component instanceof JToggleButton)
-//            {
-//                if (   ! ((JToggleButton)component).isSelected()   )
-//                {
-//                    ((JToggleButton)component).doClick();
-//                }
-//            }
             
             // Add Delete button
             if (component instanceof JButton)
             {
                 if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
                 {
-//                    component.getParent().add(this.inputFileDeleteButton);
-//                    if (inputFileChooserContainer) { component.getParent().add(this.inputFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
                     component.getParent().add(this.inputFileDeleteButton);
                 }
             }
@@ -569,57 +532,37 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptButtonAction(ActionEvent event)
     {
+        // Needs Threading to early split off from the UI Event Dispatch Thread
         Thread encryptThread = new Thread(new Runnable()
         {
             @Override
             @SuppressWarnings({"static-access"})
             public void run()
             {
-                Path outputFilePath = null;
-
-//                // Add the inputFilesPath to List from inputFileChooser
-//                ArrayList<Path> inputFilesPathList = new ArrayList<>(); for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-//                Add the inputFilesPath to List from inputFileChooser
+//              Extend chooser.selectedfiles and add to inputFilesPath
                 ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*");
-
-                // makes double additions
-//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-                // Validate and create output files
-                for(Path inputFilePathItem : inputFilesPathList)
-                {
-                    finalCrypt.isValidFile(inputFilePathItem, false, true);
-                    if ( inputFilePathItem.compareTo(cipherFileChooser.getSelectedFile().toPath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
-
-//                    // Validate output path
-//                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-//                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); }
-                }
 
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
 
-                // Resize path Buffers
-                try 
+                // Set Buffer Size
+                finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+                int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+                if ( cipherSize < finalCrypt.getBufferSize())
                 {
-                    if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
-                    {
-                        finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
-                        if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
-                    }
+                    finalCrypt.setBufferSize(cipherSize);
+                    status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
                 }
-                catch (IOException ex) { error("Files.size(cfp)" + ex + "\n"); }
-
+                else
+                {
+                    status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+                }
+                
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
 
                 encryptionStarted();
-//                finalCrypt.encryptSelection();
                 finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
-
-////                SwingWorker version of FinalCrypt
-//                try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
             }
         });
         encryptThread.setName("encryptThread");

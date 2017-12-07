@@ -51,7 +51,8 @@ public class FinalCrypt  extends Thread
     private static final String VERSION = "1.1";
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
-    private int bufferSize = 1024 * 1024; // Default 1MB
+    private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
+    private int bufferSize = 0; // Default 1MB
     private int inputFileBufferSize;
     private int cipherFileBufferSize;
     private int outputFileBufferSize;
@@ -100,6 +101,7 @@ public class FinalCrypt  extends Thread
     public boolean getDec()                                                 { return dec; }
     public boolean getHex()                                                 { return hex; }
     public boolean getChr()                                                 { return chr; }
+    public int getBufferSizeDefault()                                      { return bufferSizeDefault; }
     public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
     public Path getCipherFilePath()                                         { return cipherFilePath; }
     public Path getOutputFilePath()                                         { return outputFilePath; }
@@ -134,7 +136,6 @@ public class FinalCrypt  extends Thread
 
         // Get files bytes total
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { stats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
-        if (verbose) { ui.log("Total files: " + inputFilesPathList.size() + " containing totally:  " + stats.getFilesBytesTotal() + " bytes\n"); }
 
         stats.setFilesTotal(inputFilesPathList.size());
         ui.status(stats.getEncryptionStartSummary());
@@ -182,6 +183,7 @@ public class FinalCrypt  extends Thread
                     // Prints printByte Header ones                
                     if ( print )
                     {
+                        ui.log("\n");
                         ui.log(" ----------------------------------------------------------------------\n");
                         ui.log("|          |       Input       |      Cipher       |      Output       |\n");
                         ui.log("| ---------|-------------------|-------------------|-------------------|\n");
@@ -253,10 +255,9 @@ public class FinalCrypt  extends Thread
                     long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
                     if ( ( inputfilesize != 0 ) && (inputfilesize == outputfilesize) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }
                     
-                } // input != cipher
+                } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
-
         stats.setFilesEndEpoch();
         ui.status(stats.getEncryptionEndSummary());
 
@@ -432,7 +433,7 @@ public class FinalCrypt  extends Thread
         
         if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { ui.error("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage() + "\n");} }
 
-        if (Files.exists(path, opt))    { if (verbose) { ui.log(path + " exists.\n"); }}                   else { ui.error(path + " does not exist!" + "\n"); isValid = false; }
+        if (Files.exists(path, opt))    { if (verbose) { /*ui.log(path + " exists.\n"); */}}                else { ui.error(path + " does not exist!" + "\n"); isValid = false; }
         if (Files.isRegularFile(path))  { if (verbose) { /*ui.log("The checked file is regular.\n"); */}}   else { ui.error("Error: The checked file is not regular!" + "\n"); isValid = false; }
         if (Files.isReadable(path))     { if (verbose) { /*ui.log("The checked file is readable.\n"); */}}  else { ui.error("Error: The checked file is not readable!" + "\n"); isValid = false; }
         if (Files.isWritable(path))     { if (verbose) { /*ui.log("The checked file is writable.\n"); */}}  else { ui.error("Error: The checked file is not writable!" + "\n"); isValid = false; }
@@ -446,7 +447,7 @@ public class FinalCrypt  extends Thread
     public boolean isValidDir(Path path)
     {
         boolean isValid = true;
-        if (Files.exists(path))    { if (verbose) { ui.log(path + " exists.\n"); }} else { ui.error("Item: " + path + " does not exist!" + "\n"); isValid = false; }
+        if (Files.exists(path))    {  } else { ui.error("Item: " + path + " does not exist!" + "\n"); isValid = false; }
         
         return isValid;
     }

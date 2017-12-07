@@ -53,99 +53,61 @@ public class GUI extends javax.swing.JFrame implements UI
     {
         gui = this;
 
-//        SwingUtilities.invokeLater(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//              Create Custom DeleteButtons to be injected into JFileChooser
-                inputFileDeleteButton = new javax.swing.JButton();
-                inputFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
-                inputFileDeleteButton.setText("X");
-                inputFileDeleteButton.setEnabled(false);
-                inputFileDeleteButton.setToolTipText("Delete selected item(s)");
-                inputFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-                {
-                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                    {
-                        inputFileDeleteButtonActionPerformed(evt);
-                    }
-                });
+//      Create Custom DeleteButtons to be injected into JFileChooser
+        inputFileDeleteButton = new javax.swing.JButton();
+        inputFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
+        inputFileDeleteButton.setText("X");
+        inputFileDeleteButton.setEnabled(false);
+        inputFileDeleteButton.setToolTipText("Delete selected item(s)");
+        inputFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                inputFileDeleteButtonActionPerformed(evt);
+            }
+        });
 
-                cipherFileDeleteButton = new javax.swing.JButton();
-                cipherFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
-                cipherFileDeleteButton.setText("X");
-                cipherFileDeleteButton.setEnabled(false);
-                cipherFileDeleteButton.setToolTipText("Delete selected item");
-                cipherFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-                {
-                    public void actionPerformed(java.awt.event.ActionEvent evt)
-                    {
-                        cipherFileDeleteButtonActionPerformed(evt);
-                    }
-                });
+        cipherFileDeleteButton = new javax.swing.JButton();
+        cipherFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
+        cipherFileDeleteButton.setText("X");
+        cipherFileDeleteButton.setEnabled(false);
+        cipherFileDeleteButton.setToolTipText("Delete selected item");
+        cipherFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                cipherFileDeleteButtonActionPerformed(evt);
+            }
+        });
 
-                initComponents();  
-                this.setTitle(FinalCrypt.getProcuct() + " " + FinalCrypt.getVersion());
-                
-                printButton.setVisible(false);
-                textButton.setVisible(false);
-                binButton.setVisible(false);
-                decButton.setVisible(false);
-                hexButton.setVisible(false);
-                charButton.setVisible(false);
-                
-                try
-                { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
-                catch (ClassNotFoundException ex) { }
-                catch (InstantiationException ex) { }
-                catch (IllegalAccessException ex) { }
-                catch (UnsupportedLookAndFeelException ex) { }
+        initComponents();  
+        this.setTitle(FinalCrypt.getProcuct() + " " + FinalCrypt.getVersion());
 
-                Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
-                int winWidth = (int)getWidth();
-                int winHeight = (int)getHeight();
-                int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
-                int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
-                setLocation(posX, posY);
-                this.setSize(screenDim);
+        printButton.setVisible(false);
+        textButton.setVisible(false);
+        binButton.setVisible(false);
+        decButton.setVisible(false);
+        hexButton.setVisible(false);
+        charButton.setVisible(false);
+
+        try
+        { UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); }
+        catch (ClassNotFoundException ex) { }
+        catch (InstantiationException ex) { }
+        catch (IllegalAccessException ex) { }
+        catch (UnsupportedLookAndFeelException ex) { }
+
+        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+        int winWidth = (int)getWidth();
+        int winHeight = (int)getHeight();
+        int posX = Math.round((screenDim.width / 2) - (winWidth / 2));
+        int posY = Math.round((screenDim.height / 2) - (winHeight / 2));
+        setLocation(posX, posY);
+        this.setSize(screenDim);
+
+        finalCrypt = new FinalCrypt(gui);
+        finalCrypt.start();
                 
-                finalCrypt = new FinalCrypt(gui);
-                finalCrypt.start();
-                
-////              SwingWorker version of FinalCrypt
-//                finalCrypt.execute();
-//                finalCrypt.addPropertyChangeListener(new PropertyChangeListener()
-//                {
-//                    @Override
-//                    public void propertyChange(PropertyChangeEvent pcEvt)
-//                    {
-//                        if (pcEvt.getPropertyName().equals("state"))
-//                        {
-//                            if (pcEvt.getNewValue() == SwingWorker.StateValue.DONE)
-//                            {
-//                                done();
-////                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
-//                            }
-//                            else if (pcEvt.getNewValue() == SwingWorker.StateValue.STARTED)
-//                            {
-//                                start();
-////                                try { done(finalCrypt.get());} catch (InterruptedException e) { e.printStackTrace(); } catch (ExecutionException e) { e.printStackTrace(); }
-//                            }
-//                            else { log("PropertyChange: " + pcEvt.getPropertyName() + " getNewValue: " + pcEvt.getNewValue());}
-//                        }
-//                        else if (pcEvt.getPropertyName().equals("progress"))
-//                        {
-//                            setProgress((Integer)pcEvt.getNewValue());
-//                        }
-//                        else { log("PropertyChange:" + pcEvt.getPropertyName());}
-//                    }
-//                });
-//
-//                try { finalCrypt.execute(); } catch (Exception ex) { log(ex.getMessage()); }
-//            }
-//        });
-        
 
         inputFileChooserComponentAlteration(inputFileChooser);
         cipherFileChooserComponentAlteration(cipherFileChooser);
@@ -768,58 +730,37 @@ public class GUI extends javax.swing.JFrame implements UI
 
     private void encryptButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_encryptButtonActionPerformed
     {//GEN-HEADEREND:event_encryptButtonActionPerformed
+        // Needs Threading to early split off from the UI Event Dispatch Thread
         Thread encryptThread = new Thread(new Runnable()
         {
             @Override
             @SuppressWarnings({"static-access"})
             public void run()
             {
-                Path outputFilePath = null;
-
-//                // Add the inputFilesPath to List from inputFileChooser
-//                ArrayList<Path> inputFilesPathList = new ArrayList<>(); 
-//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-
-//                Add the inputFilesPath to List from inputFileChooser
+//              Extend chooser.selectedfiles and add to inputFilesPath
                 ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*");
-//                for (File file:inputFileChooser.getSelectedFiles()) { inputFilesPathList.add(file.toPath()); }
-
-                
-                // Validate and create output files
-                for(Path inputFilePathItem : inputFilesPathList)
-                {
-                    finalCrypt.isValidFile(inputFilePathItem, false, true);
-                    if ( inputFilePathItem.toAbsolutePath().compareTo(cipherFileChooser.getSelectedFile().toPath().toAbsolutePath()) == 0 )      { error("Skipping inputfile: equal to cipherfile!\n"); }
-
-//                    // Validate output path
-//                    outputFilePath = inputFilePathItem.resolveSibling(inputFilePathItem.getFileName() + ".dat");
-//                    if ( finalCrypt.isValidFile(outputFilePath, true, false) ) {} else  { error("Error output\n"); }
-                }
 
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
 
-                // Resize path Buffers
-                try 
+                // Set Buffer Size
+                finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+                int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+                if ( cipherSize < finalCrypt.getBufferSize())
                 {
-                    if ( Files.size(finalCrypt.getCipherFilePath()) < finalCrypt.getBufferSize())
-                    {
-                        finalCrypt.setBufferSize((int) (long) Files.size(finalCrypt.getCipherFilePath()));
-                        if ( finalCrypt.getVerbose() ) { log("Alert: BufferSize limited to cipherfile size: " + finalCrypt.getBufferSize()); }
-                    }
+                    finalCrypt.setBufferSize(cipherSize);
+                    status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
                 }
-                catch (IOException ex) { error("Files.size(cfp)" + ex + "\n"); }
+                else
+                {
+                    status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+                }
 
                 fileProgressBar.setValue(0);
                 filesProgressBar.setValue(0);
 
                 encryptionStarted();
-//                finalCrypt.encryptSelection();
                 finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
-
-////                SwingWorker version of FinalCrypt
-//                try { finalCrypt.doInBackground(); } catch (Exception ex) { log(ex.getMessage()); }
             }
         });
         encryptThread.setName("encryptThread");
@@ -1172,20 +1113,6 @@ public class GUI extends javax.swing.JFrame implements UI
 //            }
 //        });
     }
-     
-////  SwingWorker version of FinalCrypt     
-//    public void setProgress(Integer newValue) 
-//    {
-////        SwingUtilities.invokeLater(new Runnable()
-////        {
-////            public void run()
-////            {
-////                if (finalCrypt.getDebug()) { println("Progress File : " + newValue + "%\n"); }
-//                if (finalCrypt.getDebug()) { println("Progress Files: " + newValue + "%\n"); }
-//                fileProgressBar.setValue(newValue);
-////            }
-////        });
-//    }
 
     @Override
     synchronized public void encryptionFinished()
@@ -1207,23 +1134,4 @@ public class GUI extends javax.swing.JFrame implements UI
 //            }
 //        });
     }
-
-//// SwingWorker Method
-//   public void start() 
-//   {
-//       System.out.println("GUI.start()");
-//       filesProgressBar.setValue(0);
-//   }
-
-//// SwingWorker Method
-//   public void done()
-//   {
-//       System.out.println("GUI.done()");
-//      filesProgressBar.setValue(0);
-//      
-////      new Timer(TIMER_DELAY, new ActionListener()
-////      {
-////          @Override public void actionPerformed(ActionEvent e) { Window win = SwingUtilities.getWindowAncestor(mainPanel); win.dispose(); }
-////      }) {{setRepeats(false);}}.start();
-//   }     
 }
