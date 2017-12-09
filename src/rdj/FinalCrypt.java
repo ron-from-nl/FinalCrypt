@@ -23,8 +23,14 @@
 package rdj;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
@@ -40,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
@@ -48,7 +56,10 @@ public class FinalCrypt  extends Thread
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
     private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
-    private static final String VERSION = "1.1";
+    private static final int    VERSION = 1;
+    private static final int    MAJOR = 1;
+    private static final int    MINOR = 0;
+    private static final String VERSIONSTRING = VERSION + "." + MAJOR + "." + MINOR;
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
@@ -81,6 +92,48 @@ public class FinalCrypt  extends Thread
     public FinalCrypt(UI ui)
     {    
 //        super("FinalCryptThread");
+        int localVersion = 0;
+        int remoteVersion = 0;
+        URL localURL = null;
+        URL remoteURL = null;
+        ReadableByteChannel rbc;
+        ByteBuffer byteBuffer;
+        
+//        Set the locations of the version resources
+        localURL = getClass().getResource("rdj/VERSION");
+        try { remoteURL = new URL("http://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION"); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
+
+//      Read the local VERSION file
+        rbc = null; try { rbc = Channels.newChannel(localURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        byteBuffer = ByteBuffer.allocate(512);
+        try {
+            while(rbc.read(byteBuffer) > 0)
+            {
+                byteBuffer.flip();
+                while(byteBuffer.hasRemaining())
+                {
+                    char ch = (char) byteBuffer.get();
+                    System.out.print(ch);
+                }
+            }
+        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        
+//      Read the remote VERSION file
+        rbc = null; try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        byteBuffer = ByteBuffer.allocate(512);
+        try {
+            while(rbc.read(byteBuffer) > 0)
+            {
+                byteBuffer.flip();
+                while(byteBuffer.hasRemaining())
+                {
+                    char ch = (char) byteBuffer.get();
+                    System.out.print(ch);
+                }
+            }
+        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
         
         inputFilesPathList = new ArrayList<>();
         inputFileBufferSize = bufferSize;
@@ -510,7 +563,7 @@ public class FinalCrypt  extends Thread
 
     public static String getCopyright()                     { return COPYRIGHT; }
     public static String getAuthor()                        { return AUTHOR; }
-    public static String getVersion()                       { return VERSION; }
+    public static String getVersion()                       { return VERSIONSTRING; }
     public static String getProcuct()                       { return PRODUCTNAME; }
     public static String getCompany()                       { return COMPANYNAME; }
     public Stats getStats()                                 { return stats; }

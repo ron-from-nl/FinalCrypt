@@ -1,8 +1,11 @@
 Todo
 
-binary bitmask demo
-progressBar percentage
 .bit filter button
+bit / linegraph animation
+JCurses TUI 
+progressBar percentage
+preserve all file attributes
+Version update notification
 
 Doing
 =============================================================================
