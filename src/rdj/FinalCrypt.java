@@ -103,37 +103,37 @@ public class FinalCrypt  extends Thread
         localURL = getClass().getResource("rdj/VERSION");
         try { remoteURL = new URL("http://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION"); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
 
-//      Read the local VERSION file
-        rbc = null; try { rbc = Channels.newChannel(localURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        byteBuffer = ByteBuffer.allocate(512);
-        try {
-            while(rbc.read(byteBuffer) > 0)
-            {
-                byteBuffer.flip();
-                while(byteBuffer.hasRemaining())
-                {
-                    char ch = (char) byteBuffer.get();
-                    System.out.print(ch);
-                }
-            }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+////      Read the local VERSION file
+//        rbc = null; try { rbc = Channels.newChannel(localURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+//        byteBuffer = ByteBuffer.allocate(512);
+//        try {
+//            while(rbc.read(byteBuffer) > 0)
+//            {
+//                byteBuffer.flip();
+//                while(byteBuffer.hasRemaining())
+//                {
+//                    char ch = (char) byteBuffer.get();
+//                    System.out.print(ch);
+//                }
+//            }
+//        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+//        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
         
-//      Read the remote VERSION file
-        rbc = null; try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        byteBuffer = ByteBuffer.allocate(512);
-        try {
-            while(rbc.read(byteBuffer) > 0)
-            {
-                byteBuffer.flip();
-                while(byteBuffer.hasRemaining())
-                {
-                    char ch = (char) byteBuffer.get();
-                    System.out.print(ch);
-                }
-            }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+////      Read the remote VERSION file
+//        rbc = null; try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+//        byteBuffer = ByteBuffer.allocate(512);
+//        try {
+//            while(rbc.read(byteBuffer) > 0)
+//            {
+//                byteBuffer.flip();
+//                while(byteBuffer.hasRemaining())
+//                {
+//                    char ch = (char) byteBuffer.get();
+//                    System.out.print(ch);
+//                }
+//            }
+//        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+//        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
         
         inputFilesPathList = new ArrayList<>();
         inputFileBufferSize = bufferSize;
