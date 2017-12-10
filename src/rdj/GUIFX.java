@@ -52,6 +52,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
@@ -912,6 +913,12 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void cipherInfoLabelClicked(MouseEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
+        
+//      Style the Alert
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+        
         alert.setTitle("Information Dialog");
         alert.setHeaderText("What is your secret Cipher file?");
         alert.setResizable(true);
@@ -919,14 +926,27 @@ public class GUIFX extends Application implements UI, Initializable
         infotext  = "The cipher file encrypts the selected files on the left.\n";
         infotext += "Choose a personal cipher file (like a photo or video).\n";
         infotext += "\n";
+        infotext += "Keep backups of your cipher file and keep it SECRET!\n";
+        infotext += "Without cipher file you can NEVER decrypt your data!\n";
+        infotext += "\n";
+        infotext += "=========================================\n";
+        infotext += "\n";
         infotext += "Best practice is to have a unique and larger cipher file\n";
         infotext += "and encrypt that file with another personal cipher file.\n";
-        infotext += "This causes known meta-data regions to also be encrypted.\n";
+        infotext += "This encrypts metadata bit-patterns in your cipher.\n";
         infotext += "Keep your final cipher file away from your computer for\n";
-        infotext += "as long as you don't need it and hide it from big brother.\n";
+        infotext += "as long as you don't need it to hide it from big brother.\n";
         infotext += "\n";
-        infotext += "Keep safe backups of your cipher file and keep it SECRET!\n";
-        infotext += "Without cipher file you can NEVER decrypt your data again!";
+        infotext += "Encryption:\n";
+        infotext += "Unique cipher file bit patterns mask your data-bits.\n";
+        infotext += "Positive cipher bits (1) negate correlating data-bits.\n";
+        infotext += "Selected files become mutated with negating ciphers.\n";
+        infotext += "\n";
+        infotext += "                  Encrypt                      Decrypt\n";
+        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\n";
+        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\n";
+        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3  ";
+//        infotext += " \n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
@@ -934,6 +954,12 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void inputInfoLabelClicked(MouseEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
+
+//      Style the Alert
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+
         alert.setTitle("Information Dialog");
         alert.setHeaderText("What about your selected items?");
         alert.setResizable(true);
@@ -943,7 +969,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "All original files are removed after encryption.\n";
         infotext += "\n";
         infotext += "Decrypt by encrypting again with the same cipher.\n";
-        infotext += "After decryption the *.bit extension gets removed.";
+        infotext += "After decryption, the *.bit extension gets removed.";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
