@@ -23,13 +23,10 @@
 package rdj;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystems;
@@ -42,24 +39,23 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributes;
+import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
 {
-    private static final String COMPANYNAME = "GPLv3";
-    private static final String PRODUCTNAME = "FinalCrypt";
-    private static final String AUTHOR = "Ron de Jong";
-    private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
-    private static final int    VERSION = 1;
-    private static final int    MAJOR = 1;
-    private static final int    MINOR = 0;
-    private static final String VERSIONSTRING = VERSION + "." + MAJOR + "." + MINOR;
+//    private static final String COMPANYNAME = "GPLv3";
+//    private static final String PRODUCTNAME = "FinalCrypt";
+//    private static final String AUTHOR = "Ron de Jong";
+//    private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
+//    private static final int    VERSION = 1;
+//    private static final int    MAJOR = 1;
+//    private static final int    MINOR = 0;
+//    private static final String VERSIONSTRING = VERSION + "." + MAJOR + "." + MINOR;
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
@@ -87,53 +83,24 @@ public class FinalCrypt  extends Thread
     private TimerTask updateProgressTask;
     private java.util.Timer updateProgressTaskTimer;
     private final Stats stats;
+
+    private String localVersionString = "";
+    private String remoteVersionString = "";
+    private int localVersion = 0;
+    private int remoteVersion = 0;
+//        URL localURL = null;
+    private InputStream istream = null;
+    private URL remoteURL = null;
+    private ReadableByteChannel rbc = null;
+    private ByteBuffer byteBuffer;        
     
 
     public FinalCrypt(UI ui)
     {    
 //        super("FinalCryptThread");
-        int localVersion = 0;
-        int remoteVersion = 0;
-        URL localURL = null;
-        URL remoteURL = null;
-        ReadableByteChannel rbc;
-        ByteBuffer byteBuffer;
+        
         
 //        Set the locations of the version resources
-        localURL = getClass().getResource("rdj/VERSION");
-        try { remoteURL = new URL("http://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION"); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
-
-////      Read the local VERSION file
-//        rbc = null; try { rbc = Channels.newChannel(localURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-//        byteBuffer = ByteBuffer.allocate(512);
-//        try {
-//            while(rbc.read(byteBuffer) > 0)
-//            {
-//                byteBuffer.flip();
-//                while(byteBuffer.hasRemaining())
-//                {
-//                    char ch = (char) byteBuffer.get();
-//                    System.out.print(ch);
-//                }
-//            }
-//        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-//        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        
-////      Read the remote VERSION file
-//        rbc = null; try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-//        byteBuffer = ByteBuffer.allocate(512);
-//        try {
-//            while(rbc.read(byteBuffer) > 0)
-//            {
-//                byteBuffer.flip();
-//                while(byteBuffer.hasRemaining())
-//                {
-//                    char ch = (char) byteBuffer.get();
-//                    System.out.print(ch);
-//                }
-//            }
-//        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-//        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
         
         inputFilesPathList = new ArrayList<>();
         inputFileBufferSize = bufferSize;
@@ -143,7 +110,7 @@ public class FinalCrypt  extends Thread
         fc = this;
         stats = new Stats();
     }
-    
+        
     public int getBufferSize()                                              { return bufferSize; }
     
     public boolean getDebug()                                               { return debug; }
@@ -250,7 +217,7 @@ public class FinalCrypt  extends Thread
                     long cipherFileChannelRead = 0;                
                     final ByteBuffer inputFileBuffer =  ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
                     final ByteBuffer cipherFileBuffer = ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-
+                    
                     stats.setFileStartEpoch();
 
                     // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
@@ -264,7 +231,7 @@ public class FinalCrypt  extends Thread
                             inputFileChannelPos += inputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); //inputFileChannelPos = inputFileChannel.position();
                             if (( inputFileChannelPos == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
                             inputFileChannel.close();
-//                        } catch (IOException ex) { ui.error("Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
+                            
                         } catch (IOException ex) { ui.error("Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
 
                         // Open cipherFile
@@ -277,7 +244,6 @@ public class FinalCrypt  extends Thread
                             cipherFileBuffer.flip();
 
                             cipherFileChannel.close();
-//                        } catch (IOException ex) { ui.error("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); }
                         } catch (IOException ex) { ui.error("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
 
                         // Open outputFile for writing
@@ -286,13 +252,15 @@ public class FinalCrypt  extends Thread
                             // Encrypt inputBuffer and fill up outputBuffer
                             ByteBuffer outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
                             outputFileChannel.write(outputFileBuffer);
+
+                            if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
+
                             outputFileBuffer.clear();
                             inputFileBuffer.clear();
                             cipherFileBuffer.clear();
 
-                            if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
                             outputFileChannel.close();
-//                        } catch (IOException ex) { ui.error("outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); }
+                            
                         } catch (IOException ex) { ui.error("outputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
                     }
                     if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
@@ -303,6 +271,36 @@ public class FinalCrypt  extends Thread
                     ui.status(stats.getFileBytesThroughPut());
                     stats.addFilesEncrypted(1);
                         
+                    BasicFileAttributes battr = null;
+                    PosixFileAttributes pattr = null;
+                    DosFileAttributes dattr = null;
+
+//                  Read inputFilePath attributes for outputFilePath                            
+                    if ( System.getProperty("os.name").toLowerCase().startsWith("win") ) { try { dattr = Files.readAttributes(inputFilePath, DosFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
+                    else                                                                 { try { pattr = Files.readAttributes(inputFilePath, PosixFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
+                            
+//                  Write inputFilePath attributes to outputFilePath                            
+                    if ( System.getProperty("os.name").toLowerCase().startsWith("win") )
+                    {
+                        try
+                        {
+                            Files.setAttribute(outputFilePath, "basic:lastModifiedTime", dattr.lastModifiedTime());
+                            Files.setAttribute(outputFilePath, "dos:hidden", dattr.isHidden());
+                            Files.setAttribute(outputFilePath, "dos:system", dattr.isSystem());
+                            Files.setAttribute(outputFilePath, "dos:readonly", dattr.isReadOnly());
+                            Files.setAttribute(outputFilePath, "dos:archive", dattr.isArchive());
+                        } catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex + "\n"); }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Files.setAttribute(outputFilePath, "posix:owner", pattr.owner());
+                            Files.setAttribute(outputFilePath, "posix:group", pattr.group());
+                            Files.setPosixFilePermissions(outputFilePath, pattr.permissions());
+                            Files.setLastModifiedTime(outputFilePath, pattr.lastModifiedTime());
+                        } catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
+                    }	
 //                  Delete the original
                     long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
                     long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
@@ -561,11 +559,11 @@ public class FinalCrypt  extends Thread
         return pathList;
     }
 
-    public static String getCopyright()                     { return COPYRIGHT; }
-    public static String getAuthor()                        { return AUTHOR; }
-    public static String getVersion()                       { return VERSIONSTRING; }
-    public static String getProcuct()                       { return PRODUCTNAME; }
-    public static String getCompany()                       { return COMPANYNAME; }
+//    public static String getCopyright()                     { return COPYRIGHT; }
+//    public static String getAuthor()                        { return AUTHOR; }
+//    public static String getVersion()                       { return VERSIONSTRING; }
+//    public static String getProcuct()                       { return PRODUCTNAME; }
+//    public static String getCompany()                       { return COMPANYNAME; }
     public Stats getStats()                                 { return stats; }
 
 //  Class Extends Thread

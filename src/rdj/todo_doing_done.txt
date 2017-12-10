@@ -4,13 +4,12 @@ Todo
 bit / linegraph animation
 JCurses TUI 
 progressBar percentage
-preserve all file attributes
-Version update notification
 
 Doing
 =============================================================================
 
-
+Implemented online updates
+preserve all file attributes
 
 =============================================================================
 Done

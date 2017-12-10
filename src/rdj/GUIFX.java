@@ -30,6 +30,8 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -119,6 +121,7 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean hasEncryptableItem;
     private boolean hasCipherItem;
     private Object root;
+    private Version update;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -129,11 +132,14 @@ public class GUIFX extends Application implements UI, Initializable
         Scene scene = new Scene((Parent)root);
         
         stage.setScene(scene);
-        stage.setTitle(FinalCrypt.getProcuct() + " " + FinalCrypt.getVersion());
+        stage.setTitle(Version.getProcuct());
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         stage.setMaximized(true);
         stage.show();
+
+//      start(..) comes after Initialize(..)
+//        this.checkUpdate();
     }
 
     @Override
@@ -245,9 +251,54 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileSwingNode.setContent(cipherFileChooser);   
         
         finalCrypt = new FinalCrypt(this);
-        finalCrypt.start();          
+        finalCrypt.start();
+        
+        checkUpdate();
     }
     
+    private void checkUpdate()
+    {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                Platform.runLater(() ->
+                {
+                    update = new Version(guifx);
+                    update.checkLastestVersion();
+                    status(update.getVersionReport());
+//                    setStageTitle(update.getThisOverallVersionString());
+
+                    if ( (update.versionIsDifferent()) && (update.versionIsDifferent()) )
+                    {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + update.getLatestOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
+                        if (alert.getResult() == ButtonType.YES)
+                        {
+                            Thread updateThread = new Thread(new Runnable()
+                            {
+                                @Override
+                                @SuppressWarnings({"static-access"})
+                                public void run()
+                                {
+                                    try { try {  Desktop.getDesktop().browse(new URI("http://github.com/ron-from-nl/FinalCrypt/releases/download/1.1/FinalCrypt.jar")); }
+                                    catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
+                                    catch (IOException ex) { guifx.error(ex.getMessage()); }
+                                }
+                            });
+                            updateThread.setName("encryptThread");
+                            updateThread.setDaemon(true);
+                            updateThread.start();
+                        }
+                    }
+                });
+            }
+        }, 3000);    
+    
+    }
+    
+
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {
@@ -746,16 +797,24 @@ public class GUIFX extends Application implements UI, Initializable
                 log(status);
             }
         });
+    }
 
+    public void setStageTitle(String title)
+    {
+        PlatformImpl.runAndWait(new Runnable()
+        {
+            @Override
+//            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                guifx.stage.setTitle(title);
+            }
+        });
+    }
 
-//        Platform.runLater(new Runnable()
-//        {
-//            @Override public void run()
-//            {
-//                statusLabel.setText(status);
-//                log(status);
-//            }
-//        });
+    public void statusLater(String status)
+    {
+        statusLabel.setText(status);
     }
 
     @Override

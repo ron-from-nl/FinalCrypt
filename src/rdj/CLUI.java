@@ -27,8 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import static rdj.FinalCrypt.getAuthor;
-import static rdj.FinalCrypt.getCopyright;
 
 /* commandline test routine
 
@@ -73,6 +71,8 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
+            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getThisOverallVersionString()); System.exit(0); }
+            else if ( args[paramCnt].equals("--update"))                                                            { Version upd = new Version(this); upd.checkLastestVersion(); log(upd.getProcuct() + " " + upd.getVersionReport()); System.exit(0); }
             else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
@@ -163,6 +163,8 @@ public class CLUI implements UI
         log("            [-d] [--debug]        Enables debugging mode.\n");
         log("            [-v] [--verbose]      Enables verbose mode.\n");
         log("            [-p] [--print]        Print overal data encryption.\n");
+        log("                 [--version]      Print " + Version.getProcuct() + " version.\n");
+        log("                 [--update]       Check for online updates.\n");
         log("            [--txt]               Print text calculations.\n");
         log("            [--bin]               Print binary calculations.\n");
         log("            [--dec]               Print decimal calculations.\n");
@@ -178,7 +180,7 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypts myfile and all content in mydir with myphotofile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n\n");
-        log(FinalCrypt.getProcuct() + " "+FinalCrypt.getVersion() +" Author: " + getAuthor() + " " + getCopyright() + "\n\n");
+        log(Version.getProcuct() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
 
@@ -203,7 +205,7 @@ public class CLUI implements UI
     @Override
     public void println(String message)
     {
-        System.out.println(message + "\n");
+        System.out.println(message);
     }
 
     @Override
