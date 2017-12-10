@@ -74,7 +74,7 @@
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text=" ?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
                                                          <font>
                                                             <Font name="Open Sans Bold" size="18.0" />
                                                          </font>
