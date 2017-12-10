@@ -934,8 +934,8 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "Best practice is to have a unique and larger cipher file\n";
         infotext += "and encrypt that file with another personal cipher file.\n";
         infotext += "This encrypts metadata bit-patterns in your cipher.\n";
-        infotext += "Keep your final cipher file away from your computer for\n";
-        infotext += "as long as you don't need it to hide it from big brother.\n";
+        infotext += "Keep your cipher file away from your computer for as\n";
+        infotext += "long as you don't need it to hide it from big brother.\n";
         infotext += "\n";
         infotext += "Encryption:\n";
         infotext += "Unique cipher file bit patterns mask your data-bits.\n";
