@@ -917,10 +917,16 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setResizable(true);
         String infotext = new String();
         infotext  = "The cipher file encrypts the selected files on the left.\n";
-        infotext += "Choose a large UNIQUE personal file (a photo or video).\n";
+        infotext += "Choose a personal cipher file (like a photo or video).\n";
         infotext += "\n";
-        infotext += "Keep backups of your cipher file and keep it SECRET!\n";
-        infotext += "Without cipher file you can NEVER decrypt your data!";
+        infotext += "Best practice is to have a unique and larger cipher file\n";
+        infotext += "and encrypt that file with another personal cipher file.\n";
+        infotext += "This causes known meta-data regions to also be encrypted.\n";
+        infotext += "Keep your final cipher file away from your computer for\n";
+        infotext += "as long as you don't need it and hide it from big brother.\n";
+        infotext += "\n";
+        infotext += "Keep safe backups of your cipher file and keep it SECRET!\n";
+        infotext += "Without cipher file you can NEVER decrypt your data again!";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
@@ -937,7 +943,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "All original files are removed after encryption.\n";
         infotext += "\n";
         infotext += "Decrypt by encrypting again with the same cipher.\n";
-        infotext += "After decryption the *.bit extension is removed.";
+        infotext += "After decryption the *.bit extension gets removed.";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
