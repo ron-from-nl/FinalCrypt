@@ -929,7 +929,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "Keep backups of your cipher file and keep it SECRET!\n";
         infotext += "Without cipher file you can NEVER decrypt your data!\n";
         infotext += "\n";
-        infotext += "=========================================\n";
+        infotext += "==================================\n";
         infotext += "\n";
         infotext += "Best practice is to have a unique and larger cipher file\n";
         infotext += "and encrypt that file with another personal cipher file.\n";
