@@ -271,7 +271,7 @@ public class GUIFX extends Application implements UI, Initializable
                     status(update.getVersionReport());
 //                    setStageTitle(update.getThisOverallVersionString());
 
-                    if ( (update.versionIsDifferent()) && (update.versionIsDifferent()) )
+                    if ( (update.versionIsDifferent()) && (update.versionCanBeUpdated()) )
                     {
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + update.getLatestOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
                         if (alert.getResult() == ButtonType.YES)

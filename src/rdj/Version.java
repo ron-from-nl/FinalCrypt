@@ -138,8 +138,8 @@ public class Version
     }
 
     public boolean versionIsDifferent()     { if      ( thisVersionTotal != latestVersionTotal ) { return true; } else { return false; } }
-    public boolean versionIsOutdated()      { if      ( thisVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
-    public boolean versionIsBleadingEdge()  { if      ( thisVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
+    public boolean versionCanBeUpdated()    { if      ( thisVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
+    public boolean versionIsDevelopment()   { if      ( thisVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
 
     public static String getCopyright()                     { return COPYRIGHT; }
     public static String getAuthor()                        { return AUTHOR; }
