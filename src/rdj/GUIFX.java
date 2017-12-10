@@ -122,6 +122,8 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean hasCipherItem;
     private Object root;
     private Version update;
+    @FXML
+    private Label cipherFileChooserInfoLabel;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -903,5 +905,22 @@ public class GUIFX extends Application implements UI, Initializable
             hexButton.setVisible(!hexButton.isVisible());
             charButton.setVisible(!charButton.isVisible());
         }
+    }
+
+    @FXML
+    private void cipherInfoLabelClicked(MouseEvent event) {
+        String infotext = new String();
+        infotext  = "The cipher file encrypts the selected files on the left.\n";
+        infotext += "Choose a large UNIQUE personal file (a photo or video).\n";
+        infotext += "\n";
+        infotext += "Keep backups of your cipher file and keep it SECRET!\n";
+        infotext += "Without cipher file you can NEVER decrypt your data!";
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setResizable(true);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("What is your secret Cipher file?");
+        alert.setContentText(infotext);
+
+        alert.showAndWait();
     }
 }
