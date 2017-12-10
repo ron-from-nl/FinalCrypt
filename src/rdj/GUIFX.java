@@ -282,7 +282,7 @@ public class GUIFX extends Application implements UI, Initializable
                                 @SuppressWarnings({"static-access"})
                                 public void run()
                                 {
-                                    try { try {  Desktop.getDesktop().browse(new URI("http://github.com/ron-from-nl/FinalCrypt/releases/download/1.1/FinalCrypt.jar")); }
+                                    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEVERSIONPACKAGESTRING)); }
                                     catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
                                     catch (IOException ex) { guifx.error(ex.getMessage()); }
                                 }

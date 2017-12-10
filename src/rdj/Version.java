@@ -39,7 +39,8 @@ public class Version
     private int latestVersionTotal = 0;
 //        URL localURL = null;
     private InputStream istream = null;
-    private final String REMOTEURLSTRING = "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+    private static final String REMOTEVERSIONSTRING =          "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+    public static final String REMOTEVERSIONPACKAGESTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt.jar";
     private URL remoteURL = null;
     private ReadableByteChannel rbc = null;
     private ByteBuffer byteBuffer; 
@@ -84,7 +85,7 @@ public class Version
     public void checkLastestVersion()
     {
 //      Read the remote VERSION file
-        try { remoteURL = new URL(REMOTEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
+        try { remoteURL = new URL(REMOTEVERSIONSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
         try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
         byteBuffer = ByteBuffer.allocate(512); latestOverallVersionString = "";
         try {
@@ -122,7 +123,7 @@ public class Version
         if      (thisVersionTotal < latestVersionTotal)
         {
 //            returnString += "Your version: " + thisOverallVersionString + " is outdated. There's a new version: " + latestOverallVersionString + " available at: http://github.com/ron-from-nl/FinalCrypt/releases/download/1.1/FinalCrypt.jar\n"; 
-            returnString += getProcuct() + " " + thisOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: http://github.com/ron-from-nl/FinalCrypt/releases/download/1.1/FinalCrypt.jar\n"; 
+            returnString += getProcuct() + " " + thisOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEVERSIONPACKAGESTRING + "\n"; 
 
         } 
         else if (thisVersionTotal > latestVersionTotal)
