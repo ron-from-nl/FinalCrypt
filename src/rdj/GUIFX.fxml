@@ -33,11 +33,34 @@
                                        <children>
                                           <AnchorPane maxHeight="40.0" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0">
                                              <children>
-                                                <Label fx:id="inputFileChooserLabel" alignment="CENTER" contentDisplay="CENTER" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" text="Select the items you want to encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <font>
-                                                      <Font name="Open Sans" size="18.0" />
-                                                   </font>
-                                                </Label>
+                                                <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                                                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label fx:id="inputFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" minHeight="40.0" minWidth="439.0" prefHeight="40.0" prefWidth="439.0" text="Select the items you want to encrypt" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                                                         <font>
+                                                            <Font name="Open Sans" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                         <effect>
+                                                            <DropShadow height="30.0" radius="14.5" width="30.0" />
+                                                         </effect>
+                                                         <font>
+                                                            <Font name="Open Sans Bold" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane prefHeight="396.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
@@ -61,8 +84,8 @@
                                              <children>
                                                 <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
-                                                    <ColumnConstraints hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0" percentWidth="70.0" prefWidth="393.0" />
-                                                    <ColumnConstraints hgrow="NEVER" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0" percentWidth="70.0" prefWidth="393.0" />
+                                                    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
                                                       <ColumnConstraints hgrow="ALWAYS" maxWidth="265.0" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
@@ -74,7 +97,7 @@
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
                                                          <font>
                                                             <Font name="Open Sans Bold" size="18.0" />
                                                          </font>

@@ -124,6 +124,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Version update;
     @FXML
     private Label cipherFileChooserInfoLabel;
+    @FXML
+    private Label inputFileChooserInfoLabel;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -909,18 +911,34 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML
     private void cipherInfoLabelClicked(MouseEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("What is your secret Cipher file?");
+        alert.setResizable(true);
         String infotext = new String();
         infotext  = "The cipher file encrypts the selected files on the left.\n";
         infotext += "Choose a large UNIQUE personal file (a photo or video).\n";
         infotext += "\n";
         infotext += "Keep backups of your cipher file and keep it SECRET!\n";
         infotext += "Without cipher file you can NEVER decrypt your data!";
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setResizable(true);
-        alert.setTitle("Information Dialog");
-        alert.setHeaderText("What is your secret Cipher file?");
         alert.setContentText(infotext);
+        alert.showAndWait();
+    }
 
+    @FXML
+    private void inputInfoLabelClicked(MouseEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("What about your selected items?");
+        alert.setResizable(true);
+        String infotext = new String();
+        infotext  = "The selected items can be files and directories.\n";
+        infotext += "All encrypted files get a *.bit extension added.\n";
+        infotext += "All original files are removed after encryption.\n";
+        infotext += "\n";
+        infotext += "Decrypt by encrypting again with the same cipher.\n";
+        infotext += "After decryption the *.bit extension is removed.";
+        alert.setContentText(infotext);
         alert.showAndWait();
     }
 }
