@@ -374,8 +374,8 @@ public class FinalCrypt  extends Thread
         if ( chr )      { logByteChar(dataByte, cipherByte, outputByte, dum, dnm, dbm); }
 
         // Increment Byte Progress Counters 
-        stats.addFilesBytesEncrypted(1);
         stats.addFileBytesEncrypted(1);
+        stats.addFilesBytesEncrypted(1);
         
         return (byte)dbm; // outputByte
     }

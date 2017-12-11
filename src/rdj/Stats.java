@@ -132,8 +132,8 @@ public class Stats
     public String getFilesBytesProgressPercentage()                               
     {
         String returnString = new String();
-        double percentage = ( ((double)filesBytesEncrypted / ((filesBytesTotal / 100f ))) ); // *1000 from mSec to Sec
-        String throughputString = String.format("%.0f", percentage);
+        double percentage = ( ((double)filesBytesEncrypted / ((filesBytesTotal / 100.0 ))) ); // *1000 from mSec to Sec
+        String throughputString = String.format("%.0f", Math.floor(percentage));
         returnString = " " + throughputString + "%\n";
         
         return returnString;
