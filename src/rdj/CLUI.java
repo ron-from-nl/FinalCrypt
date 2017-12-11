@@ -181,10 +181,10 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c myphotofile.jpg\n");
         log("\n");
         log("            # Encrypts myfile and all content in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n");
         log("\n");
         log("            # Encrypts all files with bit extension in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e bit -c myphotofile.jpg\n\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e bit -c myphotofile.jpg\n");
         log("\n");
         log("            # Encrypts all files excluding bit extensions in mydir with myphotofile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e -bit -c myphotofile.jpg\n\n");
