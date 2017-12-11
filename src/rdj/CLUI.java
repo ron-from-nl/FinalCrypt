@@ -174,7 +174,7 @@ public class CLUI implements UI
         log("            [-b size]             Changes default I/O buffer size (size = KB) (default 1024 KB).\n");
         log("Parameters:\n");
         log("            <-i \"dir/file\">       The dir or file you want to encrypt (dir encrypt recursively!).\n");
-        log("            <-e \"[-]ext\">         File extension to be filtered. \"-\" prefix will exclude extension\n");
+        log("            [-e \"[-]ext\"]         File extension to be filtered. \"-\" prefix will exclude extension\n");
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
         log("Examples:\n");
         log("            # Encrypts myfile with myphotofile\n");
@@ -184,10 +184,10 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n\n");
         log("\n");
         log("            # Encrypts all files with bit extension in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e \"bit\" -c myphotofile.jpg\n\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e bit -c myphotofile.jpg\n\n");
         log("\n");
         log("            # Encrypts all files excluding bit extensions in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e \"-bit\" -c myphotofile.jpg\n\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e -bit -c myphotofile.jpg\n\n");
         log(Version.getProcuct() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
