@@ -304,7 +304,7 @@ public class FinalCrypt  extends Thread
 //                  Delete the original
                     long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
                     long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
-                    if ( ( inputfilesize != 0 ) && (inputfilesize == outputfilesize) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }
+                    if ( inputfilesize == outputfilesize ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }                    
                     
                 } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
