@@ -511,7 +511,7 @@ public class FinalCrypt  extends Thread
     }
     
 //  Called by EncryptSelected GUI & GUIFX
-    public ArrayList<Path> getExtendedPathList(File[] files, String wildcard)
+    public ArrayList<Path> getExtendedPathList(File[] files, String extension)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
         ArrayList<Path> pathList = new ArrayList<>();
@@ -519,7 +519,7 @@ public class FinalCrypt  extends Thread
         {
             if (file.isDirectory())
             {
-                for (Path path:getDirectoryPathList(file, wildcard))
+                for (Path path:getDirectoryPathList(file, extension))
                 {
                     pathList.add(path);
                 } 
@@ -546,13 +546,13 @@ public class FinalCrypt  extends Thread
     }
 
     // Used by getExtendedPathList(File[] files)
-    public ArrayList<Path> getDirectoryPathList(File file, String wildcard)
+    public ArrayList<Path> getDirectoryPathList(File file, String extension)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
         ArrayList<Path> pathList = new ArrayList<>();
         
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, wildcard);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, extension);
         try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
         pathList = mySimpleFileVisitor.getPathList();
 
@@ -584,10 +584,10 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     private final ArrayList<Path> pathList;
 
 //  Default CONSTRUCTOR
-    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String wildcard) // "*.txt"
+    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String extension)
     {
         this.ui = ui;
-        matcher = FileSystems.getDefault().getPathMatcher("glob:" + wildcard);
+        matcher = FileSystems.getDefault().getPathMatcher("glob:*." + extension);
         this.delete = delete;
         this.returnpathlist = returnpathlist;
         pathList = new ArrayList<Path>();
@@ -596,7 +596,6 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
    
     @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
     {
-//        System.out.println("Entering directory: " + dir.toString());
         return FileVisitResult.CONTINUE;
     }
     
@@ -608,15 +607,12 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
             {
                 try      
                 {
-//                  System.out.println("Removing filtered file: " + path.toRealPath().toString());
                     Files.delete(path);
-//                } catch (IOException ex) { System.out.println("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex); }
                 } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); }
             }
             
             else if (returnpathlist)
             {
-//                System.out.println("Adding filtered file: " + path.getFileName());
                 pathList.add(path);
             }
             else {     }
@@ -626,7 +622,6 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFileFailed(Path file, IOException exc)
     {
-//        System.out.println("Error: visitFileFailed: " + file.toString() + " due to: " + exc);
         ui.error("Error: visitFileFailed: " + exc + "\n");
         return FileVisitResult.SKIP_SIBLINGS;
     }
@@ -637,9 +632,7 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
         {
             try
             {
-//                    System.out.println("Removing leaving filtered directory: " + path.getFileName());
                 Files.delete(path);
-//            } catch (IOException ex) { System.out.println("Error: postVisitDirectory: " + path.toString() + " due to: " + ex); } }
             } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex + "\n"); } }
         else if (returnpathlist)    {     }
         else                        {     }

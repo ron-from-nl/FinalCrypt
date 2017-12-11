@@ -65,6 +65,8 @@ import javafx.stage.Stage;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -185,6 +187,22 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        inputFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("FinalCrypt *.bit", "bit"));
+        FileFilter nbf = new FileFilter()
+                 {
+                    @Override
+                    public boolean accept(File file)
+                    {
+                       return !file.getName().toLowerCase().endsWith(".bit");
+                    }
+
+                    @Override
+                    public String getDescription()
+                    {
+                       return "NON FinalCrypt";
+                    }
+                 };
+        inputFileChooser.addChoosableFileFilter(nbf);
         inputFileChooser.addPropertyChangeListener
         (
             // New Object
@@ -379,14 +397,32 @@ public class GUIFX extends Application implements UI, Initializable
 //      En/Disable hasEncryptableItems
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*"))
+            String extension = "*"; try { extension = getSelectedExtensionFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), extension) )
             {
                 if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
             }
         }
         checkEncryptionReady();
     }
-    
+
+    private String getSelectedExtensionFromFileChooser( javax.swing.filechooser.FileFilter ff)
+    {
+        String ext = "*";
+        String desc = "*";
+        if ( ff != null ) {desc = ff.getDescription();}
+        javax.swing.filechooser.FileNameExtensionFilter ef = null;
+        try { ef = (javax.swing.filechooser.FileNameExtensionFilter) inputFileChooser.getFileFilter(); } catch (ClassCastException exc) {        }
+        if ( ef != null ) 
+        {
+//            ext = ef.getExtensions()[0]; 
+            desc = ef.getDescription();
+        }
+//        else { ext = "*"; }
+        if      ( desc.startsWith("FinalCrypt") ) { ext = "bit"; }
+        else if ( desc.startsWith("NON FinalCrypt") ) { ext = "[!b][!i][!t]"; }
+        return ext;
+    }
 //  FileChooser Listener methods
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
     {                                                     
@@ -596,7 +632,8 @@ public class GUIFX extends Application implements UI, Initializable
             public void run()
             {
 //              Extend chooser.selectedfiles and add to inputFilesPath
-                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), "*");
+                String extension = "*"; try { extension = getSelectedExtensionFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), extension);
 
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
