@@ -8,8 +8,6 @@ progressBar percentage
 Doing
 =============================================================================
 
-Implemented online updates
-preserve all file attributes
 
 =============================================================================
 Done
@@ -17,6 +15,9 @@ Done
 
 Committed
 
+Added totalBytes encrypted percentage file-printing primarily for CLUI
+Implemented online updates
+preserve all file attributes
 Cleanup interface file validation
 Improved set and correct buffersize
 Set Product & Version in all interfaces

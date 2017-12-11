@@ -113,7 +113,7 @@ public class Stats
         String returnString = new String();
         double throughput = ( ((double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch))) * 1000 ); // *1000 from mSec to Sec
         String throughputString = String.format("%.1f", throughput);
-        returnString = " (" + getHumanSize(throughput,1) + "/Sec)\n";
+        returnString = " (" + getHumanSize(throughput,1) + "/Sec)";
         
         return returnString;
     }
@@ -125,6 +125,16 @@ public class Stats
         double throughput = ( ((double)filesBytesEncrypted / ((filesEndEpoch - filesStartEpoch))) * 1000 ); // *1000 from mSec to Sec
         String throughputString = String.format("%.1f", throughput);
         returnString = " (average: " + getHumanSize(throughput,1) + "/Sec)\n";
+        
+        return returnString;
+    }
+    
+    public String getFilesBytesProgressPercentage()                               
+    {
+        String returnString = new String();
+        double percentage = ( ((double)filesBytesEncrypted / ((filesBytesTotal / 100f ))) ); // *1000 from mSec to Sec
+        String throughputString = String.format("%.0f", percentage);
+        returnString = " " + throughputString + "%\n";
         
         return returnString;
     }

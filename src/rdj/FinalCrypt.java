@@ -266,9 +266,9 @@ public class FinalCrypt  extends Thread
                     if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
 
                     stats.setFileEndEpoch();
-//                    fileDiffEpoch = (( (double)fileBytesEncrypted / ((fileEndEpoch - fileStartEpoch)/1000f))/ 1000000f);
-//                    String throughput = String.format("%.1f", fileDiffEpoch);
-                    ui.status(stats.getFileBytesThroughPut());
+                    
+//                  Print the stats
+                    ui.status(stats.getFileBytesThroughPut()); ui.status(stats.getFilesBytesProgressPercentage());
                     stats.addFilesEncrypted(1);
                         
                     BasicFileAttributes battr = null;
