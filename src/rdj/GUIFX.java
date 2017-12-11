@@ -408,20 +408,21 @@ public class GUIFX extends Application implements UI, Initializable
 
     private String getSelectedExtensionFromFileChooser( javax.swing.filechooser.FileFilter ff)
     {
-        String ext = "*";
+        String extension = "*";
         String desc = "*";
         if ( ff != null ) {desc = ff.getDescription();}
         javax.swing.filechooser.FileNameExtensionFilter ef = null;
         try { ef = (javax.swing.filechooser.FileNameExtensionFilter) inputFileChooser.getFileFilter(); } catch (ClassCastException exc) {        }
         if ( ef != null ) 
         {
-//            ext = ef.getExtensions()[0]; 
+//            extension = ef.getExtensions()[0]; 
             desc = ef.getDescription();
         }
-//        else { ext = "*"; }
-        if      ( desc.startsWith("FinalCrypt") ) { ext = "bit"; }
-        else if ( desc.startsWith("NON FinalCrypt") ) { ext = "[!b][!i][!t]"; }
-        return ext;
+//        else { extension = "*"; }
+        if      ( desc.startsWith("FinalCrypt") )       { extension = "bit"; }
+        else if ( desc.startsWith("NON FinalCrypt") )   { extension = "[!b][!i][!t]"; }
+        else                                            { extension = "*"; }
+        return extension;
     }
 //  FileChooser Listener methods
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 

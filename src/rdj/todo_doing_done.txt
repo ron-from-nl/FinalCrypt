@@ -1,9 +1,14 @@
 Todo
 
-.bit filter button
-bit / linegraph animation
 JCurses TUI 
+
+bit / linegraph animation
+TextArea(HTML) replacing TextArea in log
 progressBar percentage
+Backup update locations (properties, daily check / history)
+Pause & Stop Button 
+Caching widgets behind UI interface methods
+TextArea scroll limits
 
 Doing
 =============================================================================

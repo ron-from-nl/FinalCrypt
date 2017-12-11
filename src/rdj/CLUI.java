@@ -48,7 +48,7 @@ public class CLUI implements UI
         Path inputFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
-        String extension = "";
+        String extension = "*";
         
         
         // Load the FinalCrypt Objext
