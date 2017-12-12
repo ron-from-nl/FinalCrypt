@@ -289,20 +289,9 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void welcome()
     {
-//        Timer timer = new Timer();
-//        timer.schedule(new TimerTask()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                Platform.runLater(() ->
-//                {
-                    version = new Version(guifx);
-                    version.getCurrentlyInstalledVersion();
-                    status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
-//                });
-//            }
-//        }, 3000);    
+        version = new Version(guifx);
+        version.getCurrentlyInstalledVersion();
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n");
     }
     
     private void checkUpdate()
