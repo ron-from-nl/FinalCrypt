@@ -40,7 +40,7 @@ public class Version
 //        URL localURL = null;
     private InputStream istream = null;
     private static final String REMOTEVERSIONFILEURLSTRING =          "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-    public static final String REMOTEPACKAGEDOWNLOADURLSTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/";
+    public static final String REMOTEPACKAGEDOWNLOADURLSTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
     private ReadableByteChannel latestVersionByteChannel = null;
