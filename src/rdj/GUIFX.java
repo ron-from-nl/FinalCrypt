@@ -124,11 +124,18 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean hasEncryptableItem;
     private boolean hasCipherItem;
     private Object root;
-    private Version update;
+    private Version version;
+
     @FXML
     private Label cipherFileChooserInfoLabel;
     @FXML
     private Label inputFileChooserInfoLabel;
+    @FXML
+    private ToggleButton pauseToggleButton;
+    @FXML
+    private Button stopButton;
+    @FXML
+    private Button updateButton;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -137,7 +144,7 @@ public class GUIFX extends Application implements UI, Initializable
         this.stage = stage;
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
-        
+                
         stage.setScene(scene);
         stage.setTitle(Version.getProcuct());
         stage.setMinWidth(1100);
@@ -145,8 +152,9 @@ public class GUIFX extends Application implements UI, Initializable
         stage.setMaximized(true);
         stage.show();
 
-//      start(..) comes after Initialize(..)
-//        this.checkUpdate();
+        version = new Version(guifx);
+        version.getCurrentlyInstalledVersion();
+        stage.setTitle(Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
     }
 
     @Override
@@ -276,27 +284,46 @@ public class GUIFX extends Application implements UI, Initializable
         finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
         
-        checkUpdate();
+        welcome();
+    }
+    
+    private void welcome()
+    {
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                Platform.runLater(() ->
+//                {
+                    version = new Version(guifx);
+                    version.getCurrentlyInstalledVersion();
+                    status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
+//                });
+//            }
+//        }, 3000);    
     }
     
     private void checkUpdate()
     {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask()
+//        {
+//            @Override
+//            public void run()
+//            {
                 Platform.runLater(() ->
                 {
-                    update = new Version(guifx);
-                    update.checkLastestVersion();
-                    status(update.getVersionReport());
-//                    setStageTitle(update.getThisOverallVersionString());
+                    version = new Version(guifx);
+                    version.getCurrentlyInstalledVersion();
+                    version.getLatestOnlineVersion();
+                    status(version.getUpdateStatus());
+//                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
 
-                    if ( (update.versionIsDifferent()) && (update.versionCanBeUpdated()) )
+                    if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
                     {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + update.getLatestOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + version.getLatestOnlineOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
                         if (alert.getResult() == ButtonType.YES)
                         {
                             Thread updateThread = new Thread(new Runnable()
@@ -305,7 +332,7 @@ public class GUIFX extends Application implements UI, Initializable
                                 @SuppressWarnings({"static-access"})
                                 public void run()
                                 {
-                                    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEVERSIONPACKAGESTRING)); }
+                                    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURLSTRING)); }
                                     catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
                                     catch (IOException ex) { guifx.error(ex.getMessage()); }
                                 }
@@ -316,8 +343,8 @@ public class GUIFX extends Application implements UI, Initializable
                         }
                     }
                 });
-            }
-        }, 3000);    
+//            }
+//        }, 3000);    
     
     }
     
@@ -510,7 +537,7 @@ public class GUIFX extends Application implements UI, Initializable
                     {
                         ((JToggleButton)component).doClick();
                     }};
-                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 1500L);
+                    Timer updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 2000L);
                 }
             }
             
@@ -855,7 +882,7 @@ public class GUIFX extends Application implements UI, Initializable
         });
     }
 
-    public void statusLater(String status)
+    public void statusDirect(String status)
     {
         statusLabel.setText(status);
     }
@@ -880,6 +907,9 @@ public class GUIFX extends Application implements UI, Initializable
             @Override public void run()
             {
                 encryptButton.setDisable(true);
+                pauseToggleButton.setDisable(false);
+                stopButton.setDisable(false);
+
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
                 inputFileChooser.rescanCurrentDirectory();
@@ -921,7 +951,10 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
-                encryptButton.setDisable(false);
+                encryptButton.setDisable(true);
+                pauseToggleButton.setDisable(true);
+                stopButton.setDisable(true);
+                
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
@@ -1011,4 +1044,23 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setContentText(infotext);
         alert.showAndWait();
     }
+
+    @FXML
+    private void pauseToggleButtonAction(ActionEvent event)
+    {
+        finalCrypt.setPausing(pauseToggleButton.isSelected());
+    }
+
+    @FXML
+    private void stopButtonAction(ActionEvent event)
+    {
+        finalCrypt.setStopPending(true);
+        status(Boolean.toString(finalCrypt.getStopPending()));
+    }
+
+    @FXML
+    private void updateButtonAction(ActionEvent event)
+    {
+        checkUpdate();
+    }    
 }

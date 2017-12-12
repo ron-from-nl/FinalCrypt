@@ -44,6 +44,8 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
@@ -93,7 +95,9 @@ public class FinalCrypt  extends Thread
     private URL remoteURL = null;
     private ReadableByteChannel rbc = null;
     private ByteBuffer byteBuffer;        
-    
+    private boolean stopPending = false;
+    private boolean pausing = false;
+
 
     public FinalCrypt(UI ui)
     {    
@@ -153,6 +157,8 @@ public class FinalCrypt  extends Thread
     {
         
         stats.reset();
+        stopPending = false;
+        pausing = false;
 
         // Get files bytes total
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { stats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
@@ -223,6 +229,8 @@ public class FinalCrypt  extends Thread
                     // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
                     while ( ! inputFileEnded )
                     {
+                        if (stopPending)    { stopPending = false; inputFileEnded = true; break fileloop; }
+
                         //open inputFile
                         try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
                         {
@@ -304,7 +312,7 @@ public class FinalCrypt  extends Thread
 //                  Delete the original
                     long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex) { ui.error("Error: Files.size(inputFilePath): " + ex + "\n"); }
                     long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.size(outputFilePath): " + ex + "\n"); }
-                    if ( inputfilesize == outputfilesize ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }                    
+                    if ( inputfilesize == outputfilesize ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex) { ui.error("Files.deleteIfExists(inputFilePath): " + ex + "\n"); } }
                     
                 } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
@@ -326,6 +334,7 @@ public class FinalCrypt  extends Thread
         byte outputByte;
         
         ByteBuffer outputFileBuffer =   ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
+        while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
         for (int inputFileBufferCount = 0; inputFileBufferCount < inputFileBuffer.limit(); inputFileBufferCount++)
         {
             inputTotal += inputByte;
@@ -397,6 +406,11 @@ public class FinalCrypt  extends Thread
     private String getHexString(Byte myByte, String digits) { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
     private String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
+    public boolean getPausing()             { return pausing; }
+    public boolean getStopPending()         { return stopPending; }
+    public void setPausing(boolean val)     { pausing = val; }
+    public void setStopPending(boolean val) { stopPending = val; }
+
     private void logByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
         ui.log(preFix + "C: ");

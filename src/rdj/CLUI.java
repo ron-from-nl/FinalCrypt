@@ -39,6 +39,8 @@ clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxy
 public class CLUI implements UI
 {
     FinalCrypt finalCrypt;
+    Version version;
+
     public CLUI(String[] args)
     {
         boolean ifset = false, cfset = false;
@@ -49,6 +51,8 @@ public class CLUI implements UI
         Path cipherFilePath = null;
         Path outputFilePath = null;
         String extension = "*";
+        version = new Version(this);
+        version.getCurrentlyInstalledVersion();
         
         
         // Load the FinalCrypt Objext
@@ -72,8 +76,9 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
-            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getThisOverallVersionString()); System.exit(0); }
-            else if ( args[paramCnt].equals("--update"))                                                            { Version upd = new Version(this); upd.checkLastestVersion(); log(upd.getProcuct() + " " + upd.getVersionReport()); System.exit(0); }
+//            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
+            else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
+            else if ( args[paramCnt].equals("--update"))                                                            { version.getLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
             else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
@@ -164,7 +169,7 @@ public class CLUI implements UI
         log("            [-d] [--debug]        Enables debugging mode.\n");
         log("            [-v] [--verbose]      Enables verbose mode.\n");
         log("            [-p] [--print]        Print overal data encryption.\n");
-        log("                 [--version]      Print " + Version.getProcuct() + " version.\n");
+        log("                 [--version]      Print " + version.getProcuct() + " version.\n");
         log("                 [--update]       Check for online updates.\n");
         log("            [--txt]               Print text calculations.\n");
         log("            [--bin]               Print binary calculations.\n");
@@ -188,7 +193,7 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypts all files excluding bit extensions in mydir with myphotofile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e -bit -c myphotofile.jpg\n\n");
-        log(Version.getProcuct() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
+        log(Version.getProcuct() + " " + version.getCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
 

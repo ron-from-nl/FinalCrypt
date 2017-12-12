@@ -150,6 +150,9 @@
                         <GridPane minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -157,18 +160,42 @@
                            <children>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="encryptButton" maxHeight="35.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="encryptButton" disable="true" focusTraversable="false" maxHeight="35.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </Button>
                                  </children>
-                                 <effect>
-                                    <DropShadow />
-                                 </effect>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="40.0" prefWidth="275.0" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font name="Open Sans" size="18.0" />
+                                       </font>
+                                    </ToggleButton>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                                  <opaqueInsets>
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </opaqueInsets>
+                                 <children>
+                                    <Button fx:id="stopButton" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" maxHeight="35.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="42.0" prefWidth="1045.0" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font name="Open Sans" size="18.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                                 <children>
+                                    <Button fx:id="updateButton" focusTraversable="false" maxHeight="35.0" mnemonicParsing="false" onAction="#updateButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Check Update" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font name="Open Sans" size="18.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
                               </AnchorPane>
                            </children>
                         </GridPane>
@@ -188,47 +215,47 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <ToggleButton fx:id="logButton" mnemonicParsing="false" onAction="#logButtonAction" onMouseClicked="#onLogButtonClicked" prefHeight="88.0" prefWidth="413.0" text="Log">
+                              <ToggleButton fx:id="logButton" focusTraversable="false" mnemonicParsing="false" onAction="#logButtonAction" onMouseClicked="#onLogButtonClicked" prefHeight="88.0" prefWidth="413.0" text="Log">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="printButton" disable="true" mnemonicParsing="false" onAction="#printButtonAction" prefHeight="88.0" prefWidth="413.0" text="Print" visible="false" GridPane.columnIndex="1">
+                              <ToggleButton fx:id="printButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#printButtonAction" prefHeight="88.0" prefWidth="413.0" text="Print" visible="false" GridPane.columnIndex="1">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="textButton" disable="true" mnemonicParsing="false" onAction="#textButtonAction" prefHeight="88.0" prefWidth="413.0" text="Text" visible="false" GridPane.columnIndex="2">
+                              <ToggleButton fx:id="textButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#textButtonAction" prefHeight="88.0" prefWidth="413.0" text="Text" visible="false" GridPane.columnIndex="2">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="binButton" disable="true" mnemonicParsing="false" onAction="#binButtonAction" prefHeight="88.0" prefWidth="413.0" text="Binary" visible="false" GridPane.columnIndex="3">
+                              <ToggleButton fx:id="binButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#binButtonAction" prefHeight="88.0" prefWidth="413.0" text="Binary" visible="false" GridPane.columnIndex="3">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="decButton" disable="true" mnemonicParsing="false" onAction="#decButtonAction" prefHeight="88.0" prefWidth="413.0" text="Decimal" visible="false" GridPane.columnIndex="4">
+                              <ToggleButton fx:id="decButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decButtonAction" prefHeight="88.0" prefWidth="413.0" text="Decimal" visible="false" GridPane.columnIndex="4">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="hexButton" disable="true" mnemonicParsing="false" onAction="#hexButtonAction" prefHeight="88.0" prefWidth="413.0" text="Hexadecimal" visible="false" GridPane.columnIndex="5">
+                              <ToggleButton fx:id="hexButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#hexButtonAction" prefHeight="88.0" prefWidth="413.0" text="Hexadecimal" visible="false" GridPane.columnIndex="5">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="charButton" disable="true" mnemonicParsing="false" onAction="#charButtonAction" prefHeight="88.0" prefWidth="413.0" text="Char" visible="false" GridPane.columnIndex="6">
+                              <ToggleButton fx:id="charButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#charButtonAction" prefHeight="88.0" prefWidth="413.0" text="Char" visible="false" GridPane.columnIndex="6">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="verboseButton" disable="true" mnemonicParsing="false" onAction="#verboseButtonAction" prefHeight="88.0" prefWidth="413.0" text="Verbose" GridPane.columnIndex="7">
+                              <ToggleButton fx:id="verboseButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#verboseButtonAction" prefHeight="88.0" prefWidth="413.0" text="Verbose" GridPane.columnIndex="7">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </ToggleButton>
-                              <ToggleButton fx:id="debugButton" disable="true" mnemonicParsing="false" onAction="#debugButtonAction" prefHeight="88.0" prefWidth="413.0" text="Debug" GridPane.columnIndex="8">
+                              <ToggleButton fx:id="debugButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#debugButtonAction" prefHeight="88.0" prefWidth="413.0" text="Debug" GridPane.columnIndex="8">
                                  <font>
                                     <Font size="15.0" />
                                  </font>

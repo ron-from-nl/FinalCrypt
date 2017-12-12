@@ -33,63 +33,76 @@ public class Version
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
     private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
-    private static String thisOverallVersionString = "";
+    private static String currentOverallVersionString = "";
     private String latestOverallVersionString = "";
-    private static int thisVersionTotal = 0;
+    private static int currentVersionTotal = 0;
     private int latestVersionTotal = 0;
 //        URL localURL = null;
     private InputStream istream = null;
-    private static final String REMOTEVERSIONSTRING =          "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-    public static final String REMOTEVERSIONPACKAGESTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt.jar";
+    private static final String REMOTEVERSIONFILEURLSTRING =          "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+    public static final String REMOTEPACKAGEDOWNLOADURLSTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/";
     private URL remoteURL = null;
-    private ReadableByteChannel rbc = null;
+    private ReadableByteChannel currentVersionByteChannel = null;
+    private ReadableByteChannel latestVersionByteChannel = null;
+//    private ReadableByteChannel currentVersionByteChannel = null;
     private ByteBuffer byteBuffer; 
     
-    private boolean versionsKnown = false;
+    private boolean currentVersionIsKnown = false;
+    private boolean latestVersionIsKnown = false;
     private boolean updateAvailable = false;
 
     public Version(UI ui)
     {
         this.ui = ui;
+    }
+    
+    public String getCurrentlyInstalledVersion()
+    {
         istream = getClass().getResourceAsStream("VERSION");
 
 //      Read the local VERSION file
-        rbc = newChannel(istream);
-        byteBuffer = ByteBuffer.allocate(512); thisOverallVersionString = "";
+        currentOverallVersionString = "Unknown";
+        currentVersionByteChannel = newChannel(istream);
+        byteBuffer = ByteBuffer.allocate(512);
         try {
-            while(rbc.read(byteBuffer) > 0)
+            while(currentVersionByteChannel.read(byteBuffer) > 0)
             {
                 byteBuffer.flip();
                 while(byteBuffer.hasRemaining())
                 {
-                    thisOverallVersionString += (char) byteBuffer.get();
+                    currentOverallVersionString += (char) byteBuffer.get();
                 }
             }
         } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }        
+        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }        
 
-        thisOverallVersionString.replaceAll("\\p{C}", "?");
-//        thisOverallVersionString.replaceAll("[^\\d. ]", "");
+        currentOverallVersionString.replaceAll("\\p{C}", "?");
+//        currentOverallVersionString.replaceAll("[^\\d. ]", "");
 
-        String thisVersionString = thisOverallVersionString.substring(0, thisOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
-        String thisUpgradeString = thisOverallVersionString.substring(thisOverallVersionString.indexOf("."), thisOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
-        String thisUpdateString = thisOverallVersionString.substring(thisOverallVersionString.lastIndexOf("."), thisOverallVersionString.length()).replaceAll("[^\\d]", "");
+        String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
+        String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
+        String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
         
-        int thisVersion = Integer.parseInt(thisVersionString);
-        int thisUpgrade = Integer.parseInt(thisUpgradeString);
-        int thisUpdate = Integer.parseInt(thisUpdateString);
-        thisVersionTotal = thisVersion+thisUpgrade+thisUpdate;
-        thisOverallVersionString = thisVersionString + "." + thisUpgradeString + "." + thisUpdateString;
+        int currentVersion = Integer.parseInt(currentVersionString);
+        int currentUpgrade = Integer.parseInt(currentUpgradeString);
+        int currentUpdate = Integer.parseInt(currentUpdateString);
+        currentVersionTotal = currentVersion+currentUpgrade+currentUpdate;
+        currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
+        currentVersionIsKnown = true;
+        return currentOverallVersionString;
     }
 
-    public void checkLastestVersion()
+    public String getLatestOnlineVersion()
     {
 //      Read the remote VERSION file
-        try { remoteURL = new URL(REMOTEVERSIONSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { rbc = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        byteBuffer = ByteBuffer.allocate(512); latestOverallVersionString = "";
-        try {
-            while(rbc.read(byteBuffer) > 0)
+        latestOverallVersionString = "Unknown";
+        try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
+        try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); } // null pointer at no connect
+        byteBuffer = ByteBuffer.allocate(512);
+        try
+        {
+            latestOverallVersionString = "";
+            while(latestVersionByteChannel.read(byteBuffer) > 0)
             {
                 byteBuffer.flip();
                 while(byteBuffer.hasRemaining())
@@ -98,7 +111,7 @@ public class Version
                 }
             }
         } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { rbc.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
 
         latestOverallVersionString.replaceAll("\\p{C}", "?");
 //        latestOverallVersionString.replaceAll("[^\\d.", "");
@@ -111,35 +124,44 @@ public class Version
         int latestUpgrade = Integer.parseInt(latestUpgradeString);
         int latestUpdate = Integer.parseInt(latestUpdateString);
         latestVersionTotal = latestVerion+latestUpgrade+latestUpdate;
-        latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;        
+        latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
+        latestVersionIsKnown = true;
+        return latestOverallVersionString;
     }
 
-    public String getLatestOverallVersionString() { return latestOverallVersionString; }
-    public String getThisOverallVersionString() { return thisOverallVersionString; }
+    public String getLatestOnlineOverallVersionString() { return latestOverallVersionString; }
+    public String getCurrentlyInstalledOverallVersionString() { return currentOverallVersionString; }
 
-    public String getVersionReport() 
+    public String getUpdateStatus() 
     {
         String returnString = "";
-        if      (thisVersionTotal < latestVersionTotal)
+        if (( currentVersionIsKnown) && ( latestVersionIsKnown))
         {
-//            returnString += "Your version: " + thisOverallVersionString + " is outdated. There's a new version: " + latestOverallVersionString + " available at: http://github.com/ron-from-nl/FinalCrypt/releases/download/1.1/FinalCrypt.jar\n"; 
-            returnString += getProcuct() + " " + thisOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEVERSIONPACKAGESTRING + "\n"; 
+            if      (currentVersionTotal < latestVersionTotal)
+            {
+                returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURLSTRING + "\n"; 
 
-        } 
-        else if (thisVersionTotal > latestVersionTotal)
-        {
-            returnString += getProcuct() + " " + thisOverallVersionString + " is a development version!\n";
-        } 
+            } 
+            else if (currentVersionTotal > latestVersionTotal)
+            {
+                returnString += getProcuct() + " " + currentOverallVersionString + " is a development version!\n";
+            } 
+            else
+            {
+                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date\n";
+            } 
+        }
         else
         {
-            returnString += getProcuct() + " " + thisOverallVersionString + " is up to date\n";
-        } 
+            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProcuct() + " Version\n"; }
+            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProcuct() + " Version\n"; }
+        }
         return returnString;
     }
 
-    public boolean versionIsDifferent()     { if      ( thisVersionTotal != latestVersionTotal ) { return true; } else { return false; } }
-    public boolean versionCanBeUpdated()    { if      ( thisVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
-    public boolean versionIsDevelopment()   { if      ( thisVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
+    public boolean versionIsDifferent()     { if      ( currentVersionTotal != latestVersionTotal ) { return true; } else { return false; } }
+    public boolean versionCanBeUpdated()    { if      ( currentVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
+    public boolean versionIsDevelopment()   { if      ( currentVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
 
     public static String getCopyright()                     { return COPYRIGHT; }
     public static String getAuthor()                        { return AUTHOR; }
