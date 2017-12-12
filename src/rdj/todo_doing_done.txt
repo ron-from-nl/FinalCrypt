@@ -1,4 +1,4 @@
-Todo
+=================================== Todo ====================================
 
 JCurses TUI 
 
@@ -10,17 +10,18 @@ Pause & Stop Button
 Caching widgets behind UI interface methods
 TextArea scroll limits
 
-Doing
-=============================================================================
+=================================== Doing ===================================
 
 
 
-=============================================================================
-Done
+
+=================================== Done ====================================
 
 
-Committed
 
+================================= Committed =================================
+
+Cached statusLAbel and logTextArea and set default * on wildcard extension in CLUI
 Added in and excluding extension filtering to GUI and CLUI
 Added totalBytes encrypted percentage file-printing primarily for CLUI
 Implemented online updates
