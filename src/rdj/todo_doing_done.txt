@@ -31,3 +31,7 @@ Improved set and correct buffersize
 Set Product & Version in all interfaces
 Add SI Prefix calculation to statistics
 Removed inputFile selection bug
+
+================================= Comments =================================
+
+~/jdk1.8.0_121/bin/javapackager -deploy -native exe -BsystemWide=true -BjvmOptions=-Xmx128m -BjvmOptions=-Xms128m -outdir packages -outfile FinalCrypt -srcdir dist -srcfiles FinalCrypt.jar -appclass rdj.GUIFX -name FinalCrypt -title "FinalCrypt Demo"
