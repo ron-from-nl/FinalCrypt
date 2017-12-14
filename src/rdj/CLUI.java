@@ -45,15 +45,16 @@ public class CLUI implements UI
     {
         boolean ifset = false, cfset = false;
         boolean validInvocation = true;
+        boolean negatePattern = false;
 
         ArrayList<Path> inputFilesPathList = new ArrayList<>();
         Path inputFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
-        String extension = "*";
         version = new Version(this);
         version.getCurrentlyInstalledVersion();
-        
+
+        String pattern = "*";        
         
         // Load the FinalCrypt Objext
         finalCrypt = new FinalCrypt(this);
@@ -83,7 +84,10 @@ public class CLUI implements UI
 
             // File Parameters
             else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
-            else if ( args[paramCnt].equals("-e")) { if ( args[paramCnt+1].startsWith("-") ) { String param = args[paramCnt+1].replace("-", ""); for (char chr:param.toCharArray()) { extension += "[!" + chr + "]"; }  paramCnt++; } else { extension = args[paramCnt+1]; paramCnt++; }}
+//            else if ( args[paramCnt].equals("-w")) { if ( args[paramCnt+1].startsWith("-") ) { String param = args[paramCnt+1].replace("-", ""); pattern = "glob:"; for (char chr:param.toCharArray()) { pattern += "[!" + chr + "]"; }  paramCnt++; } else { pattern = "glob:" + args[paramCnt+1]; paramCnt++; }}
+            else if ( args[paramCnt].equals("-w")) { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
+            else if ( args[paramCnt].equals("-W")) { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
+            else if ( args[paramCnt].equals("-r")) { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; }
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
@@ -99,7 +103,7 @@ public class CLUI implements UI
             {
                 if ( finalCrypt.isValidDir(inputFilePathItem) )
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n"); }
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n", true); }
                 }
                 else
                 {
@@ -118,7 +122,7 @@ public class CLUI implements UI
             if ( finalCrypt.isValidFile(cipherFilePath, false, true) )
             {
                 finalCrypt.setCipherFilePath(cipherFilePath);
-                if (finalCrypt.getVerbose()) { status("Cipher parameter: " + finalCrypt.getCipherFilePath() + " exist\n"); }
+                if (finalCrypt.getVerbose()) { status("Cipher parameter: " + finalCrypt.getCipherFilePath() + " exist\n", true); }
             } else { usage(); }
         }
         else
@@ -126,28 +130,48 @@ public class CLUI implements UI
             error("Cipher parameter: " + cipherFilePath + " does not exists\n"); usage();
         }            
 
-
-
-//      All is well, now convert small parameter list into recusive list
-//      Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
-        ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, extension);
-        // Set the Options
-        
-        // Set Buffer Size
-        int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
-        if ( cipherSize < finalCrypt.getBufferSize())
+//      Look for encryptable files & detect cipher file targeted among all input filess
+        boolean hasEncryptableItem = false;
+        for (Path path:finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, true) )
         {
-            finalCrypt.setBufferSize(cipherSize);
-            status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+            if ((path.compareTo(finalCrypt.getCipherFilePath()) == 0))
+            {
+                status("Warning: cipher-file: " + finalCrypt.getCipherFilePath().toAbsolutePath() + " will be excluded!\n", true);
+            }
+            else
+            {
+                if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
+            }
+        }
+
+//      // Input validation past, last check on encryptable items in list
+        if ( !hasEncryptableItem )
+        {
+            log("Nothing to encrypt\n");
         }
         else
         {
-            status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+//          All is well, now convert small parameter list into recusive list
+//          Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
+            ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
+            // Set the Options
+
+            // Set Buffer Size
+            int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+            if ( cipherSize < finalCrypt.getBufferSize())
+            {
+                finalCrypt.setBufferSize(cipherSize);
+                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
+            }
+            else
+            {
+                status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
+            }
+
+            // Start Encryption
+            this.encryptionStarted();
+            finalCrypt.encryptSelection(inputFilesPathListExtended, finalCrypt.getCipherFilePath());
         }
-        
-        // Start Encryption
-        this.encryptionStarted();
-        finalCrypt.encryptSelection(inputFilesPathListExtended, cipherFilePath);
     }
 
     public static void main(String[] args)
@@ -178,21 +202,30 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("            [-b size]             Changes default I/O buffer size (size = KB) (default 1024 KB).\n");
         log("Parameters:\n");
-        log("            <-i \"dir/file\">       The dir or file you want to encrypt (dir encrypt recursively!).\n");
-        log("            [-e \"[-]ext\"]         File extension to be filtered. \"-\" prefix will exclude extension\n");
+        log("            <-i \"file/dir\">       The file or dir you want to encrypt (encrypts dir recursively).\n");
+        log("            [-w \'wildcard\']       File wildcard include filter. Uses: \"Glob Patterns Syntax\".\n");
+        log("            [-W \'wildcard\']       File wildcard exclude filter. Uses: \"Glob Patterns Syntax\".\n");
+        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\n");
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
+        log("                                  A cipher-file is a unique file like a personal photo or video!\n");
         log("Examples:\n");
-        log("            # Encrypts myfile with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c myphotofile.jpg\n");
+        log("            # Encrypt myfile with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\n");
         log("\n");
-        log("            # Encrypts myfile and all content in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c myphotofile.jpg\n");
+        log("            # Encrypt myfile and all content in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\n");
         log("\n");
-        log("            # Encrypts all files with bit extension in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e bit -c myphotofile.jpg\n");
+        log("            # Encrypt all files with *.bit extension in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\n");
         log("\n");
-        log("            # Encrypts all files excluding bit extensions in mydir with myphotofile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -e -bit -c myphotofile.jpg\n\n");
+        log("            # Encrypt all files without *.bit extension in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -W '*.bit' -c mycipherfile\n");
+        log("\n");
+        log("            # Encrypt all files with *.bit extension in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\n");
+        log("\n");
+        log("            # Encrypt all files excluding .bit extension in mydir with myphotofile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n\n");
         log(Version.getProcuct() + " " + version.getCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
@@ -206,12 +239,13 @@ public class CLUI implements UI
     @Override
     public void error(String message)
     {
-        status(message);
+        status(message, true);
     }
 
     @Override
-    public void status(String status)
+    public void status(String status, boolean log)
     {
+//        if (log) { log(status); } // for future
         log(status);
     }
 

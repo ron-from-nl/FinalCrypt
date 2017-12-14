@@ -39,8 +39,8 @@ public class Version
     private int latestVersionTotal = 0;
 //        URL localURL = null;
     private InputStream istream = null;
-    private static final String REMOTEVERSIONFILEURLSTRING =          "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-    public static final String REMOTEPACKAGEDOWNLOADURLSTRING =    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+    public static final String REMOTEPACKAGEDOWNLOADURLSTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
     private ReadableByteChannel latestVersionByteChannel = null;
@@ -86,7 +86,8 @@ public class Version
         int currentVersion = Integer.parseInt(currentVersionString);
         int currentUpgrade = Integer.parseInt(currentUpgradeString);
         int currentUpdate = Integer.parseInt(currentUpdateString);
-        currentVersionTotal = currentVersion+currentUpgrade+currentUpdate;
+        
+        currentVersionTotal = (currentVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
         currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
         currentVersionIsKnown = true;
         return currentOverallVersionString;
@@ -120,10 +121,10 @@ public class Version
         String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
 
-        int latestVerion = Integer.parseInt(latestVersionString);
+        int latestVersion = Integer.parseInt(latestVersionString);
         int latestUpgrade = Integer.parseInt(latestUpgradeString);
         int latestUpdate = Integer.parseInt(latestUpdateString);
-        latestVersionTotal = latestVerion+latestUpgrade+latestUpdate;
+        latestVersionTotal = (latestVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
         latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
         latestVersionIsKnown = true;
         return latestOverallVersionString;
@@ -148,7 +149,7 @@ public class Version
             } 
             else
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date\n";
+                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date with latest: " + latestOverallVersionString + "\n";
             } 
         }
         else

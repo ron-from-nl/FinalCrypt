@@ -26,7 +26,7 @@ public interface UI
 {
     public void log(String message);
     public void error(String message);
-    public void status(String status);
+    public void status(String status, boolean log);
     public void println(String message);
     public void encryptionGraph(int value);
     public void encryptionProgress(int filesProgressPercent, int fileProgressPercent);

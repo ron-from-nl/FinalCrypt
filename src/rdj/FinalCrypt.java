@@ -164,7 +164,7 @@ public class FinalCrypt  extends Thread
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { stats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
 
         stats.setFilesTotal(inputFilesPathList.size());
-        ui.status(stats.getEncryptionStartSummary());
+        ui.status(stats.getEncryptionStartSummary(), true);
         
         // Setup the Progress timer & task
         updateProgressTask = new TimerTask() { @Override public void run() { ui.encryptionProgress( (int) (stats.getFileBytesEncrypted() /( stats.getFileBytesTotal()/100.0)), (int) (stats.getFilesBytesEncrypted() /(stats.getFilesBytesTotal()/100.0))); }};
@@ -204,7 +204,7 @@ public class FinalCrypt  extends Thread
     
         
 //                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
-                    ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + " ");
+                    ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + " ", true);
 
                     // Prints printByte Header ones                
                     if ( print )
@@ -276,7 +276,7 @@ public class FinalCrypt  extends Thread
                     stats.setFileEndEpoch();
                     
 //                  Print the stats
-                    ui.status(stats.getFileBytesThroughPut()); ui.status(stats.getFilesBytesProgressPercentage());
+                    ui.status(stats.getFileBytesThroughPut(), true); ui.status(stats.getFilesBytesProgressPercentage(), true);
                     stats.addFilesEncrypted(1);
                         
                     BasicFileAttributes battr = null;
@@ -318,7 +318,7 @@ public class FinalCrypt  extends Thread
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
         stats.setFilesEndEpoch();
-        ui.status(stats.getEncryptionEndSummary());
+        ui.status(stats.getEncryptionEndSummary(), true);
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
         ui.encryptionFinished();
@@ -390,10 +390,10 @@ public class FinalCrypt  extends Thread
     }
 
 //  Recursive Deletion of PathList
-    public void deleteSelection(ArrayList<Path> inputFilesPathList, boolean delete, boolean returnpathlist, String wildcard)
+    public void deleteSelection(ArrayList<Path> inputFilesPathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, delete, returnpathlist, wildcard);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, delete, returnpathlist, pattern, negatePattern);
         for (Path path:inputFilesPathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
@@ -524,53 +524,103 @@ public class FinalCrypt  extends Thread
         return pathList;
     }
     
-//  Called by EncryptSelected GUI & GUIFX
-    public ArrayList<Path> getExtendedPathList(File[] files, String extension)
+//  Called by EncryptSelected GUIFX
+    public ArrayList<Path> getExtendedPathList(File[] files, Path cipherPath, String pattern, boolean negatePattern, boolean status)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
         ArrayList<Path> pathList = new ArrayList<>();
-        for (File file:files)
+        if ( cipherPath == null )
         {
-            if (file.isDirectory())
+            for (File file:files)
             {
-                for (Path path:getDirectoryPathList(file, extension))
+                if (file.isDirectory())
                 {
-                    pathList.add(path);
-                } 
+                    for (Path path:getDirectoryPathList(file, pattern, negatePattern))
+                    {
+                        pathList.add(path);
+                    } 
+                }
+                else
+                {
+                    pathList.add(file.toPath());
+                }
             }
-            else
+        }
+        else
+        {
+            for (File file:files)
             {
-                pathList.add(file.toPath());
+                if (file.isDirectory())
+                {
+                    for (Path path:getDirectoryPathList(file, pattern, negatePattern))
+                    {
+                        if ( ((path.compareTo(cipherPath) != 0)) ) {pathList.add(path);} else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                    } 
+                }
+                else
+                {
+                    if ( ((file.toPath().compareTo(cipherPath) != 0)) ) { pathList.add(file.toPath()); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                }
             }
         }
         return pathList;
     }
 
 //  Called by EncryptSelected CLUI (works with PathList instead of File[] because FileChooser produces File[] array)
-    public ArrayList<Path> getExtendedPathList(ArrayList<Path> inPathList, String wildcard)
+    public ArrayList<Path> getExtendedPathList(ArrayList<Path> userSelectedItemsPathList, Path cipherPath, String pattern, boolean negatePattern, boolean status)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
-        ArrayList<Path> pathList = new ArrayList<>();
-        for (Path outerpath:inPathList)
+        ArrayList<Path> recursivePathList = new ArrayList<>();
+        if ( cipherPath == null )
         {
-            if ( Files.isDirectory(outerpath) ) { for (Path path:getDirectoryPathList(outerpath.toFile(), wildcard)) { pathList.add(path); }
-            } else { pathList.add(outerpath); }
+            for (Path outerpath:userSelectedItemsPathList)
+            {
+                if ( Files.isDirectory(outerpath) )
+                {
+                    for (Path path:getDirectoryPathList(outerpath.toFile(), pattern, negatePattern))
+                    {
+                        recursivePathList.add(path);
+                    }
+                }
+                else
+                {
+                    recursivePathList.add(outerpath);
+                }
+            }
         }
-        return pathList;
+        else
+        {
+            for (Path userSelectedItemPath:userSelectedItemsPathList)
+            {
+                if ( Files.isDirectory(userSelectedItemPath) )
+                {
+                    for (Path subItemPath:getDirectoryPathList(userSelectedItemPath.toFile(), pattern, negatePattern))
+                    {
+                        // cipherdetection not shown?
+                        if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", true); }}
+                    }
+                }
+                else
+                {
+                    if ( ((userSelectedItemPath.compareTo(cipherPath) != 0)) ) { recursivePathList.add(userSelectedItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", true); }}
+                }
+            }
+        }
+        return recursivePathList;
     }
 
     // Used by getExtendedPathList(File[] files)
-    public ArrayList<Path> getDirectoryPathList(File file, String extension)
+    public ArrayList<Path> getDirectoryPathList(File file, String pattern, boolean negatePattern)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
-        ArrayList<Path> pathList = new ArrayList<>();
+        ArrayList<Path> recursivePathList = new ArrayList<>();
         
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, extension);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, pattern, negatePattern);
         try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
-        pathList = mySimpleFileVisitor.getPathList();
+        recursivePathList = mySimpleFileVisitor.getPathList();
 
-        return pathList;
+        return recursivePathList;
     }
 
 //    public static String getCopyright()                     { return COPYRIGHT; }
@@ -592,20 +642,26 @@ public class FinalCrypt  extends Thread
 class MySimpleFileVisitor extends SimpleFileVisitor<Path>
 {
     private final UI ui;
-    private final PathMatcher matcher;
+    private final PathMatcher pathMatcher;
     private final boolean delete; 
     private final boolean returnpathlist; 
     private final ArrayList<Path> pathList;
+    private boolean negatePattern;
 
 //  Default CONSTRUCTOR
-    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String extension)
+
+//  regex pattern
+//  all *.bit   =   'regex:^.*\.bit$'
+//  all but *.bit   'regex:(?!.*\.bit$)^.*$'
+    
+    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         this.ui = ui;
-        matcher = FileSystems.getDefault().getPathMatcher("glob:*." + extension);
+        pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
         this.delete = delete;
         this.returnpathlist = returnpathlist;
         pathList = new ArrayList<Path>();
-        
+        this.negatePattern = negatePattern;
     }
    
     @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
@@ -615,26 +671,29 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
     {
-        if (path.getFileName() != null && matcher.matches(path.getFileName()))
-        {            
-            if      (delete)
-            {
-                try      
-                {
-                    Files.delete(path);
-                } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); }
-            }
-            
-            else if (returnpathlist)
-            {
-                pathList.add(path);
-            }
-            else {     }
-        }   
+//        if ((path.getFileName() != null) && (pathMatcher.matches(path.getFileName())))
+        if (!negatePattern)
+        {
+            if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
+            {            
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
+                else if (returnpathlist)    { pathList.add(path); }
+                else                        {  }
+            }   
+        }
+        else
+        {
+            if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) )
+            {            
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
+                else if (returnpathlist)    { pathList.add(path); }
+                else                        {  }
+            }   
+        }
         return FileVisitResult.CONTINUE;
     }
     
-    @Override public FileVisitResult visitFileFailed(Path file, IOException exc)
+    @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
     {
         ui.error("Error: visitFileFailed: " + exc + "\n");
         return FileVisitResult.SKIP_SIBLINGS;
@@ -642,12 +701,7 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
     {
-        if (delete)
-        {
-            try
-            {
-                Files.delete(path);
-            } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex + "\n"); } }
+        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex + "\n"); } }
         else if (returnpathlist)    {     }
         else                        {     }
         return FileVisitResult.CONTINUE;

@@ -112,6 +112,7 @@ public class GUIFX extends Application implements UI, Initializable
     FinalCrypt finalCrypt;
     GUIFX guifx;
     private JFileChooser inputFileChooser;
+    private boolean negatePattern;
     private JFileChooser cipherFileChooser;
     @FXML
     private SwingNode inputFileSwingNode;
@@ -195,7 +196,9 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+//      Add (*.bit) extension filter
         inputFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("FinalCrypt *.bit", "bit"));
+//      Add (NON *.bit) extension filter
         FileFilter nbf = new FileFilter()
                  {
                     @Override
@@ -291,7 +294,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         version = new Version(guifx);
         version.getCurrentlyInstalledVersion();
-        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n");
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true);
     }
     
     private void checkUpdate()
@@ -307,7 +310,7 @@ public class GUIFX extends Application implements UI, Initializable
                     version = new Version(guifx);
                     version.getCurrentlyInstalledVersion();
                     version.getLatestOnlineVersion();
-                    status(version.getUpdateStatus());
+                    status(version.getUpdateStatus(), true);
 //                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
 
                     if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
@@ -360,8 +363,8 @@ public class GUIFX extends Application implements UI, Initializable
                             ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
                             boolean delete = true;
                             boolean returnpathlist = false;
-                            String wildcard = "*";
-                            finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+                            String pattern = "glob:*";
+                            finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                             inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                             cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                         }
@@ -389,8 +392,8 @@ public class GUIFX extends Application implements UI, Initializable
                         pathList.add(cipherFileChooser.getSelectedFile().toPath());
                         boolean delete = true;
                         boolean returnpathlist = false;
-                        String wildcard = "*";
-                        finalCrypt.deleteSelection(pathList, delete, returnpathlist, wildcard);
+                        String pattern = "glob:*";
+                        finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                         inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                         cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                     }
@@ -401,7 +404,12 @@ public class GUIFX extends Application implements UI, Initializable
 
 //  FileChooser Listener methods
     private void inputFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
-    {                                                            
+    {
+        checkInputFileChooserSelection(true);
+    }
+    
+    private void checkInputFileChooserSelection(boolean status)
+    {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
         hasEncryptableItem = false;
@@ -413,20 +421,34 @@ public class GUIFX extends Application implements UI, Initializable
 //      En/Disable hasEncryptableItems
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
-            String extension = "*"; try { extension = getSelectedExtensionFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), extension) )
+            String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+//          Remove optionally selected cipher file from selected file list
+
+//          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
+            Path cipherPath = null;
+            if ( (cipherFileChooser.getSelectedFile() != null) && (hasCipherItem) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
+
+//          Look for encryptable files
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
             {
-                if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
+                if ( (cipherFileChooser.getSelectedFile() != null) && (hasCipherItem) )
+                {
+                    if ( (Files.isRegularFile(path)) && ((path.compareTo(cipherFileChooser.getSelectedFile().toPath()) != 0)) ) { hasEncryptableItem = true; }
+                }
+                else
+                {
+                    if ( Files.isRegularFile(path) ) { hasEncryptableItem = true; }
+                }
             }
         }
         checkEncryptionReady();
     }
 
-    private String getSelectedExtensionFromFileChooser( javax.swing.filechooser.FileFilter ff)
+    private String getSelectedPatternFromFileChooser( javax.swing.filechooser.FileFilter fileFilter)
     {
-        String extension = "*";
+        negatePattern = false; String pattern = "glob:*";
         String desc = "*";
-        if ( ff != null ) {desc = ff.getDescription();}
+        if ( fileFilter != null ) {desc = fileFilter.getDescription();}
         javax.swing.filechooser.FileNameExtensionFilter ef = null;
         try { ef = (javax.swing.filechooser.FileNameExtensionFilter) inputFileChooser.getFileFilter(); } catch (ClassCastException exc) {        }
         if ( ef != null ) 
@@ -435,10 +457,11 @@ public class GUIFX extends Application implements UI, Initializable
             desc = ef.getDescription();
         }
 //        else { extension = "*"; }
-        if      ( desc.startsWith("FinalCrypt") )       { extension = "bit"; }
-        else if ( desc.startsWith("NON FinalCrypt") )   { extension = "[!b][!i][!t]"; }
-        else                                            { extension = "*"; }
-        return extension;
+        if      ( desc.startsWith("FinalCrypt") )       { negatePattern = false; pattern = "glob:*.bit"; }
+        else if ( desc.startsWith("NON FinalCrypt") )   { negatePattern = true;  pattern = "glob:*.bit"; }
+//        else if ( desc.startsWith("NON FinalCrypt") )   { negatePattern = true; pattern = "glob:*.[!b][!i][!t]"; }
+        else                                            { negatePattern = false; pattern = "glob:*"; }
+        return pattern;
     }
 //  FileChooser Listener methods
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
@@ -461,7 +484,13 @@ public class GUIFX extends Application implements UI, Initializable
 /////////////////////////////////////////////////////////////////////////////////////////////
     
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
-    {                                                     
+    {
+        checkCipherFileChooserSelection();
+        checkInputFileChooserSelection(true);
+    }
+    
+    private void checkCipherFileChooserSelection()
+    {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
 
@@ -487,9 +516,23 @@ public class GUIFX extends Application implements UI, Initializable
         }
         
         checkEncryptionReady();
-    }                                                
+    }
 
-    private void checkEncryptionReady() { if ( (hasEncryptableItem) && (hasCipherItem) ) { encryptButton.setDisable(false); } else { encryptButton.setDisable(true); }}
+    private void checkEncryptionReady()
+    {
+        if ( (hasEncryptableItem) && (hasCipherItem) )
+        {
+            encryptButton.setDisable(false);
+            pauseToggleButton.setDisable(true);
+            stopButton.setDisable(true);
+        }
+        else
+        {
+            encryptButton.setDisable(true);
+            pauseToggleButton.setDisable(true);
+            stopButton.setDisable(true);
+        }
+    }
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      
@@ -649,8 +692,8 @@ public class GUIFX extends Application implements UI, Initializable
             public void run()
             {
 //              Extend chooser.selectedfiles and add to inputFilesPath
-                String extension = "*"; try { extension = getSelectedExtensionFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), extension);
+                String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherFileChooser.getSelectedFile().toPath(), pattern, negatePattern, true);
 
                 finalCrypt.setInputFilesPathList(inputFilesPathList);
                 finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
@@ -661,11 +704,11 @@ public class GUIFX extends Application implements UI, Initializable
                 if ( cipherSize < finalCrypt.getBufferSize())
                 {
                     finalCrypt.setBufferSize(cipherSize);
-                    status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+                    status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
                 }
                 else
                 {
-                    status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n");
+                    status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
                 }
                 
                 filesProgressBar.setProgress(0.0);
@@ -838,13 +881,13 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
-                status(message);
+                status(message, true);
             }
         });
     }
 
     @Override
-    public void status(String status)
+    public void status(String status, boolean log)
     {
         PlatformImpl.runAndWait(new Runnable()
         {
@@ -853,7 +896,7 @@ public class GUIFX extends Application implements UI, Initializable
             public void run()
             {
                 statusLabel.setText(status);
-                log(status);
+                if ( log ) { log(status); }
             }
         });
     }
@@ -939,11 +982,7 @@ public class GUIFX extends Application implements UI, Initializable
         Platform.runLater(new Runnable()
         {
             @Override public void run()
-            {
-                encryptButton.setDisable(true);
-                pauseToggleButton.setDisable(true);
-                stopButton.setDisable(true);
-                
+            {                                
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
@@ -952,6 +991,8 @@ public class GUIFX extends Application implements UI, Initializable
                 if (finalCrypt.getStats().getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal())); } // 50% becomes 0.5
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                checkInputFileChooserSelection(false);
+                checkCipherFileChooserSelection();
             }
         });
     }    
@@ -1044,7 +1085,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void stopButtonAction(ActionEvent event)
     {
         finalCrypt.setStopPending(true);
-        status(Boolean.toString(finalCrypt.getStopPending()));
+        if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
     }
 
     @FXML
