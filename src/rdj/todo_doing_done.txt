@@ -16,8 +16,10 @@ TextArea scroll limits
 =================================== Done ====================================
 
 
+
 ================================= Committed =================================
 
+Locked encrypt, pause and stop buttons from filechooser events during encryption
 Added support for Globbing Pattern and RegEx file filtering to CLUI
 Detect and removed cipherfile from extendedPathList returnList as extra safety
 Added improved Encrypt, Pause, Stop Button behavior after rescan fileChoosers

@@ -137,6 +137,7 @@ public class GUIFX extends Application implements UI, Initializable
     private Button stopButton;
     @FXML
     private Button updateButton;
+    private boolean encryptionRunning;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -520,17 +521,20 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkEncryptionReady()
     {
-        if ( (hasEncryptableItem) && (hasCipherItem) )
+        if ( !encryptionRunning )
         {
-            encryptButton.setDisable(false);
-            pauseToggleButton.setDisable(true);
-            stopButton.setDisable(true);
-        }
-        else
-        {
-            encryptButton.setDisable(true);
-            pauseToggleButton.setDisable(true);
-            stopButton.setDisable(true);
+            if ((hasEncryptableItem) && (hasCipherItem) )
+            {
+                encryptButton.setDisable(false);
+                pauseToggleButton.setDisable(true);
+                stopButton.setDisable(true);
+            }
+            else
+            {
+                encryptButton.setDisable(true);
+                pauseToggleButton.setDisable(true);
+                stopButton.setDisable(true);
+            }
         }
     }
 
@@ -938,6 +942,7 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
+                encryptionRunning = true;
                 encryptButton.setDisable(true);
                 pauseToggleButton.setDisable(false);
                 stopButton.setDisable(false);
@@ -983,6 +988,7 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {                                
+                encryptionRunning = false;
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
