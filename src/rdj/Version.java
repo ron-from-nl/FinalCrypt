@@ -149,7 +149,7 @@ public class Version
             } 
             else
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date with latest: " + latestOverallVersionString + "\n";
+                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date\n";
             } 
         }
         else
