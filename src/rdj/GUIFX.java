@@ -319,17 +319,20 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProcuct();
                 String header = "Brief Introduction:";
                 String infotext = new String();
-                infotext =  "1 Select files to encrypt on left side.\n";
-                infotext += "2 Select cipher file on the right side.\n";
-                infotext += "3 Click [Encrypt] to encrypt to: *.bit.\n";
-                infotext += "4 Click [Encrypt] again to decrypt.\n";
+                infotext =  "1. Select files to encrypt on left side.\n";
+                infotext += "2. Select cipher file on the right side.\n";
+                infotext += "3. Click [Encrypt] to encrypt to: *.bit.\n";
+                infotext += "4. Click [Encrypt] again to decrypt.\n";
                 infotext += "\n";
-                infotext += "Congratulations! You now know the basics.\n";
+                infotext += "Congrats! You now know the basics.\n";
                 infotext += "\n";
                 infotext += "Optional:\n";
+                infotext += "\n";
                 infotext += "Double click to open files.\n";
                 infotext += "Click [LOG] to see details.\n";
-                infotext += "Click [Check Update] occationally.\n\n";
+                infotext += "Click [Check Update] maybe.\n";
+                infotext += "\n";
+                infotext += "Live to love - Enjoy your privacy.\n\n";
                 
 /*
                 Linux: ${user.home}/.java/.userPrefs/_\!\(\)\!~\!\"q\!#4\!\[w\"_\!%k\!\[g\"\}\!#@\!\<\!\=\=/prefs.xml 
@@ -349,14 +352,14 @@ public class GUIFX extends Application implements UI, Initializable
 
                 if (! val.equals("Yes"))
                 {
-                    Alert alert = custAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide", param ? "Yes" : "No"),  ButtonType.OK);
+                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide", param ? "Yes" : "No"),  ButtonType.OK);
                     if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
                 }
             }
         });
     }
     
-    public static Alert custAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
+    public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
     {
         Alert alert = new Alert(type);
         // Need to force the alert to layout in order to grab the graphic,
@@ -365,7 +368,7 @@ public class GUIFX extends Application implements UI, Initializable
         Node graphic = alert.getDialogPane().getGraphic();
         // Create a new dialog pane that has a checkbox instead of the hide/show details button
         // Use the supplied callback for the action of the checkbox
-        alert.setDialogPane(new DialogPane()
+        DialogPane dialogPane = new DialogPane()
         {
           @Override
           protected Node createDetailsButton()
@@ -375,7 +378,11 @@ public class GUIFX extends Application implements UI, Initializable
             checkbox.setOnAction(e -> optOutAction.accept(checkbox.isSelected()));
             return checkbox;
           }
-        });
+        };
+        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+
+        alert.setDialogPane(dialogPane);
         alert.getDialogPane().getButtonTypes().addAll(buttonTypes);
         alert.getDialogPane().setContentText(message);
         // Fool the dialog into thinking there is some expandable content
@@ -1143,7 +1150,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "                  Encrypt                      Decrypt\n";
         infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\n";
         infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\n";
-        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3  ";
+        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\n\n";
 //        infotext += " \n";
         alert.setContentText(infotext);
         alert.showAndWait();
@@ -1167,7 +1174,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "All original files are removed after encryption.\n";
         infotext += "\n";
         infotext += "Decrypt by encrypting again with the same cipher.\n";
-        infotext += "After decryption, the *.bit extension gets removed.";
+        infotext += "After decryption, the *.bit extension gets removed.\n\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
