@@ -7,6 +7,8 @@ TextArea(HTML) replacing TextArea in log
 progressBar percentage
 Backup update locations (properties, daily check / history)
 TextArea scroll limits
+Optional password
+SoftPedia certificate and firsttime use introduction
 
 =================================== Doing ===================================
 
@@ -19,6 +21,7 @@ TextArea scroll limits
 
 ================================= Committed =================================
 
+Added a brief first-time introduction window (user preferences persistent).
 Locked encrypt, pause and stop buttons from filechooser events during encryption
 Added support for Globbing Pattern and RegEx file filtering to CLUI
 Detect and removed cipherfile from extendedPathList returnList as extra safety

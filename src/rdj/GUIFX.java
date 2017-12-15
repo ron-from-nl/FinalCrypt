@@ -35,10 +35,17 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
@@ -46,12 +53,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -61,7 +73,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
@@ -155,7 +169,7 @@ public class GUIFX extends Application implements UI, Initializable
         stage.show();
 
         version = new Version(guifx);
-        version.getCurrentlyInstalledVersion();
+        version.checkCurrentlyInstalledVersion();
         stage.setTitle(Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
     }
 
@@ -294,10 +308,87 @@ public class GUIFX extends Application implements UI, Initializable
     private void welcome()
     {
         version = new Version(guifx);
-        version.getCurrentlyInstalledVersion();
+        version.checkCurrentlyInstalledVersion();
         status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true);
+
+        Platform.runLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                String title =  "Welcome to " + Version.getProcuct();
+                String header = "Brief Introduction:";
+                String infotext = new String();
+                infotext =  "1 Select files to encrypt on left side.\n";
+                infotext += "2 Select cipher file on the right side.\n";
+                infotext += "3 Click [Encrypt] to encrypt to: *.bit.\n";
+                infotext += "4 Click [Encrypt] again to decrypt.\n";
+                infotext += "\n";
+                infotext += "Congratulations! You now know the basics.\n";
+                infotext += "\n";
+                infotext += "Optional:\n";
+                infotext += "Double click to open files.\n";
+                infotext += "Click [LOG] to see details.\n";
+                infotext += "Click [Check Update] occationally.\n\n";
+                
+/*
+                Linux: ${user.home}/.java/.userPrefs/_\!\(\)\!~\!\"q\!#4\!\[w\"_\!%k\!\[g\"\}\!#@\!\<\!\=\=/prefs.xml 
+                
+                For Windows systemRoot and userRoot are stored in HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Prefs and HKEY_CURRENT_USER\Software\JavaSoft\Prefs respectively.
+                For Unix systemRoot and userRoot are stored in "/etc/.java" and "${user.home}/.java/.userPrefs", respectively.
+                Note that for Unix the locations can be changed by specifying "java.util.prefs.userRoot" and "java.util.prefs.systemRoot" properties
+                Mac OS X ~/Library/Preferences in multiple plist files.
+                Mac OS X uses the java.util.prefs.MacOSXPreferencesFactory class. See lists.apple.com/archives/java-dev/2010/Jul/msg00056.html 
+                the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
+                See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
+                JDK 8 all the items in java.util.prefs:                 
+*/                
+                
+                Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+                String val = prefs.get("Hide", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+
+                if (! val.equals("Yes"))
+                {
+                    Alert alert = custAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide", param ? "Yes" : "No"),  ButtonType.OK);
+                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
+                }
+            }
+        });
     }
     
+    public static Alert custAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
+    {
+        Alert alert = new Alert(type);
+        // Need to force the alert to layout in order to grab the graphic,
+        // as we are replacing the dialog pane with a custom pane
+        alert.getDialogPane().applyCss();
+        Node graphic = alert.getDialogPane().getGraphic();
+        // Create a new dialog pane that has a checkbox instead of the hide/show details button
+        // Use the supplied callback for the action of the checkbox
+        alert.setDialogPane(new DialogPane()
+        {
+          @Override
+          protected Node createDetailsButton()
+          {
+            CheckBox checkbox = new CheckBox();
+            checkbox.setText(optOutMessage);
+            checkbox.setOnAction(e -> optOutAction.accept(checkbox.isSelected()));
+            return checkbox;
+          }
+        });
+        alert.getDialogPane().getButtonTypes().addAll(buttonTypes);
+        alert.getDialogPane().setContentText(message);
+        // Fool the dialog into thinking there is some expandable content
+        // a Group won't take up any space if it has no children
+        alert.getDialogPane().setExpandableContent(new Group());
+        alert.getDialogPane().setExpanded(true);
+        // Reset the dialog graphic using the default style
+        alert.getDialogPane().setGraphic(graphic);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        return alert;
+    }
+
     private void checkUpdate()
     {
 //        Timer timer = new Timer();
@@ -309,8 +400,8 @@ public class GUIFX extends Application implements UI, Initializable
                 Platform.runLater(() ->
                 {
                     version = new Version(guifx);
-                    version.getCurrentlyInstalledVersion();
-                    version.getLatestOnlineVersion();
+                    version.checkCurrentlyInstalledVersion();
+                    version.checkLatestOnlineVersion();
                     status(version.getUpdateStatus(), true);
 //                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
 
@@ -1016,7 +1107,7 @@ public class GUIFX extends Application implements UI, Initializable
             charButton.setVisible(!charButton.isVisible());
         }
     }
-
+    
     @FXML
     private void cipherInfoLabelClicked(MouseEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);

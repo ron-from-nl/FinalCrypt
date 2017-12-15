@@ -56,7 +56,7 @@ public class Version
         this.ui = ui;
     }
     
-    public String getCurrentlyInstalledVersion()
+    public String checkCurrentlyInstalledVersion()
     {
         istream = getClass().getResourceAsStream("VERSION");
 
@@ -93,7 +93,7 @@ public class Version
         return currentOverallVersionString;
     }
 
-    public String getLatestOnlineVersion()
+    public String checkLatestOnlineVersion()
     {
 //      Read the remote VERSION file
         latestOverallVersionString = "Unknown";

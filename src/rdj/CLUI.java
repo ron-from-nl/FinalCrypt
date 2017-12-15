@@ -52,7 +52,7 @@ public class CLUI implements UI
         Path cipherFilePath = null;
         Path outputFilePath = null;
         version = new Version(this);
-        version.getCurrentlyInstalledVersion();
+        version.checkCurrentlyInstalledVersion();
 
         String pattern = "*";        
         
@@ -79,7 +79,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
 //            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
-            else if ( args[paramCnt].equals("--update"))                                                            { version.getLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
+            else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
             else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
@@ -226,7 +226,7 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypt all files excluding .bit extension in mydir with myphotofile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n\n");
-        log(Version.getProcuct() + " " + version.getCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
 
