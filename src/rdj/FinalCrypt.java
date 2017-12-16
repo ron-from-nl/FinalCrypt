@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ron
+ * © Copyleft 2017 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- *
+/*
  * @author Ron de Jong ronuitzaandam@gmail.com
  */
 
@@ -44,20 +43,9 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-//public class FinalCrypt  extends SwingWorker
 public class FinalCrypt  extends Thread
 {
-//    private static final String COMPANYNAME = "GPLv3";
-//    private static final String PRODUCTNAME = "FinalCrypt";
-//    private static final String AUTHOR = "Ron de Jong";
-//    private static final String COPYRIGHT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR);
-//    private static final int    VERSION = 1;
-//    private static final int    MAJOR = 1;
-//    private static final int    MINOR = 0;
-//    private static final String VERSIONSTRING = VERSION + "." + MAJOR + "." + MINOR;
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
@@ -68,10 +56,6 @@ public class FinalCrypt  extends Thread
     private long bufferTotal = 0; // DNumber of buffers
 
     private int printAddressByteCounter = 0;
-//    public long fileBytesTotal = 0;
-//    public long filesBytesTotal = 0;
-//    private long fileBytesEncrypted = 0;
-//    private long filesBytesEncrypted = 0;
     private ArrayList<Path> inputFilesPathList;
     private Path cipherFilePath = null;
     private Path outputFilePath = null;
@@ -97,13 +81,11 @@ public class FinalCrypt  extends Thread
     private ByteBuffer byteBuffer;        
     private boolean stopPending = false;
     private boolean pausing = false;
+    private boolean inputFileEnded;
 
 
     public FinalCrypt(UI ui)
-    {    
-//        super("FinalCryptThread");
-        
-        
+    {   
 //        Set the locations of the version resources
         
         inputFilesPathList = new ArrayList<>();
@@ -176,6 +158,7 @@ public class FinalCrypt  extends Thread
         // Encrypt Files loop
         fileloop: for (Path inputFilePath:inputFilesPathList)
         {
+            if (stopPending)    { inputFileEnded = true; break fileloop; }
             if (! Files.isDirectory(inputFilePath))
             {
                 if ((inputFilePath.compareTo(cipherFilePath) != 0))
@@ -200,10 +183,8 @@ public class FinalCrypt  extends Thread
                     
                     try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex + "\n"); }
 
-    //              Status
+//                  Status
     
-        
-//                    ui.status("Encrypting file: " + inputFilePath.getFileName() + " with cipherfile: " + cipherFilePath.getFileName() + "\n");
                     ui.status(cipherFilePath.toAbsolutePath() + " encrypting: " + inputFilePath.toAbsolutePath() + " ", true);
 
                     // Prints printByte Header ones                
@@ -217,7 +198,7 @@ public class FinalCrypt  extends Thread
                         ui.log("|----------|-------------------|-------------------|-------------------|\n");
                     }
 
-                    boolean inputFileEnded = false;
+                    inputFileEnded = false;
                     long inputFileChannelPos = 0;
                     long cipherFileChannelPos = 0;                
                     long cipherFileChannelRead = 0;                
@@ -229,7 +210,7 @@ public class FinalCrypt  extends Thread
                     // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
                     while ( ! inputFileEnded )
                     {
-                        if (stopPending)    { stopPending = false; inputFileEnded = true; break fileloop; }
+                        if (stopPending)    { inputFileEnded = true; ui.status("\n", true); break fileloop; }
 
                         //open inputFile
                         try (final SeekableByteChannel inputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
@@ -318,6 +299,7 @@ public class FinalCrypt  extends Thread
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
         stats.setFilesEndEpoch();
+        if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
         ui.status(stats.getEncryptionEndSummary(), true);
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
@@ -623,11 +605,6 @@ public class FinalCrypt  extends Thread
         return recursivePathList;
     }
 
-//    public static String getCopyright()                     { return COPYRIGHT; }
-//    public static String getAuthor()                        { return AUTHOR; }
-//    public static String getVersion()                       { return VERSIONSTRING; }
-//    public static String getProcuct()                       { return PRODUCTNAME; }
-//    public static String getCompany()                       { return COMPANYNAME; }
     public Stats getStats()                                 { return stats; }
 
 //  Class Extends Thread

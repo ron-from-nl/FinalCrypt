@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.embed.swing.*?>
@@ -48,12 +49,12 @@
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
+                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
                                                          <cursor>
                                                             <Cursor fx:constant="HAND" />
                                                          </cursor>
                                                          <effect>
-                                                            <DropShadow height="30.0" radius="14.5" width="30.0" />
+                                                            <DropShadow blurType="TWO_PASS_BOX" height="30.0" radius="14.5" width="30.0" />
                                                          </effect>
                                                          <font>
                                                             <Font name="Open Sans Bold" size="18.0" />
@@ -97,7 +98,7 @@
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
+                                                      <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
                                                          <font>
                                                             <Font name="Open Sans Bold" size="18.0" />
                                                          </font>
@@ -133,7 +134,7 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="Cousine" size="14.0" />
                                  </font></TextArea>
@@ -143,14 +144,15 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <AnchorPane maxHeight="196.0" minHeight="100.0" prefHeight="120.0" prefWidth="1100.0">
+            <AnchorPane maxHeight="95.0" minHeight="95.0" prefHeight="95.0" prefWidth="1100.0" VBox.vgrow="SOMETIMES">
                <children>
-                  <VBox alignment="BOTTOM_CENTER" prefHeight="120.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="bottomVBox" alignment="BOTTOM_CENTER" maxHeight="95.0" minHeight="95.0" prefHeight="95.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <GridPane minHeight="40.0" prefHeight="40.0" prefWidth="1237.0">
+                        <GridPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="1237.0" VBox.vgrow="ALWAYS">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="NEVER" minWidth="50.0" prefWidth="50.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
@@ -176,7 +178,7 @@
                                     </ToggleButton>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                                  <opaqueInsets>
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </opaqueInsets>
@@ -188,7 +190,7 @@
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
                                  <children>
                                     <Button fx:id="updateButton" focusTraversable="false" maxHeight="35.0" mnemonicParsing="false" onAction="#updateButtonAction" prefHeight="40.0" prefWidth="1100.0" text="Check Update" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
@@ -197,87 +199,42 @@
                                     </Button>
                                  </children>
                               </AnchorPane>
-                           </children>
-                        </GridPane>
-                        <GridPane prefHeight="30.0" prefWidth="1237.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <ToggleButton fx:id="logButton" focusTraversable="false" mnemonicParsing="false" onAction="#logButtonAction" onMouseClicked="#onLogButtonClicked" prefHeight="88.0" prefWidth="413.0" text="Log">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="printButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#printButtonAction" prefHeight="88.0" prefWidth="413.0" text="Print" visible="false" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="textButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#textButtonAction" prefHeight="88.0" prefWidth="413.0" text="Text" visible="false" GridPane.columnIndex="2">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="binButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#binButtonAction" prefHeight="88.0" prefWidth="413.0" text="Binary" visible="false" GridPane.columnIndex="3">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="decButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decButtonAction" prefHeight="88.0" prefWidth="413.0" text="Decimal" visible="false" GridPane.columnIndex="4">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="hexButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#hexButtonAction" prefHeight="88.0" prefWidth="413.0" text="Hexadecimal" visible="false" GridPane.columnIndex="5">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="charButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#charButtonAction" prefHeight="88.0" prefWidth="413.0" text="Char" visible="false" GridPane.columnIndex="6">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="verboseButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#verboseButtonAction" prefHeight="88.0" prefWidth="413.0" text="Verbose" GridPane.columnIndex="7">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
-                              <ToggleButton fx:id="debugButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#debugButtonAction" prefHeight="88.0" prefWidth="413.0" text="Debug" GridPane.columnIndex="8">
-                                 <font>
-                                    <Font size="15.0" />
-                                 </font>
-                              </ToggleButton>
+                              <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" progress="0.5" GridPane.columnIndex="2" />
                            </children>
                         </GridPane>
                         <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="20.0" minHeight="20.0" prefHeight="20.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
                            <children>
-                              <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" layoutX="30.0" layoutY="13.0" maxHeight="20.0" minHeight="20.0" prefHeight="20.0" prefWidth="1100.0" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font name="Open Sans" size="12.0" />
-                                 </font></Label>
+                              <GridPane alignment="CENTER" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="NEVER" maxWidth="175.0" minWidth="175.0" percentWidth="0.0" prefWidth="175.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status">
+                                       <font>
+                                          <Font name="Open Sans" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="copyleftLabel" cache="true" cacheHint="SPEED" disable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyleft" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                                       <font>
+                                          <Font name="Open Sans" size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
                            </children>
                         </AnchorPane>
                      </children>

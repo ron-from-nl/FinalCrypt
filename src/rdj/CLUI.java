@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ron
+ * © Copyleft 2017 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,24 +209,24 @@ public class CLUI implements UI
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
         log("                                  A cipher-file is a unique file like a personal photo or video!\n");
         log("Examples:\n");
-        log("            # Encrypt myfile with myphotofile\n");
+        log("            # Encrypt myfile with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\n");
         log("\n");
-        log("            # Encrypt myfile and all content in mydir with myphotofile\n");
+        log("            # Encrypt myfile and all content in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\n");
         log("\n");
-        log("            # Encrypt all files with *.bit extension in mydir with myphotofile\n");
+        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\n");
         log("\n");
-        log("            # Encrypt all files without *.bit extension in mydir with myphotofile\n");
+        log("            # Encrypt all files without *.bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -W '*.bit' -c mycipherfile\n");
         log("\n");
-        log("            # Encrypt all files with *.bit extension in mydir with myphotofile\n");
+        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\n");
         log("\n");
-        log("            # Encrypt all files excluding .bit extension in mydir with myphotofile\n");
+        log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n\n");
-        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyleft() + "\n\n");
         System.exit(1);
     }
 

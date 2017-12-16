@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ron
+ * © Copyleft 2017 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -53,7 +48,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -61,26 +55,35 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.MouseButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.lang.management.ManagementFactory;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javax.management.InstanceNotFoundException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ReflectionException;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -101,22 +104,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Button encryptButton;
     @FXML
-    private ToggleButton logButton;
-    @FXML
-    private ToggleButton printButton;
-    @FXML
-    private ToggleButton textButton;
-    @FXML
-    private ToggleButton binButton;
-    @FXML
-    private ToggleButton decButton;
-    @FXML
-    private ToggleButton hexButton;
-    @FXML
-    private ToggleButton charButton;
-    @FXML
-    private ToggleButton verboseButton;
-    @FXML
     private ProgressBar filesProgressBar;
     @FXML
     private ProgressBar fileProgressBar;
@@ -132,8 +119,6 @@ public class GUIFX extends Application implements UI, Initializable
     private SwingNode inputFileSwingNode;
     @FXML
     private SwingNode cipherFileSwingNode;
-    @FXML
-    private ToggleButton debugButton;
     private JButton inputFileDeleteButton;
     private JButton cipherFileDeleteButton;
     private boolean hasEncryptableItem;
@@ -152,6 +137,21 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Button updateButton;
     private boolean encryptionRunning;
+    @FXML
+    private Label copyleftLabel;
+    private TimerTask updateProgressTask;
+    private Timer updateProgressTaskTimer;
+    @FXML
+    private ProgressIndicator cpuIndicator;
+    private MBeanServer mbs;
+    private ObjectName name;
+    private AttributeList list;
+    private Attribute att;
+    private Double value;
+    private String procCPULoadAttribute;
+    @FXML
+    private VBox bottomVBox;
+    private GridPane logButtonGridPane;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -166,6 +166,7 @@ public class GUIFX extends Application implements UI, Initializable
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         stage.setMaximized(true);
+        stage.setOnCloseRequest(e -> Platform.exit());
         stage.show();
 
         version = new Version(guifx);
@@ -215,19 +216,19 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("FinalCrypt *.bit", "bit"));
 //      Add (NON *.bit) extension filter
         FileFilter nbf = new FileFilter()
-                 {
-                    @Override
-                    public boolean accept(File file)
-                    {
-                       return !file.getName().toLowerCase().endsWith(".bit");
-                    }
+        {
+            @Override
+            public boolean accept(File file)
+            {
+                return !file.getName().toLowerCase().endsWith(".bit");
+            }
 
-                    @Override
-                    public String getDescription()
-                    {
-                       return "NON FinalCrypt";
-                    }
-                 };
+            @Override
+            public String getDescription()
+            {
+                return "NON FinalCrypt";
+            }
+        };
         inputFileChooser.addChoosableFileFilter(nbf);
         inputFileChooser.addPropertyChangeListener
         (
@@ -305,11 +306,50 @@ public class GUIFX extends Application implements UI, Initializable
         welcome();
     }
     
+    public double getProcessCpuLoad()
+    {
+        try { list = mbs.getAttributes(name, new String[]{ procCPULoadAttribute });}
+        catch (InstanceNotFoundException ex)    { status(ex.getMessage(), true); }
+        catch (ReflectionException ex)          { status(ex.getMessage(), true); }
+        
+        if (list.isEmpty()) { return Double.NaN; }
+        att = (Attribute)list.get(0);
+        value  = (Double)att.getValue();    
+        return value;
+    }
+
     private void welcome()
     {
         version = new Version(guifx);
         version.checkCurrentlyInstalledVersion();
-        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true);
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true); copyleftLabel.setText(Version.getCopyleft() + " " + Version.getAuthor());
+
+//      cpuIndicator
+        Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
+        cpuIndicator.setTooltip(cpuIndicatorToolTip);
+
+//      for: ProcessCpuLoad()
+        procCPULoadAttribute = "ProcessCpuLoad";
+        mbs = ManagementFactory.getPlatformMBeanServer();
+        try {name    = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
+        catch (MalformedObjectNameException ex)        { status(ex.getMessage(), true); }
+        catch (NullPointerException ex)                { status(ex.getMessage(), true); }
+        
+ //     Must be in Thread otherwise no gracefull close on exit
+        Thread cpuIndicatorThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                updateProgressTask = new TimerTask() { @Override public void run() { Platform.runLater(new Runnable()
+                { @Override public void run() { cpuIndicator.setProgress(getProcessCpuLoad()); } }); }};
+                updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200);
+            }
+        });
+        cpuIndicatorThread.setName("cpuIndicatorThread");
+        cpuIndicatorThread.setDaemon(true);
+        cpuIndicatorThread.start();
 
         Platform.runLater(new Runnable()
         {
@@ -333,7 +373,6 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "Click [Check Update] maybe.\n";
                 infotext += "\n";
                 infotext += "Live to love - Enjoy your privacy.\n\n";
-                
 /*
                 Linux: ${user.home}/.java/.userPrefs/_\!\(\)\!~\!\"q\!#4\!\[w\"_\!%k\!\[g\"\}\!#@\!\<\!\=\=/prefs.xml 
                 
@@ -348,11 +387,11 @@ public class GUIFX extends Application implements UI, Initializable
 */                
                 
                 Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-                String val = prefs.get("Hide", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+                String val = prefs.get("Hide Intro", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 
                 if (! val.equals("Yes"))
                 {
-                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide", param ? "Yes" : "No"),  ButtonType.OK);
+                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
                     if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
                 }
             }
@@ -362,12 +401,8 @@ public class GUIFX extends Application implements UI, Initializable
     public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
     {
         Alert alert = new Alert(type);
-        // Need to force the alert to layout in order to grab the graphic,
-        // as we are replacing the dialog pane with a custom pane
         alert.getDialogPane().applyCss();
         Node graphic = alert.getDialogPane().getGraphic();
-        // Create a new dialog pane that has a checkbox instead of the hide/show details button
-        // Use the supplied callback for the action of the checkbox
         DialogPane dialogPane = new DialogPane()
         {
           @Override
@@ -385,11 +420,8 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setDialogPane(dialogPane);
         alert.getDialogPane().getButtonTypes().addAll(buttonTypes);
         alert.getDialogPane().setContentText(message);
-        // Fool the dialog into thinking there is some expandable content
-        // a Group won't take up any space if it has no children
         alert.getDialogPane().setExpandableContent(new Group());
         alert.getDialogPane().setExpanded(true);
-        // Reset the dialog graphic using the default style
         alert.getDialogPane().setGraphic(graphic);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
@@ -398,47 +430,37 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkUpdate()
     {
-//        Timer timer = new Timer();
-//        timer.schedule(new TimerTask()
-//        {
-//            @Override
-//            public void run()
-//            {
-                Platform.runLater(() ->
-                {
-                    version = new Version(guifx);
-                    version.checkCurrentlyInstalledVersion();
-                    version.checkLatestOnlineVersion();
-                    status(version.getUpdateStatus(), true);
+        Platform.runLater(() ->
+        {
+            version = new Version(guifx);
+            version.checkCurrentlyInstalledVersion();
+            version.checkLatestOnlineVersion();
+            status(version.getUpdateStatus(), true);
 //                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
 
-                    if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
+            if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
+            {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + version.getLatestOnlineOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES)
+                {
+                    Thread updateThread = new Thread(new Runnable()
                     {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + version.getLatestOnlineOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
-                        if (alert.getResult() == ButtonType.YES)
+                        @Override
+                        @SuppressWarnings({"static-access"})
+                        public void run()
                         {
-                            Thread updateThread = new Thread(new Runnable()
-                            {
-                                @Override
-                                @SuppressWarnings({"static-access"})
-                                public void run()
-                                {
-                                    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURLSTRING)); }
-                                    catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
-                                    catch (IOException ex) { guifx.error(ex.getMessage()); }
-                                }
-                            });
-                            updateThread.setName("encryptThread");
-                            updateThread.setDaemon(true);
-                            updateThread.start();
+                            try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURLSTRING)); }
+                            catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
+                            catch (IOException ex) { guifx.error(ex.getMessage()); }
                         }
-                    }
-                });
-//            }
-//        }, 3000);    
-    
+                    });
+                    updateThread.setName("encryptThread");
+                    updateThread.setDaemon(true);
+                    updateThread.start();
+                }
+            }
+        });
     }
-    
 
 //  Custom FileChooserDelete Listener methods
     private void inputFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
@@ -521,28 +543,31 @@ public class GUIFX extends Application implements UI, Initializable
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
         {
             String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-//          Remove optionally selected cipher file from selected file list
 
 //          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
             Path cipherPath = null;
             if ( (cipherFileChooser.getSelectedFile() != null) && (hasCipherItem) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
 
-//          Look for encryptable files
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
-            {
-                if ( (cipherFileChooser.getSelectedFile() != null) && (hasCipherItem) )
-                {
-                    if ( (Files.isRegularFile(path)) && ((path.compareTo(cipherFileChooser.getSelectedFile().toPath()) != 0)) ) { hasEncryptableItem = true; }
-                }
-                else
-                {
-                    if ( Files.isRegularFile(path) ) { hasEncryptableItem = true; }
-                }
-            }
+//          Look for encryptable files (Long I/O operation set hourglass)
+            cursorWait();
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) ) { if ( Files.isRegularFile(path) ) { hasEncryptableItem = true; } }
+            cursorDefault();
         }
         checkEncryptionReady();
     }
 
+    private void cursorWait()
+    {
+            inputFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+            cipherFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));        
+    }
+    
+    private void cursorDefault()
+    {
+            inputFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));
+            cipherFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));        
+    }
+    
     private String getSelectedPatternFromFileChooser( javax.swing.filechooser.FileFilter fileFilter)
     {
         negatePattern = false; String pattern = "glob:*";
@@ -825,145 +850,6 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    @FXML
-    private void logButtonAction(ActionEvent event)
-    {
-        printButton.setDisable(!logButton.isSelected());
-        textButton.setDisable(!logButton.isSelected());
-        binButton.setDisable(!logButton.isSelected());
-        decButton.setDisable(!logButton.isSelected());
-        hexButton.setDisable(!logButton.isSelected());
-        charButton.setDisable(!logButton.isSelected());
-        verboseButton.setDisable(!logButton.isSelected());
-        debugButton.setDisable(!logButton.isSelected());
-        tab.getSelectionModel().select((logButton.isSelected()) ? 1 : 0);
-        setOptions();
-    }
-    
-    @FXML
-    private void printButtonAction(ActionEvent event)
-    {
-//        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void textButtonAction(ActionEvent event)
-    {
-        printButton.setSelected(false);
-//        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void binButtonAction(ActionEvent event)
-    {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-//        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void decButtonAction(ActionEvent event)
-    {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-//        decButton.setSelected(false);
-        hexButton.setSelected(false);
-        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void hexButtonAction(ActionEvent event)
-    {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-//        hexButton.setSelected(false);
-        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void charButtonAction(ActionEvent event)
-    {
-        printButton.setSelected(false);
-        textButton.setSelected(false);
-        binButton.setSelected(false);
-        decButton.setSelected(false);
-        hexButton.setSelected(false);
-//        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void verboseButtonAction(ActionEvent event)
-    {
-//        printButton.setSelected(false);
-//        textButton.setSelected(false);
-//        binButton.setSelected(false);
-//        decButton.setSelected(false);
-//        hexButton.setSelected(false);
-//        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    @FXML
-    private void debugButtonAction(ActionEvent event)
-    {
-//        printButton.setSelected(false);
-//        textButton.setSelected(false);
-//        binButton.setSelected(false);
-//        decButton.setSelected(false);
-//        hexButton.setSelected(false);
-//        charButton.setSelected(false);
-//        verboseButton.setSelected(false);
-//        debugButton.setSelected(false);
-        setOptions();
-    }
-    
-    private void setOptions()
-    {
-        finalCrypt.setPrint(logButton.isSelected() & printButton.isSelected());
-        finalCrypt.setTXT(logButton.isSelected() & textButton.isSelected());
-        finalCrypt.setBin(logButton.isSelected() & binButton.isSelected());
-        finalCrypt.setDec(logButton.isSelected() & decButton.isSelected());
-        finalCrypt.setHex(logButton.isSelected() & hexButton.isSelected());
-        finalCrypt.setChr(logButton.isSelected() & charButton.isSelected());
-        finalCrypt.setVerbose(logButton.isSelected() & verboseButton.isSelected());
-        finalCrypt.setDebug(logButton.isSelected() & debugButton.isSelected());
-    }
-    
     @Override
     public void log(String message)
     {
@@ -1074,7 +960,7 @@ public class GUIFX extends Application implements UI, Initializable
                 if (finalCrypt.getDebug()) { println("Progress File : " + filesProgressPercent / 100.0  + " factor"); }
                 if (finalCrypt.getDebug()) { println("Progress Files: " + fileProgressPercent / 100.0 + " factor"); }
                 fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
-                filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui
+                filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui                
             }
         });
     }
@@ -1087,6 +973,7 @@ public class GUIFX extends Application implements UI, Initializable
             @Override public void run()
             {                                
                 encryptionRunning = false;
+                
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
@@ -1100,20 +987,6 @@ public class GUIFX extends Application implements UI, Initializable
             }
         });
     }    
-
-    @FXML
-    private void onLogButtonClicked(MouseEvent event)
-    {
-        if (event.getButton() == MouseButton.SECONDARY)
-        {
-            printButton.setVisible(!printButton.isVisible());
-            textButton.setVisible(!textButton.isVisible());
-            binButton.setVisible(!binButton.isVisible());
-            decButton.setVisible(!decButton.isVisible());
-            hexButton.setVisible(!hexButton.isVisible());
-            charButton.setVisible(!charButton.isVisible());
-        }
-    }
     
     @FXML
     private void cipherInfoLabelClicked(MouseEvent event) {
@@ -1197,4 +1070,5 @@ public class GUIFX extends Application implements UI, Initializable
     {
         checkUpdate();
     }    
+
 }
