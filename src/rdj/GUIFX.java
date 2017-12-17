@@ -980,6 +980,7 @@ public class GUIFX extends Application implements UI, Initializable
                 if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { log("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor\n"); }
                 if (finalCrypt.getStats().getFileBytesTotal() != 0)                                { fileProgressBar.setProgress((finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal())); }
                 if (finalCrypt.getStats().getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal())); } // 50% becomes 0.5
+                inputFileChooser.setFileFilter(inputFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 checkInputFileChooserSelection(false);

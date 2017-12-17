@@ -16,14 +16,15 @@ SoftPedia certificate
 
 =================================== Done ====================================
 
+
+================================= Committed =================================
+
+Reset to "All-Files" filefilter (extension) after encryption
 Removed the GUIFX logbuttons
 Added a Process CPU Load circular indicator
 Replaced copyright to copyleft references and added a copyleft label
 Added an Hourglass on mousepointer when busy
 Changed to user preferences so user can Hide Intro permanently
-
-================================= Committed =================================
-
 Added a brief first-time introduction window (user preferences persistent).
 Locked encrypt, pause and stop buttons from filechooser events during encryption
 Added support for Globbing Pattern and RegEx file filtering to CLUI
