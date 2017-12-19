@@ -9,15 +9,21 @@ Backup update locations (properties, daily check / history)
 TextArea scroll limits
 Optional password
 SoftPedia certificate
+Secure Delete (overwriting original content with random patterns and delete)
 
 =================================== Doing ===================================
 
-
+Debian packages should specify a license
+Delete original Following Symbolic Links
+Update version in manifest.mf -> Manifest-Version field
 
 =================================== Done ====================================
 
 
 ================================= Committed =================================
+
+Added Secure Delete (Shredding)
+Implemented extended statistics
 
 Reset to "All-Files" filefilter (extension) after encryption
 Removed the GUIFX logbuttons

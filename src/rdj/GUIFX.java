@@ -972,14 +972,9 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {                                
-                encryptionRunning = false;
-                
-                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { println("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { println("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFileBytesTotal() != 0))   { log("Progress File : " + (finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal()) + " factor\n"); }
-                if ((finalCrypt.getDebug()) && (finalCrypt.getStats().getFilesBytesTotal() != 0))  { log("Progress Files: " + (finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal()) + " factor\n"); }
-                if (finalCrypt.getStats().getFileBytesTotal() != 0)                                { fileProgressBar.setProgress((finalCrypt.getStats().getFileBytesEncrypted() / finalCrypt.getStats().getFileBytesTotal())); }
-                if (finalCrypt.getStats().getFilesBytesTotal() != 0)                               { filesProgressBar.setProgress((finalCrypt.getStats().getFilesBytesEncrypted() / finalCrypt.getStats().getFilesBytesTotal())); } // 50% becomes 0.5
+                encryptionRunning = false;                
+                fileProgressBar.setProgress(0);
+                filesProgressBar.setProgress(0);
                 inputFileChooser.setFileFilter(inputFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 inputFileChooser.rescanCurrentDirectory();  inputFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
@@ -1044,8 +1039,8 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setResizable(true);
         String infotext = new String();
         infotext  = "The selected items can be files and directories.\n";
-        infotext += "All encrypted files get a *.bit extension added.\n";
-        infotext += "All original files are removed after encryption.\n";
+        infotext += "All encrypted files get the *.bit extension added.\n";
+        infotext += "All original files are securely deleted (shredded).\n";
         infotext += "\n";
         infotext += "Decrypt by encrypting again with the same cipher.\n";
         infotext += "After decryption, the *.bit extension gets removed.\n\n";
