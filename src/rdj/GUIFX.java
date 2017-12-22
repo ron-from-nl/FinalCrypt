@@ -84,6 +84,7 @@ import javafx.scene.layout.VBox;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
+import javax.swing.UIManager;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -152,6 +153,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private VBox bottomVBox;
     private GridPane logButtonGridPane;
+    private FileFilter nonFinalCryptFilter;
+    private FileNameExtensionFilter finalCryptFilter;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -160,7 +163,9 @@ public class GUIFX extends Application implements UI, Initializable
         this.stage = stage;
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
-                
+        
+//        try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); }
+        
         stage.setScene(scene);
         stage.setTitle(Version.getProcuct());
         stage.setMinWidth(1100);
@@ -205,6 +210,7 @@ public class GUIFX extends Application implements UI, Initializable
         
         
 //        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+//        UIManager.put("FileChooser.readOnly", Boolean.FALSE);
         inputFileChooser = new JFileChooser();
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
@@ -212,10 +218,13 @@ public class GUIFX extends Application implements UI, Initializable
         inputFileChooser.setFocusable(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        inputFileChooser.grabFocus(); // Maybe helps against flikkering in OSX
+
 //      Add (*.bit) extension filter
-        inputFileChooser.addChoosableFileFilter(new FileNameExtensionFilter("FinalCrypt *.bit", "bit"));
+        finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
+        inputFileChooser.addChoosableFileFilter(finalCryptFilter);
 //      Add (NON *.bit) extension filter
-        FileFilter nbf = new FileFilter()
+        nonFinalCryptFilter = new FileFilter()
         {
             @Override
             public boolean accept(File file)
@@ -229,7 +238,7 @@ public class GUIFX extends Application implements UI, Initializable
                 return "NON FinalCrypt";
             }
         };
-        inputFileChooser.addChoosableFileFilter(nbf);
+        inputFileChooser.addChoosableFileFilter(nonFinalCryptFilter);
         inputFileChooser.addPropertyChangeListener
         (
             // New Object
@@ -262,7 +271,7 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);
-        cipherFileChooser.setFocusable(true);
+        cipherFileChooser.setFocusable(false);
         cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         cipherFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         cipherFileChooser.addPropertyChangeListener
@@ -589,7 +598,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 //  FileChooser Listener methods
     private void inputFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
-    {                                                     
+    {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
         if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
@@ -603,6 +612,8 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         } else { encryptButton.setDisable(true); }
+        inputFileChooser.setFileFilter(this.nonFinalCryptFilter);
+        inputFileChooser.setFileFilter(inputFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
     }                                                
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -673,7 +684,10 @@ public class GUIFX extends Application implements UI, Initializable
                 catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\n"); }
             }
         } else { encryptButton.setDisable(true); }
-    }                                                 
+        cipherFileChooser.setFileFilter(this.nonFinalCryptFilter);
+        cipherFileChooser.setFileFilter(cipherFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+        cipherFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
+    }
 
     
     public static void main(String[] args)

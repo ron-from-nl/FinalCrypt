@@ -9,23 +9,21 @@ Backup update locations (properties, daily check / history)
 TextArea scroll limits
 Optional password
 SoftPedia certificate
-Secure Delete (overwriting original content with random patterns and delete)
 
 =================================== Doing ===================================
 
-Debian packages should specify a license
-Delete original Following Symbolic Links
-Update version in manifest.mf -> Manifest-Version field
+Working on an endless bouncing events on the filechooser dropdownfields on OSX
 
 =================================== Done ====================================
 
 
 ================================= Committed =================================
 
+Undo file-rename after file-open action (by on-off swapping filefilters)
+Disabled focusable ability on all widges in the GUI (focus issue OSX)
+Reset to "All-Files" filefilter (extension) after encryption
 Added Secure Delete (Shredding)
 Implemented extended statistics
-
-Reset to "All-Files" filefilter (extension) after encryption
 Removed the GUIFX logbuttons
 Added a Process CPU Load circular indicator
 Replaced copyright to copyleft references and added a copyleft label

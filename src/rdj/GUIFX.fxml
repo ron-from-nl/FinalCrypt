@@ -17,7 +17,7 @@
          <children>
             <TabPane fx:id="tab" focusTraversable="false" minHeight="350.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
-                <Tab fx:id="encryptTab" text="Encrypt">
+                <Tab fx:id="encryptTab" closable="false" text="Encrypt">
                      <content>
                         <GridPane>
                           <columnConstraints>
@@ -44,7 +44,7 @@
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Label fx:id="inputFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" minHeight="40.0" minWidth="439.0" prefHeight="40.0" prefWidth="439.0" text="Select the items you want to encrypt" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                                                      <Label fx:id="inputFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" minHeight="40.0" minWidth="439.0" prefHeight="40.0" prefWidth="439.0" text="Select the items you want to encrypt" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
                                                          <font>
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
@@ -68,7 +68,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="inputFileSwingNode" />
+                                                      <SwingNode fx:id="inputFileSwingNode" focusTraversable="false" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -93,7 +93,7 @@
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Label fx:id="cipherFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" minHeight="40.0" prefHeight="40.0" prefWidth="542.0" text="Select your secret cipher file " textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                                                      <Label fx:id="cipherFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" minHeight="40.0" prefHeight="40.0" prefWidth="542.0" text="Select your secret cipher file " textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
                                                          <font>
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
@@ -117,7 +117,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="cipherFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
+                                                      <SwingNode fx:id="cipherFileSwingNode" focusTraversable="false" StackPane.alignment="BOTTOM_CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -130,11 +130,11 @@
                         </GridPane>
                      </content>
                 </Tab>
-                <Tab fx:id="logTab" text="Log">
+                <Tab fx:id="logTab" closable="false" text="Log">
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="Cousine" size="14.0" />
                                  </font></TextArea>
@@ -204,12 +204,12 @@
                         </GridPane>
                         <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="fileProgressBar" layoutY="6.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="fileProgressBar" focusTraversable="false" layoutY="6.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
-                              <ProgressBar fx:id="filesProgressBar" layoutY="5.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ProgressBar fx:id="filesProgressBar" focusTraversable="false" layoutY="5.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
@@ -223,12 +223,12 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status">
+                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status">
                                        <font>
                                           <Font name="Open Sans" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="copyleftLabel" cache="true" cacheHint="SPEED" disable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyleft" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                                    <Label fx:id="copyleftLabel" cache="true" cacheHint="SPEED" disable="true" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyleft" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
                                        <font>
                                           <Font name="Open Sans" size="12.0" />
                                        </font>
