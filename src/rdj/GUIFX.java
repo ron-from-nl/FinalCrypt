@@ -1,5 +1,5 @@
 /*
- * © Copyleft 2017 ron
+ * © copyleft 2018 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -79,12 +78,16 @@ import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.Event;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
-import javax.swing.UIManager;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -140,8 +143,8 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean encryptionRunning;
     @FXML
     private Label copyleftLabel;
-    private TimerTask updateProgressTask;
-    private Timer updateProgressTaskTimer;
+//    private TimerTask updateProgressTask;
+//    private Timer updateProgressTaskTimer;
     @FXML
     private ProgressIndicator cpuIndicator;
     private MBeanServer mbs;
@@ -173,7 +176,7 @@ public class GUIFX extends Application implements UI, Initializable
         stage.setMaximized(true);
         stage.setOnCloseRequest(e -> Platform.exit());
         stage.show();
-
+        
         version = new Version(guifx);
         version.checkCurrentlyInstalledVersion();
         stage.setTitle(Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
@@ -182,133 +185,73 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+//      inputFileDeleteButton
         inputFileDeleteButton = new javax.swing.JButton();
         inputFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
         inputFileDeleteButton.setText("X");
         inputFileDeleteButton.setEnabled(false);
         inputFileDeleteButton.setToolTipText("Delete selected item(s)");
         inputFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                inputFileDeleteButtonActionPerformed(evt);
-            }
-        });
-        
+        { public void actionPerformed(java.awt.event.ActionEvent evt) { inputFileDeleteButtonActionPerformed(evt); } });
+
+//      cipherFileDeleteButton
         cipherFileDeleteButton = new javax.swing.JButton();
         cipherFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
         cipherFileDeleteButton.setText("X");
         cipherFileDeleteButton.setEnabled(false);
         cipherFileDeleteButton.setToolTipText("Delete selected item");
         cipherFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                cipherFileDeleteButtonActionPerformed(evt);
-            }
-        });
+        { public void actionPerformed(java.awt.event.ActionEvent evt) { cipherFileDeleteButtonActionPerformed(evt); } });
         
+//      Create filefilters        
+        finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
+        nonFinalCryptFilter = new FileFilter() // Custom negate filefilter
+        { 
+            @Override public boolean accept(File file) { return !file.getName().toLowerCase().endsWith(".bit"); }
+            @Override public String getDescription()   { return "NON FinalCrypt"; }
+        };
         
 //        inputFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-//        UIManager.put("FileChooser.readOnly", Boolean.FALSE);
+//        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         inputFileChooser = new JFileChooser();
         inputFileChooser.setControlButtonsAreShown(false);
         inputFileChooser.setToolTipText("Right mousclick for Refresh");
         inputFileChooser.setMultiSelectionEnabled(true);
         inputFileChooser.setFocusable(true);
+//        inputFileChooser.setFocusCycleRoot(true);
+//        inputFileChooser.setFocusTraversalKeysEnabled(true);
+//        inputFileChooser.setFocusTraversalPolicyProvider(true);
         inputFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         inputFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        inputFileChooser.grabFocus(); // Maybe helps against flikkering in OSX
 
-//      Add (*.bit) extension filter
-        finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
         inputFileChooser.addChoosableFileFilter(finalCryptFilter);
-//      Add (NON *.bit) extension filter
-        nonFinalCryptFilter = new FileFilter()
-        {
-            @Override
-            public boolean accept(File file)
-            {
-                return !file.getName().toLowerCase().endsWith(".bit");
-            }
-
-            @Override
-            public String getDescription()
-            {
-                return "NON FinalCrypt";
-            }
-        };
         inputFileChooser.addChoosableFileFilter(nonFinalCryptFilter);
-        inputFileChooser.addPropertyChangeListener
-        (
-            // New Object
-            new java.beans.PropertyChangeListener()
-            {
-                // New Method
-                @Override
-                public void propertyChange(java.beans.PropertyChangeEvent evt) 
-                {
-                    inputFileChooserPropertyChange(evt);
-                } 
-            }
-        );
+        inputFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { inputFileChooserPropertyChange(evt); });
+        inputFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { inputFileChooserActionPerformed(evt); });
+        inputFileChooserComponentAlteration(inputFileChooser);
+        inputFileSwingNode.setContent(inputFileChooser);
 
-        inputFileChooser.addActionListener
-        (
-            // New Object
-            new ActionListener() 
-            {
-                // New Methid
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt)
-                {
-                    inputFileChooserActionPerformed(evt);
-                }
-            }
-        );
 //        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
         cipherFileChooser = new JFileChooser();
         cipherFileChooser.setControlButtonsAreShown(false);
         cipherFileChooser.setToolTipText("Right mousclick for Refresh");
         cipherFileChooser.setMultiSelectionEnabled(false);
-        cipherFileChooser.setFocusable(false);
+        cipherFileChooser.setFocusable(true);
+//        cipherFileChooser.setFocusCycleRoot(true);
+//        cipherFileChooser.setFocusTraversalKeysEnabled(true);
+//        cipherFileChooser.setFocusTraversalPolicyProvider(true);
         cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         cipherFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        cipherFileChooser.addPropertyChangeListener
-        (
-            new java.beans.PropertyChangeListener() 
-            {
-                @Override
-                public void propertyChange(java.beans.PropertyChangeEvent evt)
-                {
-                    cipherFileChooserPropertyChange(evt);
-                } 
-            }
-        );
+        cipherFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { cipherFileChooserPropertyChange(evt); });
+        cipherFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { cipherFileChooserActionPerformed(evt); });
         
-        cipherFileChooser.addActionListener
-        (
-            // New Object
-            new ActionListener() 
-            {
-                // New Methid
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent evt)
-                {
-                    cipherFileChooserActionPerformed(evt);
-                }
-            }
-        );
-        
-//        disable(inputFileChooser, false);
-        inputFileChooserComponentAlteration(inputFileChooser);
         cipherFileChooserComponentAlteration(cipherFileChooser);
+        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(50), ae -> 
+        {
+            cipherFileSwingNode.setContent(cipherFileChooser);
+        }
+        )); timeline.play();
 
-
-//      Put FileChoosers into SwingNodes        
-        inputFileSwingNode.setContent(inputFileChooser);
-        cipherFileSwingNode.setContent(cipherFileChooser);   
-        
         finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
         
@@ -318,8 +261,7 @@ public class GUIFX extends Application implements UI, Initializable
     public double getProcessCpuLoad()
     {
         try { list = mbs.getAttributes(name, new String[]{ procCPULoadAttribute });}
-        catch (InstanceNotFoundException ex)    { status(ex.getMessage(), true); }
-        catch (ReflectionException ex)          { status(ex.getMessage(), true); }
+        catch (InstanceNotFoundException | ReflectionException ex) { status(ex.getMessage(), true); }
         
         if (list.isEmpty()) { return Double.NaN; }
         att = (Attribute)list.get(0);
@@ -341,25 +283,12 @@ public class GUIFX extends Application implements UI, Initializable
         procCPULoadAttribute = "ProcessCpuLoad";
         mbs = ManagementFactory.getPlatformMBeanServer();
         try {name    = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
-        catch (MalformedObjectNameException ex)        { status(ex.getMessage(), true); }
-        catch (NullPointerException ex)                { status(ex.getMessage(), true); }
+        catch (MalformedObjectNameException | NullPointerException ex) { status(ex.getMessage(), true); }
         
- //     Must be in Thread otherwise no gracefull close on exit
-        Thread cpuIndicatorThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-                updateProgressTask = new TimerTask() { @Override public void run() { Platform.runLater(new Runnable()
-                { @Override public void run() { cpuIndicator.setProgress(getProcessCpuLoad()); } }); }};
-                updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200);
-            }
-        });
-        cpuIndicatorThread.setName("cpuIndicatorThread");
-        cpuIndicatorThread.setDaemon(true);
-        cpuIndicatorThread.start();
-
+        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
+                cpuIndicator.setProgress(getProcessCpuLoad())
+        )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();       
+        
         Platform.runLater(new Runnable()
         {
             @Override
@@ -367,8 +296,8 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 String title =  "Welcome to " + Version.getProcuct();
                 String header = "Brief Introduction:";
-                String infotext = new String();
-                infotext =  "1. Select files to encrypt on left side.\n";
+                String infotext = 
+                            "1. Select files to encrypt on left side.\n";
                 infotext += "2. Select cipher file on the right side.\n";
                 infotext += "3. Click [Encrypt] to encrypt to: *.bit.\n";
                 infotext += "4. Click [Encrypt] again to decrypt.\n";
@@ -405,6 +334,31 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         });
+        Alert alert = new Alert(AlertType.INFORMATION);
+
+//      Style the Alert
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+        dialogPane.getStyleClass().add("myDialog");
+
+//        alert.setTitle("Info");
+//        alert.setHeaderText("Welcome");
+//        alert.setResizable(true);
+//        String infotext = new String();
+//        infotext  = "Welcome.\n";
+//        alert.setContentText(infotext);
+//        alert.setOnShowing(new EventHandler<DialogEvent>()
+//        {
+//            @Override
+//            public void handle(DialogEvent event)
+//            {
+////              JavaFX Delay Timer to prevent not on application thread error
+//                Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1000), ae -> 
+//                        alert.close()
+//                )); timeline.play();
+//            }
+//        });
+//        alert.showAndWait();        
     }
     
     public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
@@ -452,16 +406,11 @@ public class GUIFX extends Application implements UI, Initializable
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + version.getLatestOnlineOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES)
                 {
-                    Thread updateThread = new Thread(new Runnable()
-                    {
-                        @Override
-                        @SuppressWarnings({"static-access"})
-                        public void run()
-                        {
-                            try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURLSTRING)); }
-                            catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
-                            catch (IOException ex) { guifx.error(ex.getMessage()); }
-                        }
+                    Thread updateThread;
+                    updateThread = new Thread(() -> {
+                        try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
+                        catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
+                        catch (IOException ex) { guifx.error(ex.getMessage()); }
                     });
                     updateThread.setName("encryptThread");
                     updateThread.setDaemon(true);
@@ -477,8 +426,7 @@ public class GUIFX extends Application implements UI, Initializable
         PlatformImpl.runAndWait(new Runnable()
         {
             @Override
-            public void run()
-            {
+            public void run() {
                 String itemword = "";
                 if ( inputFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
                 else if ( inputFileChooser.getSelectedFiles().length > 1 )  { itemword = "items"; }
@@ -488,7 +436,7 @@ public class GUIFX extends Application implements UI, Initializable
                 {
                     if ((inputFileChooser != null)  && (inputFileChooser.getSelectedFiles() != null))
                     {
-                        if ( inputFileChooser.getSelectedFiles().length > 0 ) 
+                        if ( inputFileChooser.getSelectedFiles().length > 0 )
                         {
                             ArrayList<Path> pathList = finalCrypt.getPathList(inputFileChooser.getSelectedFiles());
                             boolean delete = true;
@@ -509,7 +457,6 @@ public class GUIFX extends Application implements UI, Initializable
         PlatformImpl.runAndWait(new Runnable()
         {
             @Override
-//            @SuppressWarnings({"static-access"})
             public void run()
             {
                 String selection = "Delete 1 selected item?";
@@ -549,7 +496,7 @@ public class GUIFX extends Application implements UI, Initializable
         {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
 
 //      En/Disable hasEncryptableItems
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null))
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && ( hasCipherItem )) // No need to scan for encryptable items without selected cipher for better performance
         {
             String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
@@ -647,7 +594,21 @@ public class GUIFX extends Application implements UI, Initializable
                     (Files.isRegularFile(cipherFileChooser.getSelectedFile().toPath())) &&
                     (cipherFileChooser.getSelectedFile().length() > 0)
                )
-            { hasCipherItem = true; } else { hasCipherItem = false; }
+            { hasCipherItem = true; }
+            
+            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().equals("/dev/sdb"))
+            {
+//                status("Device: " + cipherFileChooser.getSelectedFile().getAbsolutePath(), true);
+//                String pathname = "\\\\.\\GLOBALROOT\\ArcName\\multi(0)disk(1)rdisk(1)partition(5)"; // UNC?
+//                Path diskRoot = ( new File( pathname ) ).toPath();
+//                FileChannel fc = FileChannel.open( diskRoot, StandardOpenOption.READ, StandardOpenOption.WRITE );
+//                ByteBuffer bb = ByteBuffer.allocate( 4096 );
+//
+//                fc.position( 4096 ); fc.read( bb );
+//                fc.position( 4096 ); fc.write( bb );
+//                fc.close();
+            }
+            else            { hasCipherItem = false; }
         }
         
         checkEncryptionReady();
@@ -864,77 +825,26 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    @Override
-    public void log(String message)
-    {
-        Platform.runLater(new Runnable()
-        {
-            @Override public void run()
-            {
-                logTextArea.appendText(message);
-            }
-        });
-    }
-
-    @Override
-    public void error(String message)
-    {
-        Platform.runLater(new Runnable()
-        {
-            @Override public void run()
-            {
-                status(message, true);
-            }
-        });
-    }
-
-    @Override
-    public void status(String status, boolean log)
+    @Override public void log(String message) { Platform.runLater(() -> { logTextArea.appendText(message); }); }
+    @Override public void error(String message) { Platform.runLater(new Runnable() { @Override public void run() { status(message, true); } }); }
+    @Override public void status(String status, boolean log)
     {
         PlatformImpl.runAndWait(new Runnable()
         {
             @Override
-//            @SuppressWarnings({"static-access"})
             public void run()
             {
                 statusLabel.setText(status);
-                if ( log ) { log(status); }
+                if (log) { log(status); }
             }
         });
     }
 
-    public void setStageTitle(String title)
-    {
-        PlatformImpl.runAndWait(new Runnable()
-        {
-            @Override
-//            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-                guifx.stage.setTitle(title);
-            }
-        });
-    }
+    public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
+    public void statusDirect(String status) { statusLabel.setText(status); }
 
-    public void statusDirect(String status)
-    {
-        statusLabel.setText(status);
-    }
-
-    @Override
-    public void println(String message)
-    {
-        Platform.runLater(new Runnable()
-        {
-            @Override public void run()
-            {
-                System.out.println(message);
-            }
-        });
-    }
-
-    @Override
-    public void encryptionStarted()
+    @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
+    @Override public void encryptionStarted()
     {
         Platform.runLater(new Runnable()
         {
@@ -953,19 +863,8 @@ public class GUIFX extends Application implements UI, Initializable
         });
     }
     
-    @Override
-    public void encryptionGraph(int value)
-    {
-        Platform.runLater(new Runnable()
-        {
-            @Override public void run()
-            {
-            }
-        });
-    }
-
-    @Override
-    public void encryptionProgress(int fileProgressPercent, int filesProgressPercent)
+    @Override public void encryptionGraph(int value) { Platform.runLater(new Runnable() { @Override public void run() { }});}
+    @Override public void encryptionProgress(int fileProgressPercent, int filesProgressPercent)
     {
         Platform.runLater(new Runnable()
         {
@@ -979,8 +878,7 @@ public class GUIFX extends Application implements UI, Initializable
         });
     }
 
-    @Override
-    public void encryptionFinished()
+    @Override public void encryptionFinished()
     {
         Platform.runLater(new Runnable()
         {
@@ -1063,11 +961,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML
-    private void pauseToggleButtonAction(ActionEvent event)
-    {
-        finalCrypt.setPausing(pauseToggleButton.isSelected());
-    }
-
+    private void pauseToggleButtonAction(ActionEvent event) { finalCrypt.setPausing(pauseToggleButton.isSelected()); }
     @FXML
     private void stopButtonAction(ActionEvent event)
     {
@@ -1076,9 +970,20 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML
-    private void updateButtonAction(ActionEvent event)
-    {
-        checkUpdate();
-    }    
+    private void updateButtonAction(ActionEvent event) { checkUpdate(); }
 
+    @FXML
+    private void encryptTabSelectionChanged(Event event)
+    {
+        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(50), ae -> 
+        {
+            inputFileSwingNode.setContent(inputFileChooser);
+        }
+        )); timeline.play();
+    }
+
+    @FXML
+    private void logTabSelectionChanged(Event event)
+    {
+    }
 }

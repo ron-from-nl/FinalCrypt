@@ -1,27 +1,25 @@
 =================================== Todo ====================================
 
-JCurses TUI 
-
 bit / linegraph animation
-TextArea(HTML) replacing TextArea in log
 progressBar percentage
 Backup update locations (properties, daily check / history)
-TextArea scroll limits
 Optional password
 SoftPedia certificate
 
 =================================== Doing ===================================
 
-Working on an endless bouncing events on the filechooser dropdownfields on OSX
+Working on raw devices as cipher byte sources (need raw diskreader)
 
 =================================== Done ====================================
 
+Fixed filechooser focusowner conflict bug under OSX
+Skipped scan encryptable items without selected cipher (better performance)
 
 ================================= Committed =================================
 
-Undo file-rename after file-open action (by on-off swapping filefilters)
-Disabled focusable ability on all widges in the GUI (focus issue OSX)
-Reset to "All-Files" filefilter (extension) after encryption
+Undo file-rename after file-open action
+Disabled focusable ability on all widgets
+Reset to "All-Files" filefilter after encryption
 Added Secure Delete (Shredding)
 Implemented extended statistics
 Removed the GUIFX logbuttons

@@ -1,5 +1,5 @@
 /*
- * © Copyleft 2017 ron
+ * © copyleft 2018 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,11 @@ import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.TimerTask;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+//import java.util.TimerTask;
 
 public class FinalCrypt  extends Thread
 {
@@ -66,8 +70,8 @@ public class FinalCrypt  extends Thread
     private final UI ui;
     private final FinalCrypt fc;
     
-    private TimerTask updateProgressTask;
-    private java.util.Timer updateProgressTaskTimer;
+//    private TimerTask updateProgressTask;
+//    private java.util.Timer updateProgressTaskTimer;
 
     private String localVersionString = "";
     private String remoteVersionString = "";
@@ -83,6 +87,7 @@ public class FinalCrypt  extends Thread
     private boolean inputFileEnded;
     private long filesTotal = 0;
     private long filesProcessed = 0;
+    private Timeline updateProgressTimeline;
 
 
     public FinalCrypt(UI ui)
@@ -149,9 +154,8 @@ public class FinalCrypt  extends Thread
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allFilesStats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
         ui.status(allFilesStats.getEncryptionStartSummary(), true);
         
-        // Setup the Progress TIMER & TASK
-        updateProgressTask = new TimerTask() { @Override public void run()
-        {
+//      Setup the Progress TIMER & TASK
+        updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
             ui.encryptionProgress
             (
                 (int) ((readInputFileStat.getFileBytesProcessed() + 
@@ -160,9 +164,21 @@ public class FinalCrypt  extends Thread
                         readOutputFileStat.getFileBytesProcessed() + 
                         writeInputFileStat.getFileBytesProcessed()) / ( (allFilesStats.getFileBytesTotal() * 5 ) / 100.0)),
                 (int) ((allFilesStats.getFilesBytesProcessed() * 5) / ( (allFilesStats.getFilesBytesTotal() * 5 ) / 100.0))
-            );
-        }};
-        updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
+            )        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
+            
+//        updateProgressTask = new TimerTask() { @Override public void run()
+//        {
+//            ui.encryptionProgress
+//            (
+//                (int) ((readInputFileStat.getFileBytesProcessed() + 
+//                        readCipherFileStat.getFileBytesProcessed() + 
+//                        writeOutputFileStat.getFileBytesProcessed() + 
+//                        readOutputFileStat.getFileBytesProcessed() + 
+//                        writeInputFileStat.getFileBytesProcessed()) / ( (allFilesStats.getFileBytesTotal() * 5 ) / 100.0)),
+//                (int) ((allFilesStats.getFilesBytesProcessed() * 5) / ( (allFilesStats.getFilesBytesTotal() * 5 ) / 100.0))
+//            );
+//        }};
+//        updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
 
 //      Start Files Encryption Clock
         allFilesStats.setFilesStartNanoTime();
@@ -339,9 +355,9 @@ public class FinalCrypt  extends Thread
 //                  FILE STATUS        
                     ui.log("- Encrypt: rd(" +  readInputFileStat.getFileBytesThroughPut() + ") -> ");
                     ui.log("rd(" +           readCipherFileStat.getFileBytesThroughPut() + ") -> ");
-                    ui.log("rw(" +           writeOutputFileStat.getFileBytesThroughPut() + ") ");
+                    ui.log("wr(" +           writeOutputFileStat.getFileBytesThroughPut() + ") ");
                     ui.log("- Shred: rd(" +    readOutputFileStat.getFileBytesThroughPut() + ") -> ");
-                    ui.log("rw(" +           writeInputFileStat.getFileBytesThroughPut() + ") ");                                        
+                    ui.log("wr(" +           writeInputFileStat.getFileBytesThroughPut() + ") ");                                        
                     ui.log(allFilesStats.getFilesBytesProgressPercentage());
                     allFilesStats.addFilesProcessed(1);
                     
@@ -391,7 +407,8 @@ public class FinalCrypt  extends Thread
         if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
         ui.status(allFilesStats.getEncryptionEndSummary(), true);
 
-        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();  
+//        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
+        updateProgressTimeline.stop();
         ui.encryptionFinished();
     }
     

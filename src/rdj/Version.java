@@ -1,5 +1,5 @@
 /*
- * © Copyleft 2017 ron
+ * © copyleft 2018 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public class Version
     private int latestVersionTotal = 0;
     private InputStream istream = null;
     private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-    public static final String REMOTEPACKAGEDOWNLOADURLSTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    public static final String REMOTEPACKAGEDOWNLOADURISTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
     private ReadableByteChannel latestVersionByteChannel = null;
@@ -138,7 +138,7 @@ public class Version
         {
             if      (currentVersionTotal < latestVersionTotal)
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURLSTRING + "\n"; 
+                returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\n"; 
 
             } 
             else if (currentVersionTotal > latestVersionTotal)

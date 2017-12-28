@@ -17,7 +17,7 @@
          <children>
             <TabPane fx:id="tab" focusTraversable="false" minHeight="350.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
-                <Tab fx:id="encryptTab" closable="false" text="Encrypt">
+                <Tab fx:id="encryptTab" closable="false" onSelectionChanged="#encryptTabSelectionChanged" text="Encrypt">
                      <content>
                         <GridPane>
                           <columnConstraints>
@@ -49,12 +49,12 @@
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="#2302f8" underline="true" GridPane.columnIndex="1">
+                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="BLUE" underline="true" GridPane.columnIndex="1">
                                                          <cursor>
                                                             <Cursor fx:constant="HAND" />
                                                          </cursor>
                                                          <effect>
-                                                            <DropShadow blurType="TWO_PASS_BOX" height="30.0" radius="14.5" width="30.0" />
+                                                            <Glow level="0.5" />
                                                          </effect>
                                                          <font>
                                                             <Font name="Open Sans Bold" size="18.0" />
@@ -68,7 +68,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="inputFileSwingNode" focusTraversable="false" />
+                                                      <SwingNode fx:id="inputFileSwingNode" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -77,7 +77,7 @@
                                     </VBox>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane minWidth="500.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                              <AnchorPane focusTraversable="true" minWidth="500.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                                  <children>
                                     <VBox prefHeight="396.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -103,7 +103,7 @@
                                                             <Font name="Open Sans Bold" size="18.0" />
                                                          </font>
                                                          <effect>
-                                                            <DropShadow height="30.0" radius="14.5" width="30.0" />
+                                                            <Glow level="0.5" />
                                                          </effect>
                                                          <cursor>
                                                             <Cursor fx:constant="HAND" />
@@ -117,7 +117,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="cipherFileSwingNode" focusTraversable="false" StackPane.alignment="BOTTOM_CENTER" />
+                                                      <SwingNode fx:id="cipherFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -130,7 +130,7 @@
                         </GridPane>
                      </content>
                 </Tab>
-                <Tab fx:id="logTab" closable="false" text="Log">
+                <Tab fx:id="logTab" closable="false" onSelectionChanged="#logTabSelectionChanged" text="Log">
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>

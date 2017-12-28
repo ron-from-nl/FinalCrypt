@@ -1,5 +1,5 @@
 /*
- * © Copyleft 2017 ron
+ * © copyleft 2018 ron
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
