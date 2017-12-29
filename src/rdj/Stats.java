@@ -118,7 +118,8 @@ public class Stats
 //  START
     public String getEncryptionStartSummary()                               
     {
-        String returnString = "Encryption: starting: " + filesTotal + " files totally " + getHumanSize(filesBytesTotal,1) + "\n";
+        String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
+        String returnString = "Encryption: starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\n";
         
         return returnString;
     }
@@ -142,8 +143,8 @@ public class Stats
 //  END
     public String getEncryptionEndSummary()                               
     {
-        String returnString = "Encryption: finished: " + filesProcessed + " / " + filesTotal + " files totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getFilesBytesThroughPut() + "\n";
-        
+        String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
+        String returnString = "Encryption: finished: " + filesProcessed + " / " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getFilesBytesThroughPut() + "\n";
         return returnString;
     }
     

@@ -12,6 +12,7 @@ Working on raw devices as cipher byte sources (need raw diskreader)
 
 =================================== Done ====================================
 
+Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistence
 
