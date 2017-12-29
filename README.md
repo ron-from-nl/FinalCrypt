@@ -5,7 +5,7 @@ FinalCrypt uses (large) cipher files, which can be any unique file like a person
 Conventional encryption software uses relatively small key(files) to encrypt and decrypt files by means of incomprehensible mathematics (to most people) leaving you completely in the dark about true safety.
 FinalCrypt's power relies on the uniqueness of your personal cipher file that doesn't exist anywhere else in the world. FinalCrypt encrypts your data-files with sequential correlating cipher bit-patterns.
 Sequential positive cipher bits negate correlating data bits. In order to decrypt you need to have the unique cipher data sequence all the way to the cipher's end of file.
-No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file, so security and secrecy guaranteed for as long as you can keep your cipher secret!
+No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file, so security and secrecy guaranteed for as long as you keep your cipher secret!
 
 One more reason to not trust standard encryption algorithms:
 http://www.zdnet.com/article/has-the-nsa-broken-ssl-tls-aes/
