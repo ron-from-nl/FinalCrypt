@@ -12,11 +12,13 @@ Working on raw devices as cipher byte sources (need raw diskreader)
 
 =================================== Done ====================================
 
-Fixed filechooser focusowner conflict bug under OSX
-Skipped scan encryptable items without selected cipher (better performance)
+Changed README.md for a better explanation and motivation of FinalCrypt 
+Synchroniously encrypting & shredding files for guaranteed data consistence
 
 ================================= Committed =================================
 
+Fixed filechooser focusowner conflict bug under OSX
+Skipped scan encryptable items without selected cipher (better performance)
 Undo file-rename after file-open action
 Disabled focusable ability on all widgets
 Reset to "All-Files" filefilter after encryption

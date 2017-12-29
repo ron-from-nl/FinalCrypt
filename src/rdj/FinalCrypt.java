@@ -263,7 +263,7 @@ public class FinalCrypt  extends Thread
                             // Fill up inputFileBuffer
                             readInputFileChannel.position(readInputFileChannelPosition);
                             readInputFileChannelTransfered = readInputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); readInputFileChannelPosition += readInputFileChannelTransfered;
-                            if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; }
+                            if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; } // Buffer.limit = remainder from current position to end
                             readInputFileChannel.close(); readInputFileStat.setFileEndEpoch(); readInputFileStat.clock();
                             readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allFilesStats.addFilesBytesProcessed(readInputFileChannelTransfered / 2);
                         } catch (IOException ex) { ui.error("Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
@@ -286,7 +286,7 @@ public class FinalCrypt  extends Thread
 
                             // Open outputFile for writing
                             writeOutputFileStat.setFileStartEpoch();
-                            try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND)))
+                            try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
                             {
                                 // Encrypt inputBuffer and fill up outputBuffer
                                 outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);

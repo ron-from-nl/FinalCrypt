@@ -559,8 +559,7 @@ public class GUIFX extends Application implements UI, Initializable
                 }
             }
         } else { encryptButton.setDisable(true); }
-        inputFileChooser.setFileFilter(this.nonFinalCryptFilter);
-        inputFileChooser.setFileFilter(inputFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+        inputFileChooser.setFileFilter(this.nonFinalCryptFilter); inputFileChooser.setFileFilter(inputFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
     }                                                
 
 /////////////////////////////////////////////////////////////////////////////////////////////
