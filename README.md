@@ -7,7 +7,7 @@ FinalCrypt's power relies on the uniqueness of your personal cipher file that do
 Sequential positive cipher bits negate correlating data bits. In order to decrypt you need to have the unique cipher data sequence all the way to the cipher's end of file.
 No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file, so security and secrecy guaranteed for as long as you can keep your cipher secret!
 
-One more reason to not trust other standard encryption algorithms:
+One more reason to not trust standard encryption algorithms:
 http://www.zdnet.com/article/has-the-nsa-broken-ssl-tls-aes/
 
 This software was developed with NetBeans 8.2
