@@ -8,15 +8,23 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
-Working on raw devices as cipher byte sources (need raw diskreader)
+Working on raw device cipher creator and reader
 
 =================================== Done ====================================
+
+
+
+============================= Source Committed ==============================
+
+
+
+============================= Source Published ==============================
 
 Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistence
 
-================================= Committed =================================
+============================= Binaries Released =============================
 
 Fixed filechooser focusowner conflict bug under OSX
 Skipped scan encryptable items without selected cipher (better performance)
