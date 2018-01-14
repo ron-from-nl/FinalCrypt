@@ -66,8 +66,8 @@ public class Stats
     public long getFileEndEpoch()                                   { return fileEndNanoTime; }
 
 //  Files Encryption Time
-    public long getFilesStartEpoch()                                { return filesStartNanoTime; }
-    public long getFilesEndEpoch()                                  { return filesEndNanoTime; }
+    public long getAllDataStartEpoch()                                { return filesStartNanoTime; }
+    public long getAllDataEndEpoch()                                  { return filesEndNanoTime; }
     
 //  Setters
     
@@ -80,20 +80,16 @@ public class Stats
     public void setFileBytesTotal(long fileBytesTotal)              { this.fileBytesTotal = fileBytesTotal; }
         
 //  Files Encrypting Bytes
-    public void setFilesBytesProcessed(long filesBytesProcessed)    { this.filesBytesProcessed = filesBytesProcessed; }
-    public void setFilesBytesTotal(long filesBytesTotal)            { this.filesBytesTotal = filesBytesTotal; }
+    public void setAllDataBytesProcessed(long filesBytesProcessed)    { this.filesBytesProcessed = filesBytesProcessed; }
+    public void setAllDataBytesTotal(long filesBytesTotal)            { this.filesBytesTotal = filesBytesTotal; }
 
 //  File Encryption Time
-//    public void setFileStartNanoTime()                            { this.fileStartNanoTime = System.currentTimeMillis(); }
-//    public void setFileEndNanoTime()                              { this.fileEndNanoTime = System.currentTimeMillis(); }
     public void setFileStartNanoTime()                              { this.fileStartNanoTime = System.nanoTime(); }
     public void setFileEndNanoTime()                                { this.fileEndNanoTime = System.nanoTime(); }
 
 //  Files Encryption Time
-//    public void setFilesStartNanoTime()                           { this.filesStartNanoTime = System.currentTimeMillis(); }
-//    public void setFilesEndNanoTime()                             { this.filesEndNanoTime = System.currentTimeMillis(); }
-    public void setFilesStartNanoTime()                             { this.filesStartNanoTime = System.nanoTime(); }
-    public void setFilesEndNanoTime()                               { this.filesEndNanoTime = System.nanoTime(); }
+    public void setAllDataStartNanoTime()                             { this.filesStartNanoTime = System.nanoTime(); }
+    public void setAllDataEndNanoTime()                               { this.filesEndNanoTime = System.nanoTime(); }
     public void clock()                                             { this.nanoSeconds += (filesEndNanoTime - filesStartNanoTime); }
     
 //  Adders
@@ -108,15 +104,15 @@ public class Stats
     public void addFileBytesTotal(long fileBytesTotal)              { this.fileBytesTotal += fileBytesTotal; }
         
 //  Files Encrypting Bytes
-    public void addFilesBytesProcessed(long filesBytesProcessed)    { this.filesBytesProcessed += filesBytesProcessed; }
-    public void addFilesBytesTotal(long filesBytesTotal)            { this.filesBytesTotal += filesBytesTotal; }
+    public void addAllDataBytesProcessed(long filesBytesProcessed)    { this.filesBytesProcessed += filesBytesProcessed; }
+    public void addAllDataBytesTotal(long filesBytesTotal)            { this.filesBytesTotal += filesBytesTotal; }
 
 //  Stats
     
     
     
 //  START
-    public String getEncryptionStartSummary()                               
+    public String getStartSummary()                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
         String returnString = "Encryption: starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\n";
@@ -126,7 +122,7 @@ public class Stats
     
     
     
-    public String getFilesBytesProgressPercentage()                               
+    public String getAllDataBytesProgressPercentage()                               
     {
         String returnString = new String();
         double percentage = (
@@ -141,14 +137,14 @@ public class Stats
     
     
 //  END
-    public String getEncryptionEndSummary()                               
+    public String getEndSummary()                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "Encryption: finished: " + filesProcessed + " / " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getFilesBytesThroughPut() + "\n";
+        String returnString = "Encryption: finished: " + filesProcessed + " / " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut();
         return returnString;
     }
     
-    public String getFilesBytesThroughPut()                               
+    public String getAllDataBytesThroughPut()                               
     {
         String returnString = new String();
         double throughput = ( ((double)(filesBytesProcessed) / (((double)nanoSeconds / 1000000000.0))) ); // *1000 from mSec to Sec
@@ -166,7 +162,7 @@ public class Stats
         long factor;
         double newValue = value;
         String returnString = new String("");
-        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZB","EB","PB","TB","GB","MB","KB","Bytes"));
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZiB","EiB","PiB","TiB","GiB","MiB","KiB","Bytes"));
         for (factor = 70; factor > 0; factor -= 10)
         {
             if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;

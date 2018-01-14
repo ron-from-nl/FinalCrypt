@@ -54,7 +54,7 @@ public class CLUI implements UI
         version = new Version(this);
         version.checkCurrentlyInstalledVersion();
 
-        String pattern = "*";        
+        String pattern = "glob:*";
         
         // Load the FinalCrypt Objext
         finalCrypt = new FinalCrypt(this);

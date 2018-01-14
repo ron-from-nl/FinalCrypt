@@ -48,7 +48,7 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 //import java.util.TimerTask;
 
-public class FinalCrypt  extends Thread
+public class FinalCrypt extends Thread
 {
     private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
 
@@ -138,7 +138,7 @@ public class FinalCrypt  extends Thread
         
     public void encryptSelection(ArrayList<Path> inputFilesPathList, Path cipherFilePath)
     {
-        Stats allFilesStats = new Stats(); allFilesStats.reset();
+        Stats allDataStats = new Stats(); allDataStats.reset();
         
         Stat readInputFileStat = new Stat(); readInputFileStat.reset();
         Stat readCipherFileStat = new Stat(); readCipherFileStat.reset();
@@ -150,9 +150,10 @@ public class FinalCrypt  extends Thread
         pausing = false;
 
         // Get TOTALS
-        allFilesStats.setFilesTotal(inputFilesPathList.size());
-        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allFilesStats.addFilesBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
-        ui.status(allFilesStats.getEncryptionStartSummary(), true);
+        allDataStats.setFilesTotal(inputFilesPathList.size());
+        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allDataStats.addAllDataBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
+        ui.status(allDataStats.getStartSummary(), true);
+        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
         updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
@@ -162,26 +163,12 @@ public class FinalCrypt  extends Thread
                         readCipherFileStat.getFileBytesProcessed() + 
                         writeOutputFileStat.getFileBytesProcessed() + 
                         readOutputFileStat.getFileBytesProcessed() + 
-                        writeInputFileStat.getFileBytesProcessed()) / ( (allFilesStats.getFileBytesTotal() * 5 ) / 100.0)),
-                (int) ((allFilesStats.getFilesBytesProcessed() * 5) / ( (allFilesStats.getFilesBytesTotal() * 5 ) / 100.0))
+                        writeInputFileStat.getFileBytesProcessed()) / ( (allDataStats.getFileBytesTotal() * 5 ) / 100.0)),
+                (int) ((allDataStats.getFilesBytesProcessed() * 5) / ( (allDataStats.getFilesBytesTotal() * 5 ) / 100.0))
             )        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
-            
-//        updateProgressTask = new TimerTask() { @Override public void run()
-//        {
-//            ui.encryptionProgress
-//            (
-//                (int) ((readInputFileStat.getFileBytesProcessed() + 
-//                        readCipherFileStat.getFileBytesProcessed() + 
-//                        writeOutputFileStat.getFileBytesProcessed() + 
-//                        readOutputFileStat.getFileBytesProcessed() + 
-//                        writeInputFileStat.getFileBytesProcessed()) / ( (allFilesStats.getFileBytesTotal() * 5 ) / 100.0)),
-//                (int) ((allFilesStats.getFilesBytesProcessed() * 5) / ( (allFilesStats.getFilesBytesTotal() * 5 ) / 100.0))
-//            );
-//        }};
-//        updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 50);
 
 //      Start Files Encryption Clock
-        allFilesStats.setFilesStartNanoTime();
+        allDataStats.setAllDataStartNanoTime();
         
         // Encrypt Files loop
         fileloop: for (Path inputFilePath:inputFilesPathList)
@@ -238,7 +225,7 @@ public class FinalCrypt  extends Thread
                     ByteBuffer outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
                     
                     // Get and set the stats
-                    try { allFilesStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
+                    try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("Error: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
 
                     readInputFileStat.setFileBytesProcessed(0);
                     readCipherFileStat.setFileBytesProcessed(0);
@@ -265,7 +252,7 @@ public class FinalCrypt  extends Thread
                             readInputFileChannelTransfered = readInputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); readInputFileChannelPosition += readInputFileChannelTransfered;
                             if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; } // Buffer.limit = remainder from current position to end
                             readInputFileChannel.close(); readInputFileStat.setFileEndEpoch(); readInputFileStat.clock();
-                            readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allFilesStats.addFilesBytesProcessed(readInputFileChannelTransfered / 2);
+                            readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readInputFileChannelTransfered / 2);
                         } catch (IOException ex) { ui.error("Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
 //                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\n");
                         
@@ -330,7 +317,7 @@ public class FinalCrypt  extends Thread
                             readOutputFileChannelTransfered = readOutputFileChannel.read(outputFileBuffer); outputFileBuffer.flip(); readOutputFileChannelPosition += readOutputFileChannelTransfered;
                             if (( readOutputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
                             readOutputFileChannel.close(); readOutputFileStat.setFileEndEpoch(); readOutputFileStat.clock();
-                            readOutputFileStat.addFileBytesProcessed(outputFileBuffer.limit()); allFilesStats.addFilesBytesProcessed(outputFileBuffer.limit()/2);
+                            readOutputFileStat.addFileBytesProcessed(outputFileBuffer.limit()); allDataStats.addAllDataBytesProcessed(outputFileBuffer.limit()/2);
                         } catch (IOException ex) { ui.error("Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
 //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\n");
 
@@ -358,8 +345,8 @@ public class FinalCrypt  extends Thread
                     ui.log("wr(" +           writeOutputFileStat.getFileBytesThroughPut() + ") ");
                     ui.log("- Shred: rd(" +    readOutputFileStat.getFileBytesThroughPut() + ") -> ");
                     ui.log("wr(" +           writeInputFileStat.getFileBytesThroughPut() + ") ");                                        
-                    ui.log(allFilesStats.getFilesBytesProgressPercentage());
-                    allFilesStats.addFilesProcessed(1);
+                    ui.log(allDataStats.getAllDataBytesProgressPercentage());
+                    allDataStats.addFilesProcessed(1);
                     
                     if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
                     
@@ -403,9 +390,9 @@ public class FinalCrypt  extends Thread
                 } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
         } // Encrypt Files Loop
-        allFilesStats.setFilesEndNanoTime(); allFilesStats.clock();
+        allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.status(allFilesStats.getEncryptionEndSummary(), true);
+        ui.status(allDataStats.getEndSummary(), true);
 
 //        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
         updateProgressTimeline.stop();
@@ -584,9 +571,9 @@ public class FinalCrypt  extends Thread
         if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { ui.error("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage() + "\n");} }
 
         if (Files.exists(path, opt))    { if (verbose) { /*ui.log(path + " exists.\n"); */}}                else { ui.error(path + " does not exist!" + "\n"); isValid = false; }
-        if (Files.isRegularFile(path))  { if (verbose) { /*ui.log("The checked file is regular.\n"); */}}   else { ui.error("Error: The checked file is not regular!" + "\n"); isValid = false; }
-        if (Files.isReadable(path))     { if (verbose) { /*ui.log("The checked file is readable.\n"); */}}  else { ui.error("Error: The checked file is not readable!" + "\n"); isValid = false; }
-        if (Files.isWritable(path))     { if (verbose) { /*ui.log("The checked file is writable.\n"); */}}  else { ui.error("Error: The checked file is not writable!" + "\n"); isValid = false; }
+//        if (Files.isRegularFile(path))  { if (verbose) { /*ui.log("The checked file is regular.\n"); */}}   else { ui.error("Error: The checked file is not regular!" + "\n"); isValid = false; }
+//        if (Files.isReadable(path))     { if (verbose) { /*ui.log("The checked file is readable.\n"); */}}  else { ui.error("Error: The checked file is not readable!" + "\n"); isValid = false; }
+//        if (Files.isWritable(path))     { if (verbose) { /*ui.log("The checked file is writable.\n"); */}}  else { ui.error("Error: The checked file is not writable!" + "\n"); isValid = false; }
         try { fileSize = Files.size(path); } catch (IOException ex) { ui.error("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage() + "\n"); }
 //        if (verbose) { ui.log("The checked file has " + fileSize + " bytes of data."); }
         if (( mustHaveData ) && ( fileSize == 0 )) { ui.error("Error: The checked file requires data!\n"); isValid = false; }

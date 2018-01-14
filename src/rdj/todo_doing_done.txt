@@ -8,6 +8,9 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
+long cipherfilesize not int
+Read bytes per sector for LBA size
+GUID Partition Table Object (new, read, zero, create, zero, write)
 Working on raw device cipher creator and reader
 
 =================================== Done ====================================
