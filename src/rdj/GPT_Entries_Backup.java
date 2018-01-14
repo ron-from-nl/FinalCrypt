@@ -22,7 +22,7 @@ import java.util.List;
 
 public class GPT_Entries_Backup
 {
-    private final long LBA = -33L;
+    public final long LBA = -33L;
     private final long LENGTH = 128L * 128L;
 
     private byte[]  partttionTypeGUIDBytes1;
@@ -186,7 +186,7 @@ public class GPT_Entries_Backup
     }
     
     public void write(Path rawDeviceFilePath)                               { new Device(ui).write(get(), rawDeviceFilePath, LBA); }
-    public void writeCipher(Path cipherFilePath, Path rawDeviceFilePath)    { new Device(ui).write(cipherFilePath, rawDeviceFilePath, firstLBA1, firstLBA2); }
+    public void writeCipher(Path cipherFilePath, Path rawDeviceFilePath)    { new Device(ui).write(cipherFilePath, rawDeviceFilePath, firstLBA1, lastLBA1, firstLBA2, lastLBA2); }
     
     public byte[] get(int off, int length) { return GPT.get(get(), off, length); }
     public byte[] get()

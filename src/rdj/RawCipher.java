@@ -20,7 +20,6 @@ import java.nio.file.Path;
 
 public class RawCipher extends Thread
 {
-    public static int bytesPerSector = 512;
     private final UI ui;
         
     public RawCipher(UI ui) { this.ui = ui; }

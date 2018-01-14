@@ -881,11 +881,18 @@ public class GUIFX extends Application implements UI, Initializable
                     encryptionStarted();
                     finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
                 }
-                else
+                else if (encryptButton.getText().equals("Write"))
                 {
                     encryptionStarted();
                     rawCipher = new RawCipher(guifx); rawCipher.start();
                     rawCipher.writeRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
+                    encryptionFinished();
+                }
+                else if (encryptButton.getText().equals("Clone"))
+                {
+                    encryptionStarted();
+                    rawCipher = new RawCipher(guifx); rawCipher.start();
+//                    rawCipher.cloneRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
                     encryptionFinished();
                 }
             }

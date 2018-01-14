@@ -148,7 +148,7 @@ public class GPT_Header_Backup
 //      56 (0x38)     16 bytes  During LBA 1    Disk GUID (also referred as UUID on UNIXes)
                                                 diskGUIDBytes =             gpt.gpt_Header.diskGUIDBytes;
 //      72 (0x48)     8 bytes   During LBA 1    Starting LBA of array of partition entries (always 2 in primary copy)
-                                                startingLBAOfEntriesBytes = GPT.hex2Bytes(GPT.getHexStringLittleEndian((deviceSize / Device.bytesPerSector) - 33L, 8)); // was 2
+                                                startingLBAOfEntriesBytes = GPT.hex2Bytes(GPT.getHexStringLittleEndian((deviceSize / Device.bytesPerSector) + gpt.gpt_Entries_Backup.LBA, 8));
 //      80 (0x50)     4 bytes   During LBA 1    Number of partition entries in array
                                                 entriesInArrayBytes =       GPT.hex2Bytes(GPT.getHexStringLittleEndian(128L, 4));
 //      84 (0x54)     4 bytes   During LBA 1    Size of a single partition entry (usually 80h or 128)
