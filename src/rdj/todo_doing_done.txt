@@ -8,10 +8,7 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
-long cipherfilesize not int
-Read bytes per sector for LBA size
-GUID Partition Table Object (new, read, zero, create, zero, write)
-Working on raw device cipher creator and reader
+Adding GPTpartition zeroing
 
 =================================== Done ====================================
 
@@ -23,6 +20,7 @@ Working on raw device cipher creator and reader
 
 ============================= Source Published ==============================
 
+Added Raw Cipher Device Support including GPT Tooling
 Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistence
