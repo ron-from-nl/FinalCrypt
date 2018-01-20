@@ -16,29 +16,18 @@
  * You should have received a copy of the Creative Commons 
  * Public License License along with this software;
  */
+package rdj;
 
-.myDialog:header *.header-panel
+public class Mode
 {
-    -fx-background-color: #aaaaaa;
-}
-.myDialog:header *.header-panel *.label
-{
-    -fx-font-size: 20px;
-    -fx-font-style: normal;
-    -fx-fill: #292929;
-}
-.myDialog /* middel section */
-{
-    -fx-background-color: #eeeeee;
-}
-.myDialog > *.label.content
-{
-    -fx-font-size: 14px;
-    -fx-font: 14px Courier;
-    -fx-font-weight: normal;
-    -fx-font-smoothing-type: lcd;
-}
-.myDialog > *.button-bar > *.container
-{
-    -fx-background-color: #cccccc;
+    private static final int         SELECT =           0;
+    private static final int         ENCRYPT =          1;
+    private static final int         WRITE =            2;
+    private static final int         CLONE =            3;
+    private static       int         mode =             SELECT;
+    private static final String[]    MODEDESCRIPTION =  new String[]{"Encrypt","Write","Clone","Select"};
+
+    public int getMode()                                { return mode; }
+    public String setMode(int value)                    { mode = value; return getDescription(); }
+    public String getDescription()                      { return MODEDESCRIPTION[mode]; }
 }

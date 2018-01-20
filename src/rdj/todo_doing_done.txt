@@ -10,6 +10,7 @@ SoftPedia certificate
 
 Adding GPT partition zeroing
 Adding GPT cloning
+Adding statemachine structure
 
 =================================== Done ====================================
 

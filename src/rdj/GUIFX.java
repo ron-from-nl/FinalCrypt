@@ -1,23 +1,20 @@
 /*
- * © copyleft 2018 ron
+ * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This is free software; you can redistribute it 
+ * under the terms of the Creative Common License
+ * Creative Common License: (CC BY-NC-ND 4.0) as published by
+ * https://creativecommons.org/licenses/by-nc-nd/4.0/ ; either
+ * version 4.0 of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+ * International Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
- *
- * @author Ron de Jong ronuitzaandam@gmail.com
+ * You should have received a copy of the Creative Commons 
+ * Public License License along with this software;
  */
 
 package rdj;
@@ -128,8 +125,8 @@ public class GUIFX extends Application implements UI, Initializable
     private SwingNode cipherFileSwingNode;
     private JButton inputFileDeleteButton;
     private JButton cipherFileDeleteButton;
-    private boolean hasEncryptableItem;
-    private boolean hasCipherItem;
+//    private boolean hasEncryptable;
+//    private boolean hasCipherItem;
     private Object root;
     private Version version;
 
@@ -493,7 +490,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-        hasEncryptableItem = false;
+//        hasEncryptable = false;
+        State.targetReady = false;
         
 //      En/Disable FileChooser deletebutton
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0))
@@ -509,7 +507,7 @@ public class GUIFX extends Application implements UI, Initializable
                         (Character.isLetter(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-1)))
                    )
                 {
-                    hasEncryptableItem = true;
+                    State.targetReady = true;
                     Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Write");}});
                 }
             }
@@ -521,33 +519,33 @@ public class GUIFX extends Application implements UI, Initializable
                         (!String.valueOf(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s"))
                    )
                 {
-                    hasEncryptableItem = true;
+                    State.targetReady = true;
                     Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Write");}});
                 }
             }
             else
             {
-                hasEncryptableItem = false;
+                State.targetReady = false;
                 Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Encrypt");}});
             }
         }
         
 //      En/Disable hasEncryptableItems
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && ( hasCipherItem )) // No need to scan for encryptable items without selected cipher for better performance
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
         {
             
             String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
 //          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
             Path cipherPath = null;
-            if ( (cipherFileChooser.getSelectedFile() != null) && (hasCipherItem) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
+            if ( (cipherFileChooser.getSelectedFile() != null) && (State.cipherReady) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
 
 //          Look for encryptable files (Long I/O operation set hourglass)
             cursorWait();
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) ) { if ( Files.isRegularFile(path) ) { hasEncryptableItem = true; } }
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) ) { if ( Files.isRegularFile(path) ) { State.targetReady = true; } }
             cursorDefault();
         }
-        checkEncryptionReady();
+        checkModeReady();
     }
 
     private void cursorWait()
@@ -612,7 +610,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-        hasCipherItem = false;
+        State.cipherReady = false;
 
         // Set Buffer Size
         finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
@@ -637,7 +635,7 @@ public class GUIFX extends Application implements UI, Initializable
                     (cipherFileChooser.getSelectedFile().length() > 0)
                )
             {
-                hasCipherItem = true;
+                State.cipherReady = true;
                 try { cipherSize = (int)Files.size(cipherFileChooser.getSelectedFile().toPath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
             }
             else if(cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux
@@ -647,7 +645,7 @@ public class GUIFX extends Application implements UI, Initializable
                         (Character.isDigit(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-1)))
                    )
                 {
-                    hasCipherItem = true;
+                    State.cipherReady = true;
 //                  Get size of device        
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
                     { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { guifx.status(ex.getMessage(), true); }
@@ -661,13 +659,13 @@ public class GUIFX extends Application implements UI, Initializable
                         (String.valueOf(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s"))
                    )
                 {
-                    hasCipherItem = true;
+                    State.cipherReady = true;
 //                  Get size of device        
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
                     { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { guifx.status(ex.getMessage(), true); }
                 }
             }
-            else            { hasCipherItem = false; }
+            else            { State.cipherReady = false; }
         }
         if ( cipherSize < finalCrypt.getBufferSize())
         {
@@ -679,14 +677,14 @@ public class GUIFX extends Application implements UI, Initializable
 //            status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
 //        }
         
-        checkEncryptionReady();
+        checkModeReady();
     }
 
-    private void checkEncryptionReady()
+    private void checkModeReady()
     {
         if ( !encryptionRunning )
         {
-            if ((hasEncryptableItem) && (hasCipherItem) )
+            if ((State.targetReady) && (State.cipherReady) )
             {
                 encryptButton.setDisable(false);
                 pauseToggleButton.setDisable(true);
