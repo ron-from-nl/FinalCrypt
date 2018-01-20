@@ -31,10 +31,10 @@ import java.util.Calendar;
 public class Version
 {
     private UI ui;
-    private static final String COMPANYNAME = "GPLv3";
+    private static final String COMPANYNAME = "Private Person";
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
-    private static final String COPYLEFT = "© Copyleft " + Calendar.getInstance().get(Calendar.YEAR); // Future Copyleft symbol 🄯
+    private static final String COPYRIGHT = "© Copyright " + Calendar.getInstance().get(Calendar.YEAR);
     private static String currentOverallVersionString = "";
     private String latestOverallVersionString = "";
     private static int currentVersionTotal = 0;
@@ -164,8 +164,8 @@ public class Version
     public boolean versionCanBeUpdated()    { if      ( currentVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
     public boolean versionIsDevelopment()   { if      ( currentVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
 
-    public static String getCopyleft()                      { return COPYLEFT; }
-    public static String getAuthor()                        { return AUTHOR; }
-    public static String getProcuct()                       { return PRODUCTNAME; }
-    public static String getCompany()                       { return COMPANYNAME; }
+    public static String getCopyright()     { return COPYRIGHT; }
+    public static String getAuthor()        { return AUTHOR; }
+    public static String getProcuct()       { return PRODUCTNAME; }
+    public static String getCompany()       { return COMPANYNAME; }
 }

@@ -142,7 +142,7 @@ public class GUIFX extends Application implements UI, Initializable
     private Button updateButton;
     private boolean encryptionRunning;
     @FXML
-    private Label copyleftLabel;
+    private Label copyrightLabel;
 //    private TimerTask updateProgressTask;
 //    private Timer updateProgressTaskTimer;
     @FXML
@@ -274,7 +274,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         version = new Version(guifx);
         version.checkCurrentlyInstalledVersion();
-        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true); copyleftLabel.setText(Version.getCopyleft() + " " + Version.getAuthor());
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true); copyrightLabel.setText(Version.getCopyright() + " " + Version.getAuthor());
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);

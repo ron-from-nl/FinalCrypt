@@ -223,7 +223,7 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n\n");
-        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyleft() + "\n\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
 

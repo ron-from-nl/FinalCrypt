@@ -39,7 +39,6 @@ Added Secure Delete (Shredding)
 Implemented extended statistics
 Removed the GUIFX logbuttons
 Added a Process CPU Load circular indicator
-Replaced copyright to copyleft references and added a copyleft label
 Added an Hourglass on mousepointer when busy
 Changed to user preferences so user can Hide Intro permanently
 Added a brief first-time introduction window (user preferences persistent).
