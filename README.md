@@ -16,7 +16,4 @@ On top of raw ciphers, optional password injection will be introduced to further
 One more reason to not trust standard encryption algorithms:
 http://www.zdnet.com/article/has-the-nsa-broken-ssl-tls-aes/
 
-This software was developed with NetBeans 8.2
-http://www.oracle.com/technetwork/articles/javase/jdk-netbeans-jsp-142931.html
-
 Drop me an email if you have any questions: ronuitzaandam@gmail.com
