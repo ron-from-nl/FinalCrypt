@@ -10,7 +10,7 @@ The enormous amounts of unique bit patterns in your cipher file negate the bit p
 Decrypting is simply done by encrypting your data files again with the same unique cipher.
 No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file.
 Therefore security and secrecy is guaranteed for as long as you keep your cipher file secret!
-Soon FinalCrypt will support raw cipher device creation (e.g. on USB mem sticks) to safeguard your ciphers more secure / obscure.
+FinalCrypt supports raw cipher partitions on Linux and Apple OSX (e.g. on USB mem sticks etc.) to safeguard your ciphers more securely. 
 On top of raw ciphers, optional password injection will be introduced to further protect possibly exposed personal ciphers.
 
 One more reason to not trust standard encryption algorithms:
