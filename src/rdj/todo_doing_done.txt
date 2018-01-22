@@ -12,13 +12,17 @@ SoftPedia certificate
 =================================== Done ====================================
 
 
-
 ============================= Source Committed ==============================
 
 
 
 ============================= Source Published ==============================
 
+Line breaking during processing catches
+Clear Log TextArea every 1000 writes for better performance
+Added Raw Cipher support to Command Line User Interface
+Fixed pauze & stop buttons in new Statemachine
+Fixed CLUI relative paths bug in absolute paths
 
 ============================= Binaries Released =============================
 

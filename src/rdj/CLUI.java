@@ -20,10 +20,14 @@
 package rdj;
 
 import java.io.IOException;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import javafx.application.Platform;
 
 /* commandline test routine
 
@@ -37,9 +41,11 @@ public class CLUI implements UI
 {
     FinalCrypt finalCrypt;
     Version version;
+    UI ui;
 
     public CLUI(String[] args)
     {
+        this.ui = this;
         boolean ifset = false, cfset = false;
         boolean validInvocation = true;
         boolean negatePattern = false;
@@ -80,20 +86,24 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
-            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
+//            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
+            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
 //            else if ( args[paramCnt].equals("-w")) { if ( args[paramCnt+1].startsWith("-") ) { String param = args[paramCnt+1].replace("-", ""); pattern = "glob:"; for (char chr:param.toCharArray()) { pattern += "[!" + chr + "]"; }  paramCnt++; } else { pattern = "glob:" + args[paramCnt+1]; paramCnt++; }}
             else if ( args[paramCnt].equals("-w")) { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-W")) { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-r")) { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
-            else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; }
+//            else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; }
+            else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
         if ( ! ifset ) { error("\nError: Missing parameter <-i \"inputfile\">" + "\n"); usage(); }
         if ( ! cfset ) { error("\nError: Missing parameter <-c \"cipherfile\">" + "\n"); usage(); }
 
+        
 
-//      Check the inputFileList created by the parameters
+//      Check if inputFileList elements exist on filesystem
+
         for(Path inputFilePathItem : inputFilesPathList)
         {
             if (Files.exists(inputFilePathItem))
@@ -113,64 +123,248 @@ public class CLUI implements UI
             }            
         }
 
+        
+//////////////////////////////////////////////////// CHECK CIPHERFILE INPUT /////////////////////////////////////////////////
+        
+        
+        State.cipherSelected = State.INVALID;
+        State.cipherReady = false;
+        
+//      Cipher Validation        
+        
+        long cipherSize = finalCrypt.getBufferSizeDefault(); 
+
 //      Check the cipherFile created by the parameters
         if (Files.exists(cipherFilePath))
         {
-            if ( finalCrypt.isValidFile(cipherFilePath, false, true) )
+            if ( (Files.isRegularFile(cipherFilePath)) && (cipherSize > 0) )
             {
-                finalCrypt.setCipherFilePath(cipherFilePath);
-                if (finalCrypt.getVerbose()) { status("Cipher parameter: " + finalCrypt.getCipherFilePath() + " exist\n", true); }
-            } else { usage(); }
+                try { cipherSize = (int)Files.size(cipherFilePath); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+
+                if (cipherSize > 0)
+                {
+                    State.cipherSelected = State.FILE;
+                    State.cipherReady = true;
+                    finalCrypt.setCipherFilePath(cipherFilePath);
+                }
+            }
+            else if(cipherFilePath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Selection
+            {
+                if (
+                        ( ! cipherFilePath.getFileName().toString().endsWith("sda") )
+                   )
+                {
+                    if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
+                    {
+                        State.cipherSelected = State.PARTITION;
+                        State.cipherReady = true;
+                    }
+                    else
+                    {
+                        State.cipherSelected = State.DEVICE;
+                    }
+
+                    finalCrypt.setCipherFilePath(cipherFilePath);
+                    State.cipherReady = true;
+    //                  Get size of partition
+                    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+                }
+            }
+            else if (cipherFilePath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Selection
+            {
+                if (
+                        ( ! cipherFilePath.getFileName().toString().endsWith("disk0"))
+                   )
+                {
+                    if (
+                            (Character.isDigit(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-1))) &&
+                            (String.valueOf(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
+                       )
+                    {
+                        State.cipherSelected = State.PARTITION;
+                    }
+                    else
+                    {
+                        State.cipherSelected = State.DEVICE;
+                    }
+
+    //                  Get size of device        
+                    finalCrypt.setCipherFilePath(cipherFilePath);
+                    State.cipherReady = true;
+                    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+                    println("ciphersize = " + cipherSize);
+                } else { State.cipherReady = false; } // disk0
+            }
+            else
+            {
+                State.cipherSelected = State.INVALID;
+                State.cipherReady = false;
+            }
+
+            if ( cipherSize < finalCrypt.getBufferSize())
+            {
+                finalCrypt.setBufferSize((int)cipherSize);
+                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
+            }
         }
         else
         { 
             error("Cipher parameter: " + cipherFilePath + " does not exists\n"); usage();
         }            
 
-//      Look for encryptable files & detect cipher file targeted among all input filess
-        boolean hasEncryptableItem = false;
-        for (Path path:finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, true) )
+
+//////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
+
+        State.targetSelected = State.INVALID;
+        State.targetReady = false;
+        
+//      Test for Raw Cipher Target
+        if (inputFilesPathList.size() == 1)
         {
-            if ((path.compareTo(finalCrypt.getCipherFilePath()) == 0))
+            if (inputFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Device
             {
-                status("Warning: cipher-file: " + finalCrypt.getCipherFilePath().toAbsolutePath() + " will be excluded!\n", true);
+                if (
+                        ( ! inputFilesPathList.get(0).getFileName().toString().endsWith("sda")) && // Not main disk
+                        ( Character.isLetter( inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -1) )) // Device selected
+                   )
+                {
+                    State.targetSelected = State.DEVICE;
+                    State.targetReady = true;
+                }
+                else
+                {
+                    State.targetSelected = State.PARTITION;
+                    State.targetReady = false;
+                }                    
             }
-            else
+            else if (inputFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Device
             {
-                if (Files.isRegularFile(path)) { hasEncryptableItem = true; }
+                if (
+                        ( ! inputFilesPathList.get(0).getFileName().toString().endsWith("disk0")) && // not primary disk
+                        ( Character.isDigit( inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -1) )) && // last char = digit
+                        ( ! String.valueOf(inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -2)).equalsIgnoreCase("s")) // ! slice
+                   )
+                {
+                    State.targetSelected = State.DEVICE;
+                    State.targetReady = true;                    
+                }
+                else
+                {
+                    State.targetSelected = State.PARTITION;
+                    State.targetReady = false;
+                }                    
+            }
+            else // No Raw Cipher Device Target selected
+            {
+                State.targetSelected = State.INVALID;
+                State.targetReady = false;                
+            }
+        }
+        
+//      En/Disable hasEncryptableItems
+        if ((inputFilesPathList.size() > 0 ) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
+        {
+//          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
+            Path cipherPath = null;
+
+//          Look for encryptable files (Long I/O operation set hourglass)
+
+
+            for (Path path:finalCrypt.getExtendedPathList(inputFilesPathList, cipherFilePath, pattern, negatePattern, true) )
+            {
+                if ((path.compareTo(cipherFilePath) == 0))
+                {
+                    status("Warning: cipher-file: " + cipherFilePath.toAbsolutePath() + " will be excluded!\n", true);
+                }
+                else if ( Files.isRegularFile(path) ) { State.targetSelected = State.FILE; State.targetReady = true; }
             }
         }
 
-//      // Input validation past, last check on encryptable items in list
-        if ( !hasEncryptableItem )
+            
+/////////////////////////////////////////////// SET MODE ////////////////////////////////////////////////////
+
+
+        Mode.modeReady = false; Mode.setMode(Mode.SELECT);
+        
+        if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
         {
-            log("Nothing to encrypt\n");
+            Mode.modeReady = true;
+            status(Mode.setMode(Mode.ENCRYPT) + "\n", true);
+        }
+        else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
+        {
+            Mode.modeReady = true;
+            status(Mode.setMode(Mode.ENCRYPTRAW) + "\n", true);
+        }
+        else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
+        {
+            Mode.modeReady = true;
+            status(Mode.setMode(Mode.WRITE) + "\n", true);
+        }
+        else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
+        {
+//          Source and Dest Device may not be the same
+            if (
+                    ( inputFilesPathList.get(0).compareTo(cipherFilePath) != 0 )  &&
+                    ( State.targetSelected == State.DEVICE ) && ( State.cipherSelected == State.DEVICE )
+               )
+            {
+                Mode.modeReady = true;
+                status(Mode.setMode(Mode.CLONE) + "\n", true);
+            }
+            else
+            { 
+                Mode.modeReady = false;
+            }
+        }
+        else                                                                                    
+        {
+            Mode.modeReady = false;
+            status(Mode.setMode(Mode.SELECT) + "\n", true);
+        }
+
+        if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
+        {
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
+
+//          Mode SET / KNOWN, Now we know what and how to execute
+
+            RawCipher rawCipher;
+            if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
+            {
+//              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
+                ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
+                this.encryptionStarted();
+                finalCrypt.encryptSelection(inputFilesPathListExtended, finalCrypt.getCipherFilePath());
+            }
+            else if ( Mode.getMode() == Mode.WRITE )
+            {
+                encryptionStarted();
+                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.writeRawCipher(cipherFilePath, inputFilesPathList.get(0));
+                encryptionFinished();
+            }
+            else if ( Mode.getMode() == Mode.CLONE )
+            {
+                encryptionStarted();
+                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.cloneRawCipher(cipherFilePath, inputFilesPathList.get(0));
+                encryptionFinished();
+            }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         }
         else
         {
-//          All is well, now convert small parameter list into recusive list
-//          Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
-            ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
-            // Set the Options
-
-            // Set Buffer Size
-            int cipherSize = 0; try { cipherSize = (int)Files.size(finalCrypt.getCipherFilePath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
-            if ( cipherSize < finalCrypt.getBufferSize())
-            {
-                finalCrypt.setBufferSize(cipherSize);
-                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
-            }
-            else
-            {
-                status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
-            }
-
-            // Start Encryption
-            this.encryptionStarted();
-            finalCrypt.encryptSelection(inputFilesPathListExtended, finalCrypt.getCipherFilePath());
+            status("Mode not ready\n", true);
         }
+            
     }
 
+    
     public static void main(String[] args)
     {
         new CLUI(args);

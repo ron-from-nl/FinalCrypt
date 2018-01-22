@@ -223,12 +223,12 @@
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status">
+                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status" GridPane.hgrow="ALWAYS">
                                        <font>
                                           <Font name="Open Sans" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="copyrightLabel" cache="true" cacheHint="SPEED" disable="true" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyright" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                                    <Label fx:id="copyrightLabel" cache="true" cacheHint="SPEED" disable="true" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyright" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
                                        <font>
                                           <Font name="Open Sans" size="12.0" />
                                        </font>

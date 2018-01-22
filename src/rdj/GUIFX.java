@@ -159,6 +159,7 @@ public class GUIFX extends Application implements UI, Initializable
     private FileFilter nonFinalCryptFilter;
     private FileNameExtensionFilter finalCryptFilter;
     private RawCipher rawCipher;
+    private int lineCounter;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -641,7 +642,7 @@ public class GUIFX extends Application implements UI, Initializable
            )
         { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
         
-        // En/Disable hasCipherItem
+        // Set Cipher State
         if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
         {
             if (
@@ -972,7 +973,7 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    @Override public void log(String message) { Platform.runLater(() -> { logTextArea.appendText(message); }); }
+    @Override public void log(String message) { Platform.runLater(() -> { lineCounter++; logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
     @Override public void error(String message) { Platform.runLater(new Runnable() { @Override public void run() { status(message, true); } }); }
 
     @Override public void status(String status, boolean log)
@@ -1111,7 +1112,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void pauseToggleButtonAction(ActionEvent event)
     {
-        if ( encryptButton.getText().equals("Encrypt") )
+//        if ( encryptButton.getText().equals("Encrypt") )
+        if ( (Mode.getMode() == Mode.ENCRYPT ) || (Mode.getMode() == Mode.ENCRYPTRAW ) )
         {
             finalCrypt.setPausing(pauseToggleButton.isSelected());
         }
@@ -1124,7 +1126,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void stopButtonAction(ActionEvent event)
     {
-        if ( encryptButton.getText().equals("Encrypt") )
+//        if ( encryptButton.getText().equals("Encrypt") )
+        if ( (Mode.getMode() == Mode.ENCRYPT ) || (Mode.getMode() == Mode.ENCRYPTRAW ) )
         {
             finalCrypt.setStopPending(true);
             if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
