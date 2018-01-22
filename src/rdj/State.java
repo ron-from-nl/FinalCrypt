@@ -24,9 +24,12 @@ public class State
     public final    static  int FILE =               1;
     public final    static  int DIR =                2;
     public final    static  int MULTI =              3;
-    public final    static  int DEV =                4;
+    public final    static  int DEVICE =             4;
+    public final    static  int PARTITION =          5;
+    
     public          static  int targetSelected =     INVALID;
     public          static  int cipherSelected =     INVALID;
+    
     public          static  boolean targetReady =    false;
     public          static  boolean cipherReady =    false;
     public static   void    reset()

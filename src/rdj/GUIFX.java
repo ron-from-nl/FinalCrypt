@@ -490,43 +490,53 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-//        hasEncryptable = false;
+        State.targetSelected = State.INVALID;
         State.targetReady = false;
         
 //      En/Disable FileChooser deletebutton
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && (inputFileChooser.getSelectedFiles().length > 0))
         {inputFileDeleteButton.setEnabled(true);} else {inputFileDeleteButton.setEnabled(false);}
 
-//      Just for Encrypt of Write Text on encryptButton
+//      Test for Raw Cipher Target
         if ((inputFileChooser != null) && (inputFileChooser.getSelectedFile() != null) && (inputFileChooser.getSelectedFiles().length == 1))
         {
-            if (inputFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux
+            if (inputFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Raw Cipher Device
             {
                 if (
-                        (!inputFileChooser.getSelectedFile().getName().endsWith("sda")) &&
-                        (Character.isLetter(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-1)))
+                        (!inputFileChooser.getSelectedFile().getName().endsWith("sda")) && // Not main disk
+                        (Character.isLetter(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-1))) // Device selected
                    )
                 {
+                    State.targetSelected = State.DEVICE;
                     State.targetReady = true;
-                    Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Write");}});
                 }
+                else
+                {
+                    State.targetSelected = State.PARTITION;
+                    State.targetReady = false;
+                }                    
             }
-            else if (inputFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple
+            else if (inputFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Raw Cipher Device
             {
                 if (
-                        (!inputFileChooser.getSelectedFile().getName().endsWith("disk0")) &&
-                        (Character.isDigit(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-1))) &&
-                        (!String.valueOf(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s"))
+                        (!inputFileChooser.getSelectedFile().getName().endsWith("disk0")) && // not primary disk
+                        (Character.isDigit(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-1))) && // last char = digit
+                        (!String.valueOf(inputFileChooser.getSelectedFile().getName().charAt(inputFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s")) // ! slice
                    )
                 {
-                    State.targetReady = true;
-                    Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Write");}});
+                    State.targetSelected = State.DEVICE;
+                    State.targetReady = true;                    
                 }
+                else
+                {
+                    State.targetSelected = State.PARTITION;
+                    State.targetReady = false;
+                }                    
             }
-            else
+            else // No Raw Cipher Device Target selected
             {
-                State.targetReady = false;
-                Platform.runLater(new Runnable(){ @Override public void run(){encryptButton.setText("Encrypt");}});
+                State.targetSelected = State.INVALID;
+                State.targetReady = false;                
             }
         }
         
@@ -542,7 +552,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 //          Look for encryptable files (Long I/O operation set hourglass)
             cursorWait();
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) ) { if ( Files.isRegularFile(path) ) { State.targetReady = true; } }
+            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+            {
+                if ( Files.isRegularFile(path) ) { State.targetSelected = State.FILE; State.targetReady = true; }
+            }
             cursorDefault();
         }
         checkModeReady();
@@ -610,6 +623,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
+        State.cipherSelected = State.INVALID;
         State.cipherReady = false;
 
         // Set Buffer Size
@@ -635,47 +649,67 @@ public class GUIFX extends Application implements UI, Initializable
                     (cipherFileChooser.getSelectedFile().length() > 0)
                )
             {
+                State.cipherSelected = State.FILE;
                 State.cipherReady = true;
                 try { cipherSize = (int)Files.size(cipherFileChooser.getSelectedFile().toPath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
             }
-            else if(cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux
+            else if(cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Raw Cipher Selection
             {
                 if (
-                        (!cipherFileChooser.getSelectedFile().getName().endsWith("sda")) &&
-                        (Character.isDigit(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-1)))
+                        (!cipherFileChooser.getSelectedFile().getName().endsWith("sda"))
                    )
                 {
+                    if (Character.isDigit(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-1)))
+                    {
+                        State.cipherSelected = State.PARTITION;
+                        State.cipherReady = true;
+                    }
+                    else
+                    {
+                        State.cipherSelected = State.DEVICE;
+                    }
+
                     State.cipherReady = true;
-//                  Get size of device        
+//                  Get size of partition
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
                     { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { guifx.status(ex.getMessage(), true); }
                 }
             }
-            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple
+            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Raw Cipher Selection
             {
                 if (
-                        (!cipherFileChooser.getSelectedFile().getName().endsWith("disk0")) &&
-                        (Character.isDigit(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-1))) &&
-                        (String.valueOf(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s"))
+                        (!cipherFileChooser.getSelectedFile().getName().endsWith("disk0"))
                    )
                 {
-                    State.cipherReady = true;
+                    if (
+                            (Character.isDigit(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-1))) &&
+                            (String.valueOf(cipherFileChooser.getSelectedFile().getName().charAt(cipherFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s"))
+                       )
+                    {
+                        State.cipherSelected = State.PARTITION;
+                    }
+                    else
+                    {
+                        State.cipherSelected = State.DEVICE;
+                    }
+
 //                  Get size of device        
+                    State.cipherReady = true;
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
-                    { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { guifx.status(ex.getMessage(), true); }
-                }
+                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { guifx.status(ex.getMessage(), true); }
+                } else { State.cipherReady = false; } // disk0
             }
-            else            { State.cipherReady = false; }
+            else
+            {
+                State.cipherSelected = State.INVALID;
+                State.cipherReady = false;
+            }
         }
         if ( cipherSize < finalCrypt.getBufferSize())
         {
             finalCrypt.setBufferSize((int)cipherSize);
             status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
         }
-//        else
-//        {
-//            status("BufferSize is set to: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
-//        }
         
         checkModeReady();
     }
@@ -684,7 +718,45 @@ public class GUIFX extends Application implements UI, Initializable
     {
         if ( !encryptionRunning )
         {
-            if ((State.targetReady) && (State.cipherReady) )
+            Mode.modeReady = false;
+            Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.SELECT)); } });
+
+            if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
+            {
+                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPT)); } });
+            }
+            else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
+            {
+                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPTRAW)); } });
+            }
+            else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
+            {
+                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.WRITE)); } });
+            }
+            else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
+            {
+//              Source and Dest Device may not be the same
+                if (
+                        ( ( inputFileChooser != null) && (inputFileChooser.getSelectedFile() != null ) )            &&
+                        ( ( cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null ) )          &&
+                        ( inputFileChooser.getSelectedFile().compareTo(cipherFileChooser.getSelectedFile()) != 0 )  &&
+                        ( State.targetSelected == State.DEVICE ) && ( State.cipherSelected == State.DEVICE )
+                   )
+                {
+                    Mode.modeReady = true;
+                    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.CLONE)); } });
+                }
+                else
+                { 
+                    Mode.modeReady = false;
+                }
+            }
+            else                                                                                    
+            {
+                Mode.modeReady = false; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.SELECT)); } });
+            }
+            
+            if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
             {
                 encryptButton.setDisable(false);
                 pauseToggleButton.setDisable(true);
@@ -861,36 +933,36 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-//              Extend chooser.selectedfiles and add to inputFilesPath
-                String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-                ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherFileChooser.getSelectedFile().toPath(), pattern, negatePattern, true);
-
-                finalCrypt.setInputFilesPathList(inputFilesPathList);
-                finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
-
-//                // Set Buffer Size
-//                finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
-
-                filesProgressBar.setProgress(0.0);
-                fileProgressBar.setProgress(0.0);
-
-                if (encryptButton.getText().equals("Encrypt"))
+                if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
                 {
+//                  Extend chooser.selectedfiles and add to inputFilesPath
+                    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+                    ArrayList<Path> inputFilesPathList = finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherFileChooser.getSelectedFile().toPath(), pattern, negatePattern, true);
+
+                    finalCrypt.setInputFilesPathList(inputFilesPathList);
+                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
+
+    //                // Set Buffer Size
+    //                finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+
+                    filesProgressBar.setProgress(0.0);
+                    fileProgressBar.setProgress(0.0);
+
                     encryptionStarted();
                     finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
                 }
-                else if (encryptButton.getText().equals("Write"))
+                else if ( Mode.getMode() == Mode.WRITE )
                 {
                     encryptionStarted();
                     rawCipher = new RawCipher(guifx); rawCipher.start();
                     rawCipher.writeRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
                     encryptionFinished();
                 }
-                else if (encryptButton.getText().equals("Clone"))
+                else if ( Mode.getMode() == Mode.CLONE )
                 {
                     encryptionStarted();
                     rawCipher = new RawCipher(guifx); rawCipher.start();
-//                    rawCipher.cloneRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
+                    rawCipher.cloneRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
                     encryptionFinished();
                 }
             }

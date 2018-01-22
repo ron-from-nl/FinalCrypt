@@ -20,14 +20,17 @@ package rdj;
 
 public class Mode
 {
-    private static final int         SELECT =           0;
-    private static final int         ENCRYPT =          1;
-    private static final int         WRITE =            2;
-    private static final int         CLONE =            3;
-    private static       int         mode =             SELECT;
-    private static final String[]    MODEDESCRIPTION =  new String[]{"Encrypt","Write","Clone","Select"};
+    public  static final int        SELECT =            0;
+    public  static final int        ENCRYPT =           1;
+    public  static final int        ENCRYPTRAW =        2;
+    public  static final int        WRITE =             3;
+    public  static final int        CLONE =             4;
+    private static final String[]   MODEDESCRIPTION =   new String[] { "Select","Encrypt","Encrypt (Raw Cipher)","Write","Clone" };
+    
+    private static       int        mode =              SELECT;
+    public  static boolean          modeReady =         false;
 
-    public int getMode()                                { return mode; }
-    public String setMode(int value)                    { mode = value; return getDescription(); }
-    public String getDescription()                      { return MODEDESCRIPTION[mode]; }
+    public static int getMode()                         { return mode; }
+    public static String setMode(int value)             { mode = value; return getDescription(); }
+    public static String getDescription()               { return MODEDESCRIPTION[mode]; }
 }

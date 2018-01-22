@@ -108,9 +108,9 @@ public class GPT_Entries_Backup
 //      16 (0x10)   16 bytes    During LBA 2    Unique partition GUID
                                                                                             uniquePartitionGUIDBytes1 = GPT.get(bytes, 16, 16);
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
-                                                                                            firstLBABytes1 = GPT.get(bytes, 32, 8);
+                                                                                            firstLBABytes1 = GPT.get(bytes, 32, 8); firstLBA1 = Long.reverseBytes(GPT.bytesToLong(firstLBABytes1));
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                                                            lastLBABytes1 = GPT.get(bytes, 40, 8);
+                                                                                            lastLBABytes1 = GPT.get(bytes, 40, 8); lastLBA1 = Long.reverseBytes(GPT.bytesToLong(lastLBABytes1));
 //      48 (0x30)   8 bytes     During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                                                             attributeFlagsBytes1 = GPT.get(bytes, 48, 8);
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
@@ -126,9 +126,9 @@ public class GPT_Entries_Backup
 //      144 (0x10)   16 bytes    During LBA 2    Unique partition GUID
                                                                                             uniquePartitionGUIDBytes2 = GPT.get(bytes, 144, 16);
 //      160 (0x20)   8 bytes     During LBA 2    First LBA (little endian)
-                                                                                            firstLBABytes2 = GPT.get(bytes, 160, 8);
+                                                                                            firstLBABytes2 = GPT.get(bytes, 160, 8); firstLBA2 = Long.reverseBytes(GPT.bytesToLong(firstLBABytes2));
 //      168 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                                                            lastLBABytes2 = GPT.get(bytes, 168, 8);
+                                                                                            lastLBABytes2 = GPT.get(bytes, 168, 8); lastLBA2 = Long.reverseBytes(GPT.bytesToLong(lastLBABytes2));
 //      176 (0x30)   8 bytes     During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                                                             attributeFlagsBytes2 = GPT.get(bytes, 176, 8);
 //      184 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
@@ -140,9 +140,10 @@ public class GPT_Entries_Backup
 ////////////////////////////////////////////////////////////////////////////////////////////
     }
     
-    public void create(Path cipherFilePath)
+//    public void create(Path cipherFilePath)
+    public void create(long cipherSize)
     {
-        long cipherSize = (long) GPT.getCipherSize(ui, cipherFilePath);
+//        long cipherSize = (long) GPT.getCipherSize(ui, cipherFilePath);
 //      Offset        Length    When            Data
 //      0 (0x00)      16 bytes  During LBA 2    Partition type GUID
                                                 partttionTypeGUIDBytes1 =                   GPT.hex2Bytes("AF 3D C6 0F 83 84 72 47 8E 79 3D 69 D8 47 7D E4");
@@ -152,7 +153,7 @@ public class GPT_Entries_Backup
                                                 firstLBA1 =                                 2048L;
                                                 firstLBABytes1 =                            GPT.hex2Bytes(GPT.getHexStringLittleEndian(firstLBA1, 8)); // hex2Bytes("00 08 00 00 00 00 00 00");
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                lastLBA1 =                                  2048L + (long)(Math.floor(cipherSize / Device.bytesPerSector));
+                                                lastLBA1 =                                  2048L + (long)((Math.floor((cipherSize - 1L) / Device.bytesPerSector )));
                                                 lastLBABytes1 =                             GPT.hex2Bytes(GPT.getHexStringLittleEndian(lastLBA1, 8));
 //      48 (0x30) 8 bytes       During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                 attributeFlagsBytes1 =                      GPT.hex2Bytes("00 00 00 00 00 00 00 00");
@@ -169,10 +170,10 @@ public class GPT_Entries_Backup
 //      16 (0x10)   16 bytes    During LBA 2    Unique partition GUID
                                                 uniquePartitionGUIDBytes2 =                 gpt.get_GPT_Entries().uniquePartitionGUIDBytes2;
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian)
-                                                firstLBA2 =                                 2048L + (long)(Math.floor(cipherSize / Device.bytesPerSector) + 1L);
+                                                firstLBA2 =                                 2048L + (long)((Math.floor((cipherSize - 1L) / Device.bytesPerSector ))) + 1L;
                                                 firstLBABytes2 =                            GPT.hex2Bytes(GPT.getHexStringLittleEndian(firstLBA2, 8));
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                lastLBA2 =                                  firstLBA2 + (long)(Math.floor(cipherSize / Device.bytesPerSector));
+                                                lastLBA2 =                                  firstLBA2 + (long)((Math.floor((cipherSize - 1L) / Device.bytesPerSector )) );
                                                 lastLBABytes2 =                             GPT.hex2Bytes(GPT.getHexStringLittleEndian(lastLBA2, 8));
 //      48 (0x30)   8 bytes     During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                 attributeFlagsBytes2 =                      GPT.hex2Bytes("00 00 00 00 00 00 00 00");
@@ -188,7 +189,7 @@ public class GPT_Entries_Backup
     }
     
     public void write(Path rawDeviceFilePath)                               { new Device(ui).write(get(), rawDeviceFilePath, LBA); }
-    public void writeCipher(Path cipherFilePath, Path rawDeviceFilePath)    { new Device(ui).write(cipherFilePath, rawDeviceFilePath, firstLBA1, lastLBA1, firstLBA2, lastLBA2); }
+    public void writeCipher(Path cipherFilePath, Path rawDeviceFilePath)    { new Device(ui).writeCipher(cipherFilePath, rawDeviceFilePath, firstLBA1, lastLBA1, firstLBA2, lastLBA2); }
     
     public byte[] get(int off, int length) { return GPT.get(get(), off, length); }
     public byte[] get()

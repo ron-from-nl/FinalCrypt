@@ -91,12 +91,13 @@ public class GPT
         gpt_Header_Backup.read(rawDeviceFilePath);
     }
     
-    synchronized public void create(Path cipherFilePath, Path rawDeviceFilePath)
+//    synchronized public void create(Path cipherFilePath, Path rawDeviceFilePath)
+    synchronized public void create(long cipherSize, Path rawDeviceFilePath)
     {
         gpt_Protective_MBR.create(rawDeviceFilePath);
-        gpt_Entries.create(cipherFilePath);             // Create order: 1
-        gpt_Header.create(rawDeviceFilePath);           // Create order: 2
-        gpt_Entries_Backup.create(cipherFilePath);      // Create order: 3
+        gpt_Entries.create(cipherSize);                 // Create order: 1
+        gpt_Entries_Backup.create(cipherSize);          // Create order: 2
+        gpt_Header.create(rawDeviceFilePath);           // Create order: 3
         gpt_Header_Backup.create(rawDeviceFilePath);    // Create order: 4
     }
     
@@ -109,7 +110,8 @@ public class GPT
         gpt_Header_Backup.write(rawDeviceFilePath);
     }
     
-    synchronized public void writeCipher(Path cipherFilePath, Path rawDeviceFilePath) { gpt_Entries.writeCipher(cipherFilePath, rawDeviceFilePath); }
+    synchronized public void writeCipher(Path cipherFilePath, Path targetDeviceFilePath)        { gpt_Entries.writeCipher(cipherFilePath, targetDeviceFilePath); }
+    synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { gpt_Entries.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath); }
     
     public String toString()
     {
@@ -167,19 +169,20 @@ public class GPT
     
     synchronized public static byte[] hex2Bytes(String string) { byte[] bytes = DatatypeConverter.parseHexBinary(string.replaceAll("[^A-Za-z0-9]","")); return bytes; }
     
-    synchronized public void logBytes(byte[] bytes) { for (byte mybyte: bytes) { logByte(mybyte); } }
+    synchronized public static void logBytes(byte[] bytes) { for (byte mybyte: bytes) { logByte(mybyte); } }
     
-    synchronized public void logByte(byte dataByte)
+    synchronized public static void logByte(byte dataByte)
     {
-        String adrhex = getHexString(printAddressByteCounter,"8");
+//        String adrhex = getHexString(printAddressByteCounter,"8");
 
         String datbin = getBinaryString(dataByte);
         String dathex = getHexString(dataByte, "2");
         String datdec = getDecString(dataByte);
         String datchr = getChar(dataByte);
         
-        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\n" );
-        printAddressByteCounter++;
+//        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\n" );
+        System.out.print("| " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\n" );
+//        printAddressByteCounter++;
     }
     
     synchronized public static byte[] get(byte[] source, int off, int length)
@@ -193,6 +196,14 @@ public class GPT
         return dest;
     }
 
+    synchronized public static long bytesToLong(byte[] bytes)
+    {
+        ByteBuffer bb = ByteBuffer.allocate(Long.BYTES);
+        bb.put(bytes);
+        bb.flip(); 
+        return bb.getLong();
+    }
+    
     synchronized public static String getBinaryString(Byte value) { return String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0'); }
     synchronized public static String getDecString(Byte value) { return String.format("%3d", (value & 0xFF)).replace(" ", "0").replaceAll("[^A-Za-z0-9]",""); }
     synchronized public static String getHexString(byte[] bytes, String digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
@@ -270,7 +281,7 @@ public class GPT
         }
     }
 
-    public static long getCipherSize(UI ui, Path cipherFilePath)
+    public static long getCipherFileSize(UI ui, Path cipherFilePath)
     {
         long cipherSize = 0;
         try { cipherSize = (long)Files.size(cipherFilePath); } catch (IOException ex) { ui.log("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }

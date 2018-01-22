@@ -26,12 +26,22 @@ public class RawCipher extends Thread
         
     public RawCipher(UI ui) { this.ui = ui; }
     
-    public void writeRawCipher(Path cipherFilePath, Path rawDeviceFilePath)
+    public void writeRawCipher(Path cipherFilePath, Path targetDeviceFilePath)
     {
         GPT gpt = new GPT(ui);
-//        gpt.read(rawDeviceFilePath); gpt.print();
-        gpt.create(cipherFilePath, rawDeviceFilePath);
-        gpt.write(rawDeviceFilePath);
-        gpt.writeCipher(cipherFilePath, rawDeviceFilePath);
+        gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDeviceFilePath);
+        gpt.write(targetDeviceFilePath);
+        gpt.writeCipher(cipherFilePath, targetDeviceFilePath);
+        try { Thread.sleep(250); } catch (InterruptedException ex) {  }
+    }
+
+    public void cloneRawCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)
+    {
+        GPT gpt = new GPT(ui);
+//        gpt.read(cipherDeviceFilePath); // gpt.print();
+        gpt.create(Device.getCipherPartitionSize(cipherDeviceFilePath), targetDeviceFilePath);
+        gpt.write(targetDeviceFilePath);
+        gpt.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath);
+        try { Thread.sleep(250); } catch (InterruptedException ex) {  }
     }
 }

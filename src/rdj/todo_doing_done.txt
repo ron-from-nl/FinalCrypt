@@ -8,9 +8,6 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
-Adding GPT partition zeroing
-Adding GPT cloning
-Adding statemachine structure
 
 =================================== Done ====================================
 
@@ -22,13 +19,15 @@ Adding statemachine structure
 
 ============================= Source Published ==============================
 
+
+============================= Binaries Released =============================
+
+Adding Raw Cipher Device Cloning on Linux and Apple
 Added Raw Cipher Device randomizing, including gap at end of partitions
 Added Raw Cipher Device Support including GPT Tooling
 Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistency
-
-============================= Binaries Released =============================
 
 Fixed filechooser focusowner conflict bug under OSX
 Skipped scan encryptable items without selected cipher (better performance)
