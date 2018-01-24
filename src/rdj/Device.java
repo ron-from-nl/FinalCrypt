@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -99,7 +99,7 @@ public class Device
 
         allDataStats.setFilesTotal(2);
         allDataStats.setAllDataBytesTotal(this.getCipherFileSize(cipherFilePath) * 2);
-        ui.status(allDataStats.getStartSummary(), true);
+        ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
         boolean inputEnded = false;
@@ -216,7 +216,7 @@ public class Device
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
 
 //        if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.status(allDataStats.getEndSummary(), true);
+        ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
         updateProgressTimeline.stop();
         ui.encryptionFinished();
@@ -237,7 +237,7 @@ public class Device
 
         allDataStats.setFilesTotal(2);
         allDataStats.setAllDataBytesTotal(this.getCipherFileSize(cipherDeviceFilePath) * 2);
-        ui.status(allDataStats.getStartSummary(), true);
+        ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
         boolean inputEnded = false;
@@ -334,7 +334,7 @@ public class Device
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
 
 //        if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.status(allDataStats.getEndSummary(), true);
+        ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
         updateProgressTimeline.stop();
         ui.encryptionFinished();

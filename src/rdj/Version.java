@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -34,7 +34,8 @@ public class Version
     private static final String COMPANYNAME = "Private Person";
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
-    private static final String COPYRIGHT = "© Copyright " + Calendar.getInstance().get(Calendar.YEAR);
+    private static final String COPYRIGHTTYPE = "Creative Commons License: (CC BY-NC-ND 4.0)" + Calendar.getInstance().get(Calendar.YEAR);
+    private static final String COPYRIGHT = "Copyright © 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     private static String currentOverallVersionString = "";
     private String latestOverallVersionString = "";
     private static int currentVersionTotal = 0;

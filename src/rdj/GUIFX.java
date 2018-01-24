@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -542,7 +542,7 @@ public class GUIFX extends Application implements UI, Initializable
         }
         
 //      En/Disable hasEncryptableItems
-        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
+        if ((inputFileChooser != null) && (inputFileChooser.getSelectedFiles() != null) && ( State.cipherSelected != State.DEVICE ) && ( State.cipherReady ) ) // No need to scan for encryptable items without selected cipher for better performance
         {
             
             String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( inputFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
@@ -732,7 +732,7 @@ public class GUIFX extends Application implements UI, Initializable
             }
             else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
             {
-                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.WRITE)); } });
+                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.CREATE_CIPHER_DEVICE)); } });
             }
             else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
             {
@@ -745,7 +745,7 @@ public class GUIFX extends Application implements UI, Initializable
                    )
                 {
                     Mode.modeReady = true;
-                    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.CLONE)); } });
+                    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.CLONE_CIPHER_DEVICE)); } });
                 }
                 else
                 { 
@@ -952,14 +952,14 @@ public class GUIFX extends Application implements UI, Initializable
                     encryptionStarted();
                     finalCrypt.encryptSelection(inputFilesPathList, cipherFileChooser.getSelectedFile().toPath());
                 }
-                else if ( Mode.getMode() == Mode.WRITE )
+                else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
                 {
                     encryptionStarted();
                     rawCipher = new RawCipher(guifx); rawCipher.start();
                     rawCipher.writeRawCipher(cipherFileChooser.getSelectedFile().toPath(), inputFileChooser.getSelectedFile().toPath());
                     encryptionFinished();
                 }
-                else if ( Mode.getMode() == Mode.CLONE )
+                else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
                 {
                     encryptionStarted();
                     rawCipher = new RawCipher(guifx); rawCipher.start();

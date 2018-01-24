@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -40,6 +40,8 @@ import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -150,7 +152,7 @@ public class FinalCrypt extends Thread
         // Get TOTALS
         allDataStats.setFilesTotal(inputFilesPathList.size());
         for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allDataStats.addAllDataBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
-        ui.status(allDataStats.getStartSummary(), true);
+        ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
@@ -390,7 +392,7 @@ public class FinalCrypt extends Thread
         } // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.status(allDataStats.getEndSummary(), true);
+        ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
 //        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
         updateProgressTimeline.stop();
@@ -736,13 +738,14 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
     {
-//        if ((path.getFileName() != null) && (pathMatcher.matches(path.getFileName())))
+        long fileSize = 0;
+        try { fileSize = Files.size(path); } catch (IOException ex) { }
         if (!negatePattern)
         {
             if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
             {            
                 if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
-                else if (returnpathlist)    { pathList.add(path); }
+                else if (returnpathlist)    { if ((fileSize > 0) && (!Files.isSymbolicLink(path))) { pathList.add(path); } }
                 else                        {  }
             }   
         }
@@ -751,7 +754,7 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
             if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) )
             {            
                 if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
-                else if (returnpathlist)    { pathList.add(path); }
+                else if (returnpathlist)    { if ((fileSize > 0) && (!Files.isSymbolicLink(path))) { pathList.add(path); } }
                 else                        {  }
             }   
         }

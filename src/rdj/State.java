@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
  * Creative Commons License: (CC BY-NC-ND 4.0) as published by
- * https://creativecommons.org/licenses/by-nc-nd/4.0/ ; either
+ * https://creativecommons.org/licenses/by-nc-nd/4.0/; either
  * version 4.0 of the License, or (at your option) any later version.
  *
  * This software is distributed in the hope that it will be useful,

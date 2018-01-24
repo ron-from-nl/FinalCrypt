@@ -13,7 +13,7 @@
 
 <AnchorPane id="AnchorPane" minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFX">
     <children>
-      <VBox minHeight="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox minHeight="650.0" prefHeight="700.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TabPane fx:id="tab" focusTraversable="false" minHeight="350.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
@@ -136,7 +136,7 @@
                            <children>
                               <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Cousine" size="14.0" />
+                                    <Font name="Cousine" size="12.0" />
                                  </font></TextArea>
                            </children>
                         </AnchorPane>
@@ -146,7 +146,7 @@
             </TabPane>
             <AnchorPane maxHeight="95.0" minHeight="95.0" prefHeight="95.0" prefWidth="1100.0" VBox.vgrow="SOMETIMES">
                <children>
-                  <VBox fx:id="bottomVBox" alignment="BOTTOM_CENTER" maxHeight="95.0" minHeight="95.0" prefHeight="95.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="bottomVBox" alignment="BOTTOM_CENTER" maxHeight="95.0" maxWidth="1.7976931348623157E308" minHeight="95.0" prefHeight="95.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <GridPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="1237.0" VBox.vgrow="ALWAYS">
                           <columnConstraints>
@@ -212,27 +212,41 @@
                               <ProgressBar fx:id="filesProgressBar" focusTraversable="false" layoutY="5.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
                            <children>
-                              <GridPane alignment="CENTER" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="NEVER" maxWidth="175.0" minWidth="175.0" percentWidth="0.0" prefWidth="175.0" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="866.0" />
+                                  <ColumnConstraints hgrow="NEVER" maxWidth="378.0" minWidth="175.0" percentWidth="0.0" prefWidth="234.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label fx:id="statusLabel" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status" GridPane.hgrow="ALWAYS">
-                                       <font>
-                                          <Font name="Open Sans" size="12.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="copyrightLabel" cache="true" cacheHint="SPEED" disable="true" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="180.0" text="copyright" textFill="#555555" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
-                                       <font>
-                                          <Font name="Open Sans" size="12.0" />
-                                       </font>
-                                    </Label>
+                                    <AnchorPane maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS">
+                                       <children>
+                                          <Label fx:id="statusLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="12.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="5.0" right="5.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
+                                       <children>
+                                          <Label fx:id="copyrightLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="TEXT_ONLY" disable="true" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="326.0" text="copyright" textAlignment="RIGHT" textFill="#555555" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="12.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="5.0" right="5.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </GridPane>
                            </children>

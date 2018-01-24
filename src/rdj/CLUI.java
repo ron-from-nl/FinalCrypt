@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -49,6 +49,7 @@ public class CLUI implements UI
         boolean ifset = false, cfset = false;
         boolean validInvocation = true;
         boolean negatePattern = false;
+        boolean printgpt = false;
 
         ArrayList<Path> inputFilesPathList = new ArrayList<>();
         Path inputFilePath = null;
@@ -80,6 +81,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
+            else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
 //            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
@@ -97,32 +99,10 @@ public class CLUI implements UI
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
-        if ( ! ifset ) { error("\nError: Missing parameter <-i \"inputfile\">" + "\n"); usage(); }
-        if ( ! cfset ) { error("\nError: Missing parameter <-c \"cipherfile\">" + "\n"); usage(); }
+        if (( ! ifset ) && ( ! printgpt ))  { error("\nError: Missing parameter <-i \"inputfile\">" + "\n"); usage(); }
+        if ( ! cfset )                      { error("\nError: Missing parameter <-c \"cipherfile\">" + "\n"); usage(); }
 
         
-
-//      Check if inputFileList elements exist on filesystem
-
-        for(Path inputFilePathItem : inputFilesPathList)
-        {
-            if (Files.exists(inputFilePathItem))
-            {
-                if ( finalCrypt.isValidDir(inputFilePathItem) )
-                {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n", true); }
-                }
-                else
-                {
-                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { usage(); }
-                }
-            }
-            else
-            { 
-                    error("Input parameter: " + inputFilePathItem + " does not exists\n"); usage();
-            }            
-        }
-
         
 //////////////////////////////////////////////////// CHECK CIPHERFILE INPUT /////////////////////////////////////////////////
         
@@ -162,6 +142,7 @@ public class CLUI implements UI
                     else
                     {
                         State.cipherSelected = State.DEVICE;
+                        if (printgpt) { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(cipherFilePath); System.exit(0);}
                     }
 
                     finalCrypt.setCipherFilePath(cipherFilePath);
@@ -217,6 +198,27 @@ public class CLUI implements UI
 
 //////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
 
+//      Check if inputFileList elements exist on filesystem
+
+        for(Path inputFilePathItem : inputFilesPathList)
+        {
+            if (Files.exists(inputFilePathItem))
+            {
+                if ( finalCrypt.isValidDir(inputFilePathItem) )
+                {
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n", true); }
+                }
+                else
+                {
+                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { usage(); }
+                }
+            }
+            else
+            { 
+                    error("Input parameter: " + inputFilePathItem + " does not exists\n"); usage();
+            }            
+        }
+        
         State.targetSelected = State.INVALID;
         State.targetReady = false;
         
@@ -301,7 +303,7 @@ public class CLUI implements UI
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
         {
             Mode.modeReady = true;
-            status(Mode.setMode(Mode.WRITE) + "\n", true);
+            status(Mode.setMode(Mode.CREATE_CIPHER_DEVICE) + "\n", true);
         }
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
         {
@@ -312,7 +314,7 @@ public class CLUI implements UI
                )
             {
                 Mode.modeReady = true;
-                status(Mode.setMode(Mode.CLONE) + "\n", true);
+                status(Mode.setMode(Mode.CLONE_CIPHER_DEVICE) + "\n", true);
             }
             else
             { 
@@ -341,13 +343,13 @@ public class CLUI implements UI
                 this.encryptionStarted();
                 finalCrypt.encryptSelection(inputFilesPathListExtended, finalCrypt.getCipherFilePath());
             }
-            else if ( Mode.getMode() == Mode.WRITE )
+            else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
             {
                 encryptionStarted();
                 rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.writeRawCipher(cipherFilePath, inputFilesPathList.get(0));
                 encryptionFinished();
             }
-            else if ( Mode.getMode() == Mode.CLONE )
+            else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
             {
                 encryptionStarted();
                 rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.cloneRawCipher(cipherFilePath, inputFilesPathList.get(0));
@@ -391,8 +393,11 @@ public class CLUI implements UI
         log("            [--dec]               Print decimal calculations.\n");
         log("            [--hex]               Print hexadecimal calculations.\n");
         log("            [--chr]               Print character calculations.\n");
-        log("            [-b size]             Changes default I/O buffer size (size = KB) (default 1024 KB).\n");
+        log("            [--gpt]               Print GUID Partition Table in combination with -c device.\n");
+        log("            [-b size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\n");
+        log("\n");
         log("Parameters:\n");
+        log("\n");
         log("            <-i \"file/dir\">       The file or dir you want to encrypt (encrypts dir recursively).\n");
         log("            [-w \'wildcard\']       File wildcard include filter. Uses: \"Glob Patterns Syntax\".\n");
         log("            [-W \'wildcard\']       File wildcard exclude filter. Uses: \"Glob Patterns Syntax\".\n");
@@ -400,6 +405,7 @@ public class CLUI implements UI
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
         log("                                  A cipher-file is a unique file like a personal photo or video!\n");
         log("Examples:\n");
+        log("\n");
         log("            # Encrypt myfile with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\n");
         log("\n");
@@ -416,7 +422,23 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\n");
         log("\n");
         log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n");
+        log("\n");
+        log("Raw Cipher Examples (Linux):\n");
+        log("\n");
+        log("            # Create Cipher Device with 2 cipher partitions (e.g. on USB Mem Stick)\n");
+        log("            # Beware: cipherfile gets randomized before writing to Device\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdb -c mycipherfile\n");
+        log("\n");
+        log("            # Print GUID Partition Table\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt -c /dev/sdb\n");
+        log("\n");
+        log("            # Clone Cipher Device (-c source -i dest)\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdc -c /dev/sdb\n");
+        log("\n");
+        log("            # Encrypt myfile with raw cipher partition\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c /dev/sdb1\n");
+        log("\n");
         log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }

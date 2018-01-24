@@ -11,6 +11,11 @@ SoftPedia certificate
 
 =================================== Done ====================================
 
+Set logTextArea to fontsize 12
+Excluded files with 0 byte size from inputlist
+Excluded symbolic link files from inputlist
+Added --gpt "Print GUID Partition Table" to Command Line User Interface
+Fixed small statusfield growth issue
 
 ============================= Source Committed ==============================
 
@@ -18,14 +23,14 @@ SoftPedia certificate
 
 ============================= Source Published ==============================
 
+
+============================= Binaries Released =============================
+
 Line breaking during processing catches
 Clear Log TextArea every 1000 writes for better performance
 Added Raw Cipher support to Command Line User Interface
 Fixed pauze & stop buttons in new Statemachine
 Fixed CLUI relative paths bug in absolute paths
-
-============================= Binaries Released =============================
-
 Adding Raw Cipher Device Cloning on Linux and Apple
 Added Raw Cipher Device randomizing, including gap at end of partitions
 Added Raw Cipher Device Support including GPT Tooling

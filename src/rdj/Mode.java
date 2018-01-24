@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -20,17 +20,17 @@ package rdj;
 
 public class Mode
 {
-    public  static final int        SELECT =            0;
-    public  static final int        ENCRYPT =           1;
-    public  static final int        ENCRYPTRAW =        2;
-    public  static final int        WRITE =             3;
-    public  static final int        CLONE =             4;
-    private static final String[]   MODEDESCRIPTION =   new String[] { "Select","Encrypt","Encrypt (Raw Cipher)","Write","Clone" };
+    public  static final int        SELECT =                0;
+    public  static final int        ENCRYPT =               1;
+    public  static final int        ENCRYPTRAW =            2;
+    public  static final int        CREATE_CIPHER_DEVICE =  3;
+    public  static final int        CLONE_CIPHER_DEVICE =   4;
+    private static final String[]   MODEDESCRIPTION =       new String[] { "Select","Encrypt","Encrypt (Raw Cipher)","Create Cipher Device","Clone Cipher Device" };
     
-    private static       int        mode =              SELECT;
-    public  static boolean          modeReady =         false;
+    private static       int        mode =                  SELECT;
+    public  static boolean          modeReady =             false;
 
-    public static int getMode()                         { return mode; }
-    public static String setMode(int value)             { mode = value; return getDescription(); }
-    public static String getDescription()               { return MODEDESCRIPTION[mode]; }
+    public static int getMode()                             { return mode; }
+    public static String setMode(int value)                 { mode = value; return getDescription(); }
+    public static String getDescription()                   { return MODEDESCRIPTION[mode]; }
 }

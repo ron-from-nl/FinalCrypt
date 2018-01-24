@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -114,10 +114,10 @@ public class Stats
     
     
 //  START
-    public String getStartSummary()                               
+    public String getStartSummary(String mode)
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "Encryption: starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\n";
+        String returnString = mode + ": starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\n";
         
         return returnString;
     }
@@ -139,10 +139,10 @@ public class Stats
     
     
 //  END
-    public String getEndSummary()                               
+    public String getEndSummary(String mode)                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "Encryption: finished: " + filesProcessed + " / " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut();
+        String returnString = mode + ": finished: " + filesProcessed + " / " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + " finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut();
         return returnString;
     }
     

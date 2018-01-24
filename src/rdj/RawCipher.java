@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -43,5 +43,12 @@ public class RawCipher extends Thread
         gpt.write(targetDeviceFilePath);
         gpt.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath);
         try { Thread.sleep(250); } catch (InterruptedException ex) {  }
+    }
+
+    public void printGPT(Path cipherDeviceFilePath)
+    {
+        GPT gpt = new GPT(ui);
+        gpt.read(cipherDeviceFilePath);
+        gpt.print();
     }
 }
