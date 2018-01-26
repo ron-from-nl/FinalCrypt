@@ -225,7 +225,7 @@ public class FinalCrypt extends Thread
                     ByteBuffer outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
                     
                     // Get and set the stats
-                    try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\nError: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }
+                    try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\nError: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); continue fileloop; }
 
                     readInputFileStat.setFileBytesProcessed(0);
                     readCipherFileStat.setFileBytesProcessed(0);
@@ -383,12 +383,13 @@ public class FinalCrypt extends Thread
                         } catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
                     }	
 //                  Delete the original
-                    long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex + "\n"); }
-                    long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex + "\n"); }
-                    if ( inputfilesize == outputfilesize ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex + "\n"); } }
+                    long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
+                    long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
+                    if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; } }
                     
                 } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
+            
         } // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
@@ -745,17 +746,33 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
             if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
             {            
                 if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
-                else if (returnpathlist)    { if ((fileSize > 0) && (!Files.isSymbolicLink(path))) { pathList.add(path); } }
+                else if (returnpathlist)    
+                {
+                    boolean filevalid = true; String conditions = ""; String size = ""; String read = ""; String write = ""; String symbolic = "";
+                    if ( fileSize == 0 )                { filevalid = false; size = "[filesize = 0] "; conditions += size; }
+                    if ( ! Files.isReadable(path) )     { filevalid = false; read = "[not readable] "; conditions += read;  }
+                    if ( ! Files.isWritable(path) )     { filevalid = false; write = "[not writable] "; conditions += write;  }
+                    if ( Files.isSymbolicLink(path) )   { filevalid = false; symbolic = "[symlink]"; conditions += symbolic;  }
+                    if ( filevalid )                    { pathList.add(path); } // else { ui.error("Excluding file: " + path.toAbsolutePath().toString()+ ": " + conditions + "\n"); }
+                }
                 else                        {  }
             }   
         }
         else
         {
             if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) )
-            {            
+            {
                 if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
-                else if (returnpathlist)    { if ((fileSize > 0) && (!Files.isSymbolicLink(path))) { pathList.add(path); } }
-                else                        {  }
+                else if (returnpathlist)
+                {
+                    boolean filevalid = true; String conditions = ""; String size = ""; String read = ""; String write = ""; String symbolic = "";
+                    if ( fileSize == 0 )                { filevalid = false; size = "[filesize = 0] "; conditions += size; }
+                    if ( ! Files.isReadable(path) )     { filevalid = false; read = "[not readable] "; conditions += read;  }
+                    if ( ! Files.isWritable(path) )     { filevalid = false; write = "[not writable] "; conditions += write;  }
+                    if ( Files.isSymbolicLink(path) )   { filevalid = false; symbolic = "[symlink]"; conditions += symbolic;  }
+                    if ( filevalid )                    { pathList.add(path); } // else { ui.error("Excluding file: " + path.toAbsolutePath().toString()+ ": " + conditions + "\n"); }
+                }
+                else  {  }
             }   
         }
         return FileVisitResult.CONTINUE;

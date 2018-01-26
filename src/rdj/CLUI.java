@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import javafx.application.Platform;
 
 /* commandline test routine
 
@@ -361,7 +360,7 @@ public class CLUI implements UI
         }
         else
         {
-            status("Mode not ready\n", true);
+            status("Nothing to do.\n", true);
         }
             
     }
