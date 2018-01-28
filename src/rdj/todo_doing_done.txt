@@ -8,6 +8,7 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
+File logger (regular & error logs)
 
 =================================== Done ====================================
 
@@ -21,8 +22,11 @@ SoftPedia certificate
 
 ============================= Binaries Released =============================
 
-Removed folow symlink delete targetfile bug
+Large (extreme) encryptiontest succeeded (over 82,500 files & 50 GiB of data)
+Added Dry Run --dry to Command Line Interface and 100% file & dir validation
+Excluded symlinked directories in target filelist (prevent double encryption)
 
+Removed follow symlink delete targetfile bug
 Set logTextArea to fontsize 12
 Excluded files with 0 byte size from inputlist
 Excluded symbolic link files from inputlist

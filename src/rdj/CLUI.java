@@ -75,25 +75,23 @@ public class CLUI implements UI
             else if (( args[paramCnt].equals("-d")) || ( args[paramCnt].equals("--debug") ))                        { finalCrypt.setDebug(true); }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
+            else if ( args[paramCnt].equals("-s"))                                                                  { finalCrypt.setSymlink(true); }
             else if ( args[paramCnt].equals("--txt"))                                                               { finalCrypt.setTXT(true); }
             else if ( args[paramCnt].equals("--bin"))                                                               { finalCrypt.setBin(true); }
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
             else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
-//            else if ( args[paramCnt].equals("--version"))                                                           { Version upd = new Version(this); println(upd.getProcuct() + " " + upd.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
             else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
             // File Parameters
-//            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
+            else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
             else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
-//            else if ( args[paramCnt].equals("-w")) { if ( args[paramCnt+1].startsWith("-") ) { String param = args[paramCnt+1].replace("-", ""); pattern = "glob:"; for (char chr:param.toCharArray()) { pattern += "[!" + chr + "]"; }  paramCnt++; } else { pattern = "glob:" + args[paramCnt+1]; paramCnt++; }}
             else if ( args[paramCnt].equals("-w")) { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-W")) { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-r")) { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
-//            else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(System.getProperty("user.dir"), args[paramCnt+1]); cfset = true; paramCnt++; }
             else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
@@ -203,13 +201,13 @@ public class CLUI implements UI
         {
             if (Files.exists(inputFilePathItem))
             {
-                if ( finalCrypt.isValidDir(inputFilePathItem) )
+                if ( isValidDir(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " exist\n", true); }
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid dir\n", true); }
                 }
-                else
+                else if ( isValidFile(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if ( finalCrypt.isValidFile(inputFilePathItem, false, true) ) {} else   { usage(); }
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid file\n", true); }
                 }
             }
             else
@@ -366,6 +364,31 @@ public class CLUI implements UI
     }
 
     
+    public boolean isValidDir(Path path, boolean symlink, boolean report)
+    {
+        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )           { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        return validdir;
+    }
+
+    public boolean isValidFile(Path path, boolean symlink, boolean report)
+    {
+        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+
+        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
+        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        return validfile;
+    }
+
     public static void main(String[] args)
     {
         new CLUI(args);
@@ -385,6 +408,7 @@ public class CLUI implements UI
         log("            [-d] [--debug]        Enables debugging mode.\n");
         log("            [-v] [--verbose]      Enables verbose mode.\n");
         log("            [-p] [--print]        Print overal data encryption.\n");
+        log("            [-f]                  Force symlinks (not recommended).\n");
         log("                 [--version]      Print " + version.getProcuct() + " version.\n");
         log("                 [--update]       Check for online updates.\n");
         log("            [--txt]               Print text calculations.\n");
@@ -392,11 +416,13 @@ public class CLUI implements UI
         log("            [--dec]               Print decimal calculations.\n");
         log("            [--hex]               Print hexadecimal calculations.\n");
         log("            [--chr]               Print character calculations.\n");
-        log("            [--gpt]               Print GUID Partition Table in combination with -c device.\n");
+        log("                                  Warning: The above Print options slows encryption severely.\n");
+        log("            [--gpt]               Print GUID Partition Table in combination with -c \"device\".\n");
         log("            [-b size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\n");
         log("\n");
         log("Parameters:\n");
         log("\n");
+        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\n");
         log("            <-i \"file/dir\">       The file or dir you want to encrypt (encrypts dir recursively).\n");
         log("            [-w \'wildcard\']       File wildcard include filter. Uses: \"Glob Patterns Syntax\".\n");
         log("            [-W \'wildcard\']       File wildcard exclude filter. Uses: \"Glob Patterns Syntax\".\n");

@@ -30,7 +30,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
@@ -40,8 +39,6 @@ import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -50,7 +47,7 @@ import javafx.util.Duration;
 
 public class FinalCrypt extends Thread
 {
-    private boolean debug = false, verbose = false, print = false, txt = false, bin = false, dec = false, hex = false, chr = false;
+    private boolean debug = false, verbose = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
 
     private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
     private int bufferSize = 0; // Default 1MB
@@ -107,11 +104,13 @@ public class FinalCrypt extends Thread
     public boolean getDebug()                                               { return debug; }
     public boolean getVerbose()                                             { return verbose; }
     public boolean getPrint()                                               { return print; }
+    public boolean getSymlink()                                             { return symlink; }
     public boolean getTXT()                                                 { return txt; }
     public boolean getBin()                                                 { return bin; }
     public boolean getDec()                                                 { return dec; }
     public boolean getHex()                                                 { return hex; }
     public boolean getChr()                                                 { return chr; }
+    public boolean getDry()                                                 { return dry; }
     public int getBufferSizeDefault()                                      { return bufferSizeDefault; }
     public ArrayList<Path> getInputFilesPathList()                          { return inputFilesPathList; }
     public Path getCipherFilePath()                                         { return cipherFilePath; }
@@ -120,11 +119,13 @@ public class FinalCrypt extends Thread
     public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
     public void setPrint(boolean print)                                     { this.print = print; }
+    public void setSymlink(boolean symlink)                                 { this.symlink = symlink; }
     public void setTXT(boolean txt)                                         { this.txt = txt; }
     public void setBin(boolean bin)                                         { this.bin = bin; }
     public void setDec(boolean dec)                                         { this.dec = dec; }
     public void setHex(boolean hex)                                         { this.hex = hex; }
     public void setChr(boolean chr)                                         { this.chr = chr; }
+    public void setDry(boolean dry)                                         { this.dry = dry; }
     public void setBufferSize(int bufferSize)                               
     {
         this.bufferSize = bufferSize;
@@ -173,220 +174,223 @@ public class FinalCrypt extends Thread
         // Encrypt Files loop
         fileloop: for (Path inputFilePath:inputFilesPathList)
         {
+            long filesize = 0; try { Files.size(inputFilePath); } catch (IOException ex) { ui.error("\nError: Files.size(inputFilePath); " + ex.getMessage() + "\n"); continue fileloop; }
             if (stopPending) { inputFileEnded = true; break fileloop; }
             if (! Files.isDirectory(inputFilePath))
             {
                 if ((inputFilePath.compareTo(cipherFilePath) != 0))
                 {
-                    String prefix = new String("bit");
-                    String suffix = new String(".bit");
-                    String extension = new String("");
-                    int lastDotPos = inputFilePath.getFileName().toString().lastIndexOf('.'); // -1 no extension
-                    int lastPos = inputFilePath.getFileName().toString().length();
-                    if (lastDotPos != -1) { extension = inputFilePath.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
-
-                    if (!extension.equals(suffix))  { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString() + suffix); }   // Add    .bit
-                    else                            { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString().replace(suffix, "")); }               // Remove .bit
-
-                    
-                    try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex + "\n"); }
-
-//                  Status
-    
+//                  Status    
                     ui.log("Processing: " + inputFilePath.toAbsolutePath() + " ");
-                    ui.status("Encrypting: " + inputFilePath.toAbsolutePath() + " ", false);
 
-                    // Prints printByte Header ones                
-                    if ( print )
+                    if ( ! dry ) // Real run passes this point
                     {
-                        ui.log("\n");
-                        ui.log(" ----------------------------------------------------------------------\n");
-                        ui.log("|          |       Input       |      Cipher       |      Output       |\n");
-                        ui.log("| ---------|-------------------|-------------------|-------------------|\n");
-                        ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
-                        ui.log("|----------|-------------------|-------------------|-------------------|\n");
-                    }
+                        String prefix = new String("bit");
+                        String suffix = new String(".bit");
+                        String extension = new String("");
+                        int lastDotPos = inputFilePath.getFileName().toString().lastIndexOf('.'); // -1 no extension
+                        int lastPos = inputFilePath.getFileName().toString().length();
+                        if (lastDotPos != -1) { extension = inputFilePath.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
 
-//                  Encryptor I/O Block
-                    inputFileEnded = false;
-                    long readInputFileChannelPosition = 0;
-                    long readInputFileChannelTransfered = 0;
-                    long readCipherFileChannelPosition = 0;                
-                    long readCipherFileChannelTransfered = 0;                
-                    long writeOutputFileChannelPosition = 0;
-                    long writeOutputFileChannelTransfered = 0;
+                        if (!extension.equals(suffix))  { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString() + suffix); }   // Add    .bit
+                        else                            { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString().replace(suffix, "")); }               // Remove .bit
 
-                    long readOutputFileChannelPosition = 0;
-                    long readOutputFileChannelTransfered = 0;
-                    long writeInputFileChannelPosition = 0;
-                    long writeInputFileChannelTransfered = 0;
-                    ByteBuffer inputFileBuffer =   ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
-                    ByteBuffer cipherFileBuffer =  ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-                    ByteBuffer outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
-                    
-                    // Get and set the stats
-                    try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\nError: encryptFiles () fileBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); continue fileloop; }
 
-                    readInputFileStat.setFileBytesProcessed(0);
-                    readCipherFileStat.setFileBytesProcessed(0);
-                    writeOutputFileStat.setFileBytesProcessed(0);
-                    readOutputFileStat.setFileBytesProcessed(0);
-                    writeInputFileStat.setFileBytesProcessed(0);
-                    
-                    // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
-                    while ( ! inputFileEnded )
-                    {
-                        if (stopPending)
+                        try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex + "\n"); }
+
+                        ui.status("Encrypting: " + inputFilePath.toAbsolutePath() + " ", false);
+
+                        // Prints printByte Header ones                
+                        if ( print )
                         {
-//                          Delete broken outputFile and keep original
-                            try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("\nFiles.deleteIfExists(outputFilePath): " + ex + "\n"); }
-                            inputFileEnded = true; ui.status("\n", true); break fileloop;
+                            ui.log("\n");
+                            ui.log(" ----------------------------------------------------------------------\n");
+                            ui.log("|          |       Input       |      Cipher       |      Output       |\n");
+                            ui.log("| ---------|-------------------|-------------------|-------------------|\n");
+                            ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
+                            ui.log("|----------|-------------------|-------------------|-------------------|\n");
                         }
 
-                        //open inputFile
-                        readInputFileStat.setFileStartEpoch(); // allFilesStats.setFilesStartNanoTime();
-                        try (final SeekableByteChannel readInputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
+    //                  Encryptor I/O Block
+                        inputFileEnded = false;
+                        long readInputFileChannelPosition = 0;
+                        long readInputFileChannelTransfered = 0;
+                        long readCipherFileChannelPosition = 0;                
+                        long readCipherFileChannelTransfered = 0;                
+                        long writeOutputFileChannelPosition = 0;
+                        long writeOutputFileChannelTransfered = 0;
+
+                        long readOutputFileChannelPosition = 0;
+                        long readOutputFileChannelTransfered = 0;
+                        long writeInputFileChannelPosition = 0;
+                        long writeInputFileChannelTransfered = 0;
+                        ByteBuffer inputFileBuffer =   ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
+                        ByteBuffer cipherFileBuffer =  ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
+                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
+
+                        // Get and set the stats
+                        try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\nError: Files.size(inputFilePath); " + ex.getMessage() + "\n"); continue fileloop; }
+
+                        readInputFileStat.setFileBytesProcessed(0);
+                        readCipherFileStat.setFileBytesProcessed(0);
+                        writeOutputFileStat.setFileBytesProcessed(0);
+                        readOutputFileStat.setFileBytesProcessed(0);
+                        writeInputFileStat.setFileBytesProcessed(0);
+
+                        // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
+                        while ( ! inputFileEnded )
                         {
-                            // Fill up inputFileBuffer
-                            readInputFileChannel.position(readInputFileChannelPosition);
-                            readInputFileChannelTransfered = readInputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); readInputFileChannelPosition += readInputFileChannelTransfered;
-                            if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; } // Buffer.limit = remainder from current position to end
-                            readInputFileChannel.close(); readInputFileStat.setFileEndEpoch(); readInputFileStat.clock();
-                            readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readInputFileChannelTransfered / 2);
-                        } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-//                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\n");
-                        
-                        if ( readInputFileChannelTransfered != -1 )
-                        {
-                            readCipherFileStat.setFileStartEpoch();
-                            try (final SeekableByteChannel readCipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                            if (stopPending)
                             {
-                                // Fill up cipherFileBuffer
-                                readCipherFileChannel.position(readCipherFileChannelPosition);
-                                readCipherFileChannelTransfered = readCipherFileChannel.read(cipherFileBuffer); readCipherFileChannelPosition += readCipherFileChannelTransfered;
-                                if ( readCipherFileChannelTransfered < cipherFileBufferSize ) { readCipherFileChannelPosition = 0; readCipherFileChannel.position(0); readCipherFileChannelTransfered += readCipherFileChannel.read(cipherFileBuffer); readCipherFileChannelPosition += readCipherFileChannelTransfered;}
-                                cipherFileBuffer.flip();
-                                readCipherFileChannel.close(); readCipherFileStat.setFileEndEpoch(); readCipherFileStat.clock();
-                                readCipherFileStat.addFileBytesProcessed(readCipherFileChannelTransfered);
-                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-//                            ui.log("readCipherFileChannelTransfered: " + readCipherFileChannelTransfered + " cipherFileBuffer.limit(): " + Integer.toString(cipherFileBuffer.limit()) + "\n");
+    //                          Delete broken outputFile and keep original
+                                try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("\nFiles.deleteIfExists(outputFilePath): " + ex + "\n"); }
+                                inputFileEnded = true; ui.status("\n", true); break fileloop;
+                            }
 
-                            // Open outputFile for writing
-                            writeOutputFileStat.setFileStartEpoch();
-                            try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-                            {
-                                // Encrypt inputBuffer and fill up outputBuffer
-                                outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
-                                writeOutputFileChannelTransfered = writeOutputFileChannel.write(outputFileBuffer); outputFileBuffer.flip(); writeOutputFileChannelPosition += writeOutputFileChannelTransfered;
-                                if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
-                                writeOutputFileChannel.close(); writeOutputFileStat.setFileEndEpoch(); writeOutputFileStat.clock();
-                                writeOutputFileStat.addFileBytesProcessed(writeOutputFileChannelTransfered);
-                            } catch (IOException ex) { ui.error("\noutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
-//                            ui.log("writeOutputFileChannelTransfered: " + writeOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
-                        }
-                        outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
-                    }
-
-//                  Counting encrypting and shredding for the average throughtput performance
-
-//                  Shredding process
-
-                    ui.status("Shredding: " + inputFilePath.toAbsolutePath() + " ", false);
-
-                    inputFileEnded = false;
-                    readInputFileChannelPosition = 0;
-                    readInputFileChannelTransfered = 0;
-                    readCipherFileChannelPosition = 0;                
-                    readCipherFileChannelTransfered = 0;                
-                    writeOutputFileChannelPosition = 0;
-
-                    inputFileBuffer =   ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
-                    cipherFileBuffer =  ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
-                    outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
-                    
-                    shredloop: while ( ! inputFileEnded )
-                    {
-                        while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-                        if (stopPending)    { inputFileEnded = true; break shredloop; }
-
-                        //read outputFile
-                        readOutputFileStat.setFileStartEpoch();
-                        try (final SeekableByteChannel readOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.READ)))
-                        {
-                            readOutputFileChannel.position(readOutputFileChannelPosition);
-                            readOutputFileChannelTransfered = readOutputFileChannel.read(outputFileBuffer); outputFileBuffer.flip(); readOutputFileChannelPosition += readOutputFileChannelTransfered;
-                            if (( readOutputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
-                            readOutputFileChannel.close(); readOutputFileStat.setFileEndEpoch(); readOutputFileStat.clock();
-                            readOutputFileStat.addFileBytesProcessed(outputFileBuffer.limit()); allDataStats.addAllDataBytesProcessed(outputFileBuffer.limit()/2);
-                        } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-//                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\n");
-
-                        //shred inputFile
-                        if ( readOutputFileChannelTransfered != -1 )
-                        {
-                            writeInputFileStat.setFileStartEpoch();
-                            try (final SeekableByteChannel writeInputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE,StandardOpenOption.SYNC)))
+                            //open inputFile
+                            readInputFileStat.setFileStartEpoch(); // allFilesStats.setFilesStartNanoTime();
+                            try (final SeekableByteChannel readInputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)))
                             {
                                 // Fill up inputFileBuffer
-                                writeInputFileChannel.position(writeInputFileChannelPosition);
-                                writeInputFileChannelTransfered = writeInputFileChannel.write(outputFileBuffer); inputFileBuffer.flip(); writeInputFileChannelPosition += writeInputFileChannelTransfered;
-                                if (( writeInputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
-                                writeInputFileChannel.close(); writeInputFileStat.setFileEndEpoch(); writeInputFileStat.clock();
-                                writeInputFileStat.addFileBytesProcessed(outputFileBuffer.limit());
-                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
-//                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
+                                readInputFileChannel.position(readInputFileChannelPosition);
+                                readInputFileChannelTransfered = readInputFileChannel.read(inputFileBuffer); inputFileBuffer.flip(); readInputFileChannelPosition += readInputFileChannelTransfered;
+                                if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; } // Buffer.limit = remainder from current position to end
+                                readInputFileChannel.close(); readInputFileStat.setFileEndEpoch(); readInputFileStat.clock();
+                                readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readInputFileChannelTransfered / 2);
+                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
+    //                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\n");
+
+                            if ( readInputFileChannelTransfered != -1 )
+                            {
+                                readCipherFileStat.setFileStartEpoch();
+                                try (final SeekableByteChannel readCipherFileChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+                                {
+                                    // Fill up cipherFileBuffer
+                                    readCipherFileChannel.position(readCipherFileChannelPosition);
+                                    readCipherFileChannelTransfered = readCipherFileChannel.read(cipherFileBuffer); readCipherFileChannelPosition += readCipherFileChannelTransfered;
+                                    if ( readCipherFileChannelTransfered < cipherFileBufferSize ) { readCipherFileChannelPosition = 0; readCipherFileChannel.position(0); readCipherFileChannelTransfered += readCipherFileChannel.read(cipherFileBuffer); readCipherFileChannelPosition += readCipherFileChannelTransfered;}
+                                    cipherFileBuffer.flip();
+                                    readCipherFileChannel.close(); readCipherFileStat.setFileEndEpoch(); readCipherFileStat.clock();
+                                    readCipherFileStat.addFileBytesProcessed(readCipherFileChannelTransfered);
+                                } catch (IOException ex) { ui.error("\nFiles.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
+    //                            ui.log("readCipherFileChannelTransfered: " + readCipherFileChannelTransfered + " cipherFileBuffer.limit(): " + Integer.toString(cipherFileBuffer.limit()) + "\n");
+
+                                // Open outputFile for writing
+                                writeOutputFileStat.setFileStartEpoch();
+                                try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+                                {
+                                    // Encrypt inputBuffer and fill up outputBuffer
+                                    outputFileBuffer = encryptBuffer(inputFileBuffer, cipherFileBuffer);
+                                    writeOutputFileChannelTransfered = writeOutputFileChannel.write(outputFileBuffer); outputFileBuffer.flip(); writeOutputFileChannelPosition += writeOutputFileChannelTransfered;
+                                    if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
+                                    writeOutputFileChannel.close(); writeOutputFileStat.setFileEndEpoch(); writeOutputFileStat.clock();
+                                    writeOutputFileStat.addFileBytesProcessed(writeOutputFileChannelTransfered);
+                                } catch (IOException ex) { ui.error("\noutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
+    //                            ui.log("writeOutputFileChannelTransfered: " + writeOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
+                            }
+                            outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
                         }
-                        outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
-                    }
 
-//                  FILE STATUS        
-                    ui.log("- Encrypt: rd(" +  readInputFileStat.getFileBytesThroughPut() + ") -> ");
-                    ui.log("rd(" +           readCipherFileStat.getFileBytesThroughPut() + ") -> ");
-                    ui.log("wr(" +           writeOutputFileStat.getFileBytesThroughPut() + ") ");
-                    ui.log("- Shred: rd(" +    readOutputFileStat.getFileBytesThroughPut() + ") -> ");
-                    ui.log("wr(" +           writeInputFileStat.getFileBytesThroughPut() + ") ");                                        
-                    ui.log(allDataStats.getAllDataBytesProgressPercentage());
-                    allDataStats.addFilesProcessed(1);
-                    
-                    if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
-                    
-//                  Print the stats
-                        
-                    BasicFileAttributes battr = null;
-                    PosixFileAttributes pattr = null;
-                    DosFileAttributes dattr = null;
+    //                  Counting encrypting and shredding for the average throughtput performance
 
-//                  Read inputFilePath attributes                            
-                    if ( System.getProperty("os.name").toLowerCase().startsWith("win") ) { try { dattr = Files.readAttributes(inputFilePath, DosFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
-                    else                                                                 { try { pattr = Files.readAttributes(inputFilePath, PosixFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
-                            
-//                  Write outputFilePath attributes                           
-                    if ( System.getProperty("os.name").toLowerCase().startsWith("win") )
-                    {
-                        try
+    //                  Shredding process
+
+                        ui.status("Shredding: " + inputFilePath.toAbsolutePath() + " ", false);
+
+                        inputFileEnded = false;
+                        readInputFileChannelPosition = 0;
+                        readInputFileChannelTransfered = 0;
+                        readCipherFileChannelPosition = 0;                
+                        readCipherFileChannelTransfered = 0;                
+                        writeOutputFileChannelPosition = 0;
+
+                        inputFileBuffer =   ByteBuffer.allocate(inputFileBufferSize);  inputFileBuffer.clear();
+                        cipherFileBuffer =  ByteBuffer.allocate(cipherFileBufferSize); cipherFileBuffer.clear();
+                        outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
+
+                        shredloop: while ( ! inputFileEnded )
                         {
-                            Files.setAttribute(outputFilePath, "basic:lastModifiedTime", dattr.lastModifiedTime());
-                            Files.setAttribute(outputFilePath, "dos:hidden", dattr.isHidden());
-                            Files.setAttribute(outputFilePath, "dos:system", dattr.isSystem());
-                            Files.setAttribute(outputFilePath, "dos:readonly", dattr.isReadOnly());
-                            Files.setAttribute(outputFilePath, "dos:archive", dattr.isArchive());
-                        } catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex + "\n"); }
-                    }
-                    else
-                    {
-                        try
+                            while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+                            if (stopPending)    { inputFileEnded = true; break shredloop; }
+
+                            //read outputFile
+                            readOutputFileStat.setFileStartEpoch();
+                            try (final SeekableByteChannel readOutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.READ)))
+                            {
+                                readOutputFileChannel.position(readOutputFileChannelPosition);
+                                readOutputFileChannelTransfered = readOutputFileChannel.read(outputFileBuffer); outputFileBuffer.flip(); readOutputFileChannelPosition += readOutputFileChannelTransfered;
+                                if (( readOutputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
+                                readOutputFileChannel.close(); readOutputFileStat.setFileEndEpoch(); readOutputFileStat.clock();
+                                readOutputFileStat.addFileBytesProcessed(outputFileBuffer.limit()); allDataStats.addAllDataBytesProcessed(outputFileBuffer.limit()/2);
+                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
+    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\n");
+
+                            //shred inputFile
+                            if ( readOutputFileChannelTransfered != -1 )
+                            {
+                                writeInputFileStat.setFileStartEpoch();
+                                try (final SeekableByteChannel writeInputFileChannel = Files.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE,StandardOpenOption.SYNC)))
+                                {
+                                    // Fill up inputFileBuffer
+                                    writeInputFileChannel.position(writeInputFileChannelPosition);
+                                    writeInputFileChannelTransfered = writeInputFileChannel.write(outputFileBuffer); inputFileBuffer.flip(); writeInputFileChannelPosition += writeInputFileChannelTransfered;
+                                    if (( writeInputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
+                                    writeInputFileChannel.close(); writeInputFileStat.setFileEndEpoch(); writeInputFileStat.clock();
+                                    writeInputFileStat.addFileBytesProcessed(outputFileBuffer.limit());
+                                } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
+    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
+                            }
+                            outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
+                        }
+
+    //                  FILE STATUS        
+                        ui.log("- Encrypt: rd(" +  readInputFileStat.getFileBytesThroughPut() + ") -> ");
+                        ui.log("rd(" +           readCipherFileStat.getFileBytesThroughPut() + ") -> ");
+                        ui.log("wr(" +           writeOutputFileStat.getFileBytesThroughPut() + ") ");
+                        ui.log("- Shred: rd(" +    readOutputFileStat.getFileBytesThroughPut() + ") -> ");
+                        ui.log("wr(" +           writeInputFileStat.getFileBytesThroughPut() + ") ");                                        
+                        ui.log(allDataStats.getAllDataBytesProgressPercentage());
+                        allDataStats.addFilesProcessed(1);
+
+                        if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
+
+    //                  Print the stats
+
+                        BasicFileAttributes battr = null;
+                        PosixFileAttributes pattr = null;
+                        DosFileAttributes dattr = null;
+
+    //                  Read inputFilePath attributes                            
+                        if ( System.getProperty("os.name").toLowerCase().startsWith("win") ) { try { dattr = Files.readAttributes(inputFilePath, DosFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
+                        else                                                                 { try { pattr = Files.readAttributes(inputFilePath, PosixFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
+
+    //                  Write outputFilePath attributes                           
+                        if ( System.getProperty("os.name").toLowerCase().startsWith("win") )
                         {
-                            Files.setAttribute(outputFilePath, "posix:owner", pattr.owner());
-                            Files.setAttribute(outputFilePath, "posix:group", pattr.group());
-                            Files.setPosixFilePermissions(outputFilePath, pattr.permissions());
-                            Files.setLastModifiedTime(outputFilePath, pattr.lastModifiedTime());
-                        } catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
-                    }	
-//                  Delete the original
-                    long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
-                    long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
-                    if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; } }
-                    
+                            try
+                            {
+                                Files.setAttribute(outputFilePath, "basic:lastModifiedTime", dattr.lastModifiedTime());
+                                Files.setAttribute(outputFilePath, "dos:hidden", dattr.isHidden());
+                                Files.setAttribute(outputFilePath, "dos:system", dattr.isSystem());
+                                Files.setAttribute(outputFilePath, "dos:readonly", dattr.isReadOnly());
+                                Files.setAttribute(outputFilePath, "dos:archive", dattr.isArchive());
+                            } catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex + "\n"); }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                Files.setAttribute(outputFilePath, "posix:owner", pattr.owner());
+                                Files.setAttribute(outputFilePath, "posix:group", pattr.group());
+                                Files.setPosixFilePermissions(outputFilePath, pattr.permissions());
+                                Files.setLastModifiedTime(outputFilePath, pattr.lastModifiedTime());
+                            } catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
+                        }	
+    //                  Delete the original
+                        long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
+                        long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
+                        if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; } }
+                    } else { ui.log("\n"); } // End real run
                 } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
             } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
             
@@ -466,7 +470,7 @@ public class FinalCrypt extends Thread
     public void deleteSelection(ArrayList<Path> inputFilesPathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, delete, returnpathlist, pattern, negatePattern);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, verbose, delete, symlink, returnpathlist, pattern, negatePattern);
         for (Path path:inputFilesPathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
@@ -563,31 +567,29 @@ public class FinalCrypt extends Thread
         ui.log("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm) + "\n");
     }
     
-    public boolean isValidFile(Path path, boolean createFile, boolean mustHaveData)
+    public static boolean isValidDir(UI ui, Path path, boolean symlink, boolean report)
     {
-        boolean isValid = true;
-        long fileSize = 0;
-        LinkOption[] opt = new LinkOption[]{LinkOption.NOFOLLOW_LINKS};
-        
-        if ((createFile) && (Files.notExists(path))) { try {Files.createFile(path);} catch (IOException ex) { ui.error("Error: isValidFile(..) Files.createFile(path): "+ ex.getLocalizedMessage() + "\n");} }
-
-        if (Files.exists(path, opt))    { if (verbose) { /*ui.log(path + " exists.\n"); */}}                else { ui.error(path + " does not exist!" + "\n"); isValid = false; }
-//        if (Files.isRegularFile(path))  { if (verbose) { /*ui.log("The checked file is regular.\n"); */}}   else { ui.error("Error: The checked file is not regular!" + "\n"); isValid = false; }
-//        if (Files.isReadable(path))     { if (verbose) { /*ui.log("The checked file is readable.\n"); */}}  else { ui.error("Error: The checked file is not readable!" + "\n"); isValid = false; }
-//        if (Files.isWritable(path))     { if (verbose) { /*ui.log("The checked file is writable.\n"); */}}  else { ui.error("Error: The checked file is not writable!" + "\n"); isValid = false; }
-        try { fileSize = Files.size(path); } catch (IOException ex) { ui.error("Error: isValidFile(..) Files.size(path): "+ ex.getLocalizedMessage() + "\n"); }
-//        if (verbose) { ui.log("The checked file has " + fileSize + " bytes of data."); }
-        if (( mustHaveData ) && ( fileSize == 0 )) { ui.error("Error: The checked file requires data!\n"); isValid = false; }
-        
-        return isValid;
+        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report ) { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        return validdir;
     }
 
-    public boolean isValidDir(Path path)
+    public static boolean isValidFile(UI ui, Path path, boolean symlink, boolean report)
     {
-        boolean isValid = true;
-        if (Files.exists(path))    {  } else { ui.error("Item: " + path + " does not exist!" + "\n"); isValid = false; }
-        
-        return isValid;
+        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+
+        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
+        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        if ( ! validfile ) { if ( report ) { ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        return validfile;
     }
 
     public ArrayList<Path> getPathList(File[] files)
@@ -615,7 +617,7 @@ public class FinalCrypt extends Thread
                 }
                 else
                 {
-                    pathList.add(file.toPath());
+                    if (isValidFile(ui, file.toPath(), symlink, verbose) ) { pathList.add(file.toPath()); }
                 }
             }
         }
@@ -627,12 +629,19 @@ public class FinalCrypt extends Thread
                 {
                     for (Path path:getDirectoryPathList(file, pattern, negatePattern))
                     {
-                        if ( ((path.compareTo(cipherPath) != 0)) ) {pathList.add(path);} else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                        if ( ((path.compareTo(cipherPath) != 0)) )
+                        {
+                            pathList.add(path);
+                        } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
                     } 
                 }
                 else
                 {
-                    if ( ((file.toPath().compareTo(cipherPath) != 0)) ) { pathList.add(file.toPath()); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                    if ( ((file.toPath().compareTo(cipherPath) != 0)) )
+                    {
+                        if (isValidFile(ui, file.toPath(), symlink, verbose) ) { pathList.add(file.toPath()); }
+                    }
+                    else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
                 }
             }
         }
@@ -689,7 +698,7 @@ public class FinalCrypt extends Thread
         ArrayList<Path> recursivePathList = new ArrayList<>();
         
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, false, true, pattern, negatePattern);
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, verbose, false, symlink, true, pattern, negatePattern);
         try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
         recursivePathList = mySimpleFileVisitor.getPathList();
 
@@ -711,7 +720,9 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
 {
     private final UI ui;
     private final PathMatcher pathMatcher;
+    private final boolean verbose; 
     private final boolean delete; 
+    private final boolean symlink; 
     private final boolean returnpathlist; 
     private final ArrayList<Path> pathList;
     private boolean negatePattern;
@@ -722,57 +733,48 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
 //  all *.bit   =   'regex:^.*\.bit$'
 //  all but *.bit   'regex:(?!.*\.bit$)^.*$'
     
-    public MySimpleFileVisitor(UI ui, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
+    public MySimpleFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         this.ui = ui;
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
         this.delete = delete;
+        this.verbose = verbose;
+        this.symlink = symlink;
         this.returnpathlist = returnpathlist;
         pathList = new ArrayList<Path>();
         this.negatePattern = negatePattern;
     }
    
-    @Override public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+    @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
     {
-        return FileVisitResult.CONTINUE;
+        if ( FinalCrypt.isValidDir(ui, path, symlink, verbose) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; }
     }
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
     {
-        long fileSize = 0;
-        try { fileSize = Files.size(path); } catch (IOException ex) { }
+        long fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex) { }
         if (!negatePattern)
         {
             if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
             {            
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
                 else if (returnpathlist)    
                 {
-                    boolean filevalid = true; String conditions = ""; String size = ""; String read = ""; String write = ""; String symbolic = "";
-                    if ( fileSize == 0 )                { filevalid = false; size = "[filesize = 0] "; conditions += size; }
-                    if ( ! Files.isReadable(path) )     { filevalid = false; read = "[not readable] "; conditions += read;  }
-                    if ( ! Files.isWritable(path) )     { filevalid = false; write = "[not writable] "; conditions += write;  }
-                    if ( Files.isSymbolicLink(path) )   { filevalid = false; symbolic = "[symlink]"; conditions += symbolic;  }
-                    if ( filevalid )                    { pathList.add(path); } // else { ui.error("Excluding file: " + path.toAbsolutePath().toString()+ ": " + conditions + "\n"); }
+                    if (FinalCrypt.isValidFile(ui, path, symlink, verbose)) { pathList.add(path); } 
                 }
-                else                        {  }
+                else { ui.status("Huh? this shouldn't have happened.\n", true); }
             }   
         }
         else
         {
-            if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) )
+            if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) ) // Negate Pattern; Does NOT match pattern
             {
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex + "\n"); } }
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
                 else if (returnpathlist)
                 {
-                    boolean filevalid = true; String conditions = ""; String size = ""; String read = ""; String write = ""; String symbolic = "";
-                    if ( fileSize == 0 )                { filevalid = false; size = "[filesize = 0] "; conditions += size; }
-                    if ( ! Files.isReadable(path) )     { filevalid = false; read = "[not readable] "; conditions += read;  }
-                    if ( ! Files.isWritable(path) )     { filevalid = false; write = "[not writable] "; conditions += write;  }
-                    if ( Files.isSymbolicLink(path) )   { filevalid = false; symbolic = "[symlink]"; conditions += symbolic;  }
-                    if ( filevalid )                    { pathList.add(path); } // else { ui.error("Excluding file: " + path.toAbsolutePath().toString()+ ": " + conditions + "\n"); }
+                    if (FinalCrypt.isValidFile(ui, path, symlink, verbose)) { pathList.add(path); } 
                 }
-                else  {  }
+                else  { ui.status("Huh? this shouldn't have happened.\n", true); }
             }   
         }
         return FileVisitResult.CONTINUE;
@@ -780,14 +782,14 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
     {
-        ui.error("Error: visitFileFailed: " + exc + "\n");
+        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\n");
         return FileVisitResult.SKIP_SIBLINGS;
     }
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
     {
-        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex + "\n"); } }
-        else if (returnpathlist)    {     }
+        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
+        else if (returnpathlist)    {        }
         else                        {     }
         return FileVisitResult.CONTINUE;
     }

@@ -115,6 +115,7 @@ public class GUIFX extends Application implements UI, Initializable
     private Label statusLabel;    
 
     FinalCrypt finalCrypt;
+    UI ui;
     GUIFX guifx;
     private JFileChooser inputFileChooser;
     private boolean negatePattern;
@@ -164,6 +165,7 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void start(Stage stage) throws Exception
     {
+        ui = this;
         guifx = this;
         this.stage = stage;
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
@@ -179,7 +181,7 @@ public class GUIFX extends Application implements UI, Initializable
         stage.setOnCloseRequest(e -> Platform.exit());
         stage.show();
         
-        version = new Version(guifx);
+        version = new Version(ui);
         version.checkCurrentlyInstalledVersion();
         stage.setTitle(Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
     }
@@ -273,7 +275,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void welcome()
     {
-        version = new Version(guifx);
+        version = new Version(ui);
         version.checkCurrentlyInstalledVersion();
         status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true); copyrightLabel.setText(Version.getCopyright() + " " + Version.getAuthor());
 
@@ -397,7 +399,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(() ->
         {
-            version = new Version(guifx);
+            version = new Version(ui);
             version.checkCurrentlyInstalledVersion();
             version.checkLatestOnlineVersion();
             status(version.getUpdateStatus(), true);
@@ -411,8 +413,8 @@ public class GUIFX extends Application implements UI, Initializable
                     Thread updateThread;
                     updateThread = new Thread(() -> {
                         try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
-                        catch (URISyntaxException ex) { guifx.error(ex.getMessage()); }}
-                        catch (IOException ex) { guifx.error(ex.getMessage()); }
+                        catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
+                        catch (IOException ex) { ui.error(ex.getMessage()); }
                     });
                     updateThread.setName("encryptThread");
                     updateThread.setDaemon(true);
@@ -553,10 +555,17 @@ public class GUIFX extends Application implements UI, Initializable
 
 //          Look for encryptable files (Long I/O operation set hourglass)
             cursorWait();
-            for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+            if ( inputFileChooser.getSelectedFiles().length == 1 )
             {
-                if ( Files.isRegularFile(path) ) { State.targetSelected = State.FILE; State.targetReady = true; }
+                if ( isValidFile(inputFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
             }
+            else if ( inputFileChooser.getSelectedFiles().length > 1 )
+            {
+                for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+                {
+                    if ( isValidFile(path, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                }
+                }
             cursorDefault();
         }
         checkModeReady();
@@ -673,7 +682,7 @@ public class GUIFX extends Application implements UI, Initializable
                     State.cipherReady = true;
 //                  Get size of partition
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
-                    { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { guifx.status(ex.getMessage(), true); }
+                    { cipherSize = deviceChannel.size(); deviceChannel.close(); }catch (IOException ex) { ui.status(ex.getMessage(), true); }
                 }
             }
             else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Raw Cipher Selection
@@ -697,7 +706,7 @@ public class GUIFX extends Application implements UI, Initializable
 //                  Get size of device        
                     State.cipherReady = true;
                     try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
-                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { guifx.status(ex.getMessage(), true); }
+                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
                 } else { State.cipherReady = false; } // disk0
             }
             else
@@ -770,6 +779,31 @@ public class GUIFX extends Application implements UI, Initializable
                 stopButton.setDisable(true);
             }
         }
+    }
+
+    public boolean isValidDir(Path path, boolean symlink, boolean report)
+    {
+        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )           { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        return validdir;
+    }
+
+    public boolean isValidFile(Path path, boolean symlink, boolean report)
+    {
+        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+
+        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
+        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        return validfile;
     }
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
