@@ -354,39 +354,85 @@ public class FinalCrypt extends Thread
 
                         if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
 
-    //                  Print the stats
 
-                        BasicFileAttributes battr = null;
-                        PosixFileAttributes pattr = null;
-                        DosFileAttributes dattr = null;
+//                      Copy inputFilePath attributes to outputFilePath
 
-    //                  Read inputFilePath attributes                            
-                        if ( System.getProperty("os.name").toLowerCase().startsWith("win") ) { try { dattr = Files.readAttributes(inputFilePath, DosFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
-                        else                                                                 { try { pattr = Files.readAttributes(inputFilePath, PosixFileAttributes.class); } catch (IOException e) { ui.error(e.getMessage()); } }
+/*
+“basic:creationTime”	FileTime	The exact time when the file was created.
+“basic:fileKey”	Object	An object that uniquely identifies a file or null if a file key is not available.
+“basic:isDirectory”	Boolean	Returns true if the file is a directory.
+“basic:isRegularFile”	Boolean	Returns true if a file is not a directory.
+“basic:isSymbolicLink”	Boolean	Returns true if the file is considered to be a symbolic link.
+“basic:isOther”	Boolean	
+“basic:lastAccessTime”	FileTime	The last time when the file was accesed.
+“basic:lastModifiedTime”	FileTime	The time when the file was last modified.
+“basic:size”	Long	The file size.    
 
-    //                  Write outputFilePath attributes                           
-                        if ( System.getProperty("os.name").toLowerCase().startsWith("win") )
+“dos:archive”	Boolean	Return true if a file is archive or not.
+“dos:hidden”	Boolean	Returns true if the file/folder is hidden.
+“dos:readonly”	Boolean	Returns true if the file/folder is read-only.
+“dos:system”	Boolean	Returns true if the file/folder is system file.
+
+“posix:permissions”	Set<PosixFilePermission>	The file permissions.
+“posix:group”	GroupPrincipal	Used to determine access rights to objects in a file system
+
+“acl:acl”	List<AclEntry>
+“acl:owner”	UserPrincipal
+*/
+
+                        for (String view:inputFilePath.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
                         {
-                            try
+//                            ui.println(view);
+                            if ( view.toLowerCase().equals("basic") )
                             {
-                                Files.setAttribute(outputFilePath, "basic:lastModifiedTime", dattr.lastModifiedTime());
-                                Files.setAttribute(outputFilePath, "dos:hidden", dattr.isHidden());
-                                Files.setAttribute(outputFilePath, "dos:system", dattr.isSystem());
-                                Files.setAttribute(outputFilePath, "dos:readonly", dattr.isReadOnly());
-                                Files.setAttribute(outputFilePath, "dos:archive", dattr.isArchive());
-                            } catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex + "\n"); }
-                        }
-                        else
-                        {
-                            try
+                                try
+                                {
+                                    BasicFileAttributes basicAttributes = null; basicAttributes = Files.readAttributes(inputFilePath, BasicFileAttributes.class);
+                                    try
+                                    {
+                                        Files.setAttribute(outputFilePath, "basic:creationTime",        basicAttributes.creationTime());
+                                        Files.setAttribute(outputFilePath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
+                                        Files.setAttribute(outputFilePath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
+                                    }
+                                    catch (IOException ex) { ui.error("Error: Set Basic Attributes: " + ex.getMessage() + "\n"); }
+                                }   catch (IOException ex) { ui.error("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+                            }
+                            else if ( view.toLowerCase().equals("dos") )
                             {
-                                Files.setAttribute(outputFilePath, "posix:owner", pattr.owner());
-                                Files.setAttribute(outputFilePath, "posix:group", pattr.group());
-                                Files.setPosixFilePermissions(outputFilePath, pattr.permissions());
-                                Files.setLastModifiedTime(outputFilePath, pattr.lastModifiedTime());
-                            } catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
-                        }	
-    //                  Delete the original
+                                try
+                                {
+                                    DosFileAttributes msdosAttributes = null; msdosAttributes = Files.readAttributes(inputFilePath, DosFileAttributes.class);
+                                    try
+                                    {
+                                        Files.setAttribute(outputFilePath, "basic:lastModifiedTime",    msdosAttributes.lastModifiedTime());
+                                        Files.setAttribute(outputFilePath, "dos:hidden",                msdosAttributes.isHidden());
+                                        Files.setAttribute(outputFilePath, "dos:system",                msdosAttributes.isSystem());
+                                        Files.setAttribute(outputFilePath, "dos:readonly",              msdosAttributes.isReadOnly());
+                                        Files.setAttribute(outputFilePath, "dos:archive",               msdosAttributes.isArchive());
+                                    }
+                                    catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex.getMessage() + "\n"); }
+                                }   catch (IOException ex) { ui.error("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+                            }
+                            else if ( view.toLowerCase().equals("posix") )
+                            {
+                                PosixFileAttributes posixAttributes = null;
+                                try
+                                {
+                                    posixAttributes = Files.readAttributes(inputFilePath, PosixFileAttributes.class);
+                                    try
+                                    {
+                                        Files.setAttribute(outputFilePath, "posix:owner",               posixAttributes.owner());
+                                        Files.setAttribute(outputFilePath, "posix:group",               posixAttributes.group());
+                                        Files.setPosixFilePermissions(outputFilePath,                   posixAttributes.permissions());
+                                        Files.setLastModifiedTime(outputFilePath,                       posixAttributes.lastModifiedTime());
+                                    }
+                                    catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
+                                }   catch (IOException ex) { ui.error("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+                            }
+                        } // End for loop set Attributes
+
+
+//                      Delete the original
                         long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
                         long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
                         if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; } }
@@ -397,6 +443,8 @@ public class FinalCrypt extends Thread
         } // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
+
+//      Print the stats
         ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
 //        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
@@ -569,26 +617,30 @@ public class FinalCrypt extends Thread
     
     public static boolean isValidDir(UI ui, Path path, boolean symlink, boolean report)
     {
-        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report ) { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
         return validdir;
     }
 
     public static boolean isValidFile(UI ui, Path path, boolean symlink, boolean report)
     {
-        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                                  { fileSize = Files.size(path); } catch (IOException ex) { }
 
-        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
-        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
-        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
-        if ( ! validfile ) { if ( report ) { ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+        else
+        {
+            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
+            if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        }
+        if ( ! validfile ) { if ( report )                  { ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
         return validfile;
     }
 

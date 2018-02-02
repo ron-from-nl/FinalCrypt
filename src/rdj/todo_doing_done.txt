@@ -15,7 +15,9 @@ File logger (regular & error logs)
 
 ============================= Source Committed ==============================
 
-
+Switched from set OS related attributes to supportedFileSystemAttributes
+Added cloning additional basic file-attributes (created & lastAccessed)
+Added batchfile input Encryption to Command Line User Interface
 
 ============================= Source Published ==============================
 

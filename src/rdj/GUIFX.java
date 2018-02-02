@@ -277,7 +277,12 @@ public class GUIFX extends Application implements UI, Initializable
     {
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion();
-        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", true); copyrightLabel.setText(Version.getCopyright() + " " + Version.getAuthor());
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", false);        
+        log("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n");
+        log("Copyright: " + Version.getCopyright() + " " + Version.getAuthor() + "\n");
+        log("Email:     " + Version.getAuthorEmail() + "\n");
+        
+        copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
@@ -783,25 +788,29 @@ public class GUIFX extends Application implements UI, Initializable
 
     public boolean isValidDir(Path path, boolean symlink, boolean report)
     {
-        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )           { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
         return validdir;
     }
 
     public boolean isValidFile(Path path, boolean symlink, boolean report)
     {
-        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                                  { fileSize = Files.size(path); } catch (IOException ex) { }
 
-        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
-        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
-        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+        else
+        {
+            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
+            if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        }
         if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
         return validfile;
     }
@@ -1007,8 +1016,9 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    @Override public void log(String message) { Platform.runLater(() -> { lineCounter++; logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
-    @Override public void error(String message) { Platform.runLater(new Runnable() { @Override public void run() { status(message, true); } }); }
+    @Override public void log(String message)       { Platform.runLater(() -> { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
+              public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
+    @Override public void error(String message)     { Platform.runLater(new Runnable() { @Override public void run() { status(message, true); } }); }
 
     @Override public void status(String status, boolean log)
     {
@@ -1022,6 +1032,8 @@ public class GUIFX extends Application implements UI, Initializable
             }
         });
     }
+
+    public void statusNow(String status, boolean log)   { statusLabel.setText(status); if (log) { log(status); } }
 
     public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
     public void statusDirect(String status) { statusLabel.setText(status); }

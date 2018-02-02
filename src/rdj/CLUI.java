@@ -51,6 +51,7 @@ public class CLUI implements UI
         boolean printgpt = false;
 
         ArrayList<Path> inputFilesPathList = new ArrayList<>();
+        Path batchFilePath = null;
         Path inputFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
@@ -70,12 +71,12 @@ public class CLUI implements UI
         // Validate Parameters
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
         {
-            // Options
+//          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(); }
             else if (( args[paramCnt].equals("-d")) || ( args[paramCnt].equals("--debug") ))                        { finalCrypt.setDebug(true); }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
-            else if ( args[paramCnt].equals("-s"))                                                                  { finalCrypt.setSymlink(true); }
+            else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))                      { finalCrypt.setSymlink(true); }
             else if ( args[paramCnt].equals("--txt"))                                                               { finalCrypt.setTXT(true); }
             else if ( args[paramCnt].equals("--bin"))                                                               { finalCrypt.setBin(true); }
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
@@ -84,20 +85,23 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
-            else if ( args[paramCnt].equals("-b")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
+            else if ( args[paramCnt].equals("-s")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
 
-            // File Parameters
+//          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
-            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
             else if ( args[paramCnt].equals("-w")) { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-W")) { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( args[paramCnt].equals("-r")) { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
+
+//          File Parameters
+            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
+            else if ( args[paramCnt].equals("-b")) { ifset = batchInput(args[paramCnt+1], inputFilesPathList); paramCnt++; }
             else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
             else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
-        if (( ! ifset ) && ( ! printgpt ))  { error("\nError: Missing parameter <-i \"inputfile\">" + "\n"); usage(); }
-        if ( ! cfset )                      { error("\nError: Missing parameter <-c \"cipherfile\">" + "\n"); usage(); }
+        if (( ! ifset ) && ( ! printgpt ))  { error("\nError: Missing valid parameter <-i \"file/dir\"> or <-b \"batchfile\">" + "\n"); usage(); }
+        if ( ! cfset )                      { error("\nError: Missing valid parameter <-c \"cipherfile\">" + "\n"); usage(); }
 
         
         
@@ -363,28 +367,64 @@ public class CLUI implements UI
             
     }
 
-    
+
+    private boolean batchInput(String batchFilePathString, ArrayList<Path> inputFilesPathList)
+    {
+        boolean ifset = false;
+        Path batchFilePath;
+        Path inputFilePath;
+
+        if ( isValidFile(Paths.get(batchFilePathString), true, true) )
+        {
+            log("Adding items from batchfile: " + batchFilePathString + "\n");
+            batchFilePath = Paths.get(batchFilePathString);
+            try
+            {
+                for (String inputFilePathString:Files.readAllLines(batchFilePath))
+                {
+//                  Entry may not be a directory (gets filtered and must be a valid file)
+                    if ( isValidFile(Paths.get(inputFilePathString), finalCrypt.getSymlink(), true) )
+                    {
+                        inputFilePath = Paths.get(inputFilePathString); inputFilesPathList.add(inputFilePath); ifset = true;
+//                        println("Adding: " + inputFilePathString);
+                    }
+                    else { /* println("Invalid file: " + inputFilePathString);*/ } // Reporting in isValidFile is already set to true, so if invalid then user is informed
+                }
+            }
+            catch (IOException ex) { error("Files.readAllLines(" + batchFilePath + ");" + ex.getMessage()); }
+            if ( ! ifset ) { log("Warning: batchfile: " + batchFilePathString + " doesn't contain any valid items!\n"); }
+        }
+        else
+        {
+            error("Error: batchfile: " + batchFilePathString + " is not a valid file!\n");
+        }
+        return ifset;
+    }
     public boolean isValidDir(Path path, boolean symlink, boolean report)
     {
-        boolean validdir = true; String conditions = "";    String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                          { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                     { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                     { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )           { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
         return validdir;
     }
 
     public boolean isValidFile(Path path, boolean symlink, boolean report)
     {
-        boolean validfile = true; String conditions = "";   String size = ""; String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0; try                              { fileSize = Files.size(path); } catch (IOException ex) { }
+        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0; try                                  { fileSize = Files.size(path); } catch (IOException ex) { }
 
-        if ( ! Files.exists(path))                          { validfile = false; exist = "[not found] "; conditions += exist; }
-        if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
-        if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-        if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+        else
+        {
+            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
+            if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        }
         if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
         return validfile;
     }
@@ -408,7 +448,7 @@ public class CLUI implements UI
         log("            [-d] [--debug]        Enables debugging mode.\n");
         log("            [-v] [--verbose]      Enables verbose mode.\n");
         log("            [-p] [--print]        Print overal data encryption.\n");
-        log("            [-f]                  Force symlinks (not recommended).\n");
+        log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\n");
         log("                 [--version]      Print " + version.getProcuct() + " version.\n");
         log("                 [--update]       Check for online updates.\n");
         log("            [--txt]               Print text calculations.\n");
@@ -418,15 +458,21 @@ public class CLUI implements UI
         log("            [--chr]               Print character calculations.\n");
         log("                                  Warning: The above Print options slows encryption severely.\n");
         log("            [--gpt]               Print GUID Partition Table in combination with -c \"device\".\n");
-        log("            [-b size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\n");
+        log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\n");
+        log("\n");
+        log("Filtering Options:\n");
+        log("\n");
+        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\n");
+        log("            [-w \'wildcard\']       File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\n");
+        log("            [-W \'wildcard\']       File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\n");
+        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\n");
         log("\n");
         log("Parameters:\n");
         log("\n");
-        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\n");
-        log("            <-i \"file/dir\">       The file or dir you want to encrypt (encrypts dir recursively).\n");
-        log("            [-w \'wildcard\']       File wildcard include filter. Uses: \"Glob Patterns Syntax\".\n");
-        log("            [-W \'wildcard\']       File wildcard exclude filter. Uses: \"Glob Patterns Syntax\".\n");
-        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\n");
+        log("            <-i / -b>             The items you want to encrypt. Individual (-i) or by batch (-b).\n");
+        log("            <[-i \"file/dir\"]>     The file or dir you want to encrypt (encrypts dirs recursively).\n");
+        log("            <[-b \"batchfile\"]>    The batchfile items you want to encrypt (-i item rules apply).\n");
+        log("\n");
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
         log("                                  A cipher-file is a unique file like a personal photo or video!\n");
         log("Examples:\n");
@@ -436,6 +482,9 @@ public class CLUI implements UI
         log("\n");
         log("            # Encrypt myfile and all content in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\n");
+        log("\n");
+        log("            # Encrypt items (files & dirs) in batchfile with mycipherfile\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -b mybatchfile -c mycipherfile\n");
         log("\n");
         log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\n");
@@ -464,7 +513,7 @@ public class CLUI implements UI
         log("            # Encrypt myfile with raw cipher partition\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c /dev/sdb1\n");
         log("\n");
-        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " Author: " + Version.getAuthor() + " " + Version.getCopyright() + "\n\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\n\n");
         System.exit(1);
     }
 
