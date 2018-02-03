@@ -152,7 +152,7 @@ public class FinalCrypt extends Thread
 
         // Get TOTALS
         allDataStats.setFilesTotal(inputFilesPathList.size());
-        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allDataStats.addAllDataBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\n"); }} 
+        for (Path inputFilePath:inputFilesPathList) { try { if (! Files.isDirectory(inputFilePath)) { allDataStats.addAllDataBytesTotal(Files.size(inputFilePath)); }  } catch (IOException ex) { ui.error("Error: encryptFiles () filesBytesTotal += Files.size(inputFilePath); "+ ex.getLocalizedMessage() + "\r\n"); }} 
         ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
@@ -174,7 +174,7 @@ public class FinalCrypt extends Thread
         // Encrypt Files loop
         fileloop: for (Path inputFilePath:inputFilesPathList)
         {
-            long filesize = 0; try { Files.size(inputFilePath); } catch (IOException ex) { ui.error("\nError: Files.size(inputFilePath); " + ex.getMessage() + "\n"); continue fileloop; }
+            long filesize = 0; try { Files.size(inputFilePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(inputFilePath); " + ex.getMessage() + "\r\n"); continue fileloop; }
             if (stopPending) { inputFileEnded = true; break fileloop; }
             if (! Files.isDirectory(inputFilePath))
             {
@@ -196,19 +196,19 @@ public class FinalCrypt extends Thread
                         else                            { outputFilePath = inputFilePath.resolveSibling(inputFilePath.getFileName().toString().replace(suffix, "")); }               // Remove .bit
 
 
-                        try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex + "\n"); }
+                        try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(outputFilePath): " + ex.getMessage() + "\r\n"); }
 
                         ui.status("Encrypting: " + inputFilePath.toAbsolutePath() + " ", false);
 
                         // Prints printByte Header ones                
                         if ( print )
                         {
-                            ui.log("\n");
-                            ui.log(" ----------------------------------------------------------------------\n");
-                            ui.log("|          |       Input       |      Cipher       |      Output       |\n");
-                            ui.log("| ---------|-------------------|-------------------|-------------------|\n");
-                            ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\n");
-                            ui.log("|----------|-------------------|-------------------|-------------------|\n");
+                            ui.log("\r\n");
+                            ui.log(" ----------------------------------------------------------------------\r\n");
+                            ui.log("|          |       Input       |      Cipher       |      Output       |\r\n");
+                            ui.log("| ---------|-------------------|-------------------|-------------------|\r\n");
+                            ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
+                            ui.log("|----------|-------------------|-------------------|-------------------|\r\n");
                         }
 
     //                  Encryptor I/O Block
@@ -229,7 +229,7 @@ public class FinalCrypt extends Thread
                         ByteBuffer outputFileBuffer =  ByteBuffer.allocate(outputFileBufferSize); outputFileBuffer.clear();
 
                         // Get and set the stats
-                        try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\nError: Files.size(inputFilePath); " + ex.getMessage() + "\n"); continue fileloop; }
+                        try { allDataStats.setFileBytesTotal(Files.size(inputFilePath)); } catch (IOException ex) { ui.error("\r\nError: Files.size(inputFilePath); " + ex.getMessage() + "\r\n"); continue fileloop; }
 
                         readInputFileStat.setFileBytesProcessed(0);
                         readCipherFileStat.setFileBytesProcessed(0);
@@ -243,8 +243,8 @@ public class FinalCrypt extends Thread
                             if (stopPending)
                             {
     //                          Delete broken outputFile and keep original
-                                try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("\nFiles.deleteIfExists(outputFilePath): " + ex + "\n"); }
-                                inputFileEnded = true; ui.status("\n", true); break fileloop;
+                                try { Files.deleteIfExists(outputFilePath); } catch (IOException ex) { ui.error("\r\nFiles.deleteIfExists(outputFilePath): " + ex.getMessage() + "\r\n"); }
+                                inputFileEnded = true; ui.status("\r\n", true); break fileloop;
                             }
 
                             //open inputFile
@@ -257,8 +257,8 @@ public class FinalCrypt extends Thread
                                 if (( readInputFileChannelTransfered == -1 ) || ( inputFileBuffer.limit() < inputFileBufferSize )) { inputFileEnded = true; } // Buffer.limit = remainder from current position to end
                                 readInputFileChannel.close(); readInputFileStat.setFileEndEpoch(); readInputFileStat.clock();
                                 readInputFileStat.addFileBytesProcessed(readInputFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readInputFileChannelTransfered / 2);
-                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-    //                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\n");
+                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue fileloop; }
+    //                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\r\n");
 
                             if ( readInputFileChannelTransfered != -1 )
                             {
@@ -272,8 +272,8 @@ public class FinalCrypt extends Thread
                                     cipherFileBuffer.flip();
                                     readCipherFileChannel.close(); readCipherFileStat.setFileEndEpoch(); readCipherFileStat.clock();
                                     readCipherFileStat.addFileBytesProcessed(readCipherFileChannelTransfered);
-                                } catch (IOException ex) { ui.error("\nFiles.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-    //                            ui.log("readCipherFileChannelTransfered: " + readCipherFileChannelTransfered + " cipherFileBuffer.limit(): " + Integer.toString(cipherFileBuffer.limit()) + "\n");
+                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue fileloop; }
+    //                            ui.log("readCipherFileChannelTransfered: " + readCipherFileChannelTransfered + " cipherFileBuffer.limit(): " + Integer.toString(cipherFileBuffer.limit()) + "\r\n");
 
                                 // Open outputFile for writing
                                 writeOutputFileStat.setFileStartEpoch();
@@ -285,8 +285,8 @@ public class FinalCrypt extends Thread
                                     if (txt) { logByteBuffer("DB", inputFileBuffer); logByteBuffer("CB", cipherFileBuffer); logByteBuffer("OB", outputFileBuffer); }
                                     writeOutputFileChannel.close(); writeOutputFileStat.setFileEndEpoch(); writeOutputFileStat.clock();
                                     writeOutputFileStat.addFileBytesProcessed(writeOutputFileChannelTransfered);
-                                } catch (IOException ex) { ui.error("\noutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
-    //                            ui.log("writeOutputFileChannelTransfered: " + writeOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
+                                } catch (IOException ex) { ui.error("\r\noutputFileChannel = Files.newByteChannel(outputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue fileloop; }
+    //                            ui.log("writeOutputFileChannelTransfered: " + writeOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
                             }
                             outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
                         }
@@ -322,8 +322,8 @@ public class FinalCrypt extends Thread
                                 if (( readOutputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
                                 readOutputFileChannel.close(); readOutputFileStat.setFileEndEpoch(); readOutputFileStat.clock();
                                 readOutputFileStat.addFileBytesProcessed(outputFileBuffer.limit()); allDataStats.addAllDataBytesProcessed(outputFileBuffer.limit()/2);
-                            } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex + "\n"); continue fileloop; }
-    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\n");
+                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue fileloop; }
+    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\r\n");
 
                             //shred inputFile
                             if ( readOutputFileChannelTransfered != -1 )
@@ -337,8 +337,8 @@ public class FinalCrypt extends Thread
                                     if (( writeInputFileChannelTransfered == -1 ) || ( outputFileBuffer.limit() < outputFileBufferSize )) { inputFileEnded = true; }
                                     writeInputFileChannel.close(); writeInputFileStat.setFileEndEpoch(); writeInputFileStat.clock();
                                     writeInputFileStat.addFileBytesProcessed(outputFileBuffer.limit());
-                                } catch (IOException ex) { ui.error("\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex + "\n"); continue fileloop; }
-    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\n\n");
+                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(inputFilePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue fileloop; }
+    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
                             }
                             outputFileBuffer.clear(); inputFileBuffer.clear(); cipherFileBuffer.clear();
                         }
@@ -352,7 +352,7 @@ public class FinalCrypt extends Thread
                         ui.log(allDataStats.getAllDataBytesProgressPercentage());
                         allDataStats.addFilesProcessed(1);
 
-                        if ( print ) { ui.log(" ----------------------------------------------------------------------\n"); }
+                        if ( print ) { ui.log(" ----------------------------------------------------------------------\r\n"); }
 
 
 //                      Copy inputFilePath attributes to outputFilePath
@@ -394,7 +394,7 @@ public class FinalCrypt extends Thread
                                         Files.setAttribute(outputFilePath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
                                         Files.setAttribute(outputFilePath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
                                     }
-                                    catch (IOException ex) { ui.error("Error: Set Basic Attributes: " + ex.getMessage() + "\n"); }
+                                    catch (IOException ex) { ui.error("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n"); }
                                 }   catch (IOException ex) { ui.error("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage()); }
                             }
                             else if ( view.toLowerCase().equals("dos") )
@@ -410,7 +410,7 @@ public class FinalCrypt extends Thread
                                         Files.setAttribute(outputFilePath, "dos:readonly",              msdosAttributes.isReadOnly());
                                         Files.setAttribute(outputFilePath, "dos:archive",               msdosAttributes.isArchive());
                                     }
-                                    catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex.getMessage() + "\n"); }
+                                    catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n"); }
                                 }   catch (IOException ex) { ui.error("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage()); }
                             }
                             else if ( view.toLowerCase().equals("posix") )
@@ -426,23 +426,23 @@ public class FinalCrypt extends Thread
                                         Files.setPosixFilePermissions(outputFilePath,                   posixAttributes.permissions());
                                         Files.setLastModifiedTime(outputFilePath,                       posixAttributes.lastModifiedTime());
                                     }
-                                    catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex + "\n"); }
+                                    catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
                                 }   catch (IOException ex) { ui.error("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage()); }
                             }
                         } // End for loop set Attributes
 
 
 //                      Delete the original
-                        long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\nError: Files.size(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
-                        long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\nError: Files.size(outputFilePath): " + ex.getMessage() + "\n"); continue fileloop; }
-                        if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\n"); continue fileloop; } }
-                    } else { ui.log("\n"); } // End real run
-                } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\n"); }
-            } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\n"); } // End "not a directory"
+                        long inputfilesize = 0;  try { inputfilesize = Files.size(inputFilePath); }   catch (IOException ex)            { ui.error("\r\nError: Files.size(inputFilePath): " + ex.getMessage() + "\r\n"); continue fileloop; }
+                        long outputfilesize = 0; try { outputfilesize = Files.size(outputFilePath); } catch (IOException ex)            { ui.error("\r\nError: Files.size(outputFilePath): " + ex.getMessage() + "\r\n"); continue fileloop; }
+                        if ( (inputfilesize != 0 ) && ( outputfilesize != 0 ) && ( inputfilesize == outputfilesize ) ) { try { Files.deleteIfExists(inputFilePath); } catch (IOException ex)    { ui.error("\r\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue fileloop; } }
+                    } else { ui.log("\r\n"); } // End real run
+                } else { ui.error(inputFilePath.toAbsolutePath() + " ignoring:   " + cipherFilePath.toAbsolutePath() + " (is cipher!)\r\n"); }
+            } else { ui.error("Skipping directory: " + inputFilePath.getFileName() + "\r\n"); } // End "not a directory"
             
         } // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
-        if ( stopPending ) { ui.status("\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
+        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 
 //      Print the stats
         ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
@@ -479,9 +479,9 @@ public class FinalCrypt extends Thread
         
 //        if (debug)
 //        {
-//            ui.log(Integer.toString(inputTotal) + "\n");
-//            ui.log(Integer.toString(cipherTotal) + "\n");
-//            ui.log(Integer.toString(outputDiff) + "\n");
+//            ui.log(Integer.toString(inputTotal) + "\r\n");
+//            ui.log(Integer.toString(cipherTotal) + "\r\n");
+//            ui.log(Integer.toString(outputDiff) + "\r\n");
 //        MD5Converter.getMD5SumFromString(Integer.toString(dataTotal));
 //        MD5Converter.getMD5SumFromString(Integer.toString(cipherTotal));
 //        }
@@ -539,7 +539,7 @@ public class FinalCrypt extends Thread
     private void logByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
         ui.log(preFix + "C: ");
-        ui.log(" " + preFix + "Z: " + byteBuffer.limit() + "\n");
+        ui.log(" " + preFix + "Z: " + byteBuffer.limit() + "\r\n");
     }
 
     private void logByte(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
@@ -563,56 +563,56 @@ public class FinalCrypt extends Thread
         
         ui.log("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
         ui.log                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-        ui.log                 (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\n");
+        ui.log                 (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\r\n");
         printAddressByteCounter++;
     }
     
     private void logByteBinary(byte inputByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\n");
-        ui.log("Input  = " + getBinaryString(inputByte) + "\n");
-        ui.log("Cipher = " + getBinaryString(cipherByte) + "\n");
-        ui.log("Output = " + getBinaryString(outputByte) + "\n");
-        ui.log("\n");
-        ui.log("DUM  = " + getBinaryString((byte)inputByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum) + "\n");
-        ui.log("DNM  = " + getBinaryString((byte)~inputByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm) + "\n");
-        ui.log("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm) + "\n");
+        ui.log("\r\n");
+        ui.log("Input  = " + getBinaryString(inputByte) + "\r\n");
+        ui.log("Cipher = " + getBinaryString(cipherByte) + "\r\n");
+        ui.log("Output = " + getBinaryString(outputByte) + "\r\n");
+        ui.log("\r\n");
+        ui.log("DUM  = " + getBinaryString((byte)inputByte) + " & " + getBinaryString((byte)~cipherByte) + " = " + getBinaryString((byte)dum) + "\r\n");
+        ui.log("DNM  = " + getBinaryString((byte)~inputByte) + " & " + getBinaryString((byte)cipherByte) + " = " + getBinaryString((byte)dnm) + "\r\n");
+        ui.log("DBM  = " + getBinaryString((byte)dum) + " & " + getBinaryString((byte)dnm) + " = " + getBinaryString((byte)dbm) + "\r\n");
     }
     
     private void logByteDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\n");
-        ui.log("Input  = " + getDecString(dataByte) + "\n");
-        ui.log("Cipher = " + getDecString(cipherByte) + "\n");
-        ui.log("Output = " + getDecString(outputByte) + "\n");
-        ui.log("\n");
-        ui.log("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum) + "\n");
-        ui.log("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm) + "\n");
-        ui.log("DBM  = " + getDecString((byte)dum) + " & " + getDecString((byte)dnm) + " = " + getDecString((byte)dbm) + "\n");
+        ui.log("\r\n");
+        ui.log("Input  = " + getDecString(dataByte) + "\r\n");
+        ui.log("Cipher = " + getDecString(cipherByte) + "\r\n");
+        ui.log("Output = " + getDecString(outputByte) + "\r\n");
+        ui.log("\r\n");
+        ui.log("DUM  = " + getDecString((byte)dataByte) + " & " + getDecString((byte)~cipherByte) + " = " + getDecString((byte)dum) + "\r\n");
+        ui.log("DNM  = " + getDecString((byte)~dataByte) + " & " + getDecString((byte)cipherByte) + " = " + getDecString((byte)dnm) + "\r\n");
+        ui.log("DBM  = " + getDecString((byte)dum) + " & " + getDecString((byte)dnm) + " = " + getDecString((byte)dbm) + "\r\n");
     }
     
     private void logByteHexaDecimal(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\n");
-        ui.log("Input  = " + getHexString(dataByte,"2") + "\n");
-        ui.log("Cipher = " + getHexString(cipherByte,"2") + "\n");
-        ui.log("Output = " + getHexString(outputByte,"2") + "\n");
-        ui.log("\n");
-        ui.log("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2") + "\n");
-        ui.log("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2") + "\n");
-        ui.log("DBM  = " + getHexString((byte)dum,"2") + " & " + getHexString((byte)dnm,"2") + " = " + getHexString((byte)dbm,"2") + "\n");
+        ui.log("\r\n");
+        ui.log("Input  = " + getHexString(dataByte,"2") + "\r\n");
+        ui.log("Cipher = " + getHexString(cipherByte,"2") + "\r\n");
+        ui.log("Output = " + getHexString(outputByte,"2") + "\r\n");
+        ui.log("\r\n");
+        ui.log("DUM  = " + getHexString((byte)dataByte,"2") + " & " + getHexString((byte)~cipherByte,"2") + " = " + getHexString((byte)dum,"2") + "\r\n");
+        ui.log("DNM  = " + getHexString((byte)~dataByte,"2") + " & " + getHexString((byte)cipherByte,"2") + " = " + getHexString((byte)dnm,"2") + "\r\n");
+        ui.log("DBM  = " + getHexString((byte)dum,"2") + " & " + getHexString((byte)dnm,"2") + " = " + getHexString((byte)dbm,"2") + "\r\n");
     }
     
     private void logByteChar(byte dataByte, byte cipherByte, byte outputByte, int dum, int dnm, int dbm)
     {
-        ui.log("\n");
-        ui.log("Input  = " + getChar(dataByte) + "\n");
-        ui.log("Cipher = " + getChar(cipherByte) + "\n");
-        ui.log("Output = " + getChar(outputByte) + "\n");
-        ui.log("\n");
-        ui.log("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum) + "\n");
-        ui.log("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm) + "\n");
-        ui.log("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm) + "\n");
+        ui.log("\r\n");
+        ui.log("Input  = " + getChar(dataByte) + "\r\n");
+        ui.log("Cipher = " + getChar(cipherByte) + "\r\n");
+        ui.log("Output = " + getChar(outputByte) + "\r\n");
+        ui.log("\r\n");
+        ui.log("DUM  = " + getChar((byte)dataByte) + " & " + getChar((byte)~cipherByte) + " = " + getChar((byte)dum) + "\r\n");
+        ui.log("DNM  = " + getChar((byte)~dataByte) + " & " + getChar((byte)cipherByte) + " = " + getChar((byte)dnm) + "\r\n");
+        ui.log("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm) + "\r\n");
     }
     
     public static boolean isValidDir(UI ui, Path path, boolean symlink, boolean report)
@@ -622,7 +622,7 @@ public class FinalCrypt extends Thread
         if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
         if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
         return validdir;
     }
 
@@ -640,7 +640,7 @@ public class FinalCrypt extends Thread
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )                  { ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        if ( ! validfile ) { if ( report )                  { ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 
@@ -684,7 +684,7 @@ public class FinalCrypt extends Thread
                         if ( ((path.compareTo(cipherPath) != 0)) )
                         {
                             pathList.add(path);
-                        } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                        } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", false); }}
                     } 
                 }
                 else
@@ -693,7 +693,7 @@ public class FinalCrypt extends Thread
                     {
                         if (isValidFile(ui, file.toPath(), symlink, verbose) ) { pathList.add(file.toPath()); }
                     }
-                    else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", false); }}
+                    else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", false); }}
                 }
             }
         }
@@ -731,12 +731,12 @@ public class FinalCrypt extends Thread
                     for (Path subItemPath:getDirectoryPathList(userSelectedItemPath.toFile(), pattern, negatePattern))
                     {
                         // cipherdetection not shown?
-                        if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", true); }}
+                        if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
                     }
                 }
                 else
                 {
-                    if ( ((userSelectedItemPath.compareTo(cipherPath) != 0)) ) { recursivePathList.add(userSelectedItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\n", true); }}
+                    if ( ((userSelectedItemPath.compareTo(cipherPath) != 0)) ) { recursivePathList.add(userSelectedItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
                 }
             }
         }
@@ -809,24 +809,24 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
         {
             if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
             {            
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
                 else if (returnpathlist)    
                 {
                     if (FinalCrypt.isValidFile(ui, path, symlink, verbose)) { pathList.add(path); } 
                 }
-                else { ui.status("Huh? this shouldn't have happened.\n", true); }
+                else { ui.status("Huh? this shouldn't have happened.\r\n", true); }
             }   
         }
         else
         {
             if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) ) // Negate Pattern; Does NOT match pattern
             {
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
+                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
                 else if (returnpathlist)
                 {
                     if (FinalCrypt.isValidFile(ui, path, symlink, verbose)) { pathList.add(path); } 
                 }
-                else  { ui.status("Huh? this shouldn't have happened.\n", true); }
+                else  { ui.status("Huh? this shouldn't have happened.\r\n", true); }
             }   
         }
         return FileVisitResult.CONTINUE;
@@ -834,13 +834,13 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     
     @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
     {
-        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\n");
+        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\r\n");
         return FileVisitResult.SKIP_SIBLINGS;
     }
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
     {
-        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\n"); } }
+        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
         else if (returnpathlist)    {        }
         else                        {     }
         return FileVisitResult.CONTINUE;

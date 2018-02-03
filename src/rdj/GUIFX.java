@@ -75,9 +75,13 @@ import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.EnumSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -161,6 +165,7 @@ public class GUIFX extends Application implements UI, Initializable
     private FileNameExtensionFilter finalCryptFilter;
     private RawCipher rawCipher;
     private int lineCounter;
+    private Configuration configuration;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -275,13 +280,18 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void welcome()
     {
+        configuration = new Configuration(ui);
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion();
-        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n", false);        
-        log("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\n");
-        log("Copyright: " + Version.getCopyright() + " " + Version.getAuthor() + "\n");
-        log("Email:     " + Version.getAuthorEmail() + "\n");
-        
+        status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\r\n", false);        
+        log("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\r\n");
+        log("Copyright: " + Version.getCopyright() + " " + Version.getAuthor() + "\r\r\n");
+        log("Email:     " + Version.getAuthorEmail() + "\r\r\n");
+        log("Logfiles:  " + configuration.getLogDirPath().toString() + "\r\r\n");
+        log("\r\r\n");
+        log("Tip: FinalCrypt command line (DOS) usage:\r\r\n");
+        log("java -cp FinalCrypt.jar rdj/CLUI --help\r\r\n");
+        log("\r\r\n");
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
 
 //      cpuIndicator
@@ -306,20 +316,20 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProcuct();
                 String header = "Brief Introduction:";
                 String infotext = 
-                            "1. Select files to encrypt on left side.\n";
-                infotext += "2. Select cipher file on the right side.\n";
-                infotext += "3. Click [Encrypt] to encrypt to: *.bit.\n";
-                infotext += "4. Click [Encrypt] again to decrypt.\n";
-                infotext += "\n";
-                infotext += "Congrats! You now know the basics.\n";
-                infotext += "\n";
-                infotext += "Optional:\n";
-                infotext += "\n";
-                infotext += "Double click to open files.\n";
-                infotext += "Click [LOG] to see details.\n";
-                infotext += "Click [Check Update] maybe.\n";
-                infotext += "\n";
-                infotext += "Live to love - Enjoy your privacy.\n\n";
+                            "1. Select files to encrypt on left side.\r\r\n";
+                infotext += "2. Select cipher file on the right side.\r\r\n";
+                infotext += "3. Click [Encrypt] to encrypt to: *.bit.\r\r\n";
+                infotext += "4. Click [Encrypt] again to decrypt.\r\r\n";
+                infotext += "\r\r\n";
+                infotext += "Congrats! You now know the basics.\r\r\n";
+                infotext += "\r\r\n";
+                infotext += "Optional:\r\r\n";
+                infotext += "\r\r\n";
+                infotext += "Double click to open files.\r\r\n";
+                infotext += "Click [LOG] to see details.\r\r\n";
+                infotext += "Click [Check Update] maybe.\r\r\n";
+                infotext += "\r\r\n";
+                infotext += "Live to love - Enjoy your privacy.\r\r\n\r\r\n";
 /*
                 Linux: ${user.home}/.java/.userPrefs/_\!\(\)\!~\!\"q\!#4\!\[w\"_\!%k\!\[g\"\}\!#@\!\<\!\=\=/prefs.xml 
                 
@@ -354,7 +364,7 @@ public class GUIFX extends Application implements UI, Initializable
 //        alert.setHeaderText("Welcome");
 //        alert.setResizable(true);
 //        String infotext = new String();
-//        infotext  = "Welcome.\n";
+//        infotext  = "Welcome.\r\r\n";
 //        alert.setContentText(infotext);
 //        alert.setOnShowing(new EventHandler<DialogEvent>()
 //        {
@@ -560,9 +570,16 @@ public class GUIFX extends Application implements UI, Initializable
 
 //          Look for encryptable files (Long I/O operation set hourglass)
             cursorWait();
-            if ( inputFileChooser.getSelectedFiles().length == 1 )
+            if (( inputFileChooser.getSelectedFiles().length == 1 ) )
             {
-                if ( isValidFile(inputFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                if ( isValidFile(inputFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), false ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                else if ( isValidDir(inputFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), false))
+                {
+                    for (Path path:finalCrypt.getExtendedPathList(inputFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+                    {
+                        if ( isValidFile(path, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                    }
+                } else { State.targetSelected = State.INVALID; State.targetReady = true; }
             }
             else if ( inputFileChooser.getSelectedFiles().length > 1 )
             {
@@ -570,7 +587,7 @@ public class GUIFX extends Application implements UI, Initializable
                 {
                     if ( isValidFile(path, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
                 }
-                }
+            }
             cursorDefault();
         }
         checkModeReady();
@@ -619,7 +636,7 @@ public class GUIFX extends Application implements UI, Initializable
                 for (File file:inputFileChooser.getSelectedFiles()) 
                 {
                     try { Desktop.getDesktop().open(file); }
-                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\n"); }
+                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\r\n"); }
                 }
             }
         } else { encryptButton.setDisable(true); }
@@ -666,7 +683,7 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 State.cipherSelected = State.FILE;
                 State.cipherReady = true;
-                try { cipherSize = (int)Files.size(cipherFileChooser.getSelectedFile().toPath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+                try { cipherSize = (int)Files.size(cipherFileChooser.getSelectedFile().toPath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\r\n"); }
             }
             else if(cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Raw Cipher Selection
             {
@@ -723,7 +740,7 @@ public class GUIFX extends Application implements UI, Initializable
         if ( cipherSize < finalCrypt.getBufferSize())
         {
             finalCrypt.setBufferSize((int)cipherSize);
-            status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
+            status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\r\n", true);
         }
         
         checkModeReady();
@@ -793,7 +810,7 @@ public class GUIFX extends Application implements UI, Initializable
         if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
         if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\r\n"); } }
         return validdir;
     }
 
@@ -811,7 +828,7 @@ public class GUIFX extends Application implements UI, Initializable
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\r\n"); } }                    
         return validfile;
     }
 
@@ -824,7 +841,7 @@ public class GUIFX extends Application implements UI, Initializable
             if ( cipherFileChooser.getSelectedFile().isFile() ) 
             {
                 try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\n"); }
+                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\r\n"); }
             }
         } else { encryptButton.setDisable(true); }
         cipherFileChooser.setFileFilter(this.nonFinalCryptFilter);
@@ -1016,21 +1033,78 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    @Override public void log(String message)       { Platform.runLater(() -> { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
-              public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
-    @Override public void error(String message)     { Platform.runLater(new Runnable() { @Override public void run() { status(message, true); } }); }
+    public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
 
     @Override public void status(String status, boolean log)
     {
-        Platform.runLater(new Runnable()
+        Platform.runLater(new Runnable() { @Override public void run()
         {
-            @Override
-            public void run()
+            statusLabel.setText(status);
+            if (log) { log(status); }
+        }});
+    }
+
+    @Override public void log(String message)
+    {
+        Platform.runLater(new Runnable() { @Override public void run()
+        {
+            lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; }
+
+            Thread logThread = new Thread(new Runnable()
             {
-                statusLabel.setText(status);
-                if (log) { log(status); }
-            }
-        });
+                private RawCipher rawCipher;
+                @Override
+                @SuppressWarnings({"static-access"})
+                public void run()
+                {
+                    try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
+
+//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//                    {
+//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//                        writeOutputFileChannel.write(outputFileBuffer);
+//                        writeOutputFileChannel.close();
+//                    } catch (IOException ex) { ui.error("\r\r\nFiles.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\r\n"); }
+                }
+            });
+            logThread.setName("encryptThread");
+            logThread.setDaemon(true);
+            logThread.start();
+        }});
+    }
+    @Override public void error(String message)
+    {
+        Platform.runLater(new Runnable() { @Override public void run()
+        {
+            status(message, true);
+            try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
+
+            Thread errorLogThread = new Thread(new Runnable()
+            {
+                private RawCipher rawCipher;
+                @Override
+                @SuppressWarnings({"static-access"})
+                public void run()
+                {
+                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
+
+//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//                    {
+//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//                        writeOutputFileChannel.write(outputFileBuffer);
+//                        writeOutputFileChannel.close();
+//                    } catch (IOException ex) { ui.error("\r\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\r\n"); }
+                }
+            });
+            errorLogThread.setName("encryptThread");
+            errorLogThread.setDaemon(true);
+            errorLogThread.start();
+
+        }});
     }
 
     public void statusNow(String status, boolean log)   { statusLabel.setText(status); if (log) { log(status); } }
@@ -1104,30 +1178,30 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setHeaderText("What is your secret Cipher file?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext  = "The cipher file encrypts the selected files on the left.\n";
-        infotext += "Choose a personal cipher file (like a photo or video).\n";
-        infotext += "\n";
-        infotext += "Keep backups of your cipher file and keep it SECRET!\n";
-        infotext += "Without cipher file you can NEVER decrypt your data!\n";
-        infotext += "\n";
-        infotext += "==================================\n";
-        infotext += "\n";
-        infotext += "Best practice is to have a unique and larger cipher file\n";
-        infotext += "and encrypt that file with another personal cipher file.\n";
-        infotext += "This encrypts metadata bit-patterns in your cipher.\n";
-        infotext += "Keep your cipher file away from your computer for as\n";
-        infotext += "long as you don't need it to hide it from big brother.\n";
-        infotext += "\n";
-        infotext += "Encryption:\n";
-        infotext += "Unique cipher file bit patterns mask your data-bits.\n";
-        infotext += "Positive cipher bits (1) negate correlating data-bits.\n";
-        infotext += "Selected files become mutated with negating ciphers.\n";
-        infotext += "\n";
-        infotext += "                  Encrypt                      Decrypt\n";
-        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\n";
-        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\n";
-        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\n\n";
-//        infotext += " \n";
+        infotext  = "The cipher file encrypts the selected files on the left.\r\r\n";
+        infotext += "Choose a personal cipher file (like a photo or video).\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "Keep backups of your cipher file and keep it SECRET!\r\r\n";
+        infotext += "Without cipher file you can NEVER decrypt your data!\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "==================================\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "Best practice is to have a unique and larger cipher file\r\r\n";
+        infotext += "and encrypt that file with another personal cipher file.\r\r\n";
+        infotext += "This encrypts metadata bit-patterns in your cipher.\r\r\n";
+        infotext += "Keep your cipher file away from your computer for as\r\r\n";
+        infotext += "long as you don't need it to hide it from big brother.\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "Encryption:\r\r\n";
+        infotext += "Unique cipher file bit patterns mask your data-bits.\r\r\n";
+        infotext += "Positive cipher bits (1) negate correlating data-bits.\r\r\n";
+        infotext += "Selected files become mutated with negating ciphers.\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "                  Encrypt                      Decrypt\r\r\n";
+        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\r\r\n";
+        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\r\r\n";
+        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\r\r\n\r\r\n";
+//        infotext += " \r\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
@@ -1145,12 +1219,12 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setHeaderText("What about your selected items?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext  = "The selected items can be files and directories.\n";
-        infotext += "All encrypted files get the *.bit extension added.\n";
-        infotext += "All original files are securely deleted (shredded).\n";
-        infotext += "\n";
-        infotext += "Decrypt by encrypting again with the same cipher.\n";
-        infotext += "After decryption, the *.bit extension gets removed.\n\n";
+        infotext  = "The selected items can be files and directories.\r\r\n";
+        infotext += "All encrypted files get the *.bit extension added.\r\r\n";
+        infotext += "All original files are securely deleted (shredded).\r\r\n";
+        infotext += "\r\r\n";
+        infotext += "Decrypt by encrypting again with the same cipher.\r\r\n";
+        infotext += "After decryption, the *.bit extension gets removed.\r\r\n\r\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }

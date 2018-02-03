@@ -199,24 +199,24 @@ public class GPT_Header
     {
         String returnString = "";
         String hexString = "";
-        returnString += ("\n");
-        returnString += ("[ LBA " + LBA + " GPT Header ]\n");
-        returnString += ("\n");
-        returnString += (String.format("%-50s", "signatureBytes"));               for (byte mybyte: signatureBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = ""; returnString += ("\n");
-        returnString += (String.format("%-50s", "revisionBytes"));                for (byte mybyte: revisionBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "headerSizeBytes"));              for (byte mybyte: headerSizeBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "crc32Bytes"));                   for (byte mybyte: headerCRC32Bytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "reservedBytes"));                for (byte mybyte: reservedBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "currentLBABytes"));              for (byte mybyte: currentLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "backupLBABytes"));               for (byte mybyte: backupLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "firstUsableLBABytes"));          for (byte mybyte: firstUsableLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "lastUsableLBABytes"));           for (byte mybyte: lastUsableLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "diskGUIDBytes"));                for (byte mybyte: diskGUIDBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "startingLBAOfEntriesBytes"));    for (byte mybyte: startingLBAOfEntriesBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "entriesInArrayBytes"));          for (byte mybyte: entriesInArrayBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "entrySizeBytes"));               for (byte mybyte: entrySizeBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "crc32PartitionsBytes"));         for (byte mybyte: crc32PartitionsBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "remainingBytes"));               for (byte mybyte: remainingBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\n");
+        returnString += ("\r\n");
+        returnString += ("[ LBA " + LBA + " GPT Header ]\r\n");
+        returnString += ("\r\n");
+        returnString += (String.format("%-50s", "signatureBytes"));               for (byte mybyte: signatureBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = ""; returnString += ("\r\n");
+        returnString += (String.format("%-50s", "revisionBytes"));                for (byte mybyte: revisionBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "headerSizeBytes"));              for (byte mybyte: headerSizeBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "crc32Bytes"));                   for (byte mybyte: headerCRC32Bytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "reservedBytes"));                for (byte mybyte: reservedBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "currentLBABytes"));              for (byte mybyte: currentLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "backupLBABytes"));               for (byte mybyte: backupLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "firstUsableLBABytes"));          for (byte mybyte: firstUsableLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "lastUsableLBABytes"));           for (byte mybyte: lastUsableLBABytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "diskGUIDBytes"));                for (byte mybyte: diskGUIDBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "startingLBAOfEntriesBytes"));    for (byte mybyte: startingLBAOfEntriesBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "entriesInArrayBytes"));          for (byte mybyte: entriesInArrayBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "entrySizeBytes"));               for (byte mybyte: entrySizeBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "crc32PartitionsBytes"));         for (byte mybyte: crc32PartitionsBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "remainingBytes"));               for (byte mybyte: remainingBytes) { hexString += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString)); hexString = "";  returnString += ("\r\n");
         return returnString;
     }
 }

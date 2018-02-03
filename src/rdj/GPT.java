@@ -180,8 +180,8 @@ public class GPT
         String datdec = getDecString(dataByte);
         String datchr = getChar(dataByte);
         
-//        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\n" );
-        System.out.print("| " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\n" );
+//        System.out.print("| " + adrhex + " | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\r\n" );
+        System.out.print("| " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\r\n" );
 //        printAddressByteCounter++;
     }
     
@@ -250,14 +250,14 @@ public class GPT
         FileSystem fs = FileSystems.getDefault();
         Iterable<FileStore> stores = fs.getFileStores();
 //        Iterable<FileStore> stores2 = FileStore;
-        ui.log("\n");
+        ui.log("\r\n");
         ui.log(String.format("%-70s", "Name"));
         ui.log(String.format("%-20s", "Type"));
         ui.log(String.format("%-20s", "Tot"));
         ui.log(String.format("%-20s", "Used"));
         ui.log(String.format("%-20s", "Avail"));
         ui.log(String.format("%-20s", "rd-Only"));
-        ui.log("\n");
+        ui.log("\r\n");
         for (FileStore store : stores)
         {
             try
@@ -274,7 +274,7 @@ public class GPT
                     ui.log(String.format("%-20s", getHumanSize(used_space,1)));
                     ui.log(String.format("%-20s", getHumanSize(available_space,1)));
                     ui.log(String.format("%-20s", is_read_only));
-                    ui.log("\n");
+                    ui.log("\r\n");
                 }
             }
             catch (IOException e) { System.err.println(e); }
@@ -284,7 +284,7 @@ public class GPT
     public static long getCipherFileSize(UI ui, Path cipherFilePath)
     {
         long cipherSize = 0;
-        try { cipherSize = (long)Files.size(cipherFilePath); } catch (IOException ex) { ui.log("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+        try { cipherSize = (long)Files.size(cipherFilePath); } catch (IOException ex) { ui.log("Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\n"); }
         return cipherSize;
     }
 

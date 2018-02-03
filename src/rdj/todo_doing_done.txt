@@ -8,26 +8,27 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
-File logger (regular & error logs)
 
 =================================== Done ====================================
 
 
 ============================= Source Committed ==============================
 
-Switched from set OS related attributes to supportedFileSystemAttributes
-Added cloning additional basic file-attributes (created & lastAccessed)
-Added batchfile input Encryption to Command Line User Interface
 
 ============================= Source Published ==============================
 
 
 ============================= Binaries Released =============================
 
+Replaced all UNIX new lines "\n" to international new line standard "\r\n"
+Added filelogger (regular & error logs) for Command Line & Graphical UI
+Switched from set OS related attributes to supportedFileSystemAttributes
+Added cloning additional basic file-attributes (created & lastAccessed)
+Added batchfile input Encryption to Command Line User Interface
+
 Large (extreme) encryptiontest succeeded (over 82,500 files & 50 GiB of data)
 Added Dry Run --dry to Command Line Interface and 100% file & dir validation
 Excluded symlinked directories in target filelist (prevent double encryption)
-
 Removed follow symlink delete targetfile bug
 Set logTextArea to fontsize 12
 Excluded files with 0 byte size from inputlist

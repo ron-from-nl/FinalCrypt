@@ -41,6 +41,7 @@ public class CLUI implements UI
     FinalCrypt finalCrypt;
     Version version;
     UI ui;
+    private final Configuration configuration;
 
     public CLUI(String[] args)
     {
@@ -55,6 +56,7 @@ public class CLUI implements UI
         Path inputFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
+        configuration = new Configuration(ui);
         version = new Version(this);
         version.checkCurrentlyInstalledVersion();
 
@@ -85,7 +87,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
-            else if ( args[paramCnt].equals("-s")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\nError: Invalid Option Value [-b size]" + "\n"); usage(); }}
+            else if ( args[paramCnt].equals("-s")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
@@ -97,11 +99,11 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
             else if ( args[paramCnt].equals("-b")) { ifset = batchInput(args[paramCnt+1], inputFilesPathList); paramCnt++; }
             else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
-            else { System.err.println("\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
+            else { System.err.println("\r\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
         }
         
-        if (( ! ifset ) && ( ! printgpt ))  { error("\nError: Missing valid parameter <-i \"file/dir\"> or <-b \"batchfile\">" + "\n"); usage(); }
-        if ( ! cfset )                      { error("\nError: Missing valid parameter <-c \"cipherfile\">" + "\n"); usage(); }
+        if (( ! ifset ) && ( ! printgpt ))  { error("\r\nError: Missing valid parameter <-i \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(); }
+        if ( ! cfset )                      { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(); }
 
         
         
@@ -120,7 +122,7 @@ public class CLUI implements UI
         {
             if ( (Files.isRegularFile(cipherFilePath)) && (cipherSize > 0) )
             {
-                try { cipherSize = (int)Files.size(cipherFilePath); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\n"); }
+                try { cipherSize = (int)Files.size(cipherFilePath); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\r\n"); }
 
                 if (cipherSize > 0)
                 {
@@ -188,12 +190,12 @@ public class CLUI implements UI
             if ( cipherSize < finalCrypt.getBufferSize())
             {
                 finalCrypt.setBufferSize((int)cipherSize);
-                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \n", true);
+                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
             }
         }
         else
         { 
-            error("Cipher parameter: " + cipherFilePath + " does not exists\n"); usage();
+            error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
         }            
 
 
@@ -207,16 +209,16 @@ public class CLUI implements UI
             {
                 if ( isValidDir(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid dir\n", true); }
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid dir\r\n", true); }
                 }
                 else if ( isValidFile(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid file\n", true); }
+                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid file\r\n", true); }
                 }
             }
             else
             { 
-                    error("Input parameter: " + inputFilePathItem + " does not exists\n"); usage();
+                    error("Input parameter: " + inputFilePathItem + " does not exists\r\n"); usage();
             }            
         }
         
@@ -279,7 +281,7 @@ public class CLUI implements UI
             {
                 if ((path.compareTo(cipherFilePath) == 0))
                 {
-                    status("Warning: cipher-file: " + cipherFilePath.toAbsolutePath() + " will be excluded!\n", true);
+                    status("Warning: cipher-file: " + cipherFilePath.toAbsolutePath() + " will be excluded!\r\n", true);
                 }
                 else if ( Files.isRegularFile(path) ) { State.targetSelected = State.FILE; State.targetReady = true; }
             }
@@ -294,17 +296,17 @@ public class CLUI implements UI
         if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
         {
             Mode.modeReady = true;
-            status(Mode.setMode(Mode.ENCRYPT) + "\n", true);
+            status(Mode.setMode(Mode.ENCRYPT) + "\r\n", true);
         }
         else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
         {
             Mode.modeReady = true;
-            status(Mode.setMode(Mode.ENCRYPTRAW) + "\n", true);
+            status(Mode.setMode(Mode.ENCRYPTRAW) + "\r\n", true);
         }
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
         {
             Mode.modeReady = true;
-            status(Mode.setMode(Mode.CREATE_CIPHER_DEVICE) + "\n", true);
+            status(Mode.setMode(Mode.CREATE_CIPHER_DEVICE) + "\r\n", true);
         }
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
         {
@@ -315,7 +317,7 @@ public class CLUI implements UI
                )
             {
                 Mode.modeReady = true;
-                status(Mode.setMode(Mode.CLONE_CIPHER_DEVICE) + "\n", true);
+                status(Mode.setMode(Mode.CLONE_CIPHER_DEVICE) + "\r\n", true);
             }
             else
             { 
@@ -325,7 +327,7 @@ public class CLUI implements UI
         else                                                                                    
         {
             Mode.modeReady = false;
-            status(Mode.setMode(Mode.SELECT) + "\n", true);
+            status(Mode.setMode(Mode.SELECT) + "\r\n", true);
         }
 
         if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
@@ -362,7 +364,7 @@ public class CLUI implements UI
         }
         else
         {
-            status("Nothing to do.\n", true);
+            status("Nothing to do.\r\n", true);
         }
             
     }
@@ -376,7 +378,7 @@ public class CLUI implements UI
 
         if ( isValidFile(Paths.get(batchFilePathString), true, true) )
         {
-            log("Adding items from batchfile: " + batchFilePathString + "\n");
+            log("Adding items from batchfile: " + batchFilePathString + "\r\n");
             batchFilePath = Paths.get(batchFilePathString);
             try
             {
@@ -392,11 +394,11 @@ public class CLUI implements UI
                 }
             }
             catch (IOException ex) { error("Files.readAllLines(" + batchFilePath + ");" + ex.getMessage()); }
-            if ( ! ifset ) { log("Warning: batchfile: " + batchFilePathString + " doesn't contain any valid items!\n"); }
+            if ( ! ifset ) { log("Warning: batchfile: " + batchFilePathString + " doesn't contain any valid items!\r\n"); }
         }
         else
         {
-            error("Error: batchfile: " + batchFilePathString + " is not a valid file!\n");
+            error("Error: batchfile: " + batchFilePathString + " is not a valid file!\r\n");
         }
         return ifset;
     }
@@ -407,7 +409,7 @@ public class CLUI implements UI
         if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
         if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\n"); } }
+        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
         return validdir;
     }
 
@@ -425,7 +427,7 @@ public class CLUI implements UI
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\n"); } }                    
+        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 
@@ -440,80 +442,80 @@ public class CLUI implements UI
     {
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
 
-        log("\n");
-        log("Usage:   java -cp FinalCrypt.jar rdj/CLUI [options] <Parameters>\n");
-        log("\n");
-        log("Options:\n");
-        log("            [-h] [--help]         Shows this help page.\n");
-        log("            [-d] [--debug]        Enables debugging mode.\n");
-        log("            [-v] [--verbose]      Enables verbose mode.\n");
-        log("            [-p] [--print]        Print overal data encryption.\n");
-        log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\n");
-        log("                 [--version]      Print " + version.getProcuct() + " version.\n");
-        log("                 [--update]       Check for online updates.\n");
-        log("            [--txt]               Print text calculations.\n");
-        log("            [--bin]               Print binary calculations.\n");
-        log("            [--dec]               Print decimal calculations.\n");
-        log("            [--hex]               Print hexadecimal calculations.\n");
-        log("            [--chr]               Print character calculations.\n");
-        log("                                  Warning: The above Print options slows encryption severely.\n");
-        log("            [--gpt]               Print GUID Partition Table in combination with -c \"device\".\n");
-        log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\n");
-        log("\n");
-        log("Filtering Options:\n");
-        log("\n");
-        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\n");
-        log("            [-w \'wildcard\']       File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\n");
-        log("            [-W \'wildcard\']       File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\n");
-        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\n");
-        log("\n");
-        log("Parameters:\n");
-        log("\n");
-        log("            <-i / -b>             The items you want to encrypt. Individual (-i) or by batch (-b).\n");
-        log("            <[-i \"file/dir\"]>     The file or dir you want to encrypt (encrypts dirs recursively).\n");
-        log("            <[-b \"batchfile\"]>    The batchfile items you want to encrypt (-i item rules apply).\n");
-        log("\n");
-        log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\n");
-        log("                                  A cipher-file is a unique file like a personal photo or video!\n");
-        log("Examples:\n");
-        log("\n");
-        log("            # Encrypt myfile with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt myfile and all content in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt items (files & dirs) in batchfile with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -b mybatchfile -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt all files without *.bit extension in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -W '*.bit' -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\n");
-        log("\n");
-        log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\n");
-        log("\n");
-        log("Raw Cipher Examples (Linux):\n");
-        log("\n");
-        log("            # Create Cipher Device with 2 cipher partitions (e.g. on USB Mem Stick)\n");
-        log("            # Beware: cipherfile gets randomized before writing to Device\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdb -c mycipherfile\n");
-        log("\n");
-        log("            # Print GUID Partition Table\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt -c /dev/sdb\n");
-        log("\n");
-        log("            # Clone Cipher Device (-c source -i dest)\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdc -c /dev/sdb\n");
-        log("\n");
-        log("            # Encrypt myfile with raw cipher partition\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c /dev/sdb1\n");
-        log("\n");
-        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\n\n");
+        log("\r\n");
+        log("Usage:   java -cp FinalCrypt.jar rdj/CLUI [options] <Parameters>\r\n");
+        log("\r\n");
+        log("Options:\r\n");
+        log("            [-h] [--help]         Shows this help page.\r\n");
+        log("            [-d] [--debug]        Enables debugging mode.\r\n");
+        log("            [-v] [--verbose]      Enables verbose mode.\r\n");
+        log("            [-p] [--print]        Print overal data encryption.\r\n");
+        log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n");
+        log("                 [--version]      Print " + version.getProcuct() + " version.\r\n");
+        log("                 [--update]       Check for online updates.\r\n");
+        log("            [--txt]               Print text calculations.\r\n");
+        log("            [--bin]               Print binary calculations.\r\n");
+        log("            [--dec]               Print decimal calculations.\r\n");
+        log("            [--hex]               Print hexadecimal calculations.\r\n");
+        log("            [--chr]               Print character calculations.\r\n");
+        log("                                  Warning: The above Print options slows encryption severely.\r\n");
+        log("            [--gpt]               Print GUID Partition Table in combination with -c \"device\".\r\n");
+        log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n");
+        log("\r\n");
+        log("Filtering Options:\r\n");
+        log("\r\n");
+        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\r\n");
+        log("            [-w \'wildcard\']       File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n");
+        log("            [-W \'wildcard\']       File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n");
+        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\r\n");
+        log("\r\n");
+        log("Parameters:\r\n");
+        log("\r\n");
+        log("            <-i / -b>             The items you want to encrypt. Individual (-i) or by batch (-b).\r\n");
+        log("            <[-i \"file/dir\"]>     The file or dir you want to encrypt (encrypts dirs recursively).\r\n");
+        log("            <[-b \"batchfile\"]>    Filelist in batchfile you want to encrypt (only files accepted).\r\n");
+        log("\r\n");
+        log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\r\n");
+        log("                                  A cipher-file is a unique file like a personal photo or video!\r\n");
+        log("Examples:\r\n");
+        log("\r\n");
+        log("            # Encrypt myfile with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt myfile and all content in mydir with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt files in batchfile with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -b mybatchfile -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt all files without *.bit extension in mydir with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -W '*.bit' -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\r\n");
+        log("\r\n");
+        log("Raw Cipher Examples (Linux):\r\n");
+        log("\r\n");
+        log("            # Create Cipher Device with 2 cipher partitions (e.g. on USB Mem Stick)\r\n");
+        log("            # Beware: cipherfile gets randomized before writing to Device\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdb -c mycipherfile\r\n");
+        log("\r\n");
+        log("            # Print GUID Partition Table\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt -c /dev/sdb\r\n");
+        log("\r\n");
+        log("            # Clone Cipher Device (-c source -i dest)\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb -i /dev/sdc\r\n");
+        log("\r\n");
+        log("            # Encrypt myfile with raw cipher partition\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c /dev/sdb1\r\n");
+        log("\r\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n");
         System.exit(1);
     }
 
@@ -521,12 +523,56 @@ public class CLUI implements UI
     public void log(String message)
     {
         System.out.print(message);
+        Thread logThread = new Thread(new Runnable()
+        {
+            private RawCipher rawCipher;
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+                try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
+
+//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//                    {
+//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//                        writeOutputFileChannel.write(outputFileBuffer);
+//                        writeOutputFileChannel.close();
+//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
+            }
+        });
+        logThread.setName("encryptThread");
+        logThread.setDaemon(true);
+        logThread.start();
     }
 
     @Override
     public void error(String message)
     {
         status(message, true);
+            Thread errorLogThread = new Thread(new Runnable()
+            {
+                private RawCipher rawCipher;
+                @Override
+                @SuppressWarnings({"static-access"})
+                public void run()
+                {
+                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
+
+//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//                    {
+//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//                        writeOutputFileChannel.write(outputFileBuffer);
+//                        writeOutputFileChannel.close();
+//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
+                }
+            });
+            errorLogThread.setName("encryptThread");
+            errorLogThread.setDaemon(true);
+            errorLogThread.start();
     }
 
     @Override
@@ -536,30 +582,21 @@ public class CLUI implements UI
         log(status);
     }
 
-    @Override
-    public void println(String message)
-    {
-        System.out.println(message);
-    }
+    @Override public void println(String message) { System.out.println(message); }
 
-    @Override
-    public void encryptionGraph(int value)
-    {
-    }
+    @Override public void encryptionGraph(int value) {  }
 
     @Override
     public void encryptionStarted() 
     {
     }
 
-    @Override
-    public void encryptionProgress(int filesProgress, int fileProgress)
+    @Override public void encryptionProgress(int filesProgress, int fileProgress)
     {
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }
     
-    @Override
-    public void encryptionFinished()
+    @Override public void encryptionFinished()
     {
     }
 }

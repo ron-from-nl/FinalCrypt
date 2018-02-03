@@ -117,7 +117,7 @@ public class Stats
     public String getStartSummary(String mode)
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = mode + ": starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\n";
+        String returnString = mode + ": starting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\r\n";
         
         return returnString;
     }
@@ -132,7 +132,7 @@ public class Stats
                             ); // *1000 from mSec to Sec
 //        String throughputString = String.format("%.1f", Math.floor(percentage));
         String throughputString = String.format("%.1f", percentage);
-        returnString = " " + throughputString + "%\n";
+        returnString = " " + throughputString + "%\r\n";
         
         return returnString;
     }
@@ -151,7 +151,7 @@ public class Stats
         String returnString = new String();
         double throughput = ( ((double)(filesBytesProcessed) / (((double)nanoSeconds / 1000000000.0))) ); // *1000 from mSec to Sec
         String throughputString = String.format("%.1f", throughput);
-        returnString = " (average: " + getHumanSize(throughput,1) + "/s)\n";
+        returnString = " (average: " + getHumanSize(throughput,1) + "/s)\r\n";
         
         return returnString;
     }

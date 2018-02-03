@@ -218,26 +218,26 @@ public class GPT_Entries_Backup
         String returnString = "";
         String hexString1 = "";
 
-        returnString += ("\n");
-        returnString += ("[ LBA " + LBA + " Entry 1-4 Backup ]\n");
-        returnString += ("\n");
-        returnString += (String.format("%-50s", "partttionTypeGUIDBytes"));   for (byte mybyte: partttionTypeGUIDBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = ""; returnString += ("\n");
-        returnString += (String.format("%-50s", "uniquePartitionGUIDBytes")); for (byte mybyte: uniquePartitionGUIDBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "firstLBABytes"));            for (byte mybyte: firstLBABytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "lastLBABytes"));             for (byte mybyte: lastLBABytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "attributeFlagsBytes"));      for (byte mybyte: attributeFlagsBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "partitionNameBytes"));       for (byte mybyte: partitionNameBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\n");
+        returnString += ("\r\n");
+        returnString += ("[ LBA " + LBA + " Entry 1-4 Backup ]\r\n");
+        returnString += ("\r\n");
+        returnString += (String.format("%-50s", "partttionTypeGUIDBytes"));   for (byte mybyte: partttionTypeGUIDBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = ""; returnString += ("\r\n");
+        returnString += (String.format("%-50s", "uniquePartitionGUIDBytes")); for (byte mybyte: uniquePartitionGUIDBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "firstLBABytes"));            for (byte mybyte: firstLBABytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "lastLBABytes"));             for (byte mybyte: lastLBABytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "attributeFlagsBytes"));      for (byte mybyte: attributeFlagsBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "partitionNameBytes"));       for (byte mybyte: partitionNameBytes1) { hexString1 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString1)); hexString1 = "";  returnString += ("\r\n");
 
         String hexString2 = "";
-        returnString += ("\n");
-        returnString += (String.format("%-50s", "partttionTypeGUIDBytes"));   for (byte mybyte: partttionTypeGUIDBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = ""; returnString += ("\n");
-        returnString += (String.format("%-50s", "uniquePartitionGUIDBytes")); for (byte mybyte: uniquePartitionGUIDBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "firstLBABytes"));            for (byte mybyte: firstLBABytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "lastLBABytes"));             for (byte mybyte: lastLBABytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "attributeFlagsBytes"));      for (byte mybyte: attributeFlagsBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
-        returnString += (String.format("%-50s", "partitionNameBytes"));       for (byte mybyte: partitionNameBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
-        returnString += ("\n");
-        returnString += (String.format("%-50s", "partition3_128Bytes"));      for (byte mybyte: partition3_128Bytes) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\n");
+        returnString += ("\r\n");
+        returnString += (String.format("%-50s", "partttionTypeGUIDBytes"));   for (byte mybyte: partttionTypeGUIDBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = ""; returnString += ("\r\n");
+        returnString += (String.format("%-50s", "uniquePartitionGUIDBytes")); for (byte mybyte: uniquePartitionGUIDBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "firstLBABytes"));            for (byte mybyte: firstLBABytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "lastLBABytes"));             for (byte mybyte: lastLBABytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "attributeFlagsBytes"));      for (byte mybyte: attributeFlagsBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
+        returnString += (String.format("%-50s", "partitionNameBytes"));       for (byte mybyte: partitionNameBytes2) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
+        returnString += ("\r\n");
+        returnString += (String.format("%-50s", "partition3_128Bytes"));      for (byte mybyte: partition3_128Bytes) { hexString2 += GPT.getHexString(mybyte, "2"); } returnString += (String.format("%-20s", hexString2)); hexString2 = "";  returnString += ("\r\n");
         return returnString;
     }
 }

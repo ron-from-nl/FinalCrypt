@@ -75,8 +75,8 @@ public class Version
                     currentOverallVersionString += (char) byteBuffer.get();
                 }
             }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }        
+        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
 
         currentOverallVersionString.replaceAll("\\p{C}", "?");
 //        currentOverallVersionString.replaceAll("[^\\d. ]", "");
@@ -99,8 +99,8 @@ public class Version
     {
 //      Read the remote VERSION file
         latestOverallVersionString = "Unknown";
-        try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); } // null pointer at no connect
+        try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); } // null pointer at no connect
         byteBuffer = ByteBuffer.allocate(512);
         try
         {
@@ -113,8 +113,8 @@ public class Version
                     latestOverallVersionString += (char) byteBuffer.get();
                 }
             }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
-        try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\n"); }
+        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
 
         latestOverallVersionString.replaceAll("\\p{C}", "?");
 //        latestOverallVersionString.replaceAll("[^\\d.", "");
@@ -142,22 +142,22 @@ public class Version
         {
             if      (currentVersionTotal < latestVersionTotal)
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\n"; 
+                returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
 
             } 
             else if (currentVersionTotal > latestVersionTotal)
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " is a development version!\n";
+                returnString += getProcuct() + " " + currentOverallVersionString + " is a development version!\r\n";
             } 
             else
             {
-                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date\n";
+                returnString += getProcuct() + " " + currentOverallVersionString + " is up to date\r\n";
             } 
         }
         else
         {
-            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProcuct() + " Version\n"; }
-            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProcuct() + " Version\n"; }
+            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProcuct() + " Version\r\n"; }
+            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProcuct() + " Version\r\n"; }
         }
         return returnString;
     }
