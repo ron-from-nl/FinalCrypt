@@ -62,7 +62,7 @@ public class Configuration
     {
         this.ui = ui;
         platform = System.getProperty("os.name").toLowerCase();
-        if ( platform.indexOf("windows") != -1 ) { fileSeparator = "\\"; lineTerminator = "\r\r\n"; } else { fileSeparator = "/"; lineTerminator = "\r\r\n"; }
+        if ( platform.indexOf("windows") != -1 ) { fileSeparator = "\\"; lineTerminator = "\r\n"; } else { fileSeparator = "/"; lineTerminator = "\r\n"; }
 
         // Just for the logToFile
         currentTimeCalendar = Calendar.getInstance();
