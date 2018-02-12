@@ -17,6 +17,8 @@ SoftPedia certificate
 
 ============================= Source Published ==============================
 
+Replaced all JavaFX Timeline objects for Timer(Task) object on all CLUI related objects, so FinalCrypt doesn't need the JavaFX libs when operating in command line user interface mode.
+Fixed updateProgressBars on creating raw cipher device and clone raw cipher device.
 
 ============================= Binaries Released =============================
 
