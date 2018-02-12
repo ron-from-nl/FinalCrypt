@@ -24,16 +24,14 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+import java.util.Timer;
+import java.util.TimerTask;
+//import javafx.animation.Animation;
+//import javafx.animation.KeyFrame;
+//import javafx.animation.Timeline;
 
 public class Device
 {
@@ -44,6 +42,8 @@ public class Device
     static UI ui;
     private static boolean pausing;
     private static boolean stopPending;
+    private TimerTask updateProgressTask;
+    private Timer updateProgressTaskTimer;
     
     public Device(UI ui)
     {
@@ -98,7 +98,8 @@ public class Device
         Stat writeCipherFileStat2 = new Stat(); writeCipherFileStat2.reset();
 
         allDataStats.setFilesTotal(2);
-        allDataStats.setAllDataBytesTotal(this.getCipherFileSize(cipherFilePath) * 2);
+        allDataStats.setFileBytesTotal      (getCipherFileSize(cipherFilePath) * 2);
+        allDataStats.setAllDataBytesTotal   (getCipherFileSize(cipherFilePath) * 2);
         ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
@@ -115,24 +116,48 @@ public class Device
         ByteBuffer  outputDeviceBuffer =    ByteBuffer.allocate(bufferSize); outputDeviceBuffer.clear();
 
 //      Setup the Progress TIMER & TASK
-        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
-        ui.encryptionProgress
-        (
-                (int) (
-                        (
-                                readCipherFileStat1.getFileBytesProcessed() +
-                                writeCipherFileStat1.getFileBytesProcessed() +
-                                readCipherFileStat2.getFileBytesProcessed() +
-                                writeCipherFileStat2.getFileBytesProcessed()
-                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
 
-                (int) (
-                        (
-                                allDataStats.getFilesBytesProcessed() * 4) /
-                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
-                        )
-        )        ));
-        updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
+        updateProgressTask = new TimerTask() { @Override public void run()
+        {
+            ui.encryptionProgress
+            (
+                    (int) (
+                            (
+                                    readCipherFileStat1.getFileBytesProcessed() +
+                                    writeCipherFileStat1.getFileBytesProcessed() +
+                                    readCipherFileStat2.getFileBytesProcessed() +
+                                    writeCipherFileStat2.getFileBytesProcessed()
+                            )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+
+                    (int) (
+                            (
+                                    allDataStats.getFilesBytesProcessed() * 4) /
+                                    ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+                            )
+            );
+        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+
+
+
+//        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
+//        ui.encryptionProgress
+//        (
+//                (int) (
+//                        (
+//                                readCipherFileStat1.getFileBytesProcessed() +
+//                                writeCipherFileStat1.getFileBytesProcessed() +
+//                                readCipherFileStat2.getFileBytesProcessed() +
+//                                writeCipherFileStat2.getFileBytesProcessed()
+//                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+//
+//                (int) (
+//                        (
+//                                allDataStats.getFilesBytesProcessed() * 4) /
+//                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+//                        )
+//        )
+//        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
+        
         allDataStats.setAllDataStartNanoTime();
 
         ui.log("Writing " + cipherFilePath.toAbsolutePath() + " to partition 1 (LBA:"+ firstLBA1 + ":" + (getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition) + ")");
@@ -218,7 +243,8 @@ public class Device
 //        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
         ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
-        updateProgressTimeline.stop();
+        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
+//        updateProgressTimeline.stop();
         ui.encryptionFinished();
     }
 
@@ -236,7 +262,9 @@ public class Device
         Stat writeCipherFileStat2 = new Stat(); writeCipherFileStat2.reset();
 
         allDataStats.setFilesTotal(2);
-        allDataStats.setAllDataBytesTotal(this.getCipherFileSize(cipherDeviceFilePath) * 2);
+        allDataStats.setFileBytesTotal      (getCipherPartitionSize(cipherDeviceFilePath) * 3);
+        allDataStats.setAllDataBytesTotal   (getCipherPartitionSize(cipherDeviceFilePath) * 3);
+        
         ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
@@ -253,24 +281,47 @@ public class Device
         ByteBuffer  outputDeviceBuffer =      ByteBuffer.allocate(bufferSize); outputDeviceBuffer.clear();
 
 //      Setup the Progress TIMER & TASK
-        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
-        ui.encryptionProgress
-        (
-                (int) (
-                        (
-                                readCipherFileStat1.getFileBytesProcessed() +
-                                writeCipherFileStat1.getFileBytesProcessed() +
-                                readCipherFileStat2.getFileBytesProcessed() +
-                                writeCipherFileStat2.getFileBytesProcessed()
-                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
 
-                (int) (
-                        ( 
-                                allDataStats.getFilesBytesProcessed() * 4) /
-                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
-                        )
-        )        ));
-        updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
+        updateProgressTask = new TimerTask() { @Override public void run()
+        {
+            ui.encryptionProgress
+            (
+                    (int) (
+                            (
+                                    readCipherFileStat1.getFileBytesProcessed() +
+                                    writeCipherFileStat1.getFileBytesProcessed() +
+                                    readCipherFileStat2.getFileBytesProcessed() +
+                                    writeCipherFileStat2.getFileBytesProcessed()
+                            )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+
+                    (int) (
+                            ( 
+                                    allDataStats.getFilesBytesProcessed() * 4) /
+                                    ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+                            )
+            );
+        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+
+
+//        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
+//        ui.encryptionProgress
+//        (
+//                (int) (
+//                        (
+//                                readCipherFileStat1.getFileBytesProcessed() +
+//                                writeCipherFileStat1.getFileBytesProcessed() +
+//                                readCipherFileStat2.getFileBytesProcessed() +
+//                                writeCipherFileStat2.getFileBytesProcessed()
+//                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+//
+//                (int) (
+//                        ( 
+//                                allDataStats.getFilesBytesProcessed() * 4) /
+//                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+//                        )
+//        )
+//        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
+        
         allDataStats.setAllDataStartNanoTime();
         
         ui.log("Cloning " + cipherDeviceFilePath.toAbsolutePath() + " to " + targetDeviceFilePath.toAbsolutePath() + " partitions (LBA:"+ firstLBA1 + ":" + (getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition) + ")");
@@ -336,7 +387,8 @@ public class Device
 //        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
         ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
 
-        updateProgressTimeline.stop();
+        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
+//        updateProgressTimeline.stop();
         ui.encryptionFinished();
     }
 
