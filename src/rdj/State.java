@@ -20,13 +20,14 @@ package rdj;
 
 public class State
 {
-    public final    static  int INVALID =            0;
-    public final    static  int FILE =               1;
-    public final    static  int DIR =                2;
-    public final    static  int MULTI =              3;
-    public final    static  int DEVICE =             4;
-    public final    static  int PARTITION =          5;
-    
+    public final    static  int	    INVALID =            0;
+    public final    static  int	    FILE =               1;
+    public final    static  int	    DIR =                2;
+    public final    static  int	    MULTI =              3;
+    public final    static  int	    DEVICE =             4;
+    public final    static  int	    PARTITION =          5;
+    private static final String[]   ITEMSELECTDESCRIPTION = new String[] { "Invalid","File","Directory","Multi","Device","Partition" };
+
     public          static  int targetSelected =     INVALID;
     public          static  int cipherSelected =     INVALID;
     
@@ -39,6 +40,17 @@ public class State
         targetReady =    false;
         cipherReady =    false;
     }
-    public void setCipherSelected(int value)  { cipherSelected = value; }
-    public void setTargetSelected(int value)  { targetSelected = value; }
+    public static void setCipherSelected(int value)	   { cipherSelected = value; }
+    public static void setTargetSelected(int value)	   { targetSelected = value; }
+    
+    public static String getCipherSelectedDescription()    { return ITEMSELECTDESCRIPTION[cipherSelected]; }	
+    public static String getTargetSelectedDescription()    { return ITEMSELECTDESCRIPTION[targetSelected]; }
+    
+    public static String print()
+    {
+	String s = "";
+	s += "Cipher selected: " + getCipherSelectedDescription() + " ready?: " + cipherReady + "\r\n";
+	s += "Target selected: " + getTargetSelectedDescription() + " ready?: " + targetReady + "\r\n";
+	return s;
+    }
 }

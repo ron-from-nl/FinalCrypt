@@ -94,11 +94,11 @@ public class GPT
 //    synchronized public void create(Path cipherFilePath, Path rawDeviceFilePath)
     synchronized public void create(long cipherSize, Path rawDeviceFilePath)
     {
-        gpt_Protective_MBR.create(rawDeviceFilePath);
-        gpt_Entries.create(cipherSize);                 // Create order: 1
-        gpt_Entries_Backup.create(cipherSize);          // Create order: 2
-        gpt_Header.create(rawDeviceFilePath);           // Create order: 3
-        gpt_Header_Backup.create(rawDeviceFilePath);    // Create order: 4
+	gpt_Protective_MBR.create(rawDeviceFilePath);
+	gpt_Entries.create(cipherSize);                 // Create order: 1
+	gpt_Entries_Backup.create(cipherSize);          // Create order: 2
+	gpt_Header.create(rawDeviceFilePath);           // Create order: 3
+	gpt_Header_Backup.create(rawDeviceFilePath);    // Create order: 4
     }
     
     synchronized public void write(Path rawDeviceFilePath)

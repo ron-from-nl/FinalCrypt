@@ -44,12 +44,12 @@
                                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Label fx:id="inputFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" minHeight="40.0" minWidth="439.0" prefHeight="40.0" prefWidth="439.0" text="Select the items you want to encrypt" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
+                                                      <Label fx:id="targetFileChooserLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" minHeight="40.0" minWidth="439.0" prefHeight="40.0" prefWidth="439.0" text="Select the items you want to encrypt" textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS">
                                                          <font>
                                                             <Font name="Open Sans" size="18.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="inputFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#inputInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="BLUE" underline="true" GridPane.columnIndex="1">
+                                                      <Label fx:id="targetFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="156.0" text="?" textAlignment="CENTER" textFill="BLUE" underline="true" GridPane.columnIndex="1">
                                                          <cursor>
                                                             <Cursor fx:constant="HAND" />
                                                          </cursor>
@@ -68,7 +68,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="inputFileSwingNode" />
+                                                      <SwingNode fx:id="targetFileSwingNode" />
                                                    </children>
                                                 </StackPane>
                                              </children>

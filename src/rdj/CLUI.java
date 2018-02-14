@@ -31,8 +31,8 @@ import java.util.EnumSet;
 /* commandline test routine
 
 clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -jar FinalCrypt.jar
-clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --print -i 1 -c 2
-clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar rdj/CLUI --print -i a -c b
+clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --print -c 2 -t 1
+clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar rdj/CLUI --print -c b -t a
 
 */
 
@@ -51,9 +51,9 @@ public class CLUI implements UI
         boolean negatePattern = false;
         boolean printgpt = false;
 
-        ArrayList<Path> inputFilesPathList = new ArrayList<>();
+        ArrayList<Path> targetFilesPathList = new ArrayList<>();
         Path batchFilePath = null;
-        Path inputFilePath = null;
+        Path targetFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
         configuration = new Configuration(ui);
@@ -87,22 +87,22 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
-            else if ( args[paramCnt].equals("-s")) { if ( validateIntegerString(args[paramCnt + 1]) )               { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
+            else if ( ( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
-            else if ( args[paramCnt].equals("-w")) { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
-            else if ( args[paramCnt].equals("-W")) { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
-            else if ( args[paramCnt].equals("-r")) { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-w")) && (!args[paramCnt+1].isEmpty()) )				    { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-W")) && (!args[paramCnt+1].isEmpty()) )				    { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-            else if ( args[paramCnt].equals("-i")) { inputFilePath = Paths.get(args[paramCnt+1]); inputFilesPathList.add(inputFilePath); ifset = true; paramCnt++; }
-            else if ( args[paramCnt].equals("-b")) { ifset = batchInput(args[paramCnt+1], inputFilesPathList); paramCnt++; }
-            else if ( args[paramCnt].equals("-c")) { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
-            else { System.err.println("\r\nError: Invalid Parameter:" + args[paramCnt]); usage(); }
+            else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetFilePath = Paths.get(args[paramCnt+1]); targetFilesPathList.add(targetFilePath); ifset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { ifset = addBatchTargetFiles(args[paramCnt+1], targetFilesPathList); paramCnt++; }
+            else if ( ( args[paramCnt].equals("-c")) && (paramCnt+1 < args.length) )				    { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
+            else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(); }
         }
         
-        if (( ! ifset ) && ( ! printgpt ))  { error("\r\nError: Missing valid parameter <-i \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(); }
+        if (( ! ifset ) && ( ! printgpt ))  { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(); }
         if ( ! cfset )                      { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(); }
 
         
@@ -137,22 +137,25 @@ public class CLUI implements UI
                         ( ! cipherFilePath.getFileName().toString().endsWith("sda") )
                    )
                 {
-                    if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
-                    {
-                        State.cipherSelected = State.PARTITION;
-                        State.cipherReady = true;
-                    }
-                    else
-                    {
-                        State.cipherSelected = State.DEVICE;
-                        if (printgpt) { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(cipherFilePath); System.exit(0);}
-                    }
+		    if (isValidFile(cipherFilePath, false, false, true))
+		    {
+			if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
+			{
+			    State.cipherSelected = State.PARTITION;
+			    State.cipherReady = true;
+			}
+			else
+			{
+			    State.cipherSelected = State.DEVICE;
+			    if (printgpt) { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(cipherFilePath); System.exit(0);}
+			}
 
-                    finalCrypt.setCipherFilePath(cipherFilePath);
-                    State.cipherReady = true;
-    //                  Get size of partition
-                    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+			finalCrypt.setCipherFilePath(cipherFilePath);
+			State.cipherReady = true;
+	//                  Get size of partition
+			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+		    } else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
                 }
             }
             else if (cipherFilePath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Selection
@@ -161,24 +164,27 @@ public class CLUI implements UI
                         ( ! cipherFilePath.getFileName().toString().endsWith("disk0"))
                    )
                 {
-                    if (
-                            (Character.isDigit(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-1))) &&
-                            (String.valueOf(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
-                       )
-                    {
-                        State.cipherSelected = State.PARTITION;
-                    }
-                    else
-                    {
-                        State.cipherSelected = State.DEVICE;
-                    }
+		    if (isValidFile(cipherFilePath, false, false, true))
+		    {
+			if (
+				(Character.isDigit(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-1))) &&
+				(String.valueOf(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
+			   )
+			{
+			    State.cipherSelected = State.PARTITION;
+			}
+			else
+			{
+			    State.cipherSelected = State.DEVICE;
+			}
 
-    //                  Get size of device        
-                    finalCrypt.setCipherFilePath(cipherFilePath);
-                    State.cipherReady = true;
-                    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-                    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
-                    println("ciphersize = " + cipherSize);
+	//                  Get size of device        
+			finalCrypt.setCipherFilePath(cipherFilePath);
+			State.cipherReady = true;
+			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+			println("ciphersize = " + cipherSize);
+		    } else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
                 } else { State.cipherReady = false; } // disk0
             }
             else
@@ -201,24 +207,24 @@ public class CLUI implements UI
 
 //////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
 
-//      Check if inputFileList elements exist on filesystem
+//      Check if targetFileList elements exist on filesystem
 
-        for(Path inputFilePathItem : inputFilesPathList)
+        for(Path targetFilePathItem : targetFilesPathList)
         {
-            if (Files.exists(inputFilePathItem))
+            if (Files.exists(targetFilePathItem))
             {
-                if ( isValidDir(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
+                if ( isValidDir(targetFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid dir\r\n", true); }
+                    if (finalCrypt.getVerbose()) { status("Target parameter: " + targetFilePathItem + " is a valid dir\r\n", true); }
                 }
-                else if ( isValidFile(inputFilePathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
+                else if ( isValidFile(targetFilePathItem, true, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
                 {
-                    if (finalCrypt.getVerbose()) { status("Input parameter: " + inputFilePathItem + " is a valid file\r\n", true); }
+                    if (finalCrypt.getVerbose()) { status("Target parameter: " + targetFilePathItem + " is a valid file\r\n", true); }
                 }
             }
             else
             { 
-                    error("Input parameter: " + inputFilePathItem + " does not exists\r\n"); usage();
+                    error("Target parameter: " + targetFilePathItem + " does not exists\r\n"); usage();
             }            
         }
         
@@ -226,40 +232,48 @@ public class CLUI implements UI
         State.targetReady = false;
         
 //      Test for Raw Cipher Target
-        if (inputFilesPathList.size() == 1)
+        if (targetFilesPathList.size() == 1)
         {
-            if (inputFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Device
+            if (targetFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Device
             {
-                if (
-                        ( ! inputFilesPathList.get(0).getFileName().toString().endsWith("sda")) && // Not main disk
-                        ( Character.isLetter( inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -1) )) // Device selected
-                   )
+                if  ( ! targetFilesPathList.get(0).getFileName().toString().endsWith("sda")) // Not main disk
                 {
-                    State.targetSelected = State.DEVICE;
-                    State.targetReady = true;
+		    if (isValidFile(targetFilesPathList.get(0).toAbsolutePath(), false, false, true))
+		    {
+			if ( Character.isLetter( targetFilesPathList.get(0).getFileName().toString().charAt(targetFilesPathList.get(0).getFileName().toString().length() -1) )) // Device selected
+			{
+			    State.targetSelected = State.DEVICE;
+			    State.targetReady = true;
+			}
+			else
+			{
+			    State.targetSelected = State.PARTITION;
+			    State.targetReady = false;
+			}
+		    } else { status("Probably no read & write permission on " + targetFilesPathList.get(0).toAbsolutePath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
                 }
-                else
-                {
-                    State.targetSelected = State.PARTITION;
-                    State.targetReady = false;
-                }                    
             }
-            else if (inputFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Device
+            else if (targetFilesPathList.get(0).toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Device
             {
-                if (
-                        ( ! inputFilesPathList.get(0).getFileName().toString().endsWith("disk0")) && // not primary disk
-                        ( Character.isDigit( inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -1) )) && // last char = digit
-                        ( ! String.valueOf(inputFilesPathList.get(0).getFileName().toString().charAt(inputFilesPathList.get(0).getFileName().toString().length() -2)).equalsIgnoreCase("s")) // ! slice
-                   )
+                if ( ! targetFilesPathList.get(0).getFileName().toString().endsWith("disk0")) // not primary disk
                 {
-                    State.targetSelected = State.DEVICE;
-                    State.targetReady = true;                    
+		    if (isValidFile(targetFilesPathList.get(0).toAbsolutePath(), false, false, true))
+		    {
+			if (
+				( Character.isDigit( targetFilesPathList.get(0).getFileName().toString().charAt(targetFilesPathList.get(0).getFileName().toString().length() -1) )) && // last char = digit
+				( ! String.valueOf(targetFilesPathList.get(0).getFileName().toString().charAt(targetFilesPathList.get(0).getFileName().toString().length() -2)).equalsIgnoreCase("s")) // ! slice
+			   ) 
+			{
+			    State.targetSelected = State.DEVICE;
+			    State.targetReady = true;                    
+			}
+			else
+			{
+			    State.targetSelected = State.PARTITION;
+			    State.targetReady = false;
+			}
+		    } else { status("Probably no read & write permission on " + targetFilesPathList.get(0).toAbsolutePath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
                 }
-                else
-                {
-                    State.targetSelected = State.PARTITION;
-                    State.targetReady = false;
-                }                    
             }
             else // No Raw Cipher Device Target selected
             {
@@ -269,7 +283,7 @@ public class CLUI implements UI
         }
         
 //      En/Disable hasEncryptableItems
-        if ((inputFilesPathList.size() > 0 ) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
+        if ((targetFilesPathList.size() > 0 ) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
         {
 //          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
             Path cipherPath = null;
@@ -277,7 +291,7 @@ public class CLUI implements UI
 //          Look for encryptable files (Long I/O operation set hourglass)
 
 
-            for (Path path:finalCrypt.getExtendedPathList(inputFilesPathList, cipherFilePath, pattern, negatePattern, true) )
+            for (Path path:finalCrypt.getExtendedPathList(targetFilesPathList, cipherFilePath, pattern, negatePattern, true) )
             {
                 if ((path.compareTo(cipherFilePath) == 0))
                 {
@@ -295,29 +309,25 @@ public class CLUI implements UI
         
         if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
         {
-            Mode.modeReady = true;
-            status(Mode.setMode(Mode.ENCRYPT) + "\r\n", true);
+            Mode.modeReady = true; Mode.setMode(Mode.ENCRYPT);
         }
         else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
         {
-            Mode.modeReady = true;
-            status(Mode.setMode(Mode.ENCRYPTRAW) + "\r\n", true);
+            Mode.modeReady = true; Mode.setMode(Mode.ENCRYPTRAW);
         }
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
         {
-            Mode.modeReady = true;
-            status(Mode.setMode(Mode.CREATE_CIPHER_DEVICE) + "\r\n", true);
+            Mode.modeReady = true; Mode.setMode(Mode.CREATE_CIPHER_DEVICE);
         }
         else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
         {
 //          Source and Dest Device may not be the same
             if (
-                    ( inputFilesPathList.get(0).compareTo(cipherFilePath) != 0 )  &&
+                    ( targetFilesPathList.get(0).compareTo(cipherFilePath) != 0 )  &&
                     ( State.targetSelected == State.DEVICE ) && ( State.cipherSelected == State.DEVICE )
                )
             {
-                Mode.modeReady = true;
-                status(Mode.setMode(Mode.CLONE_CIPHER_DEVICE) + "\r\n", true);
+                Mode.modeReady = true; Mode.setMode(Mode.CLONE_CIPHER_DEVICE);
             }
             else
             { 
@@ -327,35 +337,33 @@ public class CLUI implements UI
         else                                                                                    
         {
             Mode.modeReady = false;
-            status(Mode.setMode(Mode.SELECT) + "\r\n", true);
+	    Mode.setMode(Mode.SELECT);
         }
-
-        if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
-        {
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////            
 
 //          Mode SET / KNOWN, Now we know what and how to execute
 
+	if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
+        {
             RawCipher rawCipher;
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
-//              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as inputFile)
-                ArrayList<Path> inputFilesPathListExtended = finalCrypt.getExtendedPathList(inputFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
+//              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
+                ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
                 this.encryptionStarted();
-                finalCrypt.encryptSelection(inputFilesPathListExtended, finalCrypt.getCipherFilePath());
+                finalCrypt.encryptSelection(targetFilesPathListExtended, finalCrypt.getCipherFilePath());
             }
             else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
             {
                 encryptionStarted();
-                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.writeRawCipher(cipherFilePath, inputFilesPathList.get(0));
+                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.createRawCipher(cipherFilePath, targetFilesPathList.get(0));
                 encryptionFinished();
             }
             else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
             {
                 encryptionStarted();
-                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.cloneRawCipher(cipherFilePath, inputFilesPathList.get(0));
+                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.cloneRawCipher(cipherFilePath, targetFilesPathList.get(0));
                 encryptionFinished();
             }
 
@@ -364,33 +372,34 @@ public class CLUI implements UI
         }
         else
         {
+	    log(State.print());
             status("Nothing to do.\r\n", true);
         }
             
     }
 
 
-    private boolean batchInput(String batchFilePathString, ArrayList<Path> inputFilesPathList)
+    private boolean addBatchTargetFiles(String batchFilePathString, ArrayList<Path> targetFilesPathList)
     {
         boolean ifset = false;
         Path batchFilePath;
-        Path inputFilePath;
+        Path targetFilePath;
 
-        if ( isValidFile(Paths.get(batchFilePathString), true, true) )
+        if ( isValidFile(Paths.get(batchFilePathString), true, true, true) )
         {
             log("Adding items from batchfile: " + batchFilePathString + "\r\n");
             batchFilePath = Paths.get(batchFilePathString);
             try
             {
-                for (String inputFilePathString:Files.readAllLines(batchFilePath))
+                for (String targetFilePathString:Files.readAllLines(batchFilePath))
                 {
 //                  Entry may not be a directory (gets filtered and must be a valid file)
-                    if ( isValidFile(Paths.get(inputFilePathString), finalCrypt.getSymlink(), true) )
+                    if ( isValidFile(Paths.get(targetFilePathString), true, finalCrypt.getSymlink(), true) )
                     {
-                        inputFilePath = Paths.get(inputFilePathString); inputFilesPathList.add(inputFilePath); ifset = true;
-//                        println("Adding: " + inputFilePathString);
+                        targetFilePath = Paths.get(targetFilePathString); targetFilesPathList.add(targetFilePath); ifset = true;
+//                        println("Adding: " + targetFilePathString);
                     }
-                    else { /* println("Invalid file: " + inputFilePathString);*/ } // Reporting in isValidFile is already set to true, so if invalid then user is informed
+                    else { /* println("Invalid file: " + targetFilePathString);*/ } // Reporting in isValidFile is already set to true, so if invalid then user is informed
                 }
             }
             catch (IOException ex) { error("Files.readAllLines(" + batchFilePath + ");" + ex.getMessage()); }
@@ -413,16 +422,16 @@ public class CLUI implements UI
         return validdir;
     }
 
-    public boolean isValidFile(Path path, boolean symlink, boolean report)
+    public boolean isValidFile(Path path, boolean readSize, boolean symlink, boolean report)
     {
         boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0; try                                  { fileSize = Files.size(path); } catch (IOException ex) { }
+        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) {  } }
 
         if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
         else
         {
             if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
+            if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
             if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
@@ -471,49 +480,49 @@ public class CLUI implements UI
         log("\r\n");
         log("Parameters:\r\n");
         log("\r\n");
-        log("            <-i / -b>             The items you want to encrypt. Individual (-i) or by batch (-b).\r\n");
-        log("            <[-i \"file/dir\"]>     The file or dir you want to encrypt (encrypts dirs recursively).\r\n");
-        log("            <[-b \"batchfile\"]>    Filelist in batchfile you want to encrypt (only files accepted).\r\n");
-        log("\r\n");
         log("            <-c \"cipherfile\">     The file that encrypts your file(s). Keep cipherfile SECRET!\r\n");
         log("                                  A cipher-file is a unique file like a personal photo or video!\r\n");
+        log("\r\n");
+        log("            <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).\r\n");
+        log("            <[-t \"file/dir\"]>     Target file or dir you want to encrypt (encrypts dirs recursively).\r\n");
+        log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files accepted).\r\n");
         log("Examples:\r\n");
         log("\r\n");
         log("            # Encrypt myfile with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t myfile\r\n");
         log("\r\n");
         log("            # Encrypt myfile and all content in mydir with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -i mydir -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t myfile -t mydir\r\n");
         log("\r\n");
         log("            # Encrypt files in batchfile with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -b mybatchfile -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -b mybatchfile\r\n");
         log("\r\n");
         log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -w '*.bit' -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t mydir -w '*.bit'\r\n");
         log("\r\n");
         log("            # Encrypt all files without *.bit extension in mydir with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -W '*.bit' -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t mydir -W '*.bit'\r\n");
         log("\r\n");
         log("            # Encrypt all files with *.bit extension in mydir with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '^.*\\.bit$' -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t mydir -r '^.*\\.bit$'\r\n");
         log("\r\n");
         log("            # Encrypt all files excluding .bit extension in mydir with mycipherfile\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i mydir -r '(?!.*\\.bit$)^.*$' -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t mydir -r '(?!.*\\.bit$)^.*$'\r\n");
         log("\r\n");
         log("Raw Cipher Examples (Linux):\r\n");
         log("\r\n");
         log("            # Create Cipher Device with 2 cipher partitions (e.g. on USB Mem Stick)\r\n");
         log("            # Beware: cipherfile gets randomized before writing to Device\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i /dev/sdb -c mycipherfile\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Print GUID Partition Table\r\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI --gpt -c /dev/sdb\r\n");
         log("\r\n");
-        log("            # Clone Cipher Device (-c source -i dest)\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb -i /dev/sdc\r\n");
+        log("            # Clone Cipher Device (-c sourcecipherdevice -t destinationcipherdevice)\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb -t /dev/sdc\r\n");
         log("\r\n");
         log("            # Encrypt myfile with raw cipher partition\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI -i myfile -c /dev/sdb1\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb1 -t myfile\r\n");
         log("\r\n");
         log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n");
         System.exit(1);
@@ -534,7 +543,7 @@ public class CLUI implements UI
 
 //                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 //                    {
-//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        // Encrypt targetBuffer and fill up outputBuffer
 //                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
 //                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
 //                        writeOutputFileChannel.write(outputFileBuffer);
@@ -562,7 +571,7 @@ public class CLUI implements UI
 
 //                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 //                    {
-//                        // Encrypt inputBuffer and fill up outputBuffer
+//                        // Encrypt targetBuffer and fill up outputBuffer
 //                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
 //                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
 //                        writeOutputFileChannel.write(outputFileBuffer);
@@ -578,8 +587,8 @@ public class CLUI implements UI
     @Override
     public void status(String status, boolean log)
     {
-//        if (log) { log(status); } // for future
-        log(status);
+        if (log) { log(status); } // for future
+//        log(status);
     }
 
     @Override public void println(String message) { System.out.println(message); }

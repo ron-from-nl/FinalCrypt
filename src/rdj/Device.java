@@ -251,145 +251,152 @@ public class Device
 //  Write CipherFile to partition 1 & 2
     synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath, long firstLBA1, long lastLBA1, long firstLBA2, long lastLBA2)
     {
-        long deviceSize = getDeviceSize(targetDeviceFilePath);
-        long cipherSize = getCipherPartitionSize(cipherDeviceFilePath);
-        if ( cipherSize < bufferSize)   { bufferSize = (int)cipherSize; ui.log("BufferSize is limited to cipherfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n"); }
-//        else                            { log("BufferSize is set to: " + getHumanSize(bufferSize, 1) + " \r\n"); }
-        Stats allDataStats = new Stats(); allDataStats.reset();        
-        Stat readCipherFileStat1 = new Stat(); readCipherFileStat1.reset();
-        Stat readCipherFileStat2 = new Stat(); readCipherFileStat2.reset();
-        Stat writeCipherFileStat1 = new Stat(); writeCipherFileStat1.reset();
-        Stat writeCipherFileStat2 = new Stat(); writeCipherFileStat2.reset();
+	if ( ( isValidFile(cipherDeviceFilePath, false, false, true) ) && ( isValidFile(targetDeviceFilePath, false, false, true) ) )
+	{
+	    long deviceSize = getDeviceSize(targetDeviceFilePath);
+	    long cipherSize = getCipherPartitionSize(ui, cipherDeviceFilePath);
+	    if ( cipherSize < bufferSize)   { bufferSize = (int)cipherSize; ui.log("BufferSize is limited to cipherfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n"); }
+//            else                            { log("BufferSize is set to: " + getHumanSize(bufferSize, 1) + " \r\n"); }
+	    Stats allDataStats = new Stats(); allDataStats.reset();        
+	    Stat readCipherFileStat1 = new Stat(); readCipherFileStat1.reset();
+	    Stat readCipherFileStat2 = new Stat(); readCipherFileStat2.reset();
+	    Stat writeCipherFileStat1 = new Stat(); writeCipherFileStat1.reset();
+	    Stat writeCipherFileStat2 = new Stat(); writeCipherFileStat2.reset();
 
-        allDataStats.setFilesTotal(2);
-        allDataStats.setFileBytesTotal      (getCipherPartitionSize(cipherDeviceFilePath) * 3);
-        allDataStats.setAllDataBytesTotal   (getCipherPartitionSize(cipherDeviceFilePath) * 3);
-        
-        ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
-        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-        
-        boolean inputEnded = false;
-        long readCipherDeviceFileChannelPosition = 0;
-        long readCipherDeviceFileChannelTransfered = 0;
-        long readCipherDeviceFileChannelTransferedTotal = 0;
-        long writeOutputDeviceChannelPosition = 0;                
-        long writeOutputDeviceChannelTransfered = 0;
-        
-//      Write the cipherPartitions to target partitions
-        ByteBuffer  cipherDeviceBuffer =      ByteBuffer.allocate(bufferSize); cipherDeviceBuffer.clear();
-        byte[]      randomizedBytes =       new byte[bufferSize];
-        ByteBuffer  outputDeviceBuffer =      ByteBuffer.allocate(bufferSize); outputDeviceBuffer.clear();
+	    allDataStats.setFilesTotal(2);
+	    allDataStats.setFileBytesTotal      (getCipherPartitionSize(ui, cipherDeviceFilePath) * 3);
+	    allDataStats.setAllDataBytesTotal   (getCipherPartitionSize(ui, cipherDeviceFilePath) * 3);
 
-//      Setup the Progress TIMER & TASK
+	    ui.status(allDataStats.getStartSummary(Mode.getDescription()), true);
+	    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 
-        updateProgressTask = new TimerTask() { @Override public void run()
-        {
-            ui.encryptionProgress
-            (
-                    (int) (
-                            (
-                                    readCipherFileStat1.getFileBytesProcessed() +
-                                    writeCipherFileStat1.getFileBytesProcessed() +
-                                    readCipherFileStat2.getFileBytesProcessed() +
-                                    writeCipherFileStat2.getFileBytesProcessed()
-                            )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+	    boolean inputEnded = false;
+	    long readCipherDeviceFileChannelPosition = 0;
+	    long readCipherDeviceFileChannelTransfered = 0;
+	    long readCipherDeviceFileChannelTransferedTotal = 0;
+	    long writeOutputDeviceChannelPosition = 0;                
+	    long writeOutputDeviceChannelTransfered = 0;
 
-                    (int) (
-                            ( 
-                                    allDataStats.getFilesBytesProcessed() * 4) /
-                                    ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
-                            )
-            );
-        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+    //      Write the cipherPartitions to target partitions
+	    ByteBuffer  cipherDeviceBuffer =      ByteBuffer.allocate(bufferSize); cipherDeviceBuffer.clear();
+	    byte[]      randomizedBytes =       new byte[bufferSize];
+	    ByteBuffer  outputDeviceBuffer =      ByteBuffer.allocate(bufferSize); outputDeviceBuffer.clear();
 
+    //      Setup the Progress TIMER & TASK
 
-//        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
-//        ui.encryptionProgress
-//        (
-//                (int) (
-//                        (
-//                                readCipherFileStat1.getFileBytesProcessed() +
-//                                writeCipherFileStat1.getFileBytesProcessed() +
-//                                readCipherFileStat2.getFileBytesProcessed() +
-//                                writeCipherFileStat2.getFileBytesProcessed()
-//                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
-//
-//                (int) (
-//                        ( 
-//                                allDataStats.getFilesBytesProcessed() * 4) /
-//                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
-//                        )
-//        )
-//        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
-        
-        allDataStats.setAllDataStartNanoTime();
-        
-        ui.log("Cloning " + cipherDeviceFilePath.toAbsolutePath() + " to " + targetDeviceFilePath.toAbsolutePath() + " partitions (LBA:"+ firstLBA1 + ":" + (getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition) + ")");
+	    updateProgressTask = new TimerTask() { @Override public void run()
+	    {
+		ui.encryptionProgress
+		(
+			(int) (
+				(
+					readCipherFileStat1.getFileBytesProcessed() +
+					writeCipherFileStat1.getFileBytesProcessed() +
+					readCipherFileStat2.getFileBytesProcessed() +
+					writeCipherFileStat2.getFileBytesProcessed()
+				)   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
 
-        readCipherDeviceFileChannelPosition = Device.getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + readCipherDeviceFileChannelPosition;
-        write1loop: while ( ! inputEnded )
-        {
-            while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-            if (stopPending)    { inputEnded = true; break write1loop; }
-
-            readCipherFileStat1.setFileStartEpoch();
-            try (final SeekableByteChannel readCipherDeviceFileChannel = Files.newByteChannel(cipherDeviceFilePath, EnumSet.of(StandardOpenOption.READ)))
-            {
-                // Fill up cipherDeviceBuffer
-                readCipherDeviceFileChannel.position(readCipherDeviceFileChannelPosition);
-                readCipherDeviceFileChannelTransfered = readCipherDeviceFileChannel.read(cipherDeviceBuffer); cipherDeviceBuffer.flip();
-                readCipherDeviceFileChannelTransferedTotal += readCipherDeviceFileChannelTransfered; readCipherDeviceFileChannelPosition += readCipherDeviceFileChannelTransfered;
-                if ( readCipherDeviceFileChannelTransferedTotal >= cipherSize ) { inputEnded = true; cipherDeviceBuffer.limit((int)readCipherDeviceFileChannelTransferedTotal - (int)cipherSize); }
-                readCipherDeviceFileChannel.close(); readCipherFileStat1.setFileEndEpoch(); readCipherFileStat1.clock();
-                readCipherFileStat1.addFileBytesProcessed(readCipherDeviceFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
-            } catch (IOException ex) { ui.log("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); }
-
-            // For sone reason cipherDeviceBuffer does not poor any data out into the writeOutputDeviceChannel, but does output data to GPT.logBytes
-            outputDeviceBuffer.put(cipherDeviceBuffer.array()); outputDeviceBuffer.flip();
-
-//          Write Device
-            writeCipherFileStat1.setFileStartEpoch();
-            try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
-            {
-//              Write cipherfile to partition 1
-                writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
-                
-//              Write cipherfile to partition 2
-                writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA2) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                writeCipherFileStat2.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
-//                GPT.logBytes(cipherDeviceBuffer.array());
-                
-                writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
-                writeOutputDeviceChannel.close(); writeCipherFileStat1.setFileEndEpoch(); writeCipherFileStat1.clock();
-            } catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
-            cipherDeviceBuffer.clear();
-        }
-        readCipherDeviceFileChannelPosition = 0;
-        readCipherDeviceFileChannelTransfered = 0;
-        writeOutputDeviceChannelPosition = 0;                
-        writeOutputDeviceChannelTransfered = 0;                
-        inputEnded = false;
-
-//      FILE STATUS        
-        ui.log(" - Write: rd(" +  readCipherFileStat1.getFileBytesThroughPut() + ") -> ");
-        ui.log("wr(" +           writeCipherFileStat1.getFileBytesThroughPut() + ") ");
-        ui.log(" - Write: rd(" +  readCipherFileStat2.getFileBytesThroughPut() + ") -> ");
-        ui.log("wr(" +           writeCipherFileStat2.getFileBytesThroughPut() + ") ");
-        ui.log(allDataStats.getAllDataBytesProgressPercentage());
+			(int) (
+				( 
+					allDataStats.getFilesBytesProcessed() * 4) /
+					( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+				)
+		);
+	    }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
 
-        allDataStats.addFilesProcessed(2);
-        allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
+    //        Timeline updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
+    //        ui.encryptionProgress
+    //        (
+    //                (int) (
+    //                        (
+    //                                readCipherFileStat1.getFileBytesProcessed() +
+    //                                writeCipherFileStat1.getFileBytesProcessed() +
+    //                                readCipherFileStat2.getFileBytesProcessed() +
+    //                                writeCipherFileStat2.getFileBytesProcessed()
+    //                        )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+    //
+    //                (int) (
+    //                        ( 
+    //                                allDataStats.getFilesBytesProcessed() * 4) /
+    //                                ( (allDataStats.getFilesBytesTotal() * 4) / 100.0)
+    //                        )
+    //        )
+    //        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
 
-//        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
+	    allDataStats.setAllDataStartNanoTime();
 
-        updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
-//        updateProgressTimeline.stop();
-        ui.encryptionFinished();
+	    ui.log("Cloning " + cipherDeviceFilePath.toAbsolutePath() + " to " + targetDeviceFilePath.toAbsolutePath() + " partitions (LBA:"+ firstLBA1 + ":" + (getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition) + ")");
+
+	    readCipherDeviceFileChannelPosition = Device.getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + readCipherDeviceFileChannelPosition;
+	    write1loop: while ( ! inputEnded )
+	    {
+		while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+		if (stopPending)    { inputEnded = true; break write1loop; }
+
+		readCipherFileStat1.setFileStartEpoch();
+		try (final SeekableByteChannel readCipherDeviceFileChannel = Files.newByteChannel(cipherDeviceFilePath, EnumSet.of(StandardOpenOption.READ)))
+		{
+		    // Fill up cipherDeviceBuffer
+		    readCipherDeviceFileChannel.position(readCipherDeviceFileChannelPosition);
+		    readCipherDeviceFileChannelTransfered = readCipherDeviceFileChannel.read(cipherDeviceBuffer); cipherDeviceBuffer.flip();
+		    readCipherDeviceFileChannelTransferedTotal += readCipherDeviceFileChannelTransfered; readCipherDeviceFileChannelPosition += readCipherDeviceFileChannelTransfered;
+		    if ( readCipherDeviceFileChannelTransferedTotal >= cipherSize ) { inputEnded = true; cipherDeviceBuffer.limit((int)readCipherDeviceFileChannelTransferedTotal - (int)cipherSize); }
+		    readCipherDeviceFileChannel.close(); readCipherFileStat1.setFileEndEpoch(); readCipherFileStat1.clock();
+		    readCipherFileStat1.addFileBytesProcessed(readCipherDeviceFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
+		} catch (IOException ex) { ui.log("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); }
+
+		// For sone reason cipherDeviceBuffer does not poor any data out into the writeOutputDeviceChannel, but does output data to GPT.logBytes
+		outputDeviceBuffer.put(cipherDeviceBuffer.array()); outputDeviceBuffer.flip();
+
+    //          Write Device
+		writeCipherFileStat1.setFileStartEpoch();
+		try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+		{
+    //              Write cipherfile to partition 1
+		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA1) + writeOutputDeviceChannelPosition));
+		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
+		    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
+
+    //              Write cipherfile to partition 2
+		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA2) + writeOutputDeviceChannelPosition));
+		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
+		    writeCipherFileStat2.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
+    //                GPT.logBytes(cipherDeviceBuffer.array());
+
+		    writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
+		    writeOutputDeviceChannel.close(); writeCipherFileStat1.setFileEndEpoch(); writeCipherFileStat1.clock();
+		} catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
+		cipherDeviceBuffer.clear();
+	    }
+	    readCipherDeviceFileChannelPosition = 0;
+	    readCipherDeviceFileChannelTransfered = 0;
+	    writeOutputDeviceChannelPosition = 0;                
+	    writeOutputDeviceChannelTransfered = 0;                
+	    inputEnded = false;
+
+    //      FILE STATUS        
+	    ui.log(" - Write: rd(" +  readCipherFileStat1.getFileBytesThroughPut() + ") -> ");
+	    ui.log("wr(" +           writeCipherFileStat1.getFileBytesThroughPut() + ") ");
+	    ui.log(" - Write: rd(" +  readCipherFileStat2.getFileBytesThroughPut() + ") -> ");
+	    ui.log("wr(" +           writeCipherFileStat2.getFileBytesThroughPut() + ") ");
+	    ui.log(allDataStats.getAllDataBytesProgressPercentage());
+
+
+	    allDataStats.addFilesProcessed(2);
+	    allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
+
+    //        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
+	    ui.status(allDataStats.getEndSummary(Mode.getDescription()), true);
+
+	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
+    //        updateProgressTimeline.stop();
+	    ui.encryptionFinished();
+	}
+	else
+	{
+	    ui.error("Error: Cloning aborted.\r\n");
+	}
     }
 
     private ByteBuffer encryptBuffer(ByteBuffer inputFileBuffer, ByteBuffer cipherFileBuffer)
@@ -455,7 +462,7 @@ public class Device
         return cipherSize;
     }
 
-    public static long getCipherPartitionSize(Path cipherDeviceFilePath)
+    public static long getCipherPartitionSize(UI ui, Path cipherDeviceFilePath)
     {
         GPT gpt = new GPT(ui);
         gpt.read(cipherDeviceFilePath);
@@ -490,6 +497,35 @@ public class Device
         }
     }
     
+    public boolean isValidDir(Path path, boolean symlink, boolean report)
+    {
+        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
+        return validdir;
+    }
+
+    public boolean isValidFile(Path path, boolean readSize, boolean symlink, boolean report)
+    {
+        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
+        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { } }
+
+        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+        else
+        {
+            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
+            if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
+            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+        }
+        if ( ! validfile ) { if ( report )			{ ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        return validfile;
+    }
+
     public static boolean getPausing()             { return pausing; }
     public static boolean getStopPending()         { return stopPending; }
     public static void setPausing(boolean val)     { pausing = val; }
