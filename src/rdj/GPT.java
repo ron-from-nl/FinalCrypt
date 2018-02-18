@@ -68,7 +68,6 @@ public class GPT
         gpt_Entries2 =  new GPT_Entries(this.ui,this,-33);
         gpt_Header1 =   new GPT_Header(this.ui, this, 1L);
         gpt_Header2 =   new GPT_Header(this.ui, this, -1L);
-//        clear(); // Already clears during instantiation
     }
     
     synchronized public void clear()
