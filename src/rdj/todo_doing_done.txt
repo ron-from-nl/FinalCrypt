@@ -18,6 +18,7 @@ Added optional cipher password to protect cipher from unauthorized usage
 
 ============================= Source Published ==============================
 
+Normalized GPT Tooling Object Model
 Extended GUID Partition Table Tooling
 
 ============================= Binaries Released =============================

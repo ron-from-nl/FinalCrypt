@@ -51,11 +51,11 @@ import javax.xml.bind.DatatypeConverter;
 public class GPT
 {
     UI ui;
-    public GPT_PMBR           gpt_PMBR;
-    public GPT_Header1                   gpt_Header1;
-    public GPT_Entries1                 gpt_Entries1;
-    public GPT_Header2            gpt_Header2;
-    public GPT_Entries2		gpt_Entries2;
+    public GPT_PMBR	gpt_PMBR;
+    public GPT_Header	gpt_Header1;
+    public GPT_Entries	gpt_Entries1;
+    public GPT_Header	gpt_Header2;
+    public GPT_Entries	gpt_Entries2;
     
     private int printAddressByteCounter;
 
@@ -63,11 +63,11 @@ public class GPT
     {
         this.ui = ui;
         
-        gpt_PMBR =            new GPT_PMBR(this.ui);
-        gpt_Entries1 =                   new GPT_Entries1(this.ui);
-        gpt_Header1 =                    new GPT_Header1(this.ui, this);
-        gpt_Entries2 =            new GPT_Entries2(this.ui, this);
-        gpt_Header2 =             new GPT_Header2(this.ui, this);
+        gpt_PMBR =	new GPT_PMBR(this.ui);
+        gpt_Entries1 =  new GPT_Entries(this.ui,this,2L);
+        gpt_Entries2 =  new GPT_Entries(this.ui,this,-33);
+        gpt_Header1 =   new GPT_Header(this.ui, this, 1L);
+        gpt_Header2 =   new GPT_Header(this.ui, this, -1L);
 //        clear(); // Already clears during instantiation
     }
     
@@ -92,7 +92,7 @@ public class GPT
     synchronized public void create(long cipherSize, Path targetDeviceFilePath)
     {
 	gpt_PMBR.create(targetDeviceFilePath);
-	gpt_Entries1.create(cipherSize);			    // Create order: 1
+	gpt_Entries1.create(cipherSize);		    // Create order: 1
 	gpt_Entries2.create(cipherSize);		    // Create order: 2
 	gpt_Header1.create(targetDeviceFilePath);	    // Create order: 3
 	gpt_Header2.create(targetDeviceFilePath);	    // Create order: 4
@@ -111,10 +111,10 @@ public class GPT
     synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { gpt_Entries1.cloneCipherPartitions(cipherDeviceFilePath, targetDeviceFilePath); }
     
     public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
-    public GPT_Header1  get_GPT_Header1()   { return gpt_Header1; }
-    public GPT_Entries1 get_GPT_Entries1()  { return gpt_Entries1; }
-    public GPT_Header2  get_GPT_Header2()   { return gpt_Header2; }
-    public GPT_Entries2 get_GPT_Entries2()  { return gpt_Entries2; }
+    public GPT_Header	get_GPT_Header1()   { return gpt_Header1; }
+    public GPT_Entries	get_GPT_Entries1()  { return gpt_Entries1; }
+    public GPT_Header	get_GPT_Header2()   { return gpt_Header2; }
+    public GPT_Entries	get_GPT_Entries2()  { return gpt_Entries2; }
 
     public static byte[] byteListToByteArray(List<Byte> list) { byte[] result = new byte[list.size()]; for(int i = 0; i < list.size(); i++) { result[i] = list.get(i).byteValue(); } return result; }
     public static byte[] getUUID() { UUID uuid = UUID.randomUUID(); ByteBuffer bb = ByteBuffer.allocate(16); bb.putLong(uuid.getMostSignificantBits()); bb.putLong(uuid.getLeastSignificantBits()); return bb.array(); }
@@ -305,10 +305,10 @@ public class GPT
     }
 
 //  Get size of device        
-    synchronized public static long getDeviceSize(UI ui, Path rawDeviceFilePath)
+    synchronized public static long getDeviceSize(UI ui, Path targetDeviceFilePath)
     {
         long deviceSize = 0;
-        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(rawDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); }
+        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); }
         catch (IOException ex) { ui.status(ex.getMessage(), true); }
         
         return deviceSize;

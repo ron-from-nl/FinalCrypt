@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GPT_Entry
 {
-    private final long          LBA; // = Primary GPT Header: 2L; Secondary GPT Header: -33
+    private final long          ABSTRACT_LBA; // = Primary GPT Header: 2L; Secondary GPT Header: -33
     private final long          FIRST_LBA = 2048L;
     private final String        ENTRYCLASS;
     private final int           ENTRYNUMBER; // 0 - 127
@@ -44,13 +44,13 @@ public class GPT_Entry
     private UI ui;
     private GPT gpt;
 
-    public GPT_Entry(UI ui, GPT gpt, long lba, int EntryNumber)
+    public GPT_Entry(UI ui, GPT gpt, long abstractLBA, int EntryNumber)
     {
         this.ui = ui;
         this.gpt = gpt;
-	this.LBA = lba;
+	this.ABSTRACT_LBA = abstractLBA;
 	this.ENTRYNUMBER = EntryNumber;
-	if ( LBA > 0 ) { ENTRYCLASS = "Primary"; } else { ENTRYCLASS = "Secondary"; }
+	if ( ABSTRACT_LBA > 0 ) { ENTRYCLASS = "Primary"; } else { ENTRYCLASS = "Secondary"; }
 	clear();
     }
     
@@ -75,7 +75,7 @@ public class GPT_Entry
 
    public void read(Path cipherDeviceFilePath)
     {
-	pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(cipherDeviceFilePath), LBA)) + (ENTRYNUMBER * LENGTH));
+	pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(cipherDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
         byte[] bytes = new byte[(int)LENGTH]; bytes = new Device(ui).readPos(cipherDeviceFilePath, pos, LENGTH);
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
@@ -94,14 +94,15 @@ public class GPT_Entry
     }
     
 //    public void create(Path cipherFilePath)
-    public void create(long cipherSize)
+    public void create(long cipherSize, byte[] uniquePartitionGUIDBytes)
     {
         cipherSizeLBA =  (long)((Math.floor((cipherSize - 1L) / Device.bytesPerSector )));
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.hex2Bytes("AF 3D C6 0F 83 84 72 47 8E 79 3D 69 D8 47 7D E4");
 //      16 (0x10)   16 bytes    During LBA 2    Unique partition GUID
-                                                if ( LBA > 0 ) { uniquePartitionGUIDBytes = GPT.getUUID(); } else { uniquePartitionGUIDBytes = gpt.get_GPT_Entries1().getEntry(ENTRYNUMBER).uniquePartitionGUIDBytes; }
+//                                              if ( ABSTRACT_LBA > 0 )			    { uniquePartitionGUIDBytes = GPT.getUUID(); } else { uniquePartitionGUIDBytes = gpt.get_GPT_Entries1().getEntry(ENTRYNUMBER).uniquePartitionGUIDBytes; }
+                                                this.uniquePartitionGUIDBytes = uniquePartitionGUIDBytes;
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
                                                 startingLBA =				    FIRST_LBA + (ENTRYNUMBER * cipherSizeLBA) + ENTRYNUMBER;
                                                 startingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(startingLBA, 8));
@@ -115,7 +116,7 @@ public class GPT_Entry
         partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
     }
     
-    public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), LBA)) + (ENTRYNUMBER * LENGTH)); new Device(ui).writePos(GPT_Entry.this.getBytes(), targetDeviceFilePath, pos); }
+    public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH)); new Device(ui).writePos(GPT_Entry.this.getBytes(), targetDeviceFilePath, pos); }
     public void writeCipherPartitions(Path cipherFilePath, Path targetDeviceFilePath)	    { new Device(ui).writeCipherPartition(cipherFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
     public void cloneCipherPartition(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { new Device(ui).cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
     

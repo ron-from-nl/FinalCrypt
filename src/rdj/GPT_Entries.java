@@ -22,31 +22,38 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GPT_Entries1
+public class GPT_Entries
 {
-    private final long  LBA = 2L;
+    private final long  ABSTRACT_LBA;// = 2L;
 //    private final long  LENGTH = 128L * 128L;
     public GPT_Entry[]	gpt_entry;
     private UI ui;
     private GPT gpt;
     private long totalSize = 0;
 
-    public GPT_Entries1(UI ui)
+    public GPT_Entries(UI ui, GPT gpt, long abstractLBA)
     {
         this.ui = ui;
         this.gpt = gpt;
 	gpt_entry = new GPT_Entry[128];
-	for(int entry = 0; entry < gpt_entry.length; entry++)					    { gpt_entry[entry] = new GPT_Entry(ui,gpt,LBA,entry); }
+	this.ABSTRACT_LBA = abstractLBA;
+	
+	for(int entry = 0; entry < gpt_entry.length; entry++)					    { gpt_entry[entry] = new GPT_Entry(this.ui,this.gpt,ABSTRACT_LBA,entry); }
     }
     
     public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } }
     public void		read(Path cipherDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); }
 
-    public void		create(long cipherSize)							    { gpt_entry[0].create(cipherSize); gpt_entry[1].create(cipherSize); setTotalSize(); }
+    public void		create(long cipherSize)
+    {
+	if ( ABSTRACT_LBA > 0 ) { gpt_entry[0].create(cipherSize, GPT.getUUID());
+				  gpt_entry[1].create(cipherSize, GPT.getUUID()); }
+	else			{ gpt_entry[0].create(cipherSize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
+				  gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); }
 //    public void create(long cipherSize)							    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].create(cipherSize); } }
 
     public void		write(Path targetDeviceFilePath)					    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].write(targetDeviceFilePath); } }
-//    public void write(Path targetDeviceFilePath)						    { new Device(ui).writeLBA(getEntries(), targetDeviceFilePath, LBA); }
+//    public void write(Path targetDeviceFilePath)						    { new Device(ui).writeLBA(getEntries(), targetDeviceFilePath, ABSTRACT_LBA); }
 
     public void		writeCipherPartitions(Path cipherFilePath, Path targetDeviceFilePath)	    { gpt_entry[0].writeCipherPartitions(cipherFilePath, targetDeviceFilePath); }
     public void		cloneCipherPartitions(Path cipherDeviceFilePath, Path targetDeviceFilePath) { gpt_entry[0].cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath); gpt_entry[1].cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath); }
@@ -54,7 +61,7 @@ public class GPT_Entries1
     private int		getTotalEntries()							    { return gpt_entry.length; }
     private int		getActiveEntries()							    { int activeEntries = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { if ( gpt_entry[entry].startingLBA != 0 ) { activeEntries++; } } return activeEntries; }
     
-    public byte[]	getBytes(int off, int length)						    { return GPT.getBytesPart(GPT_Entries1.this.getBytes(), off, length); }
+    public byte[]	getBytes(int off, int length)						    { return GPT.getBytesPart(GPT_Entries.this.getBytes(), off, length); }
     public byte[]	getBytes()								    { List<Byte> byteList = new ArrayList<Byte>();for (int entry = 0; entry < gpt_entry.length; entry++) { for (byte mybyte:gpt_entry[entry].getBytes()) { byteList.add(mybyte); } } return GPT.byteListToByteArray(byteList); }
     
     public GPT_Entry	getEntry(int entry)							    { return  gpt_entry[entry]; }
@@ -71,6 +78,6 @@ public class GPT_Entries1
         returnString += ("\r\n");
         returnString += ("========================================================================\r\n");
         returnString += ("\r\n");
-	returnString += "[ LBA " + LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " Primary Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]\r\n";
+	returnString += "[ LBA " + ABSTRACT_LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " Primary Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]\r\n";
 	for(int entry = 0; entry < gpt_entry.length; entry++)   { returnString += gpt_entry[entry].toString(); } return returnString; }
 }
