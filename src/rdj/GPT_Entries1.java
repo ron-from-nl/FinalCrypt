@@ -71,6 +71,6 @@ public class GPT_Entries1
         returnString += ("\r\n");
         returnString += ("========================================================================\r\n");
         returnString += ("\r\n");
-	returnString += "[ LBA " + LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " Primary Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getLBAHumanSize(totalSize,1) + " ]\r\n";
+	returnString += "[ LBA " + LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " Primary Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]\r\n";
 	for(int entry = 0; entry < gpt_entry.length; entry++)   { returnString += gpt_entry[entry].toString(); } return returnString; }
 }

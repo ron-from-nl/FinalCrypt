@@ -242,7 +242,6 @@ public class GPT
     }
     
     synchronized public static String getLBAHumanSize(byte[] value,int decimals) { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * Device.bytesPerSector,decimals ); }
-    synchronized public static String getLBAHumanSize(long value,int decimals) { return getHumanSize( value * Device.bytesPerSector,decimals ); }
     
     synchronized public boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 

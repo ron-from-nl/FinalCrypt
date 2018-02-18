@@ -85,12 +85,12 @@ public class GPT_Entry
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
                                                 startingLBABytes =			    GPT.getBytesPart(bytes, 32, 8); startingLBA = Long.reverseBytes(GPT.bytesToLong(startingLBABytes));
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                endingLBABytes =			    GPT.getBytesPart(bytes, 40, 8);  endingLBA = Long.reverseBytes(GPT.bytesToLong(endingLBABytes));
+                                                endingLBABytes =			    GPT.getBytesPart(bytes, 40, 8); endingLBA = Long.reverseBytes(GPT.bytesToLong(endingLBABytes));
 //      48 (0x30)   8 bytes     During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                 attributesBytes =			    GPT.getBytesPart(bytes, 48, 8);
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getBytesPart(bytes, 56, 72);
-        partSize = (Long.reverseBytes(GPT.bytesToLong(endingLBABytes)) - Long.reverseBytes(GPT.bytesToLong(startingLBABytes)) + 1) * Device.bytesPerSector;
+        partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
     }
     
 //    public void create(Path cipherFilePath)
@@ -104,7 +104,7 @@ public class GPT_Entry
                                                 if ( LBA > 0 ) { uniquePartitionGUIDBytes = GPT.getUUID(); } else { uniquePartitionGUIDBytes = gpt.get_GPT_Entries1().getEntry(ENTRYNUMBER).uniquePartitionGUIDBytes; }
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
                                                 startingLBA =				    FIRST_LBA + (ENTRYNUMBER * cipherSizeLBA) + ENTRYNUMBER;
-                                                startingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(startingLBA, 8)); // hex2Bytes("00 08 00 00 00 00 00 00");
+                                                startingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(startingLBA, 8));
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
                                                 endingLBA =				    startingLBA + cipherSizeLBA;
                                                 endingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(endingLBA, 8));
@@ -112,7 +112,7 @@ public class GPT_Entry
                                                 attributesBytes =			    GPT.hex2Bytes("00 00 00 00 00 00 00 00");
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getZeroBytes(72);
-        partSize = (Long.reverseBytes(GPT.bytesToLong(endingLBABytes)) - Long.reverseBytes(GPT.bytesToLong(startingLBABytes)) + 1) * Device.bytesPerSector;
+        partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
     }
     
     public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), LBA)) + (ENTRYNUMBER * LENGTH)); new Device(ui).writePos(GPT_Entry.this.getBytes(), targetDeviceFilePath, pos); }
@@ -145,7 +145,7 @@ public class GPT_Entry
             returnString += ("\r\n");
 	    returnString += ("------------------------------------------------------------------------\r\n");
             returnString += ("\r\n");
-	    returnString += ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getLBAHumanSize(partSize,1) + " ]\r\n");
+	    returnString += ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1) + " ]\r\n");
 	    returnString += ("\r\n");
 	    returnString += (String.format("%-25s", "PartttionTypeGUID"));	    returnString += GPT.getHexAndDecimal(partitionTypeGUIDBytes, false) + "\r\n";
 	    returnString += (String.format("%-25s", "UniquePartitionGUID"));	    returnString += GPT.getHexAndDecimal(uniquePartitionGUIDBytes, false) + "\r\n";
