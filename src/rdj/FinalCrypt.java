@@ -46,7 +46,8 @@ import java.util.TimerTask;
 
 public class FinalCrypt extends Thread
 {
-    private boolean debug = false, verbose = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
+    public static boolean verbose = false;
+    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
 
     private final int bufferSizeDefault = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
     private int bufferSize = 0; // Default 1MB
@@ -128,9 +129,9 @@ public class FinalCrypt extends Thread
     public void setBufferSize(int bufferSize)                               
     {
         this.bufferSize = bufferSize;
-        this.inputFileBufferSize = this.bufferSize; 
-        this.cipherFileBufferSize = this.bufferSize; 
-        this.outputFileBufferSize = this.bufferSize;
+        inputFileBufferSize = this.bufferSize; 
+        cipherFileBufferSize = this.bufferSize; 
+        outputFileBufferSize = this.bufferSize;
     }
     public void setTargetFilesPathList(ArrayList<Path> inputFilesPathList)   { this.targetFilesPathList = inputFilesPathList; }
     public void setCipherFilePath(Path cipherFilePath)                      { this.cipherFilePath = cipherFilePath; }

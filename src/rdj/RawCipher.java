@@ -36,6 +36,7 @@ public class RawCipher extends Thread
 	    gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDeviceFilePath);
 	    gpt.write(targetDeviceFilePath);
 	    gpt.writeCipher(cipherFilePath, targetDeviceFilePath);
+	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
@@ -45,20 +46,36 @@ public class RawCipher extends Thread
 	if ( ( isValidFile(cipherDeviceFilePath, false, false, true) ) && ( isValidFile(targetDeviceFilePath, false, false, true) ) )
 	{
 	    GPT gpt = new GPT(ui);
-//            gpt.read(cipherDeviceFilePath); // gpt.print();
+	    
+//	    Either read (clone diskGUIDs & partitionGUIDs) or create (new diskGUIDs & partitionGUIDs)
+//            gpt.read(cipherDeviceFilePath); // Copies currentLBA and backupLBA which causes invalid headers on a different size USB Stick
 	    gpt.create(Device.getCipherPartitionSize(ui, cipherDeviceFilePath), targetDeviceFilePath);
+	    
 	    gpt.write(targetDeviceFilePath);
 	    gpt.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath);
+	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
 
+//  Used by --gpt option
     public void printGPT(Path cipherDeviceFilePath)
     {
 	if ( isValidFile(cipherDeviceFilePath, false, false, true) )
 	{
 	    GPT gpt = new GPT(ui);
 	    gpt.read(cipherDeviceFilePath);
+	    gpt.print();
+	}
+    }
+    
+    public void deleteGPT(Path targetDeviceFilePath)
+    {
+	if ( isValidFile(targetDeviceFilePath, false, false, true) )
+	{
+	    GPT gpt = new GPT(ui);
+	    gpt.write(targetDeviceFilePath);
+	    gpt.read(targetDeviceFilePath);
 	    gpt.print();
 	}
     }

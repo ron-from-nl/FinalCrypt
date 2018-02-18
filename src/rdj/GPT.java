@@ -46,17 +46,16 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.zip.CRC32;
 import javax.xml.bind.DatatypeConverter;
 
 public class GPT
 {
     UI ui;
-    public GPT_Protective_MBR           gpt_Protective_MBR;
-    public GPT_Header                   gpt_Header;
-    public GPT_Entries                  gpt_Entries;
-    public GPT_Header_Backup            gpt_Header_Backup;
-    public GPT_Entries_Backup           gpt_Entries_Backup;
+    public GPT_PMBR           gpt_PMBR;
+    public GPT_Header1                   gpt_Header1;
+    public GPT_Entries1                 gpt_Entries1;
+    public GPT_Header2            gpt_Header2;
+    public GPT_Entries2		gpt_Entries2;
     
     private int printAddressByteCounter;
 
@@ -64,92 +63,61 @@ public class GPT
     {
         this.ui = ui;
         
-        gpt_Protective_MBR =            new GPT_Protective_MBR(this.ui);
-        gpt_Entries =                   new GPT_Entries(this.ui);
-        gpt_Header =                    new GPT_Header(this.ui, this);
-        gpt_Entries_Backup =            new GPT_Entries_Backup(this.ui, this);
-        gpt_Header_Backup =             new GPT_Header_Backup(this.ui, this);
-        
-        reset();
+        gpt_PMBR =            new GPT_PMBR(this.ui);
+        gpt_Entries1 =                   new GPT_Entries1(this.ui);
+        gpt_Header1 =                    new GPT_Header1(this.ui, this);
+        gpt_Entries2 =            new GPT_Entries2(this.ui, this);
+        gpt_Header2 =             new GPT_Header2(this.ui, this);
+//        clear(); // Already clears during instantiation
     }
     
-    synchronized public void reset()
+    synchronized public void clear()
     {
-        gpt_Protective_MBR.reset();
-        gpt_Entries.reset();
-        gpt_Header.reset();
-        gpt_Entries_Backup.reset();
-        gpt_Header_Backup.reset();
+        gpt_PMBR.clear();
+        gpt_Entries1.clear();
+        gpt_Header1.clear();
+        gpt_Entries2.clear();
+        gpt_Header2.clear();
     }
     
-    synchronized public void read(Path rawDeviceFilePath)
+    synchronized public void read(Path cipherDeviceFilePath)
     {
-        gpt_Protective_MBR.read(rawDeviceFilePath);
-        gpt_Entries.read(rawDeviceFilePath);
-        gpt_Header.read(rawDeviceFilePath);
-        gpt_Entries_Backup.read(rawDeviceFilePath);
-        gpt_Header_Backup.read(rawDeviceFilePath);
+        gpt_PMBR.read(cipherDeviceFilePath);
+        gpt_Entries1.read(cipherDeviceFilePath);
+        gpt_Header1.read(cipherDeviceFilePath);
+        gpt_Entries2.read(cipherDeviceFilePath);
+        gpt_Header2.read(cipherDeviceFilePath);
     }
     
-//    synchronized public void create(Path cipherFilePath, Path rawDeviceFilePath)
-    synchronized public void create(long cipherSize, Path rawDeviceFilePath)
+    synchronized public void create(long cipherSize, Path targetDeviceFilePath)
     {
-	gpt_Protective_MBR.create(rawDeviceFilePath);
-	gpt_Entries.create(cipherSize);                 // Create order: 1
-	gpt_Entries_Backup.create(cipherSize);          // Create order: 2
-	gpt_Header.create(rawDeviceFilePath);           // Create order: 3
-	gpt_Header_Backup.create(rawDeviceFilePath);    // Create order: 4
+	gpt_PMBR.create(targetDeviceFilePath);
+	gpt_Entries1.create(cipherSize);			    // Create order: 1
+	gpt_Entries2.create(cipherSize);		    // Create order: 2
+	gpt_Header1.create(targetDeviceFilePath);	    // Create order: 3
+	gpt_Header2.create(targetDeviceFilePath);	    // Create order: 4
     }
     
-    synchronized public void write(Path rawDeviceFilePath)
+    synchronized public void write(Path targetDeviceFilePath)
     {
-        gpt_Protective_MBR.write(rawDeviceFilePath);
-        gpt_Header.write(rawDeviceFilePath);
-        gpt_Entries.write(rawDeviceFilePath);
-        gpt_Entries_Backup.write(rawDeviceFilePath);
-        gpt_Header_Backup.write(rawDeviceFilePath);
+        gpt_PMBR.write(targetDeviceFilePath);
+        gpt_Header1.write(targetDeviceFilePath);
+        gpt_Entries1.write(targetDeviceFilePath);
+        gpt_Entries2.write(targetDeviceFilePath);
+        gpt_Header2.write(targetDeviceFilePath);
     }
     
-    synchronized public void writeCipher(Path cipherFilePath, Path targetDeviceFilePath)        { gpt_Entries.writeCipher(cipherFilePath, targetDeviceFilePath); }
-    synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { gpt_Entries.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath); }
+    synchronized public void writeCipher(Path cipherFilePath, Path targetDeviceFilePath)        { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDeviceFilePath); }
+    synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { gpt_Entries1.cloneCipherPartitions(cipherDeviceFilePath, targetDeviceFilePath); }
     
-    public String toString()
-    {
-        String returnString = "";
-        returnString += gpt_Protective_MBR.toString();
-        returnString += gpt_Header.toString();
-        returnString += gpt_Entries.toString();
-        returnString += gpt_Entries_Backup.toString();
-        returnString += gpt_Header_Backup.toString();
-        return returnString;
-    }    
-    
-    public void print()
-    {
-        ui.log(this.toString());
-    }    
-    
-    public GPT_Protective_MBR   get_GPT_Protective_MBR()    { return gpt_Protective_MBR; }
-    public GPT_Header           get_GPT_Header()            { return gpt_Header; }
-    public GPT_Entries          get_GPT_Entries()           { return gpt_Entries; }
-    public GPT_Header_Backup    get_GPT_Header_Backup()     { return gpt_Header_Backup; }
-    public GPT_Entries_Backup   get_GPT_Entries_Backup()    { return gpt_Entries_Backup; }
+    public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
+    public GPT_Header1  get_GPT_Header1()   { return gpt_Header1; }
+    public GPT_Entries1 get_GPT_Entries1()  { return gpt_Entries1; }
+    public GPT_Header2  get_GPT_Header2()   { return gpt_Header2; }
+    public GPT_Entries2 get_GPT_Entries2()  { return gpt_Entries2; }
 
     public static byte[] byteListToByteArray(List<Byte> list) { byte[] result = new byte[list.size()]; for(int i = 0; i < list.size(); i++) { result[i] = list.get(i).byteValue(); } return result; }
     public static byte[] getUUID() { UUID uuid = UUID.randomUUID(); ByteBuffer bb = ByteBuffer.allocate(16); bb.putLong(uuid.getMostSignificantBits()); bb.putLong(uuid.getLeastSignificantBits()); return bb.array(); }
-
-    synchronized public static byte[] getCRC32(String string, byte[] bytes, boolean littleEndian) // Byte order to Little Endian
-    {
-        byte [] bigEndianBytes = new byte[4];
-        byte [] littleEndianBytes = new byte[4];
-        CRC32 crc = new CRC32(); crc.update(bytes);
-        
-        bigEndianBytes = ByteBuffer.allocate(4).putInt((int) crc.getValue()).array();
-        littleEndianBytes = getByteArrayLittleEndian(ByteBuffer.allocate(4).putInt((int) crc.getValue()).array());
-//        System.out.println(string + getHexString(littleEndianBytes, "2"));
-        if (littleEndian)   { return littleEndianBytes; }
-        else                { return bigEndianBytes; }
-    }
 
     synchronized public static byte[] getByteArrayLittleEndian(byte[] bytes) // Reverses byte order (to Little Endian)
     {
@@ -176,7 +144,7 @@ public class GPT
 //        String adrhex = getHexString(printAddressByteCounter,"8");
 
         String datbin = getBinaryString(dataByte);
-        String dathex = getHexString(dataByte, "2");
+        String dathex = getHexString(dataByte, 2);
         String datdec = getDecString(dataByte);
         String datchr = getChar(dataByte);
         
@@ -185,17 +153,25 @@ public class GPT
 //        printAddressByteCounter++;
     }
     
-    synchronized public static byte[] get(byte[] source, int off, int length)
+    synchronized public static byte[] getBytesPart(byte[] inBytes, int offset, int length)
     {
-        byte[] dest = new byte[length];
-        for (int pos = off; pos < off + length; pos++)
+        byte[] outBytes = new byte[length];
+        for (int position = offset; position < offset + length; position++)
         {
-//            System.out.println("dest["+ (pos - off) + "] = source[" + pos + "]");
-            dest[pos - off] = source[pos];
+//            System.out.println("outBytes["+ (position - offset) + "] = inBytes[" + position + "]");
+            outBytes[position - offset] = inBytes[position];
         }
-        return dest;
+        return outBytes;
     }
 
+    synchronized public static int bytesToInteger(byte[] bytes)
+    {
+        ByteBuffer bb = ByteBuffer.allocate(Long.BYTES);
+        bb.put(bytes);
+        bb.flip(); 
+        return bb.getInt();
+    }
+    
     synchronized public static long bytesToLong(byte[] bytes)
     {
         ByteBuffer bb = ByteBuffer.allocate(Long.BYTES);
@@ -206,10 +182,10 @@ public class GPT
     
     synchronized public static String getBinaryString(Byte value) { return String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0'); }
     synchronized public static String getDecString(Byte value) { return String.format("%3d", (value & 0xFF)).replace(" ", "0").replaceAll("[^A-Za-z0-9]",""); }
-    synchronized public static String getHexString(byte[] bytes, String digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
-    synchronized public static String getHexString(byte value, String digits) { return String.format("%0" + digits + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
-    synchronized public static String getHexString(int value, String digits) { return String.format("%0" + digits + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
-    synchronized public static String getHexString(long value, String digits) { return String.format("%0" + digits + "X", (value)).replaceAll("[^A-Za-z0-9]",""); }
+    synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
+    synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
+    synchronized public static String getHexString(int value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
+    synchronized public static String getHexString(long value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value)).replaceAll("[^A-Za-z0-9]",""); }
     
     synchronized public static String getHexStringLittleEndian(long value, int bytes) // Works correct
     {
@@ -224,6 +200,30 @@ public class GPT
         return returnString.replaceAll("[^A-Za-z0-9]","");
     }
     
+    public static String getHexAndDecimal(byte[] bytes, boolean decimal)
+    {
+	long allbytes = 0;
+	String returnString = "";
+        String hexPrefix = ""; // 0x
+        String hexString = "";
+
+	for (byte mybyte: bytes) { allbytes += (long)mybyte; }
+	if (allbytes == 0)
+	{
+	    returnString = "0 [" + bytes.length + "]";
+	}
+	else
+	{
+	    for (byte mybyte: bytes) { hexString += GPT.getHexString(mybyte, 2); } returnString += hexPrefix + (String.format("%-32s", hexString));
+	    if (decimal) // Decimal Integer or Long
+	    {
+		if (bytes.length == 4) { returnString += " " + Integer.reverseBytes(GPT.bytesToInteger(bytes)); }
+		if (bytes.length == 8) { returnString += " " + Long.reverseBytes(GPT.bytesToLong(bytes)); }
+	    }
+	    hexString = ""; returnString += ("");
+	}
+	return returnString;
+    }
     synchronized public static String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
     synchronized public static String getHumanSize(double value,int decimals)
@@ -241,8 +241,25 @@ public class GPT
         return returnString;
     }
     
+    synchronized public static String getLBAHumanSize(byte[] value,int decimals) { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * Device.bytesPerSector,decimals ); }
+    synchronized public static String getLBAHumanSize(long value,int decimals) { return getHumanSize( value * Device.bytesPerSector,decimals ); }
+    
     synchronized public boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
+    public void print()	{ ui.log(toString()); }    
+
+    @Override
+    public String toString()
+    {
+        String returnString = "";
+        returnString += gpt_PMBR.toString();
+        returnString += gpt_Header1.toString();
+        returnString += gpt_Entries1.toString();
+        returnString += gpt_Entries2.toString();
+        returnString += gpt_Header2.toString();
+        return returnString;
+    }    
+        
     synchronized public void fileStoreInfo()
     {
 //      Read Device

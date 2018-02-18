@@ -46,10 +46,13 @@ public class CLUI implements UI
     public CLUI(String[] args)
     {
         this.ui = this;
-        boolean ifset = false, cfset = false;
+        boolean tfset = false;
+	boolean cfset = false;
+	boolean cfsetneeded = true;
         boolean validInvocation = true;
         boolean negatePattern = false;
         boolean printgpt = false;
+        boolean deletegpt = false;
 
         ArrayList<Path> targetFilesPathList = new ArrayList<>();
         Path batchFilePath = null;
@@ -84,7 +87,8 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--dec"))                                                               { finalCrypt.setDec(true); }
             else if ( args[paramCnt].equals("--hex"))                                                               { finalCrypt.setHex(true); }
             else if ( args[paramCnt].equals("--chr"))                                                               { finalCrypt.setChr(true); }
-            else if ( args[paramCnt].equals("--gpt"))                                                               { printgpt = true; }
+            else if ( args[paramCnt].equals("--gpt-print"))                                                         { printgpt = true; cfsetneeded = false; }
+            else if ( args[paramCnt].equals("--gpt-delete"))                                                        { deletegpt = true; cfsetneeded = false; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
             else if ( ( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
@@ -96,114 +100,115 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-            else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetFilePath = Paths.get(args[paramCnt+1]); targetFilesPathList.add(targetFilePath); ifset = true; paramCnt++; }
-            else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { ifset = addBatchTargetFiles(args[paramCnt+1], targetFilesPathList); paramCnt++; }
+            else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetFilePath = Paths.get(args[paramCnt+1]); targetFilesPathList.add(targetFilePath); tfset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetFilesPathList); paramCnt++; }
             else if ( ( args[paramCnt].equals("-c")) && (paramCnt+1 < args.length) )				    { cipherFilePath = Paths.get(args[paramCnt+1]); cfset = true; paramCnt++; }
             else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(); }
         }
         
-        if (( ! ifset ) && ( ! printgpt ))  { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(); }
-        if ( ! cfset )                      { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(); }
+        if ( ! tfset )												    { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(); }
+        if ((cfsetneeded) && ( ! cfset ))									    { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(); }
 
         
         
 //////////////////////////////////////////////////// CHECK CIPHERFILE INPUT /////////////////////////////////////////////////
         
-        
-        State.cipherSelected = State.INVALID;
-        State.cipherReady = false;
-        
-//      Cipher Validation        
-        
-        long cipherSize = finalCrypt.getBufferSizeDefault(); 
+        if ( cfsetneeded )
+	{
+	    State.cipherSelected = State.INVALID;
+	    State.cipherReady = false;
 
-//      Check the cipherFile created by the parameters
-        if (Files.exists(cipherFilePath))
-        {
-            if ( (Files.isRegularFile(cipherFilePath)) && (cipherSize > 0) )
-            {
-                try { cipherSize = (int)Files.size(cipherFilePath); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\r\n"); }
+    //      Cipher Validation        
 
-                if (cipherSize > 0)
-                {
-                    State.cipherSelected = State.FILE;
-                    State.cipherReady = true;
-                    finalCrypt.setCipherFilePath(cipherFilePath);
-                }
-            }
-            else if(cipherFilePath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Selection
-            {
-                if (
-                        ( ! cipherFilePath.getFileName().toString().endsWith("sda") )
-                   )
-                {
-		    if (isValidFile(cipherFilePath, false, false, true))
+	    long cipherSize = finalCrypt.getBufferSizeDefault(); 
+
+    //      Check the cipherFile created by the parameters
+	    if (Files.exists(cipherFilePath))
+	    {
+		if ( (Files.isRegularFile(cipherFilePath)) && (cipherSize > 0) )
+		{
+		    try { cipherSize = (int)Files.size(cipherFilePath); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex + "\r\n"); }
+
+		    if (cipherSize > 0)
 		    {
-			if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
+			State.cipherSelected = State.FILE;
+			State.cipherReady = true;
+			finalCrypt.setCipherFilePath(cipherFilePath);
+		    }
+		}
+		else if(cipherFilePath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Raw Cipher Selection
+		{
+		    if (
+			    ( ! cipherFilePath.getFileName().toString().endsWith("sda") )
+		       )
+		    {
+			if (isValidFile(cipherFilePath, false, false, true))
 			{
-			    State.cipherSelected = State.PARTITION;
+			    if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
+			    {
+				State.cipherSelected = State.PARTITION;
+				State.cipherReady = true;
+			    }
+			    else
+			    {
+				State.cipherSelected = State.DEVICE;
+			    }
+
+			    finalCrypt.setCipherFilePath(cipherFilePath);
 			    State.cipherReady = true;
-			}
-			else
-			{
-			    State.cipherSelected = State.DEVICE;
-			    if (printgpt) { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(cipherFilePath); System.exit(0);}
-			}
 
-			finalCrypt.setCipherFilePath(cipherFilePath);
-			State.cipherReady = true;
-	//                  Get size of partition
-			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
-		    } else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
-                }
-            }
-            else if (cipherFilePath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Selection
-            {
-                if (
-                        ( ! cipherFilePath.getFileName().toString().endsWith("disk0"))
-                   )
-                {
-		    if (isValidFile(cipherFilePath, false, false, true))
+	    //                  Get size of partition
+			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+			    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+			} else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		    }
+		}
+		else if (cipherFilePath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Raw Cipher Selection
+		{
+		    if (
+			    ( ! cipherFilePath.getFileName().toString().endsWith("disk0"))
+		       )
 		    {
-			if (
-				(Character.isDigit(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-1))) &&
-				(String.valueOf(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
-			   )
+			if (isValidFile(cipherFilePath, false, false, true))
 			{
-			    State.cipherSelected = State.PARTITION;
-			}
-			else
-			{
-			    State.cipherSelected = State.DEVICE;
-			}
+			    if (
+				    (Character.isDigit(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-1))) &&
+				    (String.valueOf(cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
+			       )
+			    {
+				State.cipherSelected = State.PARTITION;
+			    }
+			    else
+			    {
+				State.cipherSelected = State.DEVICE;
+			    }
 
-	//                  Get size of device        
-			finalCrypt.setCipherFilePath(cipherFilePath);
-			State.cipherReady = true;
-			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
-			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
-			println("ciphersize = " + cipherSize);
-		    } else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
-                } else { State.cipherReady = false; } // disk0
-            }
-            else
-            {
-                State.cipherSelected = State.INVALID;
-                State.cipherReady = false;
-            }
+	    //                  Get size of device        
+			    finalCrypt.setCipherFilePath(cipherFilePath);
+			    State.cipherReady = true;
+			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
+			    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
+			    println("ciphersize = " + cipherSize);
+			} else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		    } else { State.cipherReady = false; } // disk0
+		}
+		else
+		{
+		    State.cipherSelected = State.INVALID;
+		    State.cipherReady = false;
+		}
 
-            if ( cipherSize < finalCrypt.getBufferSize())
-            {
-                finalCrypt.setBufferSize((int)cipherSize);
-                status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
-            }
-        }
-        else
-        { 
-            error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
-        }            
-
+		if ( cipherSize < finalCrypt.getBufferSize())
+		{
+		    finalCrypt.setBufferSize((int)cipherSize);
+		    if (FinalCrypt.verbose) status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
+		}
+	    }
+	    else
+	    { 
+		error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
+	    }            
+	}
 
 //////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
 
@@ -244,6 +249,8 @@ public class CLUI implements UI
 			{
 			    State.targetSelected = State.DEVICE;
 			    State.targetReady = true;
+			    if (printgpt)   { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(targetFilePath); System.exit(0);}
+			    if (deletegpt)  { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.deleteGPT(targetFilePath); System.exit(0);}
 			}
 			else
 			{
@@ -266,6 +273,8 @@ public class CLUI implements UI
 			{
 			    State.targetSelected = State.DEVICE;
 			    State.targetReady = true;                    
+			    if (printgpt)   { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(targetFilePath); System.exit(0);}
+			    if (deletegpt)  { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.deleteGPT(targetFilePath); System.exit(0);}
 			}
 			else
 			{
@@ -351,7 +360,7 @@ public class CLUI implements UI
             {
 //              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
                 ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
-                this.encryptionStarted();
+                encryptionStarted();
                 finalCrypt.encryptSelection(targetFilesPathListExtended, finalCrypt.getCipherFilePath());
             }
             else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
@@ -468,7 +477,8 @@ public class CLUI implements UI
         log("            [--hex]               Print hexadecimal calculations.\r\n");
         log("            [--chr]               Print character calculations.\r\n");
         log("                                  Warning: The above Print options slows encryption severely.\r\n");
-        log("            [--gpt]               Print GUID Partition Table in combination with -c \"device\".\r\n");
+        log("            [--gpt-print]         Print GUID Partition Table in combination with -t \"device\".\r\n");
+        log("            [--gpt-delete]        Delete GUID Partition Table in combination with -t \"device\".\r\n");
         log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n");
         log("\r\n");
         log("Filtering Options:\r\n");
@@ -516,7 +526,10 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI -c mycipherfile -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Print GUID Partition Table\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt -c /dev/sdb\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt-print -t /dev/sdb\r\n");
+        log("\r\n");
+        log("            # Delete GUID Partition Table\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt-delete -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Clone Cipher Device (-c sourcecipherdevice -t destinationcipherdevice)\r\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb -t /dev/sdc\r\n");

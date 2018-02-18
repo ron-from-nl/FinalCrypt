@@ -8,6 +8,7 @@ SoftPedia certificate
 
 =================================== Doing ===================================
 
+Added optional cipher password to protect cipher from unauthorized usage
 
 =================================== Done ====================================
 
@@ -17,6 +18,7 @@ SoftPedia certificate
 
 ============================= Source Published ==============================
 
+Extended GUID Partition Table Tooling
 
 ============================= Binaries Released =============================
 

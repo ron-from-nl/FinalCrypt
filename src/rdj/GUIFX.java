@@ -748,7 +748,7 @@ public class GUIFX extends Application implements UI, Initializable
         if ( cipherSize < finalCrypt.getBufferSize())
         {
             finalCrypt.setBufferSize((int)cipherSize);
-            status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
+            if (FinalCrypt.verbose) status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
         }
         
         checkModeReady();
