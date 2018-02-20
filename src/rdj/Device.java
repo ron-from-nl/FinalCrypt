@@ -509,7 +509,7 @@ public class Device
     {
         if ( lba >= 0 )
         {
-            long returnValue = 0; returnValue = (lba * bytesPerSector);
+            long returnValue = 0; returnValue = Math.abs(lba * bytesPerSector);
 //            guifx.log("LBA: " + logicalBlockAddress + " Pos: " + returnValue); guifx.log("\r\n");
             return returnValue;
         }
