@@ -39,7 +39,7 @@ public class GPT_Entries
 	gpt_entry = new GPT_Entry[128];
 	this.ABSTRACT_LBA = abstractLBA;	
 	for(int entry = 0; entry < gpt_entry.length; entry++)					    { gpt_entry[entry] = new GPT_Entry(this.ui,this.gpt,ABSTRACT_LBA,entry); }
-	if ( ABSTRACT_LBA > 0 ) { HEADERCLASS = "Primary"; } else { HEADERCLASS = "Secondary"; }
+	if ( ABSTRACT_LBA >= 0 ) { HEADERCLASS = "Primary"; } else { HEADERCLASS = "Secondary"; }
 	setDesc();
     }
     
@@ -48,7 +48,7 @@ public class GPT_Entries
 
     public void		create(long cipherSize)
     {
-	if ( ABSTRACT_LBA > 0 ) { gpt_entry[0].create(cipherSize, GPT.getUUID());
+	if ( ABSTRACT_LBA >= 0 ) { gpt_entry[0].create(cipherSize, GPT.getUUID());
 				  gpt_entry[1].create(cipherSize, GPT.getUUID()); }
 	else			{ gpt_entry[0].create(cipherSize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
 				  gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();

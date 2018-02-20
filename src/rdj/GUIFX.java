@@ -550,7 +550,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    State.targetSelected = State.PARTITION;
 			    State.targetReady = false;
 			}
-		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
                 }
             }
             else // No Raw Cipher Device Target selected
@@ -736,7 +736,7 @@ public class GUIFX extends Application implements UI, Initializable
 			State.cipherReady = true;
 			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFileChooser.getSelectedFile().toPath(), EnumSet.of(StandardOpenOption.READ)))
 			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-		    } else { status("Probably no read permission on " + cipherFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		    } else { status("Probably no read permission on " + cipherFileChooser.getSelectedFile().toPath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
 		} else { State.cipherReady = false; } // disk0
             }
             else

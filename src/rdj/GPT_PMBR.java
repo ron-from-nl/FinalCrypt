@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GPT_PMBR // Protective MBR
 {
-    private final long LBA = 0L;
+    private final long ABSTRACT_LBA = 0L;
     private String DESCSTRING;
     private final long LENGTH = Device.bytesPerSector * 1L;
 
@@ -101,7 +101,7 @@ public class GPT_PMBR // Protective MBR
 
     public void read(Path rawDeviceFilePath)
     {
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new Device(ui).readLBA(rawDeviceFilePath, LBA, this.LENGTH);
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new Device(ui).readLBA(rawDeviceFilePath, ABSTRACT_LBA, this.LENGTH);
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
                                                                         bootcodeBytes = GPT.getBytesPart(bytes, 0, 440);
@@ -165,7 +165,7 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
 
-    public void write(Path rawDeviceFilePath) { new Device(ui).writeLBA(getDesc(), getBytes(), rawDeviceFilePath, LBA); }
+    public void write(Path rawDeviceFilePath) { new Device(ui).writeLBA(getDesc(), getBytes(), rawDeviceFilePath, ABSTRACT_LBA); }
 
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(getBytes(), off, length); }
     public byte[] getBytes()
@@ -190,7 +190,7 @@ public class GPT_PMBR // Protective MBR
 
     public void print() { ui.log(toString()); }
     
-    private void setDesc() { DESCSTRING = ("[ LBA " + LBA + " - Protective MBR (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(sizeInLBABytes,1) + " ]"); }
+    private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - Protective MBR (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(sizeInLBABytes,1) + " ]"); }
     private String getDesc() { return DESCSTRING; }
 
     @Override

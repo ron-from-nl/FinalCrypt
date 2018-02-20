@@ -51,7 +51,7 @@ public class GPT_Entry
         this.gpt = gpt;
 	this.ABSTRACT_LBA = abstractLBA;
 	this.ENTRYNUMBER = EntryNumber;
-	if ( ABSTRACT_LBA > 0 ) { ENTRYCLASS = "Primary"; } else { ENTRYCLASS = "Secondary"; }
+	if ( ABSTRACT_LBA >= 0 ) { ENTRYCLASS = "Primary"; } else { ENTRYCLASS = "Secondary"; }
 	
 	clear();
     }
@@ -105,7 +105,7 @@ public class GPT_Entry
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.hex2Bytes("AF 3D C6 0F 83 84 72 47 8E 79 3D 69 D8 47 7D E4");
 //      16 (0x10)   16 bytes    During LBA 2    Unique partition GUID
-//                                              if ( ABSTRACT_LBA > 0 )			    { uniquePartitionGUIDBytes = GPT.getUUID(); } else { uniquePartitionGUIDBytes = gpt.get_GPT_Entries1().getEntry(ENTRYNUMBER).uniquePartitionGUIDBytes; }
+//                                              if ( ABSTRACT_LBA >= 0 )			    { uniquePartitionGUIDBytes = GPT.getUUID(); } else { uniquePartitionGUIDBytes = gpt.get_GPT_Entries1().getEntry(ENTRYNUMBER).uniquePartitionGUIDBytes; }
                                                 this.uniquePartitionGUIDBytes = uniquePartitionGUIDBytes;
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
                                                 startingLBA =				    FIRST_LBA + (ENTRYNUMBER * cipherSizeLBA) + ENTRYNUMBER;

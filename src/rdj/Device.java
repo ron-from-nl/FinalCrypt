@@ -515,7 +515,7 @@ public class Device
         }
         else
         {
-            long returnValue = 0; returnValue = ((devSize - 0) + (lba * bytesPerSector)); // -1 from size to 0 start position
+            long returnValue = 0; returnValue = Math.abs((devSize - 0) + (lba * bytesPerSector)); // -1 from size to 0 start position
 //            guifx.log("LBA: " + logicalBlockAddress + " Pos: " + returnValue); guifx.log("\r\n");
             return returnValue;
         }

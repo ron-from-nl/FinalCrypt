@@ -147,7 +147,6 @@ public class CLUI implements UI
 			    if (Character.isDigit( cipherFilePath.getFileName().toString().charAt(cipherFilePath.getFileName().toString().length() -1) ))
 			    {
 				State.cipherSelected = State.PARTITION;
-				State.cipherReady = true;
 			    }
 			    else
 			    {
@@ -189,7 +188,7 @@ public class CLUI implements UI
 			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
 			    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
 			    println("ciphersize = " + cipherSize);
-			} else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+			} else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
 		    } else { State.cipherReady = false; } // disk0
 		}
 		else
@@ -281,7 +280,7 @@ public class CLUI implements UI
 			    State.targetSelected = State.PARTITION;
 			    State.targetReady = false;
 			}
-		    } else { status("Probably no read & write permission on " + targetFilesPathList.get(0).toAbsolutePath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		    } else { status("Probably no read & write permission on " + targetFilesPathList.get(0).toAbsolutePath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
                 }
             }
             else // No Raw Cipher Device Target selected
