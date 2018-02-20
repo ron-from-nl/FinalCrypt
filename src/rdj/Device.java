@@ -85,15 +85,16 @@ public class Device
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
+        ui.log("Write " + desc + " Pos (" + getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba) + ") ");
         try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(rawDeviceFilePath, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
             writeOutputDeviceChannel.position(getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba));
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
-            ui.log("Wrote " + desc + " Pos (" + getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba) + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
+            ui.log("Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
-        } catch (IOException ex) { ui.error("Error: Device.writeLBA(..): " + ex.getMessage()); }
+        } catch (IOException ex) { ui.error("\r\nError: Device.writeLBA(..): " + ex.getMessage() + "\r\n"); }
     }
 
 //  Write Entry byte[] to device WARNING: writeOutputDeviceChannel.position(pos); causes exeption on OSX! Use writeLBA(..) above (from GPT_Entries)
@@ -101,15 +102,16 @@ public class Device
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
+        ui.log("Wrote " + desc + " Pos(" + pos + ") ");
         try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(rawDeviceFilePath, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
             writeOutputDeviceChannel.position(pos);
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
-            ui.log("Wrote " + desc + " Pos(" + pos + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
+            ui.log("Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
-        } catch (IOException ex) { ui.error("Error: Device.writePos(..): " + ex.getMessage()); }
+        } catch (IOException ex) { ui.error("\r\nError: Device.writePos(..): " + ex.getMessage() + "\r\n"); }
     }
 
 //  Write CipherFile to partition
