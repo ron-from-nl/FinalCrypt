@@ -93,7 +93,7 @@ public class Device
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
             ui.log("Wrote " + desc + " Pos (" + getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba) + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
-        } catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
+        } catch (IOException ex) { ui.error("Error: Device.writeLBA(..): " + ex.getMessage()); }
     }
 
 //  Write Entry byte[] to device WARNING: writeOutputDeviceChannel.position(pos); causes exeption on OSX! Use writeLBA(..) above (from GPT_Entries)
@@ -109,7 +109,7 @@ public class Device
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
             ui.log("Wrote " + desc + " Pos(" + pos + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
-        } catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
+        } catch (IOException ex) { ui.error("Error: Device.writePos(..): " + ex.getMessage()); }
     }
 
 //  Write CipherFile to partition
