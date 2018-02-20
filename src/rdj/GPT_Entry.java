@@ -25,6 +25,7 @@ import java.util.List;
 public class GPT_Entry
 {
     private final long          ABSTRACT_LBA; // = Primary GPT Header: 2L; Secondary GPT Header: -33
+    private String		DESCSTRING;
     private final long          FIRST_LBA = 2048L;
     private final String        ENTRYCLASS;
     private final int           ENTRYNUMBER; // 0 - 127
@@ -51,6 +52,7 @@ public class GPT_Entry
 	this.ABSTRACT_LBA = abstractLBA;
 	this.ENTRYNUMBER = EntryNumber;
 	if ( ABSTRACT_LBA > 0 ) { ENTRYCLASS = "Primary"; } else { ENTRYCLASS = "Secondary"; }
+	
 	clear();
     }
     
@@ -71,6 +73,7 @@ public class GPT_Entry
                                                 attributesBytes =			    GPT.hex2Bytes("00 00 00 00 00 00 00 00");
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getZeroBytes(72);
+	setDesc();
     }
 
    public void read(Path cipherDeviceFilePath)
@@ -91,6 +94,7 @@ public class GPT_Entry
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getBytesPart(bytes, 56, 72);
         partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
+	setDesc();
     }
     
 //    public void create(Path cipherFilePath)
@@ -114,9 +118,11 @@ public class GPT_Entry
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getZeroBytes(72);
         partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
+	setDesc();
     }
     
-    public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH)); new Device(ui).writePos(GPT_Entry.this.getBytes(), targetDeviceFilePath, pos); }
+    public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+											      new Device(ui).writePos(getDesc(), getBytes(), targetDeviceFilePath, pos); } // Causes exeption on OSX
     public void writeCipherPartitions(Path cipherFilePath, Path targetDeviceFilePath)	    { new Device(ui).writeCipherPartition(cipherFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
     public void cloneCipherPartition(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { new Device(ui).cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
     
@@ -129,12 +135,15 @@ public class GPT_Entry
         for (byte mybyte: uniquePartitionGUIDBytes) { byteList.add(mybyte); }
         for (byte mybyte: startingLBABytes)         { byteList.add(mybyte); }
         for (byte mybyte: endingLBABytes)           { byteList.add(mybyte); }
-        for (byte mybyte: attributesBytes)      { byteList.add(mybyte); }
+        for (byte mybyte: attributesBytes)	    { byteList.add(mybyte); }
         for (byte mybyte: partitionNameBytes)       { byteList.add(mybyte); }
         return GPT.byteListToByteArray(byteList);
     }
     
     public void print() { ui.log(toString()); }
+    
+    private void setDesc()			    { DESCSTRING = ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1) + " ]"); }
+    private String getDesc()			    { return DESCSTRING; }
     
     @Override
     public String toString()
@@ -146,7 +155,7 @@ public class GPT_Entry
             returnString += ("\r\n");
 	    returnString += ("------------------------------------------------------------------------\r\n");
             returnString += ("\r\n");
-	    returnString += ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1) + " ]\r\n");
+	    returnString += DESCSTRING + "\r\n";
 	    returnString += ("\r\n");
 	    returnString += (String.format("%-25s", "PartttionTypeGUID"));	    returnString += GPT.getHexAndDecimal(partitionTypeGUIDBytes, false) + "\r\n";
 	    returnString += (String.format("%-25s", "UniquePartitionGUID"));	    returnString += GPT.getHexAndDecimal(uniquePartitionGUIDBytes, false) + "\r\n";

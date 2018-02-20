@@ -29,6 +29,7 @@ public class GPT_Header
 {
     private final long ABSTRACT_LBA; // =  1L;
     private String HEADERCLASS;
+    private String DESCSTRING;
     private final long LENGTH = Device.bytesPerSector * 1L;
 
     private byte[] signatureBytes; 
@@ -104,6 +105,7 @@ public class GPT_Header
                                                 crc32PartitionsBytes =			GPT.hex2Bytes("00 00 00 00"); // Error: D9 CD 19 1F Correct: 
 //      92 (0x5C)     * bytes   During LBA 1    Remaining 420 bytes (or more depending on sector size) of zero's
                                                 reservedUEFIBytes =			GPT.getZeroBytes(420);
+	setDesc();
     }
 
     public void read(Path rawDeviceFilePath)
@@ -140,6 +142,7 @@ public class GPT_Header
                                                 crc32PartitionsBytes =			GPT.getBytesPart(bytes, 88, 4);
 //      92 (0x5C)     420 bytes   During LBA 1  Remaining 420 bytes (or more depending on sector size) of zero's
                                                 reservedUEFIBytes =			GPT.getBytesPart(bytes, 92, 420);
+	setDesc();
     }
     
     public void create(Path targetDeviceFilePath)
@@ -184,9 +187,10 @@ public class GPT_Header
                                                 reservedUEFIBytes =			GPT.getZeroBytes(420);
 //      CRC Calculation
                                                 headerCRC32Bytes =			getCRC32("GPT_Header1.headerCRC32Bytes:	    ",			      getBytes(0, 92), littleEndian);
+	setDesc();
     }
     
-    public void	write(Path rawDeviceFilePath)			{ new Device(ui).writeLBA(getBytes(), rawDeviceFilePath, ABSTRACT_LBA); }
+    public void	write(Path rawDeviceFilePath)			{ new Device(ui).writeLBA(getDesc(), getBytes(), rawDeviceFilePath, ABSTRACT_LBA); }
 
     public byte[]   getBytes(int off, int length)		{ return GPT.getBytesPart(getBytes(), off, length); }
     public byte[]   getBytes()
@@ -213,6 +217,9 @@ public class GPT_Header
     
     public void print() { ui.log(toString()); }
     
+    private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + HEADERCLASS + " GPT Header (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(alternateLBABytes,1) + " ]"); }
+    private String getDesc() { return DESCSTRING; }
+    
     @Override
     public String toString()
     {
@@ -220,7 +227,7 @@ public class GPT_Header
         returnString += ("\r\n");
         returnString += ("========================================================================\r\n");
         returnString += ("\r\n");
-        returnString += ("[ LBA " + ABSTRACT_LBA + " - " + HEADERCLASS + " GPT Header (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(alternateLBABytes,1) + " ]\r\n");
+        returnString += DESCSTRING + "\r\n";
         returnString += ("\r\n");
         returnString += (String.format("%-25s", "Signature"));			returnString += GPT.getHexAndDecimal(signatureBytes, false) + "\r\n";
         returnString += (String.format("%-25s", "Revision"));			returnString += GPT.getHexAndDecimal(revisionBytes, true) + "\r\n";

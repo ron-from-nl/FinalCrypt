@@ -25,6 +25,7 @@ import java.util.List;
 public class GPT_PMBR // Protective MBR
 {
     private final long LBA = 0L;
+    private String DESCSTRING;
     private final long LENGTH = Device.bytesPerSector * 1L;
 
     private byte[] bootcodeBytes;
@@ -95,6 +96,7 @@ public class GPT_PMBR // Protective MBR
                                                 partition4Bytes =       GPT.hex2Bytes("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 //      496  (0x08)     2 bytes   During LBA 0  Magic Number 55 AA Confirming valid MBR to OS
                                                 magicNumberBytes =      GPT.hex2Bytes("00 00");
+	setDesc();
     }
 
     public void read(Path rawDeviceFilePath)
@@ -130,6 +132,7 @@ public class GPT_PMBR // Protective MBR
                                                                         partition4Bytes = GPT.getBytesPart(bytes, 494, 16);
 //      510  (0x08)     2 bytes   During LBA 0  Magic Number 55 AA Confirming valid MBR to OS
                                                                         magicNumberBytes = GPT.getBytesPart(bytes, 510, 2);
+	setDesc();
     }
     
     public void create(Path rawDeviceFilePath)
@@ -159,9 +162,10 @@ public class GPT_PMBR // Protective MBR
                                                 partition4Bytes =       GPT.hex2Bytes("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 //      496  (0x08)     2 bytes   During LBA 0  Magic Number 55 AA Confirming valid MBR to OS
                                                 magicNumberBytes =      GPT.hex2Bytes("55 AA");
+	setDesc();
     }
 
-    public void write(Path rawDeviceFilePath) { new Device(ui).writeLBA(getBytes(), rawDeviceFilePath, LBA); }
+    public void write(Path rawDeviceFilePath) { new Device(ui).writeLBA(getDesc(), getBytes(), rawDeviceFilePath, LBA); }
 
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(getBytes(), off, length); }
     public byte[] getBytes()
@@ -186,6 +190,9 @@ public class GPT_PMBR // Protective MBR
 
     public void print() { ui.log(toString()); }
     
+    private void setDesc() { DESCSTRING = ("[ LBA " + LBA + " - Protective MBR (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(sizeInLBABytes,1) + " ]"); }
+    private String getDesc() { return DESCSTRING; }
+
     @Override
     public String toString()
     {
@@ -193,7 +200,7 @@ public class GPT_PMBR // Protective MBR
         returnString += ("\r\n");
         returnString += ("========================================================================\r\n");
         returnString += ("\r\n");
-        returnString += ("[ LBA " + LBA + " - Protective MBR (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(sizeInLBABytes,1) + " ]\r\n");
+        returnString += DESCSTRING + "\r\n";
         returnString += ("\r\n");
 	returnString += (String.format("%-25s", "BootCode"));		    returnString += GPT.getHexAndDecimal(bootcodeBytes, false) + "\r\n";
         returnString += (String.format("%-25s", "Disk Signature"));	    returnString += GPT.getHexAndDecimal(diskSignatureBytes, false) + "\r\n";

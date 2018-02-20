@@ -81,7 +81,7 @@ public class Device
     }
     
 //  Write byte[] to device
-    synchronized public static void writeLBA(byte[] bytes, Path rawDeviceFilePath, long lba)
+    synchronized public static void writeLBA(String desc, byte[] bytes, Path rawDeviceFilePath, long lba)
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
@@ -91,13 +91,13 @@ public class Device
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
             writeOutputDeviceChannel.position(getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba));
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
-            ui.log("Wrote LBA( " + lba + ")  Pos (" + getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba) + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
+            ui.log("Wrote " + desc + " Pos (" + getLBAOffSet(bytesPerSector, getDeviceSize(rawDeviceFilePath), lba) + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
         } catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
     }
 
-//  Write Entry byte[] to device
-    synchronized public static void writePos(byte[] bytes, Path rawDeviceFilePath, long pos)
+//  Write Entry byte[] to device WARNING: writeOutputDeviceChannel.position(pos); causes exeption on OSX! Use writeLBA(..) above (from GPT_Entries)
+    synchronized public static void writePos(String desc, byte[] bytes, Path rawDeviceFilePath, long pos)
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
@@ -107,7 +107,7 @@ public class Device
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
             writeOutputDeviceChannel.position(pos);
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
-//            ui.log("Wrote Pos (" + pos + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
+            ui.log("Wrote " + desc + " Pos(" + pos + ") Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
         } catch (IOException ex) { ui.status(Arrays.toString(ex.getStackTrace()), true); }
     }

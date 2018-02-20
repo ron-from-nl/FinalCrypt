@@ -25,35 +25,38 @@ import java.util.List;
 public class GPT_Entries
 {
     private final long  ABSTRACT_LBA;// = 2L;
-//    private final long  LENGTH = 128L * 128L;
+    private String DESCSTRING;
     public GPT_Entry[]	gpt_entry;
     private UI ui;
     private GPT gpt;
     private long totalSize = 0;
+    private final String HEADERCLASS;
 
     public GPT_Entries(UI ui, GPT gpt, long abstractLBA)
     {
         this.ui = ui;
         this.gpt = gpt;
 	gpt_entry = new GPT_Entry[128];
-	this.ABSTRACT_LBA = abstractLBA;
-	
+	this.ABSTRACT_LBA = abstractLBA;	
 	for(int entry = 0; entry < gpt_entry.length; entry++)					    { gpt_entry[entry] = new GPT_Entry(this.ui,this.gpt,ABSTRACT_LBA,entry); }
+	if ( ABSTRACT_LBA > 0 ) { HEADERCLASS = "Primary"; } else { HEADERCLASS = "Secondary"; }
+	setDesc();
     }
     
-    public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } }
-    public void		read(Path cipherDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); }
+    public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } setDesc(); }
+    public void		read(Path cipherDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); setDesc(); }
 
     public void		create(long cipherSize)
     {
 	if ( ABSTRACT_LBA > 0 ) { gpt_entry[0].create(cipherSize, GPT.getUUID());
 				  gpt_entry[1].create(cipherSize, GPT.getUUID()); }
 	else			{ gpt_entry[0].create(cipherSize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
-				  gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); }
-//    public void create(long cipherSize)							    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].create(cipherSize); } }
+				  gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();
+    }
+//    public void	create(long cipherSize)							    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].create(cipherSize); } setDesc(); }
 
-    public void		write(Path targetDeviceFilePath)					    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].write(targetDeviceFilePath); } }
-//    public void write(Path targetDeviceFilePath)						    { new Device(ui).writeLBA(getEntries(), targetDeviceFilePath, ABSTRACT_LBA); }
+//    public void	write(Path targetDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].write(targetDeviceFilePath); } } // OSX exeption
+    public void		write(Path targetDeviceFilePath)					    { new Device(ui).writeLBA(getDesc(), getBytes(), targetDeviceFilePath, ABSTRACT_LBA); }
 
     public void		writeCipherPartitions(Path cipherFilePath, Path targetDeviceFilePath)	    { gpt_entry[0].writeCipherPartitions(cipherFilePath, targetDeviceFilePath); }
     public void		cloneCipherPartitions(Path cipherDeviceFilePath, Path targetDeviceFilePath) { gpt_entry[0].cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath); gpt_entry[1].cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath); }
@@ -70,6 +73,9 @@ public class GPT_Entries
     
     private void	setTotalSize()								    { totalSize = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { totalSize += gpt_entry[entry].partSize; } }
     
+    private void	setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " " + HEADERCLASS + " Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]"); }
+    private String	getDesc() { return DESCSTRING; }
+
     @Override
     public String toString()
     {
@@ -78,6 +84,6 @@ public class GPT_Entries
         returnString += ("\r\n");
         returnString += ("========================================================================\r\n");
         returnString += ("\r\n");
-	returnString += "[ LBA " + ABSTRACT_LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " Primary Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]\r\n";
+	returnString += DESCSTRING + "\r\n";
 	for(int entry = 0; entry < gpt_entry.length; entry++)   { returnString += gpt_entry[entry].toString(); } return returnString; }
 }
