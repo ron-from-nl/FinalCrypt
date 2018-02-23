@@ -248,8 +248,8 @@ public class CLUI implements UI
 			{
 			    State.targetSelected = State.DEVICE;
 			    State.targetReady = true;
-			    if (printgpt)   { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(targetFilePath); System.exit(0);}
-			    if (deletegpt)  { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.deleteGPT(targetFilePath); System.exit(0);}
+			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetFilePath)); System.exit(0);}
+			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetFilePath)); System.exit(0);}
 			}
 			else
 			{
@@ -272,8 +272,8 @@ public class CLUI implements UI
 			{
 			    State.targetSelected = State.DEVICE;
 			    State.targetReady = true;                    
-			    if (printgpt)   { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.printGPT(targetFilePath); System.exit(0);}
-			    if (deletegpt)  { RawCipher rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.deleteGPT(targetFilePath); System.exit(0);}
+			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetFilePath)); System.exit(0);}
+			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetFilePath)); System.exit(0);}
 			}
 			else
 			{
@@ -354,7 +354,7 @@ public class CLUI implements UI
 
 	if ((State.targetReady) && (State.cipherReady) && (Mode.modeReady) )
         {
-            RawCipher rawCipher;
+            DeviceManager deviceManager;
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
 //              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
@@ -365,13 +365,13 @@ public class CLUI implements UI
             else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
             {
                 encryptionStarted();
-                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.createRawCipher(cipherFilePath, targetFilesPathList.get(0));
+                deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createRawCipher(cipherFilePath, new Device(ui,targetFilesPathList.get(0)));
                 encryptionFinished();
             }
             else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
             {
                 encryptionStarted();
-                rawCipher = new RawCipher(ui); rawCipher.start(); rawCipher.cloneRawCipher(cipherFilePath, targetFilesPathList.get(0));
+                deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneRawCipher(new Device(ui,cipherFilePath), new Device(ui,targetFilesPathList.get(0)));
                 encryptionFinished();
             }
 
@@ -546,7 +546,7 @@ public class CLUI implements UI
         System.out.print(message);
         Thread logThread = new Thread(new Runnable()
         {
-            private RawCipher rawCipher;
+//            private DeviceManager rawCipher;
             @Override
             @SuppressWarnings({"static-access"})
             public void run()
@@ -574,7 +574,7 @@ public class CLUI implements UI
         status(message, true);
             Thread errorLogThread = new Thread(new Runnable()
             {
-                private RawCipher rawCipher;
+//                private DeviceManager rawCipher;
                 @Override
                 @SuppressWarnings({"static-access"})
                 public void run()

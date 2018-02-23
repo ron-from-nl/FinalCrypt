@@ -34,16 +34,13 @@ package rdj;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import javax.xml.bind.DatatypeConverter;
@@ -79,35 +76,35 @@ public class GPT
         gpt_Header2.clear();
     }
     
-    synchronized public void read(Path cipherDeviceFilePath)
+    synchronized public void read(Device cipherDevice)
     {
-        gpt_PMBR.read(cipherDeviceFilePath);
-        gpt_Entries1.read(cipherDeviceFilePath);
-        gpt_Header1.read(cipherDeviceFilePath);
-        gpt_Entries2.read(cipherDeviceFilePath);
-        gpt_Header2.read(cipherDeviceFilePath);
+        gpt_PMBR.read(cipherDevice);
+        gpt_Entries1.read(cipherDevice);
+        gpt_Header1.read(cipherDevice);
+        gpt_Entries2.read(cipherDevice);
+        gpt_Header2.read(cipherDevice);
     }
     
-    synchronized public void create(long cipherSize, Path targetDeviceFilePath)
+    synchronized public void create(long cipherSize, Device targetDevice)
     {
-	gpt_PMBR.create(targetDeviceFilePath);
+	gpt_PMBR.create(targetDevice);
 	gpt_Entries1.create(cipherSize);		    // Create order: 1
 	gpt_Entries2.create(cipherSize);		    // Create order: 2
-	gpt_Header1.create(targetDeviceFilePath);	    // Create order: 3
-	gpt_Header2.create(targetDeviceFilePath);	    // Create order: 4
+	gpt_Header1.create(targetDevice);	    // Create order: 3
+	gpt_Header2.create(targetDevice);	    // Create order: 4
     }
     
-    synchronized public void write(Path targetDeviceFilePath)
+    synchronized public void write(Device targetDevice)
     {
-        gpt_PMBR.write(targetDeviceFilePath);
-        gpt_Header1.write(targetDeviceFilePath);
-        gpt_Entries1.write(targetDeviceFilePath);
-        gpt_Entries2.write(targetDeviceFilePath);
-        gpt_Header2.write(targetDeviceFilePath);
+        gpt_PMBR.write(targetDevice);
+        gpt_Header1.write(targetDevice);
+        gpt_Entries1.write(targetDevice);
+        gpt_Entries2.write(targetDevice);
+        gpt_Header2.write(targetDevice);
     }
     
-    synchronized public void writeCipher(Path cipherFilePath, Path targetDeviceFilePath)        { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDeviceFilePath); }
-    synchronized public void cloneCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { gpt_Entries1.cloneCipherPartitions(cipherDeviceFilePath, targetDeviceFilePath); }
+    synchronized public void writeCipher(Path cipherFilePath, Device targetDevice)  { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDevice); }
+    synchronized public void cloneCipher(Device cipherDevice, Device targetDevice)  { gpt_Entries1.cloneCipherPartitions(cipherDevice, targetDevice); }
     
     public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
     public GPT_Header	get_GPT_Header1()   { return gpt_Header1; }
@@ -240,7 +237,11 @@ public class GPT
         return returnString;
     }
     
-    synchronized public static String getLBAHumanSize(byte[] value,int decimals) { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * Device.bytesPerSector,decimals ); }
+    synchronized public static String getLBAHumanSize(byte[] value,int decimals)
+    {
+	if (value.length == 4)  { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * DeviceController.bytesPerSector,decimals ); }
+	else			{ return getHumanSize( Long.reverseBytes(GPT.bytesToLong(value)) * DeviceController.bytesPerSector,decimals ); }
+    }
     
     synchronized public boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
@@ -303,13 +304,13 @@ public class GPT
         return cipherSize;
     }
 
-//  Get size of device        
-    synchronized public static long getDeviceSize(UI ui, Path targetDeviceFilePath)
-    {
-        long deviceSize = 0;
-        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); }
-        catch (IOException ex) { ui.status(ex.getMessage(), true); }
-        
-        return deviceSize;
-    }
+////  Get size of device
+//    synchronized public static long getDeviceSize(UI ui, Path targetDeviceFilePath)
+//    {
+//        long deviceSize = 0;
+//        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); }
+//        catch (IOException ex) { ui.status(ex.getMessage(), true); }
+//        
+//        return deviceSize;
+//    }
 }

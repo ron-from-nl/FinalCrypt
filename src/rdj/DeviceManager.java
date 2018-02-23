@@ -22,60 +22,60 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class RawCipher extends Thread
+public class DeviceManager extends Thread
 {
     private final UI ui;
         
-    public RawCipher(UI ui) { this.ui = ui; }
+    public DeviceManager(UI ui) { this.ui = ui; }
     
-    public void createRawCipher(Path cipherFilePath, Path targetDeviceFilePath)
+    public void createRawCipher(Path cipherFilePath, Device targetDevice)
     {
-	if ( isValidFile(targetDeviceFilePath, false, false, true) )
+	if ( isValidFile(targetDevice.getPath(), false, false, true) )
 	{
 	    GPT gpt = new GPT(ui);
-	    gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDeviceFilePath);
-	    gpt.write(targetDeviceFilePath);
-	    gpt.writeCipher(cipherFilePath, targetDeviceFilePath);
+	    gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDevice);
+	    gpt.write(targetDevice);
+	    gpt.writeCipher(cipherFilePath, targetDevice);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
 
-    public void cloneRawCipher(Path cipherDeviceFilePath, Path targetDeviceFilePath)
+    public void cloneRawCipher(Device cipherDevice, Device targetDevice)
     {
-	if ( ( isValidFile(cipherDeviceFilePath, false, false, true) ) && ( isValidFile(targetDeviceFilePath, false, false, true) ) )
+	if ( ( isValidFile(cipherDevice.getPath(), false, false, true) ) && ( isValidFile(targetDevice.getPath(), false, false, true) ) )
 	{
 	    GPT gpt = new GPT(ui);
 	    
 //	    Either read (clone diskGUIDs & partitionGUIDs) or create (new diskGUIDs & partitionGUIDs)
 //            gpt.read(cipherDeviceFilePath); // Copies currentLBA and backupLBA which causes invalid headers on a different size USB Stick
-	    gpt.create(Device.getCipherPartitionSize(ui, cipherDeviceFilePath), targetDeviceFilePath);
+	    gpt.create(DeviceController.getCipherPartitionSize(ui, cipherDevice), targetDevice);
 	    
-	    gpt.write(targetDeviceFilePath);
-	    gpt.cloneCipher(cipherDeviceFilePath, targetDeviceFilePath);
+	    gpt.write(targetDevice);
+	    gpt.cloneCipher(cipherDevice, targetDevice);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
 
 //  Used by --gpt option
-    public void printGPT(Path cipherDeviceFilePath)
+    public void printGPT(Device cipherDevice)
     {
-	if ( isValidFile(cipherDeviceFilePath, false, false, true) )
+	if ( isValidFile(cipherDevice.getPath(), false, false, true) )
 	{
 	    GPT gpt = new GPT(ui);
-	    gpt.read(cipherDeviceFilePath);
+	    gpt.read(cipherDevice);
 	    gpt.print();
 	}
     }
     
-    public void deleteGPT(Path targetDeviceFilePath)
+    public void deleteGPT(Device targetDevice)
     {
-	if ( isValidFile(targetDeviceFilePath, false, false, true) )
+	if ( isValidFile(targetDevice.getPath(), false, false, true) )
 	{
 	    GPT gpt = new GPT(ui);
-	    gpt.write(targetDeviceFilePath);
-	    gpt.read(targetDeviceFilePath);
+	    gpt.write(targetDevice);
+	    gpt.read(targetDevice);
 	    gpt.print();
 	}
     }

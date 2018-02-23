@@ -18,7 +18,6 @@
  */
 package rdj;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class GPT_PMBR // Protective MBR
 {
     private final long ABSTRACT_LBA = 0L;
     private String DESCSTRING;
-    private final long LENGTH = Device.bytesPerSector * 1L;
+    private final long LENGTH = DeviceController.bytesPerSector * 1L;
 
     private byte[] bootcodeBytes;
     private byte[] diskSignatureBytes;
@@ -99,9 +98,9 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
 
-    public void read(Path rawDeviceFilePath)
+    public void read(Device rawDevice)
     {
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new Device(ui).readLBA(rawDeviceFilePath, ABSTRACT_LBA, this.LENGTH);
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(rawDevice, ABSTRACT_LBA, this.LENGTH);
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
                                                                         bootcodeBytes = GPT.getBytesPart(bytes, 0, 440);
@@ -135,9 +134,10 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
     
-    public void create(Path rawDeviceFilePath)
+    public void create(Device rawDevice)
     {
-        long deviceSize = GPT.getDeviceSize(ui, rawDeviceFilePath);
+//        long deviceSize = rawDevice.getSize();
+	ui.log("What the fuck: " + GPT.getHumanSize(rawDevice.getSize(), 1));
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
                                                 bootcodeBytes =		GPT.getZeroBytes(440); // 440
@@ -152,7 +152,7 @@ public class GPT_PMBR // Protective MBR
                                                 osTypeBytes =		GPT.hex2Bytes("EE"); // EE Protective / Unknown
                                                 endingCHSBytes =        GPT.hex2Bytes("FEFFFF"); // FE FF FF
                                                 startingLBABytes =      GPT.hex2Bytes("01 00 00 00"); // LBA 1
-                                                sizeInLBABytes =	GPT.hex2Bytes(GPT.getHexStringLittleEndian((deviceSize - (long)Device.bytesPerSector) / (long)Device.bytesPerSector, 4)); // LBA-0
+                                                sizeInLBABytes =	GPT.hex2Bytes(GPT.getHexStringLittleEndian((rawDevice.getSize() - (long)DeviceController.bytesPerSector) / (long)DeviceController.bytesPerSector, 4)); // LBA-0
                                                 
 //      462  (0x00)   16 bytes  During LBA 0    partition2              00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 (notn)
                                                 partition2Bytes =       GPT.hex2Bytes("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
@@ -165,7 +165,7 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
 
-    public void write(Path rawDeviceFilePath) { new Device(ui).writeLBA(getDesc(), getBytes(), rawDeviceFilePath, ABSTRACT_LBA); }
+    public void write(Device rawDevice) { new DeviceController(ui).writeLBA(getDesc(), getBytes(), rawDevice, ABSTRACT_LBA); }
 
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(getBytes(), off, length); }
     public byte[] getBytes()

@@ -153,7 +153,7 @@ public class GUIFX extends Application implements UI, Initializable
     private GridPane logButtonGridPane;
     private FileFilter nonFinalCryptFilter;
     private FileNameExtensionFilter finalCryptFilter;
-    private RawCipher rawCipher;
+    private DeviceManager deviceManager;
     private int lineCounter;
     private Configuration configuration;
     @FXML
@@ -998,7 +998,7 @@ public class GUIFX extends Application implements UI, Initializable
         final UI ui = this;
         Thread encryptThread = new Thread(new Runnable()
         {
-            private RawCipher rawCipher;
+            private DeviceManager deviceManager;
             @Override
             @SuppressWarnings({"static-access"})
             public void run()
@@ -1024,15 +1024,15 @@ public class GUIFX extends Application implements UI, Initializable
                 else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
                 {
                     encryptionStarted();
-                    rawCipher = new RawCipher(guifx); rawCipher.start();
-                    rawCipher.createRawCipher(cipherFileChooser.getSelectedFile().toPath(), targetFileChooser.getSelectedFile().toPath());
+                    deviceManager = new DeviceManager(guifx); deviceManager.start();
+                    deviceManager.createRawCipher(cipherFileChooser.getSelectedFile().toPath(), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
                     encryptionFinished();
                 }
                 else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
                 {
                     encryptionStarted();
-                    rawCipher = new RawCipher(ui); rawCipher.start();
-                    rawCipher.cloneRawCipher(cipherFileChooser.getSelectedFile().toPath(), targetFileChooser.getSelectedFile().toPath());
+                    deviceManager = new DeviceManager(ui); deviceManager.start();
+                    deviceManager.cloneRawCipher(new Device(ui,cipherFileChooser.getSelectedFile().toPath()), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
                     encryptionFinished();
                 }
             }
@@ -1061,7 +1061,7 @@ public class GUIFX extends Application implements UI, Initializable
 
             Thread logThread = new Thread(new Runnable()
             {
-                private RawCipher rawCipher;
+//                private DeviceManager rawCipher;
                 @Override
                 @SuppressWarnings({"static-access"})
                 public void run()
@@ -1092,7 +1092,7 @@ public class GUIFX extends Application implements UI, Initializable
 
             Thread errorLogThread = new Thread(new Runnable()
             {
-                private RawCipher rawCipher;
+//                private DeviceManager rawCipher;
                 @Override
                 @SuppressWarnings({"static-access"})
                 public void run()
@@ -1248,7 +1248,7 @@ public class GUIFX extends Application implements UI, Initializable
         }
         else
         {
-            Device.setPausing(pauseToggleButton.isSelected());
+            DeviceController.setPausing(pauseToggleButton.isSelected());
         }
     }
     
@@ -1263,7 +1263,7 @@ public class GUIFX extends Application implements UI, Initializable
         }
         else
         {
-            Device.setStopPending(true);
+            DeviceController.setStopPending(true);
             if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
         }
     }

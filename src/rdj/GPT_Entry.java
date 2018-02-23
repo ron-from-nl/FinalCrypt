@@ -76,10 +76,10 @@ public class GPT_Entry
 	setDesc();
     }
 
-   public void read(Path cipherDeviceFilePath)
+   public void read(Device cipherDevice)
     {
-	pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(cipherDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new Device(ui).readPos(cipherDeviceFilePath, pos, LENGTH);
+	pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, cipherDevice.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readPos(cipherDevice, pos, LENGTH);
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.getBytesPart(bytes, 0, 16);
@@ -93,14 +93,14 @@ public class GPT_Entry
                                                 attributesBytes =			    GPT.getBytesPart(bytes, 48, 8);
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getBytesPart(bytes, 56, 72);
-        partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
+        partSize = ((endingLBA - startingLBA) + 1 ) * DeviceController.bytesPerSector;
 	setDesc();
     }
     
 //    public void create(Path cipherFilePath)
     public void create(long cipherSize, byte[] uniquePartitionGUIDBytes)
     {
-        cipherSizeLBA =  (long)((Math.floor((cipherSize - 1L) / Device.bytesPerSector )));
+        cipherSizeLBA =  (long)((Math.floor((cipherSize - 1L) / DeviceController.bytesPerSector )));
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.hex2Bytes("AF 3D C6 0F 83 84 72 47 8E 79 3D 69 D8 47 7D E4");
@@ -117,14 +117,14 @@ public class GPT_Entry
                                                 attributesBytes =			    GPT.hex2Bytes("00 00 00 00 00 00 00 00");
 //      56 (0x38)   72 bytes    During LBA 2    Partition name (36 UTF-16LE code units)
                                                 partitionNameBytes =			    GPT.getZeroBytes(72);
-        partSize = ((endingLBA - startingLBA) + 1 ) * Device.bytesPerSector;
+        partSize = ((endingLBA - startingLBA) + 1 ) * DeviceController.bytesPerSector;
 	setDesc();
     }
     
-    public void write(Path targetDeviceFilePath)					    { pos = ((Device.getLBAOffSet(Device.bytesPerSector, Device.getDeviceSize(targetDeviceFilePath), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-											      new Device(ui).writePos(getDesc(), getBytes(), targetDeviceFilePath, pos); } // Causes exeption on OSX
-    public void writeCipherPartitions(Path cipherFilePath, Path targetDeviceFilePath)	    { new Device(ui).writeCipherPartition(cipherFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
-    public void cloneCipherPartition(Path cipherDeviceFilePath, Path targetDeviceFilePath)  { new Device(ui).cloneCipherPartition(cipherDeviceFilePath, targetDeviceFilePath, startingLBA, endingLBA); }
+    public void write(Device targetDevice)					    { pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, targetDevice.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+											      new DeviceController(ui).writePos(getDesc(), getBytes(), targetDevice.getPath(), pos); } // Causes exeption on OSX
+    public void writeCipherPartitions(Path cipherFilePath, Device targetDevice)	    { new DeviceController(ui).writeCipherPartition(cipherFilePath, targetDevice, startingLBA, endingLBA); }
+    public void cloneCipherPartition(Device cipherDevice, Device targetDevice)	    { new DeviceController(ui).cloneCipherPartition(cipherDevice, targetDevice, startingLBA, endingLBA); }
     
         
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(GPT_Entry.this.getBytes(), off, length); }
