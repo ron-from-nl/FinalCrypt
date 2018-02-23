@@ -187,7 +187,6 @@ public class CLUI implements UI
 			    State.cipherReady = true;
 			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
 			    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
-			    println("ciphersize = " + cipherSize);
 			} else { status("Probably no read permission on " + cipherFilePath + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
 		    } else { State.cipherReady = false; } // disk0
 		}

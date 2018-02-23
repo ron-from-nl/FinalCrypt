@@ -18,11 +18,13 @@ Added optional cipher password to protect cipher from unauthorized usage
 
 ============================= Source Published ==============================
 
-Normalized GPT Tooling Object Model
-Extended GUID Partition Table Tooling
 
 ============================= Binaries Released =============================
 
+Fixed OSX SeakableByteChannel.size bug with customer getDeviceSize method
+
+Normalized GPT Tooling Object Model
+Extended GUID Partition Table Tooling
 Added read/write file-permission test on (raw cipher) device files 
 Replaced JavaFX Timeline with Timer(Task) objects on all CLUI related objects.
 Fixed updateProgressBars on creating raw cipher device and clone raw cipher device.
