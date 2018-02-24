@@ -54,8 +54,8 @@ public class GPT_Entries
 				   gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();
     }
 //    public void	create(long cipherSize)							    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].create(cipherSize); } setDesc(); }
-
 //    public void	write(Path targetDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].write(targetDeviceFilePath); } } // OSX exeption
+
     public void		write(Device targetDevice)						    { new DeviceController(ui).writeLBA(getDesc(), getBytes(), targetDevice, ABSTRACT_LBA); }
 
     public void		writeCipherPartitions(Path cipherFilePath, Device targetDevice)		    { gpt_entry[0].writeCipherPartitions(cipherFilePath, targetDevice); }

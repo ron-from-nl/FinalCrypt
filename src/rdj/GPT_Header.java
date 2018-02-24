@@ -146,8 +146,6 @@ public class GPT_Header
     
     public void create(Device targetDevice)
     {
-//        long deviceSize = gpt.getDeviceSize(ui, targetDeviceFilePath);
-//        long deviceSize = DeviceController.getDeviceSize(ui, targetDevice);
 //      Offset        Length    When            Data
 //      0  (0x00)     8 bytes   During LBA 1    Signature ("EFI PART", 45h 46h 49h 20h 50h 41h 52h 54h or 0x5452415020494645ULL [a] on little-endian machines)
                                                 signatureBytes =			GPT.hex2Bytes("45 46 49 20 50 41 52 54"); // "EFI PART".getBytes(StandardCharsets.UTF_8);

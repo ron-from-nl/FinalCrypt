@@ -136,8 +136,6 @@ public class GPT_PMBR // Protective MBR
     
     public void create(Device rawDevice)
     {
-//        long deviceSize = rawDevice.getSize();
-	ui.log("What the fuck: " + GPT.getHumanSize(rawDevice.getSize(), 1));
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
                                                 bootcodeBytes =		GPT.getZeroBytes(440); // 440
