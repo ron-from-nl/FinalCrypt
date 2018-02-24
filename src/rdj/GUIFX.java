@@ -767,7 +767,10 @@ public class GUIFX extends Application implements UI, Initializable
             Mode.modeReady = false;
             Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.SELECT)); } });
 
-            if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
+            if      (
+			(State.targetSelected == State.FILE) && (State.targetReady) &&
+			(State.cipherSelected == State.FILE) &&	(State.cipherReady)
+		    )
             {
                 if (
                         ( ( targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null ) )          &&
@@ -778,15 +781,15 @@ public class GUIFX extends Application implements UI, Initializable
                     Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPT)); } });
                 }
             }
-            else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
+            else if ((State.targetSelected == State.FILE) && (State.targetReady) && (State.cipherSelected == State.PARTITION) && (State.cipherReady))
             {
                 Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPTRAW)); } });
             }
-            else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.FILE))
+            else if ((State.targetSelected == State.DEVICE) && (State.targetReady) && (State.cipherSelected == State.FILE) &&	(State.cipherReady))
             {
                 Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.CREATE_CIPHER_DEVICE)); } });
             }
-            else if ((State.targetSelected == State.DEVICE) && (State.cipherSelected == State.DEVICE))
+            else if ((State.targetSelected == State.DEVICE) && (State.targetReady) && (State.cipherSelected == State.DEVICE)&&	(State.cipherReady))
             {
 //              Source and Dest Device may not be the same
                 if (
