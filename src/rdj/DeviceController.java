@@ -673,7 +673,7 @@ public class DeviceController
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )			{ ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        if ( ! validfile ) { if ( report )			{ ui.error("Warning: DevCTRL: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 

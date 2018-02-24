@@ -1,0 +1,22 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
+${licensePrefix}
+${licensePrefix}This is free software; you can redistribute it 
+${licensePrefix}under the terms of the Creative Commons License
+${licensePrefix}Creative Commons License: (CC BY-NC-ND 4.0) as published by
+${licensePrefix}https://creativecommons.org/licenses/by-nc-nd/4.0/ either
+${licensePrefix}version 4.0 of the License, or (at your option) any later version.
+${licensePrefix}
+${licensePrefix}This software is distributed in the hope that it will be useful,
+${licensePrefix}but WITHOUT ANY WARRANTY; without even the implied warranty of
+${licensePrefix}MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+${licensePrefix}Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+${licensePrefix}International Public License for more details.
+${licensePrefix}
+${licensePrefix}You should have received a copy called: "LICENSE" of the 
+${licensePrefix}Creative Commons Public License along with this software;
+<#if licenseLast??>
+${licenseLast}
+</#if>

@@ -15,14 +15,16 @@ Added optional cipher password to protect cipher from unauthorized usage
 
 ============================= Source Committed ==============================
 
+Removed false logging (causing a mess in logfiles and log textArea)
 
 ============================= Source Published ==============================
 
 
 ============================= Binaries Released =============================
 
-Fixed OSX SeakableByteChannel.size bug with customer getDeviceSize method
+Removed false logging (causing a mess in logfiles and log textArea)
 
+Fixed OSX SeakableByteChannel.size bug with custom getDeviceSize method
 Normalized GPT Tooling Object Model
 Extended GUID Partition Table Tooling
 Added read/write file-permission test on (raw cipher) device files 
@@ -46,12 +48,12 @@ Fixed small statusfield growth issue
 
 Line breaking during processing catches
 Clear Log TextArea every 1000 writes for better performance
-Added Raw Cipher support to Command Line User Interface
+Added Cipher Device support to Command Line User Interface
 Fixed pauze & stop buttons in new Statemachine
 Fixed CLUI relative paths bug in absolute paths
-Adding Raw Cipher Device Cloning on Linux and Apple
-Added Raw Cipher Device randomizing, including gap at end of partitions
-Added Raw Cipher Device Support including GPT Tooling
+Adding Cipher Device Device Cloning on Linux and Apple
+Added Cipher Device Device randomizing, including gap at end of partitions
+Added Cipher Device Device Support including GPT Tooling
 Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistency

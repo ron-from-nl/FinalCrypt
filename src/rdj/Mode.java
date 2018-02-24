@@ -25,9 +25,10 @@ public class Mode
     public  static final int        ENCRYPTRAW =            2;
     public  static final int        CREATE_CIPHER_DEVICE =  3;
     public  static final int        CLONE_CIPHER_DEVICE =   4;
-    private static final String[]   MODEDESCRIPTION =       new String[] { "Select","Encrypt","Encrypt (Raw Cipher)","Create Cipher Device","Clone Cipher Device" };
+    private static final String[]   MODEDESCRIPTION =       new String[] { "Select","Encrypt","Encrypt (Cipher Device)","Create Cipher Device","Clone Cipher Device" };
     
     private static       int        mode =                  SELECT;
+    public  static boolean          modeRunning =           false;
     public  static boolean          modeReady =             false;
 
     public static int getMode()                             { return mode; }

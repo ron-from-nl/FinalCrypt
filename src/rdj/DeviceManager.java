@@ -28,7 +28,7 @@ public class DeviceManager extends Thread
         
     public DeviceManager(UI ui) { this.ui = ui; }
     
-    public void createRawCipher(Path cipherFilePath, Device targetDevice)
+    public void createCipherDevice(Path cipherFilePath, Device targetDevice)
     {
 	if ( isValidFile(targetDevice.getPath(), false, false, true) )
 	{
@@ -41,7 +41,7 @@ public class DeviceManager extends Thread
 	}
     }
 
-    public void cloneRawCipher(Device cipherDevice, Device targetDevice)
+    public void cloneCipherDevice(Device cipherDevice, Device targetDevice)
     {
 	if ( ( isValidFile(cipherDevice.getPath(), false, false, true) ) && ( isValidFile(targetDevice.getPath(), false, false, true) ) )
 	{
@@ -105,7 +105,7 @@ public class DeviceManager extends Thread
             if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )			{ ui.error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        if ( ! validfile ) { if ( report )			{ ui.error("Warning: DevMgr: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 

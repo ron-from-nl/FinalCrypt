@@ -495,7 +495,10 @@ public class GUIFX extends Application implements UI, Initializable
 //  FileChooser Listener methods
     private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
     {
-        checkTargetFileChooserSelection(true);
+	if (!encryptionRunning)
+	{
+	    checkTargetFileChooserSelection(true);
+	}
     }
     
     private void checkTargetFileChooserSelection(boolean status)
@@ -509,10 +512,10 @@ public class GUIFX extends Application implements UI, Initializable
         if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0))
         {targetFileDeleteButton.setEnabled(true);} else {targetFileDeleteButton.setEnabled(false);}
 
-//      Test for Raw Cipher Target
+//      Test for Cipher Device Target
         if ((targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null) && (targetFileChooser.getSelectedFiles().length == 1))
         {
-            if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Raw Cipher Device
+            if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Cipher Device Device
             {
                 if  (!targetFileChooser.getSelectedFile().getName().endsWith("sda")) // Not main disk
                 {
@@ -531,7 +534,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
                 }
             }
-            else if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Raw Cipher Device
+            else if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Cipher Device Device
             {
                 if (!targetFileChooser.getSelectedFile().getName().endsWith("disk0")) // not primary disk
                 {
@@ -553,7 +556,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
                 }
             }
-            else // No Raw Cipher Device Target selected
+            else // No Cipher Device Device Target selected
             {
                 State.targetSelected = State.INVALID;
                 State.targetReady = false;                
@@ -649,8 +652,11 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
     {
-        checkCipherFileChooserSelection();
-        checkTargetFileChooserSelection(true);
+	if (!encryptionRunning)
+	{
+            checkCipherFileChooserSelection();
+	    checkTargetFileChooserSelection(true);
+	}
     }
     
     private void checkCipherFileChooserSelection()
@@ -687,7 +693,7 @@ public class GUIFX extends Application implements UI, Initializable
                 State.cipherReady = true;
                 try { cipherSize = (int)Files.size(cipherFileChooser.getSelectedFile().toPath()); } catch (IOException ex) { error("Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\n"); }
             }
-            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Raw Cipher Selection
+            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Cipher Device Selection
             {
 		if (
 			(!cipherFileChooser.getSelectedFile().getName().endsWith("sda"))
@@ -712,7 +718,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    } else { status("Probably no read permission on " + cipherFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
 		}
             }
-            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Raw Cipher Selection
+            else if (cipherFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Cipher Device Selection
             {
 		if (
 			( ! cipherFileChooser.getSelectedFile().getName().endsWith("disk0"))
@@ -763,7 +769,14 @@ public class GUIFX extends Application implements UI, Initializable
 
             if      ((State.targetSelected == State.FILE) && (State.cipherSelected == State.FILE))
             {
-                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPT)); } });
+                if (
+                        ( ( targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null ) )          &&
+                        ( ( cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null ) )          &&
+                        ( targetFileChooser.getSelectedFile().compareTo(cipherFileChooser.getSelectedFile()) != 0 )
+                   )
+                {
+                    Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPT)); } });
+                }
             }
             else if ((State.targetSelected == State.FILE) && (State.cipherSelected == State.PARTITION))
             {
@@ -777,9 +790,9 @@ public class GUIFX extends Application implements UI, Initializable
             {
 //              Source and Dest Device may not be the same
                 if (
-                        ( ( targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null ) )            &&
+                        ( ( targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null ) )          &&
                         ( ( cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null ) )          &&
-                        ( targetFileChooser.getSelectedFile().compareTo(cipherFileChooser.getSelectedFile()) != 0 )  &&
+                        ( targetFileChooser.getSelectedFile().compareTo(cipherFileChooser.getSelectedFile()) != 0 ) &&
                         ( State.targetSelected == State.DEVICE ) && ( State.cipherSelected == State.DEVICE )
                    )
                 {
@@ -811,32 +824,42 @@ public class GUIFX extends Application implements UI, Initializable
         }
     }
 
-    public boolean isValidDir(Path path, boolean symlink, boolean report)
+    public boolean isValidDir(Path targetDirPath, boolean symlink, boolean report)
     {
-        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
+        boolean validdir = true; String conditions = "";		    String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(targetDirPath))				    { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(targetDirPath) )			    { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(targetDirPath) )			    { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )	    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+        if ( validdir ) {  } else { if ( report )			    { error("Warning: Invalid Dir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
         return validdir;
     }
 
-    public boolean isValidFile(Path path, boolean readSize, boolean symlink, boolean report)
+    public boolean isValidFile(Path targetSourcePath, Path cipherSourcePath, boolean readSize, boolean symlink, boolean report) // fileValidation Wrapper (including target==cipherSource comparison)
     {
-        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { } }
+	
+        boolean validfile = true; String conditions = "";			    String cipher = "";
+	validfile = isValidFile(targetSourcePath, readSize, symlink, report);
+	if (validfile) { if ( targetSourcePath.compareTo(cipherSourcePath) == 0 )   { validfile = false; cipher = "[isCipher] "; conditions += cipher; }}	
+        if ( ! validfile ) { if ( report )					    { error("Warning: GUIFX: Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        return validfile;
+    }
 
-        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+    public boolean isValidFile(Path targetSourcePath, boolean readSize, boolean symlink, boolean report)
+    {
+        boolean validfile = true; String conditions = "";		    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
+        long fileSize = 0;						    if ( readSize ) { try { fileSize = Files.size(targetSourcePath); } catch (IOException ex) { } }
+
+        if ( ! Files.exists(targetSourcePath))                              { validfile = false; exist = "[not found] "; conditions += exist; }
         else
         {
-            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
-            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
+            if ( Files.isDirectory(targetSourcePath))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
+            if ((readSize) && ( fileSize == 0 ))			    { validfile = false; size = "[empty] "; conditions += size; }
+            if ( ! Files.isReadable(targetSourcePath) )                     { validfile = false; read = "[not readable] "; conditions += read; }
+            if ( ! Files.isWritable(targetSourcePath) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(targetSourcePath)) )  { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
         }
-        if ( ! validfile ) { if ( report )                  { error("Warning: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        if ( ! validfile ) { if ( report )				    { error("Warning: GUIFX: Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 
@@ -1025,14 +1048,14 @@ public class GUIFX extends Application implements UI, Initializable
                 {
                     encryptionStarted();
                     deviceManager = new DeviceManager(guifx); deviceManager.start();
-                    deviceManager.createRawCipher(cipherFileChooser.getSelectedFile().toPath(), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
+                    deviceManager.createCipherDevice(cipherFileChooser.getSelectedFile().toPath(), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
                     encryptionFinished();
                 }
                 else if ( Mode.getMode() == Mode.CLONE_CIPHER_DEVICE )
                 {
                     encryptionStarted();
                     deviceManager = new DeviceManager(ui); deviceManager.start();
-                    deviceManager.cloneRawCipher(new Device(ui,cipherFileChooser.getSelectedFile().toPath()), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
+                    deviceManager.cloneCipherDevice(new Device(ui,cipherFileChooser.getSelectedFile().toPath()), new Device(ui,targetFileChooser.getSelectedFile().toPath()));
                     encryptionFinished();
                 }
             }
@@ -1042,9 +1065,9 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
+    synchronized public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
 
-    @Override public void status(String status, boolean log)
+    @Override synchronized public void status(String status, boolean log)
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
@@ -1053,7 +1076,7 @@ public class GUIFX extends Application implements UI, Initializable
         }});
     }
 
-    @Override public void log(String message)
+    @Override synchronized public void log(String message)
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
@@ -1083,7 +1106,7 @@ public class GUIFX extends Application implements UI, Initializable
             logThread.start();
         }});
     }
-    @Override public void error(String message)
+    @Override synchronized public void error(String message)
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
@@ -1116,7 +1139,14 @@ public class GUIFX extends Application implements UI, Initializable
         }});
     }
 
-    public void statusNow(String status, boolean log)   { statusLabel.setText(status); if (log) { log(status); } }
+    @Override public void statusNow(String status, boolean log)
+    {
+        Platform.runLater(new Runnable() { @Override public void run()
+        {
+	    statusLabel.setText(status);
+        }});
+	if (log) { log(status); } 
+    }
 
     public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
     public void statusDirect(String status) { statusLabel.setText(status); }
