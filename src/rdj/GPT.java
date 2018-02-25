@@ -265,8 +265,8 @@ public class GPT
         
         FileSystem fs = FileSystems.getDefault();
         Iterable<FileStore> stores = fs.getFileStores();
-//        Iterable<FileStore> stores2 = FileStore;
-        ui.log("\r\n");
+
+	ui.log("\r\n");
         ui.log(String.format("%-70s", "Name"));
         ui.log(String.format("%-20s", "Type"));
         ui.log(String.format("%-20s", "Tot"));
@@ -303,14 +303,4 @@ public class GPT
         try { cipherSize = (long)Files.size(cipherFilePath); } catch (IOException ex) { ui.log("Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\n"); }
         return cipherSize;
     }
-
-////  Get size of device
-//    synchronized public static long getDeviceSize(UI ui, Path targetDeviceFilePath)
-//    {
-//        long deviceSize = 0;
-//        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); }
-//        catch (IOException ex) { ui.status(ex.getMessage(), true); }
-//        
-//        return deviceSize;
-//    }
 }

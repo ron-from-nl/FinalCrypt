@@ -492,112 +492,6 @@ public class GUIFX extends Application implements UI, Initializable
         });
     }                                               
 
-//  FileChooser Listener methods
-    private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
-    {
-	if (!encryptionRunning)
-	{
-	    checkTargetFileChooserSelection(true);
-	}
-    }
-    
-    private void checkTargetFileChooserSelection(boolean status)
-    {
-        this.fileProgressBar.setProgress(0);
-        this.filesProgressBar.setProgress(0);
-        State.targetSelected = State.INVALID;
-        State.targetReady = false;
-        
-//      En/Disable FileChooser deletebutton
-        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0))
-        {targetFileDeleteButton.setEnabled(true);} else {targetFileDeleteButton.setEnabled(false);}
-
-//      Test for Cipher Device Target
-        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null) && (targetFileChooser.getSelectedFiles().length == 1))
-        {
-            if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Cipher Device Device
-            {
-                if  (!targetFileChooser.getSelectedFile().getName().endsWith("sda")) // Not main disk
-                {
-		    if (isValidFile(targetFileChooser.getSelectedFile().toPath(), false, false, false))
-		    {
-			if (Character.isLetter(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-1))) // Device selected
-			{
-			    State.targetSelected = State.DEVICE;
-			    State.targetReady = true;
-			}
-			else
-			{
-			    State.targetSelected = State.PARTITION;
-			    State.targetReady = false;
-			}
-		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
-                }
-            }
-            else if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Cipher Device Device
-            {
-                if (!targetFileChooser.getSelectedFile().getName().endsWith("disk0")) // not primary disk
-                {
-		    if (isValidFile(targetFileChooser.getSelectedFile().toPath(), false, false, false))
-		    {
-			if (
-				(Character.isDigit(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-1))) && // last char = digit
-				(!String.valueOf(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s")) // ! slice
-			   ) 
-			{
-			    State.targetSelected = State.DEVICE;
-			    State.targetReady = true;                    
-			}
-			else
-			{
-			    State.targetSelected = State.PARTITION;
-			    State.targetReady = false;
-			}
-		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
-                }
-            }
-            else // No Cipher Device Device Target selected
-            {
-                State.targetSelected = State.INVALID;
-                State.targetReady = false;                
-            }
-        }
-        
-//      En/Disable hasEncryptableItems
-        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && ( State.cipherSelected != State.DEVICE ) && ( State.cipherReady ) ) // No need to scan for encryptable items without selected cipher for better performance
-        {
-            
-            String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-
-//          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
-            Path cipherPath = null;
-            if ( (cipherFileChooser.getSelectedFile() != null) && (State.cipherReady) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
-
-//          Look for encryptable files (Long I/O operation set hourglass)
-            cursorWait();
-            if (( targetFileChooser.getSelectedFiles().length == 1 ) )
-            {
-                if ( isValidFile(targetFileChooser.getSelectedFile().toPath(), true, finalCrypt.getSymlink(), false ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
-                else if ( isValidDir(targetFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), false))
-                {
-                    for (Path path:finalCrypt.getExtendedPathList(targetFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
-                    {
-                        if ( isValidFile(path, true, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
-                    }
-                } else { State.targetSelected = State.INVALID; State.targetReady = true; }
-            }
-            else if ( targetFileChooser.getSelectedFiles().length > 1 )
-            {
-                for (Path path:finalCrypt.getExtendedPathList(targetFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
-                {
-                    if ( isValidFile(path, true, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
-                }
-            }
-            cursorDefault();
-        }
-        checkModeReady();
-    }
-
     private void cursorWait()
     {
             targetFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
@@ -629,7 +523,8 @@ public class GUIFX extends Application implements UI, Initializable
         else                                            { negatePattern = false; pattern = "glob:*"; }
         return pattern;
     }
-//  FileChooser Listener methods
+    
+//  Doubleclick open file
     private void targetFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
     {
         this.fileProgressBar.setProgress(0);
@@ -654,12 +549,12 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if (!encryptionRunning)
 	{
-            checkCipherFileChooserSelection();
-	    checkTargetFileChooserSelection(true);
+            cipherFileChooserPropertyCheck();
+	    targetFileChooserPropertyCheck(true);
 	}
     }
     
-    private void checkCipherFileChooserSelection()
+    private void cipherFileChooserPropertyCheck()
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
@@ -756,7 +651,112 @@ public class GUIFX extends Application implements UI, Initializable
             finalCrypt.setBufferSize((int)cipherSize);
             if (FinalCrypt.verbose) status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(finalCrypt.getBufferSize(), 1) + " \r\n", true);
         }
+        checkModeReady();
+    }
+
+//  FileChooser Listener methods
+    private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
+    {
+	if (!encryptionRunning)
+	{
+	    targetFileChooserPropertyCheck(true);
+	}
+    }
+    
+    private void targetFileChooserPropertyCheck(boolean status)
+    {
+        this.fileProgressBar.setProgress(0);
+        this.filesProgressBar.setProgress(0);
+        State.targetSelected = State.INVALID;
+        State.targetReady = false;
         
+//      En/Disable FileChooser deletebutton
+        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0))
+        {targetFileDeleteButton.setEnabled(true);} else {targetFileDeleteButton.setEnabled(false);}	
+	
+//      Test for Cipher Device Target
+        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFile() != null) && (targetFileChooser.getSelectedFiles().length == 1))
+        {
+            if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/sd")) // Linux Cipher Device Device
+            {
+                if  (!targetFileChooser.getSelectedFile().getName().endsWith("sda")) // Not main disk
+                {
+		    if (isValidFile(targetFileChooser.getSelectedFile().toPath(), false, false, false))
+		    {
+			if (Character.isLetter(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-1))) // Device selected
+			{
+			    State.targetSelected = State.DEVICE;
+			    State.targetReady = true;
+			}
+			else
+			{
+			    State.targetSelected = State.PARTITION;
+			    State.targetReady = false;
+			}
+		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+                }
+            }
+            else if (targetFileChooser.getSelectedFile().getAbsolutePath().startsWith("/dev/disk")) // Apple Cipher Device Device
+            {
+                if (!targetFileChooser.getSelectedFile().getName().endsWith("disk0")) // not primary disk
+                {
+		    if (isValidFile(targetFileChooser.getSelectedFile().toPath(), false, false, false))
+		    {
+			if (
+				(Character.isDigit(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-1))) && // last char = digit
+				(!String.valueOf(targetFileChooser.getSelectedFile().getName().charAt(targetFileChooser.getSelectedFile().getName().length()-2)).equalsIgnoreCase("s")) // ! slice
+			   ) 
+			{
+			    State.targetSelected = State.DEVICE;
+			    State.targetReady = true;                    
+			}
+			else
+			{
+			    State.targetSelected = State.PARTITION;
+			    State.targetReady = false;
+			}
+		    } else { status("Probably no read & write permission on " + targetFileChooser.getSelectedFile().toPath() + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
+                }
+            }
+            else // No Cipher Device Device Target selected
+            {
+                State.targetSelected = State.INVALID;
+                State.targetReady = false;                
+            }
+        }
+        
+//      En/Disable hasEncryptableItems
+        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && ( State.cipherSelected != State.DEVICE ) && ( State.cipherReady ) ) // No need to scan for encryptable items without selected cipher for better performance
+        {
+            
+            String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+
+//          Look for selected cipher file and feed to extendedPathlist to be excpluded from the WalkTree returned list
+            Path cipherPath = null;
+            if ( (cipherFileChooser.getSelectedFile() != null) && (State.cipherReady) ) { cipherPath = cipherFileChooser.getSelectedFile().toPath(); }
+
+//          Look for encryptable files (Long I/O operation set hourglass)
+            cursorWait();
+            if (( targetFileChooser.getSelectedFiles().length == 1 ) )
+            {
+                if ( isValidFile(targetFileChooser.getSelectedFile().toPath(), true, finalCrypt.getSymlink(), false ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                else if ( isValidDir(targetFileChooser.getSelectedFile().toPath(), finalCrypt.getSymlink(), false))
+                {
+                    for (Path path:finalCrypt.getExtendedPathList(targetFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+                    {
+                        if ( isValidFile(path, true, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                    }
+                } else { State.targetSelected = State.INVALID; State.targetReady = true; }
+            }
+            else if ( targetFileChooser.getSelectedFiles().length > 1 )
+            {
+                for (Path path:finalCrypt.getExtendedPathList(targetFileChooser.getSelectedFiles(), cipherPath, pattern, negatePattern, status) )
+                {
+                    if ( isValidFile(path, true, finalCrypt.getSymlink(), true ) )   { State.targetSelected = State.FILE; State.targetReady = true; }
+                }
+            }
+            cursorDefault();
+        }
         checkModeReady();
     }
 
@@ -1201,8 +1201,8 @@ public class GUIFX extends Application implements UI, Initializable
                 targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
-                checkTargetFileChooserSelection(false);
-                checkCipherFileChooserSelection();
+                targetFileChooserPropertyCheck(false);
+                cipherFileChooserPropertyCheck();
             }
         });
     }    
