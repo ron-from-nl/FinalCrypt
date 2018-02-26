@@ -119,8 +119,8 @@ public class GPT_Entry
 	setDesc();
     }
     
-    public void write(Device targetDevice)					    { pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, targetDevice.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-											      new DeviceController(ui).writePos(getDesc(), getBytes(), targetDevice.getPath(), pos); } // Causes exeption on OSX
+    public void write(Device device)					    { pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, device.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+										      new DeviceController(ui).writePos(getDesc(), getBytes(), device, pos); } // Causes exeption on OSX
     public void writeCipherPartitions(Path cipherFilePath, Device targetDevice)	    { new DeviceController(ui).writeCipherPartition(cipherFilePath, targetDevice, startingLBA, endingLBA); }
     public void cloneCipherPartition(Device cipherDevice, Device targetDevice)	    { new DeviceController(ui).cloneCipherPartition(cipherDevice, targetDevice, startingLBA, endingLBA); }
     

@@ -33,6 +33,7 @@ public class GPT_Header
 
     private byte[] signatureBytes; 
     private byte[] revisionBytes;
+    private int	   headerSize;
     private byte[] headerSizeBytes;
     private byte[] headerCRC32Bytes;
     private byte[] reservedBytes;
@@ -48,7 +49,9 @@ public class GPT_Header
     public  byte[] diskGUIDBytes;
     private long   partitionEntryLBA;
     private byte[] partitionEntryLBABytes;
+    public int	   numberOfPartitionEntries;
     private byte[] numberOfPartitionEntriesBytes;
+    public int	   sizeOfPartitionEntry;
     private byte[] sizeOfPartitionEntryBytes;
     private byte[] crc32PartitionsBytes;
     private byte[] reservedUEFIBytes;
@@ -73,7 +76,8 @@ public class GPT_Header
 //      8  (0x08)     4 bytes   During LBA 1    Revision (for GPT version 1.0 (through at least UEFI version 2.7 (May 2017)), the value is 00h 00h 01h 00h)
                                                 revisionBytes =				GPT.hex2Bytes("00 00 00 00");
 //      12 (0x0C)     4 bytes   During LBA 1    Header size in little endian (in bytes, usually 5Ch 00h 00h 00h or 92 bytes)
-                                                headerSizeBytes =			GPT.hex2Bytes("00 00 00 00"); // Header Size = 92 bytes long
+                                                headerSize =				0;
+                                                headerSizeBytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(headerSize,4)); // Header Size = 92 bytes long
 //      16 (0x10)     4 bytes   Post LBA 1      CRC32/zlib of header (offset +0 up to HEADER SIZE!!!) in little endian, with this field zeroed during calculation
                                                 headerCRC32Bytes =			GPT.hex2Bytes("00 00 00 00"); // Correct: 00 49 7C B9 Correct: 
 //      20 (0x14)     4 bytes   During LBA 1    Reserved; must be zero
@@ -96,9 +100,11 @@ public class GPT_Header
                                                 partitionEntryLBA =			0L;
                                                 partitionEntryLBABytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(0L, 8));
 //      80 (0x50)     4 bytes   During LBA 1    Number of partition entries in array
-                                                numberOfPartitionEntriesBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(0L, 4));
+                                                numberOfPartitionEntries =		0;
+                                                numberOfPartitionEntriesBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(numberOfPartitionEntries, 4));
 //      84 (0x54)     4 bytes   During LBA 1    Size of a single partition entry (usually 80h or 128)
-                                                sizeOfPartitionEntryBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(0L, 4));
+                                                sizeOfPartitionEntry =			0;
+                                                sizeOfPartitionEntryBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(sizeOfPartitionEntry, 4));
 //      88 (0x58)     4 bytes   Post LBA        The CRC32 of the GUID Partition Entry array.
 //                                              Starts at PartitionEntryLBA and iscomputed over a byte length ofNumberOfPartitionEntries *SizeOfPartitionEntry
                                                 crc32PartitionsBytes =			GPT.hex2Bytes("00 00 00 00"); // Error: D9 CD 19 1F Correct: 
@@ -107,16 +113,16 @@ public class GPT_Header
 	setDesc();
     }
 
-    public void read(Device rawDevice)
+    public void read(Device device)
     {
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(rawDevice, ABSTRACT_LBA, this.LENGTH);
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(device, ABSTRACT_LBA, this.LENGTH);
 //      Offset        Length    When            Data
 //      0  (0x00)     8 bytes   During LBA 1    Signature ("EFI PART", 45h 46h 49h 20h 50h 41h 52h 54h or 0x5452415020494645ULL [a] on little-endian machines)
                                                 signatureBytes =			GPT.getBytesPart(bytes, 0, 8);
 //      8  (0x08)     4 bytes   During LBA 1    Revision (for GPT version 1.0 (through at least UEFI version 2.7 (May 2017)), the value is 00h 00h 01h 00h)
                                                 revisionBytes =				GPT.getBytesPart(bytes, 8, 4);
 //      12 (0x0C)     4 bytes   During LBA 1    Header size in little endian (in bytes, usually 5Ch 00h 00h 00h or 92 bytes)
-                                                headerSizeBytes =			GPT.getBytesPart(bytes, 12, 4);
+                                                headerSizeBytes =			GPT.getBytesPart(bytes, 12, 4); headerSize = Integer.reverseBytes(GPT.bytesToInteger(headerSizeBytes));
 //      16 (0x10)     4 bytes   Post LBA 1      CRC32/zlib of header (offset +0 up to HEADER SIZE!!!) in little endian, with this field zeroed during calculation
                                                 headerCRC32Bytes =			GPT.getBytesPart(bytes, 16, 4);
 //      20 (0x14)     4 bytes   During LBA 1    Reserved; must be zero
@@ -134,9 +140,9 @@ public class GPT_Header
 //      72 (0x48)     8 bytes   During LBA 1    Starting LBA of array of partition entries (always 2 in primary copy)
                                                 partitionEntryLBABytes =		GPT.getBytesPart(bytes, 72, 8); partitionEntryLBA = Long.reverseBytes(GPT.bytesToLong(partitionEntryLBABytes));
 //      80 (0x50)     4 bytes   During LBA 1    Number of partition entries in array
-                                                numberOfPartitionEntriesBytes =		GPT.getBytesPart(bytes, 80, 4);
+                                                numberOfPartitionEntriesBytes =		GPT.getBytesPart(bytes, 80, 4); numberOfPartitionEntries = Integer.reverseBytes(GPT.bytesToInteger(numberOfPartitionEntriesBytes));
 //      84 (0x54)     4 bytes   During LBA 1    Size of a single partition entry (usually 80h or 128)
-                                                sizeOfPartitionEntryBytes =		GPT.getBytesPart(bytes, 84, 4);
+                                                sizeOfPartitionEntryBytes =		GPT.getBytesPart(bytes, 84, 4); sizeOfPartitionEntry = Integer.reverseBytes(GPT.bytesToInteger(sizeOfPartitionEntryBytes));
 //      88 (0x58)     4 bytes   Post LBA        The CRC32 of the GUID Partition Entry array.
                                                 crc32PartitionsBytes =			GPT.getBytesPart(bytes, 88, 4);
 //      92 (0x5C)     420 bytes   During LBA 1  Remaining 420 bytes (or more depending on sector size) of zero's
@@ -152,7 +158,8 @@ public class GPT_Header
 //      8  (0x08)     4 bytes   During LBA 1    Revision (for GPT version 1.0 (through at least UEFI version 2.7 (May 2017)), the value is 00h 00h 01h 00h)
                                                 revisionBytes =				GPT.hex2Bytes("00 00 01 00");
 //      12 (0x0C)     4 bytes   During LBA 1    Header size in little endian (in bytes, usually 5Ch 00h 00h 00h or 92 bytes)
-                                                headerSizeBytes =			GPT.hex2Bytes("5C 00 00 00"); // Header Size = 92 bytes long
+                                                headerSize =				92;
+                                                headerSizeBytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(headerSize,4)); // Header Size = 92 bytes long; GPT.hex2Bytes("5C 00 00 00");
 //      16 (0x10)     4 bytes   Post LBA 1      CRC32/zlib of header (offset +0 up to HEADER SIZE!!!) in little endian, with this field zeroed during calculation
                                                 headerCRC32Bytes =			GPT.hex2Bytes("00 00 00 00"); // Correct: 00 49 7C B9 Correct: 
 //      20 (0x14)     4 bytes   During LBA 1    Reserved; must be zero
@@ -170,52 +177,56 @@ public class GPT_Header
                                                 lastUsableLBA =				((targetDevice.getSize() / DeviceController.bytesPerSector) - 34L);
                                                 lastUsableLBABytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(lastUsableLBA,8));
 //      56 (0x38)     16 bytes  During LBA 1    Disk GUID (also referred as UUID on UNIXes) hex2Bytes("FD A4 3C 26 16 40 7E 43 83 D2 91 C0 6D C4 28 26"); // 
-                                                if ( ABSTRACT_LBA >= 0 )			{ diskGUIDBytes = GPT.getUUID(); } else { diskGUIDBytes = gpt.gpt_Header1.diskGUIDBytes; }
+                                                if ( ABSTRACT_LBA >= 0 )		{ diskGUIDBytes = GPT.getUUID(); } else { diskGUIDBytes = gpt.gpt_Header1.diskGUIDBytes; }
 //      72 (0x48)     8 bytes   During LBA 1    Starting LBA of array of partition entries (always 2 in primary copy)
-                                                if ( ABSTRACT_LBA >= 0 )			{ partitionEntryLBA = 2L; } else { partitionEntryLBA = (targetDevice.getSize() / DeviceController.bytesPerSector) - 33; }
+                                                if ( ABSTRACT_LBA >= 0 )		{ partitionEntryLBA = 2L; } else { partitionEntryLBA = (targetDevice.getSize() / DeviceController.bytesPerSector) - 33; }
                                                 partitionEntryLBABytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(partitionEntryLBA, 8));
 //      80 (0x50)     4 bytes   During LBA 1    Number of partition entries in array
-                                                numberOfPartitionEntriesBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(128L, 4));
+                                                numberOfPartitionEntries =		128;
+                                                numberOfPartitionEntriesBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(numberOfPartitionEntries, 4));
 //      84 (0x54)     4 bytes   During LBA 1    Size of a single partition entry (usually 80h or 128)
-                                                sizeOfPartitionEntryBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(128L, 4));
+                                                sizeOfPartitionEntry =			128;
+                                                sizeOfPartitionEntryBytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(sizeOfPartitionEntry, 4));
 //      88 (0x58)     4 bytes   Post LBA        The CRC32 of the GUID Partition Entry array.
 //                                              Starts at PartitionEntryLBA and is computed over a byte length of NumberOfPartitionEntries * SizeOfPartitionEntry
-                                                crc32PartitionsBytes =			getCRC32("GPT_Header1.crc32PartitionsBytes: ", gpt.get_GPT_Entries1().getBytes(), littleEndian);
+                                                crc32PartitionsBytes =			GPT.hex2Bytes("00 00 00 00");
 //      92 (0x5C)     * bytes   During LBA 1    Remaining 420 bytes (or more depending on sector size) of zero's
                                                 reservedUEFIBytes =			GPT.getZeroBytes(420);
-//      CRC Calculation
-                                                headerCRC32Bytes =			getCRC32("GPT_Header1.headerCRC32Bytes:	    ",			      getBytes(0, 92), littleEndian);
 	setDesc();
     }
     
-    public void	write(Device rawDevice)				{ new DeviceController(ui).writeLBA(getDesc(), getBytes(), rawDevice, ABSTRACT_LBA); }
+    public void setCRC32Partitions()	    {	crc32PartitionsBytes =			getCRC32("GPT_Header1.crc32PartitionsBytes: ", gpt.get_GPT_Entries1().getBytes(), littleEndian); }
+    public void setHeaderCRC32Bytes()	    {	headerCRC32Bytes =			getCRC32("GPT_Header1.headerCRC32Bytes:	    ",			      getBytes(0, headerSize), littleEndian); }
+    
+    public void	write(Device device)				{ new DeviceController(ui).writeLBA(getDesc(), getBytes(false), device, ABSTRACT_LBA); }
 
-    public byte[]   getBytes(int off, int length)		{ return GPT.getBytesPart(getBytes(), off, length); }
-    public byte[]   getBytes()
+    public byte[]   getBytes(int off, int length)		{ return GPT.getBytesPart(getBytes(false), off, length); }
+    public byte[]   getBytes(boolean headerCRC32SetToZeo)
     {
         List<Byte> definitiveByteList = new ArrayList<Byte>();
-        for (byte mybyte: signatureBytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: revisionBytes)		        { definitiveByteList.add(mybyte); }
-        for (byte mybyte: headerSizeBytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: headerCRC32Bytes)		        { definitiveByteList.add(mybyte); }
-        for (byte mybyte: reservedBytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: myLBABytes)				{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: alternateLBABytes)		        { definitiveByteList.add(mybyte); }
-        for (byte mybyte: firstUsableLBABytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: lastUsableLBABytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: diskGUIDBytes)		        { definitiveByteList.add(mybyte); }
-        for (byte mybyte: partitionEntryLBABytes)		{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: numberOfPartitionEntriesBytes)	{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: sizeOfPartitionEntryBytes)	        { definitiveByteList.add(mybyte); }
-        for (byte mybyte: crc32PartitionsBytes)			{ definitiveByteList.add(mybyte); }
-        for (byte mybyte: reservedUEFIBytes)			{ definitiveByteList.add(mybyte); }
+        for (byte mybyte: signatureBytes)							    { definitiveByteList.add(mybyte); }
+        for (byte mybyte: revisionBytes)							    { definitiveByteList.add(mybyte); }
+        for (byte mybyte: headerSizeBytes)							    { definitiveByteList.add(mybyte); }
+	if (headerCRC32SetToZeo)			{ for (byte mybyte: GPT.getZeroBytes(4))    { definitiveByteList.add(mybyte); } }
+	else						{ for (byte mybyte: headerCRC32Bytes)	    { definitiveByteList.add(mybyte); } }
+        for (byte mybyte: reservedBytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: myLBABytes)								    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: alternateLBABytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: firstUsableLBABytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: lastUsableLBABytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: diskGUIDBytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: partitionEntryLBABytes)						    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: numberOfPartitionEntriesBytes)					    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: sizeOfPartitionEntryBytes)						    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: crc32PartitionsBytes)							    { definitiveByteList.add(mybyte); }
+	for (byte mybyte: reservedUEFIBytes)							    { definitiveByteList.add(mybyte); }
 
         return GPT.byteListToByteArray(definitiveByteList);
     }
     
     public void print() { ui.log(toString()); }
     
-    private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + HEADERCLASS + " GPT Header (" + getBytes().length + " Bytes) Storage: " + GPT.getHumanSize(Math.abs(lastUsableLBA - firstUsableLBA)*DeviceController.bytesPerSector,1) + " ]"); }
+    private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + HEADERCLASS + " GPT Header (" + getBytes(false).length + " Bytes) Storage: " + GPT.getHumanSize(Math.abs(lastUsableLBA - firstUsableLBA)*DeviceController.bytesPerSector,1) + " ]"); }
     private String getDesc() { return DESCSTRING; }
     
     @Override
@@ -230,7 +241,7 @@ public class GPT_Header
         returnString += (String.format("%-25s", "Signature"));			returnString += GPT.getHexAndDecimal(signatureBytes, false) + "\r\n";
         returnString += (String.format("%-25s", "Revision"));			returnString += GPT.getHexAndDecimal(revisionBytes, true) + "\r\n";
         returnString += (String.format("%-25s", "HeaderSize"));			returnString += GPT.getHexAndDecimal(headerSizeBytes, true) + "\r\n";
-        returnString += (String.format("%-25s", "HeaderCRC32"));                returnString += GPT.getHexAndDecimal(headerCRC32Bytes, false) + " " + GPT.getHexString(getCRC32("chk: ", getBytes(), false), 2) + " (now)\r\n";
+        returnString += (String.format("%-25s", "HeaderCRC32"));                returnString += GPT.getHexAndDecimal(headerCRC32Bytes, false) + " " + GPT.getHexString(getCRC32("chk: ", getBytes(true), littleEndian), 2) + " (now)\r\n";
         returnString += (String.format("%-25s", "Reserved"));			returnString += GPT.getHexAndDecimal(reservedBytes, false) + "\r\n";
         returnString += (String.format("%-25s", "MyLBA"));			returnString += GPT.getHexAndDecimal(myLBABytes, true) + "\r\n";
         returnString += (String.format("%-25s", "AlternateLBA"));               returnString += GPT.getHexAndDecimal(alternateLBABytes, true) + "\r\n";
@@ -240,7 +251,7 @@ public class GPT_Header
         returnString += (String.format("%-25s", "PartitionEntryLBA"));		returnString += GPT.getHexAndDecimal(partitionEntryLBABytes, true) + "\r\n";
         returnString += (String.format("%-25s", "NumberOfPartitionEntries"));	returnString += GPT.getHexAndDecimal(numberOfPartitionEntriesBytes, true) + "\r\n";
         returnString += (String.format("%-25s", "SizeOfPartitionEntry"));       returnString += GPT.getHexAndDecimal(sizeOfPartitionEntryBytes, true) + "\r\n";
-        returnString += (String.format("%-25s", "CRC32Partitions"));		returnString += GPT.getHexAndDecimal(crc32PartitionsBytes, false) + " " + GPT.getHexString(getCRC32("chk: ", gpt.get_GPT_Entries1().getBytes(), false), 2) + " (now)\r\n";
+        returnString += (String.format("%-25s", "CRC32Partitions"));		returnString += GPT.getHexAndDecimal(crc32PartitionsBytes, false) + " " + GPT.getHexString(getCRC32("chk: ", gpt.get_GPT_Entries1().getBytes(), littleEndian), 2) + " (now)\r\n";
         returnString += (String.format("%-25s", "Reserved (UEFI)"));            returnString += GPT.getHexAndDecimal(reservedUEFIBytes, false) + "\r\n";
         return returnString;
     }
@@ -251,7 +262,7 @@ public class GPT_Header
 	byte [] bigEndianBytes = new byte[4];
         byte [] littleEndianBytes = new byte[4];
         bigEndianBytes = ByteBuffer.allocate(4).putInt((int) crc.getValue()).array();
-        littleEndianBytes = GPT.getByteArrayLittleEndian(ByteBuffer.allocate(4).putInt( (int)crc.getValue()).array() );
+        littleEndianBytes = GPT.getReverseBytes(ByteBuffer.allocate(4).putInt( (int)crc.getValue()).array() );
 //        System.out.println(string + getHexString(littleEndianBytes, "2"));
         if (littleEndian)   { return littleEndianBytes; }
         else                { return bigEndianBytes; }

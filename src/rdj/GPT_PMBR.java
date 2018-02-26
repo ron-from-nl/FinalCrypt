@@ -98,9 +98,9 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
 
-    public void read(Device rawDevice)
+    public void read(Device device)
     {
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(rawDevice, ABSTRACT_LBA, this.LENGTH);
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(device, ABSTRACT_LBA, this.LENGTH);
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
                                                                         bootcodeBytes = GPT.getBytesPart(bytes, 0, 440);
@@ -134,7 +134,7 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
     
-    public void create(Device rawDevice)
+    public void create(Device device)
     {
 //      Offset        Length    When            Data
 //      0  (0x00)     440 bytes During LBA 0    Bootloader bytes
@@ -150,7 +150,7 @@ public class GPT_PMBR // Protective MBR
                                                 osTypeBytes =		GPT.hex2Bytes("EE"); // EE Protective / Unknown
                                                 endingCHSBytes =        GPT.hex2Bytes("FEFFFF"); // FE FF FF
                                                 startingLBABytes =      GPT.hex2Bytes("01 00 00 00"); // LBA 1
-                                                sizeInLBABytes =	GPT.hex2Bytes(GPT.getHexStringLittleEndian((rawDevice.getSize() - (long)DeviceController.bytesPerSector) / (long)DeviceController.bytesPerSector, 4)); // LBA-0
+                                                sizeInLBABytes =	GPT.hex2Bytes(GPT.getHexStringLittleEndian((device.getSize() - (long)DeviceController.bytesPerSector) / (long)DeviceController.bytesPerSector, 4)); // LBA-0
                                                 
 //      462  (0x00)   16 bytes  During LBA 0    partition2              00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 (notn)
                                                 partition2Bytes =       GPT.hex2Bytes("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
@@ -163,7 +163,7 @@ public class GPT_PMBR // Protective MBR
 	setDesc();
     }
 
-    public void write(Device rawDevice) { new DeviceController(ui).writeLBA(getDesc(), getBytes(), rawDevice, ABSTRACT_LBA); }
+    public void write(Device device) { new DeviceController(ui).writeLBA(getDesc(), getBytes(), device, ABSTRACT_LBA); }
 
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(getBytes(), off, length); }
     public byte[] getBytes()

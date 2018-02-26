@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GPT_Entries
 {
-    private final long  ABSTRACT_LBA;// = 2L;
+    private final long  ABSTRACT_LBA; // = 2L;
     private String DESCSTRING;
     public GPT_Entry[]	gpt_entry;
     private UI ui;
@@ -32,11 +32,11 @@ public class GPT_Entries
     private long totalSize = 0;
     private final String HEADERCLASS;
 
-    public GPT_Entries(UI ui, GPT gpt, long abstractLBA)
+    public GPT_Entries(UI ui, GPT gpt, long abstractLBA, int numOfEntries)
     {
         this.ui = ui;
         this.gpt = gpt;
-	gpt_entry = new GPT_Entry[128];
+	gpt_entry = new GPT_Entry[numOfEntries];
 	this.ABSTRACT_LBA = abstractLBA;	
 	for(int entry = 0; entry < gpt_entry.length; entry++)					    { gpt_entry[entry] = new GPT_Entry(this.ui,this.gpt,ABSTRACT_LBA,entry); }
 	if ( ABSTRACT_LBA >= 0 ) { HEADERCLASS = "Primary"; } else { HEADERCLASS = "Secondary"; }
@@ -44,7 +44,7 @@ public class GPT_Entries
     }
     
     public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } setDesc(); }
-    public void		read(Device cipherDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); setDesc(); }
+    public void		read(Device cipherDeviceFilePath)					    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); setDesc(); }
 
     public void		create(long cipherSize)
     {
@@ -65,7 +65,7 @@ public class GPT_Entries
     private int		getActiveEntries()							    { int activeEntries = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { if ( gpt_entry[entry].startingLBA != 0 ) { activeEntries++; } } return activeEntries; }
     
     public byte[]	getBytes(int off, int length)						    { return GPT.getBytesPart(GPT_Entries.this.getBytes(), off, length); }
-    public byte[]	getBytes()								    { List<Byte> byteList = new ArrayList<Byte>();for (int entry = 0; entry < gpt_entry.length; entry++) { for (byte mybyte:gpt_entry[entry].getBytes()) { byteList.add(mybyte); } } return GPT.byteListToByteArray(byteList); }
+    public byte[]	getBytes()								    { List<Byte> byteList = new ArrayList<Byte>(); for (int entry = 0; entry < gpt_entry.length; entry++) { for (byte mybyte:gpt_entry[entry].getBytes()) { byteList.add(mybyte); } } return GPT.byteListToByteArray(byteList); }
     
     public GPT_Entry	getEntry(int entry)							    { return  gpt_entry[entry]; }
     

@@ -61,37 +61,43 @@ public class GPT
         this.ui = ui;
         
         gpt_PMBR =	new GPT_PMBR(this.ui);
-        gpt_Entries1 =  new GPT_Entries(this.ui,this,2L);
-        gpt_Entries2 =  new GPT_Entries(this.ui,this,-33);
         gpt_Header1 =   new GPT_Header(this.ui, this, 1L);
+        gpt_Entries1 =  new GPT_Entries(this.ui,this,2L, 128);
         gpt_Header2 =   new GPT_Header(this.ui, this, -1L);
+        gpt_Entries2 =  new GPT_Entries(this.ui,this,-33, 128);
     }
     
     synchronized public void clear()
     {
         gpt_PMBR.clear();
-        gpt_Entries1.clear();
         gpt_Header1.clear();
-        gpt_Entries2.clear();
+        gpt_Entries1.clear();
         gpt_Header2.clear();
+        gpt_Entries2.clear();
     }
     
     synchronized public void read(Device cipherDevice)
     {
         gpt_PMBR.read(cipherDevice);
+        gpt_Header1.read(cipherDevice); gpt_Entries1 =  new GPT_Entries(this.ui,this,2L, gpt_Header1.numberOfPartitionEntries);
         gpt_Entries1.read(cipherDevice);
-        gpt_Header1.read(cipherDevice);
+        gpt_Header2.read(cipherDevice); gpt_Entries2 =  new GPT_Entries(this.ui,this,-33, gpt_Header2.numberOfPartitionEntries);
         gpt_Entries2.read(cipherDevice);
-        gpt_Header2.read(cipherDevice);
     }
     
     synchronized public void create(long cipherSize, Device targetDevice)
     {
 	gpt_PMBR.create(targetDevice);
-	gpt_Entries1.create(cipherSize);		    // Create order: 1
-	gpt_Entries2.create(cipherSize);		    // Create order: 2
-	gpt_Header1.create(targetDevice);	    // Create order: 3
-	gpt_Header2.create(targetDevice);	    // Create order: 4
+	
+	gpt_Header1.create(targetDevice);
+	gpt_Entries1.create(cipherSize);
+	gpt_Header1.setCRC32Partitions();
+	gpt_Header1.setHeaderCRC32Bytes();
+	
+	gpt_Header2.create(targetDevice);
+	gpt_Entries2.create(cipherSize);
+	gpt_Header2.setCRC32Partitions();
+	gpt_Header2.setHeaderCRC32Bytes();	
     }
     
     synchronized public void write(Device targetDevice)
@@ -115,7 +121,7 @@ public class GPT
     public static byte[] byteListToByteArray(List<Byte> list) { byte[] result = new byte[list.size()]; for(int i = 0; i < list.size(); i++) { result[i] = list.get(i).byteValue(); } return result; }
     public static byte[] getUUID() { UUID uuid = UUID.randomUUID(); ByteBuffer bb = ByteBuffer.allocate(16); bb.putLong(uuid.getMostSignificantBits()); bb.putLong(uuid.getLeastSignificantBits()); return bb.array(); }
 
-    synchronized public static byte[] getByteArrayLittleEndian(byte[] bytes) // Reverses byte order (to Little Endian)
+    synchronized public static byte[] getReverseBytes(byte[] bytes) // Reverses byte order (to Little Endian)
     {
         byte[] reversedBytes = new byte[bytes.length];
         
@@ -220,6 +226,7 @@ public class GPT
 	}
 	return returnString;
     }
+    
     synchronized public static String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
     synchronized public static String getHumanSize(double value,int decimals)

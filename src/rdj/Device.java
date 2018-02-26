@@ -31,9 +31,10 @@ public class Device
     {
 	this.ui = ui;
 	this.path = path;
-	size = DeviceController.getDeviceSize(this.ui, this.path);
+	setSize();
     }
     
-    public Path getPath()   { return path; }
-    public long getSize()   { return size; }
+    public Path getPath()  { return path; }
+    public long getSize()  { return size; }
+    public void setSize()  { this.size = DeviceController.getDeviceSize(this.ui, this); }
 }

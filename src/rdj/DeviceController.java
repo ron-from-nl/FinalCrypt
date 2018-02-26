@@ -60,14 +60,13 @@ public class DeviceController
     }
     
 //  Read byte[] from device
-//    synchronized public static byte[] readLBA(Path rawDeviceFilePath, long lba, long length)
-    synchronized public static byte[] readLBA(Device rawDevice, long lba, long length)
+    synchronized public static byte[] readLBA(Device device, long lba, long length)
     {        
         long readInputDeviceChannelTransfered = 0;
         ByteBuffer inputDeviceBuffer = ByteBuffer.allocate((int)length); inputDeviceBuffer.clear();
-        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(rawDevice.getPath(), EnumSet.of(StandardOpenOption.READ)))
+        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.READ)))
         {
-            readInputDeviceChannel.position(getLBAOffSet(bytesPerSector, rawDevice.getSize(), lba));
+            readInputDeviceChannel.position(getLBAOffSet(bytesPerSector, device.getSize(), lba));
             readInputDeviceChannelTransfered = readInputDeviceChannel.read(inputDeviceBuffer); inputDeviceBuffer.flip();
             readInputDeviceChannel.close();
 //            ui.log("Read LBA " + lba + " Transfered: " + readInputDeviceChannelTransfered + "\r\n");
@@ -76,11 +75,11 @@ public class DeviceController
     }
     
 //  Read Entry byte[] from device
-    synchronized public static byte[] readPos(Device rawDevice, long pos, long length)
+    synchronized public static byte[] readPos(Device device, long pos, long length)
     {        
         long readInputDeviceChannelTransfered = 0;
         ByteBuffer inputDeviceBuffer = ByteBuffer.allocate((int)length); inputDeviceBuffer.clear();
-        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(rawDevice.getPath(), EnumSet.of(StandardOpenOption.READ)))
+        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.READ)))
         {
             readInputDeviceChannel.position(pos);
             readInputDeviceChannelTransfered = readInputDeviceChannel.read(inputDeviceBuffer); inputDeviceBuffer.flip();
@@ -91,17 +90,16 @@ public class DeviceController
     }
     
 //  Write byte[] to device
-//    synchronized public static void writeLBA(String desc, byte[] bytes, Path rawDeviceFilePath, long lba)
-    synchronized public static void writeLBA(String desc, byte[] bytes, Device rawDevice, long lba)
+    synchronized public static void writeLBA(String desc, byte[] bytes, Device device, long lba)
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
-        ui.log("Write " + desc + " Pos (" + getLBAOffSet(bytesPerSector, rawDevice.getSize(), lba) + ") ");
-        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(rawDevice.getPath(), EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+        ui.log("Write " + desc + " Pos (" + getLBAOffSet(bytesPerSector, device.getSize(), lba) + ") ");
+        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
-            writeOutputDeviceChannel.position(getLBAOffSet(bytesPerSector, rawDevice.getSize(), lba));
+            writeOutputDeviceChannel.position(getLBAOffSet(bytesPerSector, device.getSize(), lba));
             writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer);
             ui.log("Transfered: " + writeOutputDeviceChannelTransfered + "\r\n");
             writeOutputDeviceChannel.close();
@@ -109,12 +107,12 @@ public class DeviceController
     }
 
 //  Write Entry byte[] to device WARNING: writeOutputDeviceChannel.position(pos); causes exeption on OSX! Use writeLBA(..) above (from GPT_Entries)
-    synchronized public static void writePos(String desc, byte[] bytes, Path rawDeviceFilePath, long pos)
+    synchronized public static void writePos(String desc, byte[] bytes, Device device, long pos)
     {        
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
         ui.log("Wrote " + desc + " Pos(" + pos + ") ");
-        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(rawDeviceFilePath, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("\r\nBuffer: " + outputDeviceBuffer.capacity());
@@ -510,22 +508,21 @@ public class DeviceController
     }
 
 //  Wrapper method
-//    synchronized public static long getDeviceSize(UI ui, Path rawDeviceFilePath)
-    synchronized public static long getDeviceSize(UI ui, Path rawDeviceFilePath)
+    synchronized public static long getDeviceSize(UI ui, Device device)
     {
-//	long size = getDeviceSize1(ui, rawDeviceFilePath);	 return size; // Conventional method (doesn't work on OSX)
-	long size = getDeviceSize2(ui, rawDeviceFilePath, true); return size; // Customized method (platform independent)
+//	long size = getDeviceSize1(ui, device);	 return size; // Conventional method (doesn't work on OSX)
+	long size = getDeviceSize2(ui, device, true); return size; // Customized method (platform independent)
     }
 
 //  Get size of device        
-    synchronized public static long getDeviceSize1(UI ui, Path rawDeviceFilePath)
+    synchronized public static long getDeviceSize1(UI ui, Device device)
     {
         long deviceSize = 0;
-        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(rawDeviceFilePath, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
+        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
         return deviceSize;
     }
 
-    synchronized public static long getDeviceSize2(UI ui, Path rawDeviceFilePath, boolean firstcall) // OS Independent
+    synchronized public static long getDeviceSize2(UI ui, Device device, boolean firstcall) // OS Independent
     {
 	boolean verbose = false;
 //	deviceSize = 0;
@@ -540,13 +537,13 @@ public class DeviceController
 			cycles = 0;
 			finished = false;
 	}
-	if (isValidFile(ui, rawDeviceFilePath, false, false, true ))
+	if (isValidFile(ui, device.getPath(), false, false, true ))
 	{
 	    while (! finished)
 	    {
 		try
 		{
-		    deviceSize = guessDeviceSize(ui, rawDeviceFilePath, verbose);
+		    deviceSize = guessDeviceSize(ui, device, verbose);
 		}
 		catch (IOException ex)
 		{
@@ -561,7 +558,7 @@ public class DeviceController
 		    if (step < 0) {step = 1;}
 		    currpos = above; step = 1;
 		    lastpos = currpos;
-		    getDeviceSize2(ui,rawDeviceFilePath, false);
+		    getDeviceSize2(ui,device, false);
 		}
 	    }
 	}
@@ -572,7 +569,7 @@ public class DeviceController
 	return deviceSize;
     }
     
-    synchronized private static long guessDeviceSize(UI ui, Path targetDeviceFilePath, boolean verbose) throws IOException
+    synchronized private static long guessDeviceSize(UI ui, Device device, boolean verbose) throws IOException
     {
         if (verbose) ui.log(String.format("%-20s %-20s %-20s %-20s %-20s %-20s \r\n", "LastPoss     ", "CurrPoss     ", "Step    ", "Above     ", "Below    ", "Cycles     "));
         
@@ -580,7 +577,7 @@ public class DeviceController
         {
             if (verbose) ui.log(String.format("%-20d %-20d %-20d %-20d %-20d %-20d \r\n", lastpos, currpos, step, above, below, cycles));
             
-            final SeekableByteChannel deviceChannel = Files.newByteChannel(targetDeviceFilePath, EnumSet.of(StandardOpenOption.READ));
+            final SeekableByteChannel deviceChannel = Files.newByteChannel(device.getPath(), EnumSet.of(StandardOpenOption.READ));
             deviceChannel.position(currpos);
             ByteBuffer bb = ByteBuffer.allocate(1); bb.clear();
             int transfered = 0; transfered = deviceChannel.read(bb);
