@@ -1035,8 +1035,8 @@ public class GUIFX extends Application implements UI, Initializable
                     String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
                     ArrayList<Path> targetFilesPathList = finalCrypt.getExtendedPathList(targetFileChooser.getSelectedFiles(), cipherFileChooser.getSelectedFile().toPath(), pattern, negatePattern, true);
 
-                    finalCrypt.setTargetFilesPathList(targetFilesPathList);
-                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
+//                    finalCrypt.setTargetFilesPathList(targetFilesPathList);
+//                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
 
     //                // Set Buffer Size
     //                finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());

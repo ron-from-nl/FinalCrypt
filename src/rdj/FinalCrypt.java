@@ -21,10 +21,7 @@ package rdj;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
@@ -40,9 +37,6 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.TimerTask;
-//import javafx.animation.Animation;
-//import javafx.animation.KeyFrame;
-//import javafx.animation.Timeline;
 
 public class FinalCrypt extends Thread
 {
@@ -54,49 +48,49 @@ public class FinalCrypt extends Thread
     private int readTargetSourceBufferSize;
     private int readCipherSourceBufferSize;
     private int wrteTargetDestinBufferSize;
-    private long bufferTotal = 0; // DNumber of buffers
+//    private long bufferTotal = 0; // DNumber of buffers
 
     private int printAddressByteCounter = 0;
-    private ArrayList<Path> targetReadFilesPathList;
-    private Path cipherReadFilePath = null;
-    private Path targetDestinPath = null;
-    private final long inputFileSize = 0;
-    private final long cipherFileSize = 0;
-    private final long outputFileSize = 0;
-    private final String encoding = System.getProperty("file.encoding");
+//    private ArrayList<Path> targetReadFilesPathList;
+//    private Path cipherReadFilePath = null;
+//    private Path targetDestinPath = null;
+//    private final long inputFileSize = 0;
+//    private final long cipherFileSize = 0;
+//    private final long outputFileSize = 0;
+//    private final String encoding = System.getProperty("file.encoding");
     private final UI ui;
-    private final FinalCrypt fc;
+//    private final FinalCrypt fc;
     
     private TimerTask updateProgressTask;
     private java.util.Timer updateProgressTaskTimer;
 
-    private String localVersionString = "";
-    private String remoteVersionString = "";
-    private int localVersion = 0;
-    private int remoteVersion = 0;
+//    private String localVersionString = "";
+//    private String remoteVersionString = "";
+//    private int localVersion = 0;
+//    private int remoteVersion = 0;
 //        URL localURL = null;
-    private InputStream istream = null;
-    private URL remoteURL = null;
-    private ReadableByteChannel rbc = null;
-    private ByteBuffer byteBuffer;        
+//    private InputStream istream = null;
+//    private URL remoteURL = null;
+//    private ReadableByteChannel rbc = null;
+//    private ByteBuffer byteBuffer;        
     private boolean stopPending = false;
     private boolean pausing = false;
     private boolean targetSourceEnded;
-    private long filesTotal = 0;
-    private long filesProcessed = 0;
+//    private long filesTotal = 0;
+//    private long filesProcessed = 0;
 //    private Timeline updateProgressTimeline;
 
 
     public FinalCrypt(UI ui)
     {   
-//        Set the locations of the version resources
+//      Set the locations of the version resources
         
-        targetReadFilesPathList = new ArrayList<>();
+//        targetReadFilesPathList = new ArrayList<>();
         readTargetSourceBufferSize = bufferSize;
         readCipherSourceBufferSize = bufferSize;
         wrteTargetDestinBufferSize = bufferSize;        
         this.ui = ui;
-        fc = this;
+//        fc = this;
     }
         
     public int getBufferSize()                                              { return bufferSize; }
@@ -112,9 +106,9 @@ public class FinalCrypt extends Thread
     public boolean getChr()                                                 { return chr; }
     public boolean getDry()                                                 { return dry; }
     public int getBufferSizeDefault()					    { return bufferSizeDefault; }
-    public ArrayList<Path> getTargetFilesPathList()                         { return targetReadFilesPathList; }
-    public Path getCipherFilePath()                                         { return cipherReadFilePath; }
-    public Path getOutputFilePath()                                         { return targetDestinPath; }
+//    public ArrayList<Path> getTargetFilesPathList()                         { return targetReadFilesPathList; }
+//    public Path getCipherFilePath()                                         { return cipherReadFilePath; }
+//    public Path getOutputFilePath()                                         { return targetDestinPath; }
     
     public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
@@ -133,9 +127,9 @@ public class FinalCrypt extends Thread
         readCipherSourceBufferSize = this.bufferSize; 
         wrteTargetDestinBufferSize = this.bufferSize;
     }
-    public void setTargetFilesPathList(ArrayList<Path> targetReadFilesPathList)  { this.targetReadFilesPathList = targetReadFilesPathList; }
-    public void setCipherFilePath(Path cipherReadFilePath)                      { this.cipherReadFilePath = cipherReadFilePath; }
-    public void setOutputFilePath(Path targetWriteFilePath)                      { this.targetDestinPath = targetWriteFilePath; }
+//    public void setTargetFilesPathList(ArrayList<Path> targetReadFilesPathList)  { this.targetReadFilesPathList = targetReadFilesPathList; }
+//    public void setCipherFilePath(Path cipherReadFilePath)                      { this.cipherReadFilePath = cipherReadFilePath; }
+//    public void setOutputFilePath(Path targetWriteFilePath)                      { this.targetDestinPath = targetWriteFilePath; }
         
     public void encryptSelection(ArrayList<Path> targetSourcePathList, Path cipherSourcePath)
     {
@@ -189,6 +183,7 @@ public class FinalCrypt extends Thread
         // Encrypt Files loop
         encryptTargetloop: for (Path targetSourcePath:targetSourcePathList)
         {
+	    Path targetDestinPath;
 	    String fileStatusLine = "";
             long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
@@ -311,82 +306,8 @@ public class FinalCrypt extends Thread
                             }
                             targetDestinBuffer.clear(); targetSourceBuffer.clear(); cipherSourceBuffer.clear();
                         }
-
-    //                  Counting encrypting and shredding for the average throughtput performance
-
-    //                  Shredding process
-
-//			fileStatusLine += "Shredding: " + " ";
-                        ui.status("Shredding: " + targetSourcePath.toAbsolutePath() + " ", false);
-
-                        targetSourceEnded = false;
-                        readTargetSourceChannelPosition = 0;
-                        readTargetSourceChannelTransfered = 0;
-                        readCipherSourceChannelPosition = 0;                
-                        readCipherSourceChannelTransfered = 0;                
-                        writeTargetDestChannelPosition = 0;
-
-                        targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
-                        cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
-                        targetDestinBuffer = ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();
-
-                        shredloop: while ( ! targetSourceEnded )
-                        {
-                            while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-                            if (stopPending)    { targetSourceEnded = true; break shredloop; }
-
-                            //read outputFile
-                            readTargetDestinStat.setFileStartEpoch();
-                            try (final SeekableByteChannel readTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)))
-                            {
-                                readTargetDestinChannel.position(readTargetDestChannelPosition);
-                                readTargetDestChannelTransfered = readTargetDestinChannel.read(targetDestinBuffer); targetDestinBuffer.flip(); readTargetDestChannelPosition += readTargetDestChannelTransfered;
-                                if (( readTargetDestChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
-                                readTargetDestinChannel.close(); readTargetDestinStat.setFileEndEpoch(); readTargetDestinStat.clock();
-                                readTargetDestinStat.addFileBytesProcessed(targetDestinBuffer.limit()); allDataStats.addAllDataBytesProcessed(targetDestinBuffer.limit()/2);
-                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\r\n");
-
-                            //shred inputFile
-                            if ( readTargetDestChannelTransfered != -1 )
-                            {
-                                wrteTargetSourceStat.setFileStartEpoch();
-                                try (final SeekableByteChannel writeTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE,StandardOpenOption.SYNC)))
-                                {
-                                    // Fill up inputFileBuffer
-                                    writeTargetSourceChannel.position(writeTargetSourceChannelPosition);
-                                    writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip(); writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered;
-                                    if (( writeTargetSourceChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
-                                    writeTargetSourceChannel.close(); wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();
-                                    wrteTargetSourceStat.addFileBytesProcessed(targetDestinBuffer.limit());
-                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
-                            }
-                            targetDestinBuffer.clear(); targetSourceBuffer.clear(); cipherSourceBuffer.clear();
-                        }
-
-    //                  FILE STATUS 
-			fileStatusLine += "- Encrypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ";
-			fileStatusLine += "- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ";
-			fileStatusLine += allDataStats.getAllDataBytesProgressPercentage();
-			
-			ui.log(fileStatusLine);
-			
-//                        ui.log("- Encrypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ");
-//                        ui.log("rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ");
-//                        ui.log("wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ");
-//                        ui.log("- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ");
-//                        ui.log("wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ");
-//                        ui.log(allDataStats.getAllDataBytesProgressPercentage());
-                        
-			allDataStats.addFilesProcessed(1);
-
-                        if ( print ) { ui.log(" ----------------------------------------------------------------------\r\n"); }
-
-
+    
+//    ==================================================================================================================================================================
 //                      Copy inputFilePath attributes to outputFilePath
 
 /*
@@ -463,6 +384,157 @@ public class FinalCrypt extends Thread
                             }
                         } // End attributeViewloop // End attributeViewloop
 
+//			attributeViewloop: for (String view:targetSourcePath.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
+//                        {
+////                            if (verbose) { ui.println(view); }
+//                            if ( view.toLowerCase().equals("basic") )
+//                            {
+//				FileTime creationTime = null; try { creationTime = (FileTime) Files.getAttribute(targetSourcePath, "basic:creationTime", LinkOption.NOFOLLOW_LINKS); }	    catch (IOException ex) { ui.error("Error: get basic:creationTime: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "basic:creationTime",	    creationTime); }								    catch (IOException ex) { ui.error("Error: set basic:creationTime: " + ex.getMessage()); }
+//				FileTime modifiedTime = null; try { modifiedTime = (FileTime) Files.getAttribute(targetSourcePath, "basic:lastModifiedTime", LinkOption.NOFOLLOW_LINKS); }  catch (IOException ex) { ui.error("Error: get basic:lastModifiedTime: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",	    modifiedTime); }								    catch (IOException ex) { ui.error("Error: set basic:lastModifiedTime: " + ex.getMessage()); }
+//				FileTime accessedTime = null; try { accessedTime = (FileTime) Files.getAttribute(targetSourcePath, "basic:lastAccessTime", LinkOption.NOFOLLOW_LINKS); }    catch (IOException ex) { ui.error("Error: get basic:lastAccessTime: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "basic:lastAccessTime",	    accessedTime); }	
+//				catch (IOException ex) { ui.error("Error: set basic:lastAccessTime: " + ex.getMessage()); }
+//				
+//				FileTime modifiedTime2 = null; try { modifiedTime2 = Files.getLastModifiedTime(targetSourcePath, LinkOption.NOFOLLOW_LINKS); } catch (IOException ex){ ui.error("Error: Files.getLastModifiedTime(..): " + ex.getMessage()); }
+//				try { Files.setLastModifiedTime(targetDestinPath, modifiedTime2); } catch (IOException ex) { ui.error("Error: Files.setLastModifiedTime(targetDestinPath, modifiedTime);: " + ex.getMessage()); }
+//
+////				try { Files.setAttribute(targetDestinPath, "basic:creationTime",	    Files.getAttribute(targetSourcePath, "basic:creationTime", LinkOption.NOFOLLOW_LINKS)); }   catch (IOException ex) { ui.error("Error: set/get basic:creationTime: " + ex.getMessage()); }
+////				try { Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",	    Files.getAttribute(targetSourcePath, "basic:lastModifiedTime", LinkOption.NOFOLLOW_LINKS)); }   catch (IOException ex) { ui.error("Error: set/get basic:lastModifiedTime: " + ex.getMessage()); }
+////				try { Files.setAttribute(targetDestinPath, "basic:lastAccessTime",          Files.getAttribute(targetSourcePath, "basic:lastAccessTime", LinkOption.NOFOLLOW_LINKS)); }	    catch (IOException ex) { ui.error("Error: set/get basic:lastAccessTime: " + ex.getMessage()); }
+////                                try
+////                                {
+////                                    BasicFileAttributes basicAttributes = null; basicAttributes = Files.getAttribute(targetSourcePath, view, options)
+////					    readAttributes(targetSourcePath, BasicFileAttributes.class);
+////                                    try
+////                                    {
+////                                        Files.setAttribute(targetDestinPath, "basic:creationTime",        basicAttributes.creationTime());
+////                                        Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
+////                                        Files.setAttribute(targetDestinPath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
+////                                    }
+////                                    catch (IOException ex) { ui.error("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n"); }
+////                                }   catch (IOException ex) { ui.error("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+//                            }
+//                            else if ( view.toLowerCase().equals("dos") )
+//                            {
+//				try { Files.setAttribute(targetDestinPath, "dos:hidden",		    Files.getAttribute(targetSourcePath, "dos:hidden", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get dos:hidden: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "dos:system",		    Files.getAttribute(targetSourcePath, "dos:system", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get dos:system: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "dos:readonly",		    Files.getAttribute(targetSourcePath, "dos:readonly", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get dos:readonly: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "dos:archive",		    Files.getAttribute(targetSourcePath, "dos:archive", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get dos:archive: " + ex.getMessage()); }
+////                                try
+////                                {
+////                                    DosFileAttributes msdosAttributes = null; msdosAttributes = Files.readAttributes(targetSourcePath, DosFileAttributes.class);
+////                                    try
+////                                    {
+////                                        Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    msdosAttributes.lastModifiedTime());
+////                                        Files.setAttribute(targetDestinPath, "dos:hidden",                msdosAttributes.isHidden());
+////                                        Files.setAttribute(targetDestinPath, "dos:system",                msdosAttributes.isSystem());
+////                                        Files.setAttribute(targetDestinPath, "dos:readonly",              msdosAttributes.isReadOnly());
+////                                        Files.setAttribute(targetDestinPath, "dos:archive",               msdosAttributes.isArchive());
+////                                    }
+////                                    catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n"); }
+////                                }   catch (IOException ex) { ui.error("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+//                            }
+//                            else if ( view.toLowerCase().equals("posix") )
+//                            {
+//				try { Files.setAttribute(targetDestinPath, "posix:owner",		    Files.getAttribute(targetSourcePath, "posix:owner", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get posix:owner: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "posix:group",		    Files.getAttribute(targetSourcePath, "posix:group", LinkOption.NOFOLLOW_LINKS)); }		    catch (IOException ex) { ui.error("Error: set/get posix:group: " + ex.getMessage()); }
+//				try { Files.setAttribute(targetDestinPath, "posix:permissions",		    Files.getAttribute(targetSourcePath, "posix:permissions", LinkOption.NOFOLLOW_LINKS)); }	    catch (IOException ex) { ui.error("Error: set/get posix:permissions: " + ex.getMessage()); }
+//				
+////                                PosixFileAttributes posixAttributes = null;
+////                                try
+////                                {
+////                                    posixAttributes = Files.readAttributes(targetSourcePath, PosixFileAttributes.class);
+////                                    try
+////                                    {
+////                                        Files.setAttribute(targetDestinPath, "posix:owner",               posixAttributes.owner());
+////                                        Files.setAttribute(targetDestinPath, "posix:group",               posixAttributes.group());
+////                                        Files.setPosixFilePermissions(targetDestinPath,                   posixAttributes.permissions());
+////                                        Files.setLastModifiedTime(targetDestinPath,                       posixAttributes.lastModifiedTime());
+////                                    }
+////                                    catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
+////                                }   catch (IOException ex) { ui.error("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+//                            }
+//                        } // End attributeViewloop // End attributeViewloop
+
+//    ==================================================================================================================================================================
+    
+//                      Counting encrypting and shredding for the average throughtput performance
+    
+//                      Shredding process
+
+//			fileStatusLine += "Shredding: " + " ";
+                        ui.status("Shredding: " + targetSourcePath.toAbsolutePath() + " ", false);
+
+                        targetSourceEnded = false;
+                        readTargetSourceChannelPosition = 0;
+                        readTargetSourceChannelTransfered = 0;
+                        readCipherSourceChannelPosition = 0;                
+                        readCipherSourceChannelTransfered = 0;                
+                        writeTargetDestChannelPosition = 0;
+
+                        targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
+                        cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
+                        targetDestinBuffer = ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();
+
+                        shredloop: while ( ! targetSourceEnded )
+                        {
+                            while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+                            if (stopPending)    { targetSourceEnded = true; break shredloop; }
+
+                            //read outputFile
+                            readTargetDestinStat.setFileStartEpoch();
+                            try (final SeekableByteChannel readTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)))
+                            {
+                                readTargetDestinChannel.position(readTargetDestChannelPosition);
+                                readTargetDestChannelTransfered = readTargetDestinChannel.read(targetDestinBuffer); targetDestinBuffer.flip(); readTargetDestChannelPosition += readTargetDestChannelTransfered;
+                                if (( readTargetDestChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
+                                readTargetDestinChannel.close(); readTargetDestinStat.setFileEndEpoch(); readTargetDestinStat.clock();
+                                readTargetDestinStat.addFileBytesProcessed(targetDestinBuffer.limit()); allDataStats.addAllDataBytesProcessed(targetDestinBuffer.limit()/2);
+                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\r\n");
+
+                            //shred inputFile
+                            if ( readTargetDestChannelTransfered != -1 )
+                            {
+                                wrteTargetSourceStat.setFileStartEpoch();
+                                try (final SeekableByteChannel writeTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE,StandardOpenOption.SYNC)))
+                                {
+                                    // Fill up inputFileBuffer
+                                    writeTargetSourceChannel.position(writeTargetSourceChannelPosition);
+                                    writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip(); writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered;
+                                    if (( writeTargetSourceChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
+                                    writeTargetSourceChannel.close(); wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();
+                                    wrteTargetSourceStat.addFileBytesProcessed(targetDestinBuffer.limit());
+                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
+                            }
+                            targetDestinBuffer.clear(); targetSourceBuffer.clear(); cipherSourceBuffer.clear();
+                        }
+
+    //                  FILE STATUS 
+			fileStatusLine += "- Encrypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
+			fileStatusLine += "rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ";
+			fileStatusLine += "wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ";
+			fileStatusLine += "- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ";
+			fileStatusLine += "wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ";
+			fileStatusLine += allDataStats.getAllDataBytesProgressPercentage();
+			
+			ui.log(fileStatusLine);
+			
+//                        ui.log("- Encrypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ");
+//                        ui.log("rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ");
+//                        ui.log("wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ");
+//                        ui.log("- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ");
+//                        ui.log("wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ");
+//                        ui.log(allDataStats.getAllDataBytesProgressPercentage());
+                        
+			allDataStats.addFilesProcessed(1);
+
+                        if ( print ) { ui.log(" ----------------------------------------------------------------------\r\n"); }
+
+
 
 //                      Delete the original
                         long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); }	catch (IOException ex)	{ ui.error("\r\nError: Files.size(targetSourcePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
@@ -486,9 +558,9 @@ public class FinalCrypt extends Thread
     
     private ByteBuffer encryptBuffer(ByteBuffer targetSourceBuffer, ByteBuffer cipherSourceBuffer)
     {
-        int targetSourceTotal = 0;
-        int cipherSourceTotal = 0;
-        int targetDiff = 0;
+//        int targetSourceTotal = 0;
+//        int cipherSourceTotal = 0;
+//        int targetDiff = 0;
         byte targetSourceByte = 0;
         byte cipherSourceByte = 0;
         byte targetDestinByte;
@@ -497,8 +569,8 @@ public class FinalCrypt extends Thread
         while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
         for (int targetSourceBufferCount = 0; targetSourceBufferCount < targetSourceBuffer.limit(); targetSourceBufferCount++)
         {
-            targetSourceTotal += targetSourceByte;
-            cipherSourceTotal += cipherSourceByte;
+//            targetSourceTotal += targetSourceByte;
+//            cipherSourceTotal += cipherSourceByte;
             targetSourceByte = targetSourceBuffer.get(targetSourceBufferCount);
             cipherSourceByte = cipherSourceBuffer.get(targetSourceBufferCount);
             targetDestinByte = encryptByte(targetSourceBuffer.get(targetSourceBufferCount), cipherSourceBuffer.get(targetSourceBufferCount));

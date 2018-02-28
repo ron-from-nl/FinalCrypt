@@ -133,7 +133,7 @@ public class CLUI implements UI
 		    {
 			State.cipherSelected = State.FILE;
 			State.cipherReady = true;
-			finalCrypt.setCipherFilePath(cipherFilePath);
+//			finalCrypt.setCipherFilePath(cipherFilePath);
 		    }
 		}
 		else if(cipherFilePath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Cipher Device Selection
@@ -153,7 +153,7 @@ public class CLUI implements UI
 				State.cipherSelected = State.DEVICE;
 			    }
 
-			    finalCrypt.setCipherFilePath(cipherFilePath);
+//			    finalCrypt.setCipherFilePath(cipherFilePath);
 			    State.cipherReady = true;
 
 	    //                  Get size of partition
@@ -183,7 +183,7 @@ public class CLUI implements UI
 			    }
 
 	    //                  Get size of device        
-			    finalCrypt.setCipherFilePath(cipherFilePath);
+//			    finalCrypt.setCipherFilePath(cipherFilePath);
 			    State.cipherReady = true;
 			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)))
 			    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { status(ex.getMessage(), true); }
@@ -359,9 +359,10 @@ public class CLUI implements UI
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
 //              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
-                ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
+//                ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
+                ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, cipherFilePath, pattern, negatePattern, false);
                 encryptionStarted();
-                finalCrypt.encryptSelection(targetFilesPathListExtended, finalCrypt.getCipherFilePath());
+                finalCrypt.encryptSelection(targetFilesPathListExtended, cipherFilePath);
             }
             else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
             {
