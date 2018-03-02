@@ -1,0 +1,27 @@
+0123456789ABCDEF0123456789ABCDEF
+Privacy Guaranteed by FinalCrypt 
+
+1   open target file
+2   goto end - 32
+3   read 16 bytes Plaintext FinalCrypt Token (PFT)
+4   read 16 bytes Encrypted FinalCrypt Token (EFT)
+5   If (PFT tested positive)
+    {
+        // Dealing with an encrypted file
+        Decrypt EFT
+        if ( PFT.equals(EFT))
+        {
+            // Correct Cipher
+            Encrypt & remove FinalCrypt Token
+        }
+        else
+        {
+            // Incorrect Cipher
+            abort, report & continue fileloop
+        }
+    }
+    else
+    {
+        // Dealing with an unencrypted file
+        Encrypt and add FinalCrypt Token at end
+    }

@@ -49,8 +49,8 @@ public class State
     public static String print()
     {
 	String s = "";
-	s += "Cipher selected: " + getCipherSelectedDescription() + " ready?: " + cipherReady + "\r\n";
-	s += "Target selected: " + getTargetSelectedDescription() + " ready?: " + targetReady + "\r\n";
+	s += "Cipher selected: " + getCipherSelectedDescription() + " ready: " + cipherReady + "\r\n";
+	s += "Target selected: " + getTargetSelectedDescription() + " ready: " + targetReady + "\r\n";
 	return s;
     }
 }

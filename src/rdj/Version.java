@@ -117,7 +117,6 @@ public class Version
         try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
 
         latestOverallVersionString.replaceAll("\\p{C}", "?");
-//        latestOverallVersionString.replaceAll("[^\\d.", "");
 
         String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");

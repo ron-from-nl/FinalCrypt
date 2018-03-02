@@ -1,14 +1,12 @@
 =================================== Todo ====================================
 
-bit / linegraph animation
-progressBar percentage
+Progress animation
 Backup update locations (properties, daily check / history)
-Optional password
-SoftPedia certificate
 
 =================================== Doing ===================================
 
 Added optional cipher password to protect cipher from unauthorized usage
+Added FinalCrypt Token to every encrypted file to verify succesful decryption
 
 =================================== Done ====================================
 
@@ -21,6 +19,7 @@ Added optional cipher password to protect cipher from unauthorized usage
 
 ============================= Binaries Released =============================
 
+Added User Interface Validate (user selected: Cipher & Target) Object
 Fixed copy filesattribute: lastModified (set attrib before shredding original)
 Removed false logging (causing a mess in logfiles and log textArea)
 Fixed OSX SeakableByteChannel.size bug with custom getDeviceSize method

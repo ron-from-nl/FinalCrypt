@@ -133,6 +133,10 @@ public class FinalCrypt extends Thread
         
     public void encryptSelection(ArrayList<Path> targetSourcePathList, Path cipherSourcePath)
     {
+//	setBufferSize(this.getBufferSizeDefault());
+//      long cipherSize= 0; try { cipherSize = (int)Files.size(cipherSourcePath); } catch (IOException ex) { ui.error("FinalCrypt.encryptSelection Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\n"); }
+//      if ( cipherSize < getBufferSize()) { setBufferSize((int)cipherSize); if (!verbose) ui.status("BufferSize is limited to cipherfile size: " + Stats.getHumanSize(getBufferSize(), 1) + " \r\n", true); }
+	
         Stats allDataStats = new Stats(); allDataStats.reset();
         
         Stat readTargetSourceStat = new Stat(); readTargetSourceStat.reset();
@@ -768,7 +772,7 @@ public class FinalCrypt extends Thread
             {
                 if (file.isDirectory())
                 {
-                    for (Path path:getDirectoryPathList(file, pattern, negatePattern))
+                    for (Path path:getDirectoryPathList(ui, file, symlink, pattern, negatePattern))
                     {
                         pathList.add(path);
                     } 
@@ -785,7 +789,7 @@ public class FinalCrypt extends Thread
             {
                 if (file.isDirectory())
                 {
-                    for (Path path:getDirectoryPathList(file, pattern, negatePattern))
+                    for (Path path:getDirectoryPathList(ui, file, symlink, pattern, negatePattern))
                     {
                         if ( ((path.compareTo(cipherPath) != 0)) )
                         {
@@ -807,7 +811,7 @@ public class FinalCrypt extends Thread
     }
 
 //  Called by EncryptSelected CLUI (works with PathList instead of File[] because FileChooser produces File[] array)
-    public ArrayList<Path> getExtendedPathList(ArrayList<Path> userSelectedItemsPathList, Path cipherPath, String pattern, boolean negatePattern, boolean status)
+    public static ArrayList<Path> getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, boolean symlink, String pattern, boolean negatePattern, boolean status)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
         ArrayList<Path> recursivePathList = new ArrayList<>();
@@ -817,7 +821,7 @@ public class FinalCrypt extends Thread
             {
                 if ( Files.isDirectory(outerpath) )
                 {
-                    for (Path path:getDirectoryPathList(outerpath.toFile(), pattern, negatePattern))
+                    for (Path path:getDirectoryPathList(ui, outerpath.toFile(), symlink, pattern, negatePattern))
                     {
                         recursivePathList.add(path);
                     }
@@ -834,7 +838,7 @@ public class FinalCrypt extends Thread
             {
                 if ( Files.isDirectory(userSelectedItemPath) )
                 {
-                    for (Path subItemPath:getDirectoryPathList(userSelectedItemPath.toFile(), pattern, negatePattern))
+                    for (Path subItemPath:getDirectoryPathList(ui, userSelectedItemPath.toFile(), symlink, pattern, negatePattern))
                     {
                         // cipherdetection not shown?
                         if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
@@ -850,7 +854,7 @@ public class FinalCrypt extends Thread
     }
 
     // Used by getExtendedPathList(File[] files)
-    public ArrayList<Path> getDirectoryPathList(File file, String pattern, boolean negatePattern)
+    public static ArrayList<Path> getDirectoryPathList(UI ui,File file, boolean symlink, String pattern, boolean negatePattern)
     {
         // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
         ArrayList<Path> recursivePathList = new ArrayList<>();
