@@ -20,8 +20,6 @@ package rdj;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -44,13 +42,7 @@ public class Version
     private static int currentVersionTotal = 0;
     private int latestVersionTotal = 0;
     private InputStream istream = null;
-//    private StringBufferInputStream istream = null;
-//    private static final String LOCALVERSIONFILEURLSTRING =    "VERSION";
-//    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-
-    private static final String LOCALVERSIONFILEURLSTRING =    "UPDATE";
-    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/UPDATE";
-
+    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
     public static final String REMOTEPACKAGEDOWNLOADURISTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
@@ -68,52 +60,53 @@ public class Version
     
     public String checkCurrentlyInstalledVersion()
     {
-//        istream = (StringBufferInputStream) getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
-        istream = getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
+        istream = getClass().getResourceAsStream("UPDATE");
 
 //      Read the local VERSION file
-        currentOverallVersionString = "Unknown";
+        currentOverallVersionString = "";
         currentVersionByteChannel = newChannel(istream);
-        byteBuffer = ByteBuffer.allocate(1024); byteBuffer.flip();
-//        try { 
-//            while(currentVersionByteChannel.read(byteBuffer) > 0)
-//            {
-//                byteBuffer.flip();
-//                while(byteBuffer.hasRemaining())
-//                {
-//                    currentOverallVersionString += (char) byteBuffer.get();
-//                }
-//            }
-//        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-//        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
-//        currentOverallVersionString.replaceAll("\\p{C}", "?");
-	
-	
-	try { currentVersionByteChannel.read(byteBuffer); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-	
-	
-	int len;
-	String line;
-	char[] chars = new char[1024];
-	Reader reader = new InputStreamReader(istream);
-	StringBuilder stringBuilder = new StringBuilder();
-	try { while( (len = reader.read(chars)) >= 0 ) { stringBuilder.append(chars, 0, len); } } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        byteBuffer = ByteBuffer.allocate(512);
+        try {
+            while(currentVersionByteChannel.read(byteBuffer) > 0)
+            {
+                byteBuffer.flip();
+                while(byteBuffer.hasRemaining())
+                {
+                    currentOverallVersionString += (char) byteBuffer.get();
+                }
+            }
+        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
 
-	ui.log(stringBuilder.toString());
+        currentOverallVersionString.replaceAll("\\p{C}", "?");
+//        currentOverallVersionString.replaceAll("[^\\d. ]", "");
+	String[] lines = currentOverallVersionString.split(System.getProperty("line.separator"));
+	String[][] fields = new String[lines.length][2];
+	
+	int lineCounter = 0;
+        for (String line:lines)
+	{
+	    String field = ""; String value = "";
+	    field = line.substring(line.indexOf("[")+1, line.indexOf("]"));
+	    value = line.substring(line.indexOf("{")+1, line.lastIndexOf("}"));
+	    fields[lineCounter][0] = field; fields[lineCounter][1] = value; 
+	    System.out.println("Field: " + fields[lineCounter][0] + " Value: " + fields[lineCounter][1]);
+	    lineCounter++;
+	}
 	
 	
 	
 	
-        String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
+	String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
         
-        int currentVersion = Integer.parseInt(currentVersionString);
-        int currentUpgrade = Integer.parseInt(currentUpgradeString);
-        int currentUpdate = Integer.parseInt(currentUpdateString);
+//        int currentVersion = Integer.parseInt(currentVersionString);
+//        int currentUpgrade = Integer.parseInt(currentUpgradeString);
+//        int currentUpdate = Integer.parseInt(currentUpdateString);
         
-        currentVersionTotal = (currentVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
+//        currentVersionTotal = (currentVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
+        currentVersionTotal = (1 * 100) + (8 * 10) + (2 * 1);
         currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
         currentVersionIsKnown = true;
         return currentOverallVersionString;
