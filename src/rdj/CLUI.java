@@ -58,9 +58,9 @@ public class CLUI implements UI
         Path targetFilePath = null;
         Path cipherFilePath = null;
         Path outputFilePath = null;
-        configuration = new Configuration(ui);
+        configuration = new Configuration(this);
         version = new Version(this);
-        version.checkCurrentlyInstalledVersion();
+        version.checkCurrentlyInstalledVersion(this);
 
         String pattern = "glob:*";
         
@@ -89,7 +89,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--gpt-print"))                                                         { printgpt = true; cfsetneeded = false; }
             else if ( args[paramCnt].equals("--gpt-delete"))                                                        { deletegpt = true; cfsetneeded = false; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
-            else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(); log(version.getUpdateStatus()); System.exit(0); }
+            else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(this); log(version.getUpdateStatus()); System.exit(0); }
             else if ( ( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
 
 //          Filtering Options
@@ -384,7 +384,7 @@ public class CLUI implements UI
         log("            # Encrypt myfile with raw cipher partition\r\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI -c /dev/sdb1 -t myfile\r\n");
         log("\r\n");
-        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion() + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n");
+        log(Version.getProcuct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n");
         System.exit(1);
     }
 

@@ -184,7 +184,6 @@ public class GUIFX extends Application implements UI, Initializable
         stage.show();
         
         version = new Version(ui);
-        version.checkCurrentlyInstalledVersion();
         stage.setTitle(Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString());
     }
 
@@ -277,7 +276,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         configuration = new Configuration(ui);
         version = new Version(ui);
-        version.checkCurrentlyInstalledVersion();
+        version.checkCurrentlyInstalledVersion(this);
         status("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false);        
         log("Welcome to " + Version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n");
         log("Copyright: " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n");
@@ -410,8 +409,8 @@ public class GUIFX extends Application implements UI, Initializable
         Platform.runLater(() ->
         {
             version = new Version(ui);
-            version.checkCurrentlyInstalledVersion();
-            version.checkLatestOnlineVersion();
+            version.checkCurrentlyInstalledVersion(this);
+            version.checkLatestOnlineVersion(this);
             status(version.getUpdateStatus(), true);
 //                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
 

@@ -42,10 +42,12 @@ public class Version
     private static int currentVersionTotal = 0;
     private int latestVersionTotal = 0;
     private InputStream istream = null;
-    private static final String LOCALVERSIONFILEURLSTRING =     "VERSION2";
-    private static       String localVersionFileContentString = "";
-    private static final String REMOTEVERSIONFILEURLSTRING =	"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
-    public static final String REMOTEPACKAGEDOWNLOADURISTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    private static final String LOCALVERSIONFILEURLSTRING =	    "VERSION2";
+    private static       String localContent =			    "";
+    private static final String REMOTEVERSIONFILEURLSTRING =	    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2";
+    private static       String remoteContent =			    "";
+    
+    public static final String REMOTEPACKAGEDOWNLOADURISTRING =	    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
     private ReadableByteChannel latestVersionByteChannel = null;
@@ -54,88 +56,85 @@ public class Version
     private boolean currentVersionIsKnown = false;
     private boolean latestVersionIsKnown = false;
     private boolean updateAvailable = false;
-    private String[] fields;
-    private String[] values;
+    private String[] localFields;
+    private String[] localValues;
+    private String[] remoteFields;
+    private String[] remoteValues;
 
     public Version(UI ui)
     {
         this.ui = ui;
     }
     
-    public String checkCurrentlyInstalledVersion()
+    public String checkCurrentlyInstalledVersion(UI ui)
     {
         istream = getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
 
 //      Read the local VERSION file
-        currentOverallVersionString = "";
+        currentOverallVersionString = "Unknown";
         currentVersionByteChannel = newChannel(istream);
-        byteBuffer = ByteBuffer.allocate(512);
-        try { while(currentVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()){localVersionFileContentString += (char) byteBuffer.get();}}} catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        byteBuffer = ByteBuffer.allocate(1024);
+        try { while(currentVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()){localContent += (char) byteBuffer.get();}}} catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
         try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
 
-        localVersionFileContentString.replaceAll("\\p{C}", "?");
-	String[] lines = localVersionFileContentString.split(System.getProperty("line.separator"));
+        localContent.replaceAll("\\p{C}", "?");
+	String[] lines = localContent.split(System.getProperty("line.separator"));
 	
-	fields = new String[lines.length];
-	values = new String[lines.length];
+	localFields = new String[lines.length];
+	localValues = new String[lines.length];
 
 //	Convert lines to fields array
-	int lineCounter = 0; for (String line:lines) { fields[lineCounter] = line.substring(line.indexOf("[")+1, line.indexOf("]")); values[lineCounter] = line.substring(line.indexOf("{")+1, line.lastIndexOf("}")); lineCounter++; }	
-	for (int x = 0; x < (fields.length); x++)
+	int lineCounter = 0; for (String line:lines) { localFields[lineCounter] = line.substring(line.indexOf("[")+1, line.indexOf("]")); localValues[lineCounter] = line.substring(line.indexOf("{")+1, line.lastIndexOf("}")); lineCounter++; }	
+	for (int x = 0; x < (localFields.length); x++)
 	{
-	    System.out.println("Field: " + fields[x] + " Value: " + values[x]);
-	    if (fields[x].toLowerCase().equals("Version".toLowerCase())) { currentOverallVersionString = values[x]; }
+	    ui.log("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
+	    if (localFields[x].toLowerCase().equals("Version".toLowerCase())) { currentOverallVersionString = localValues[x]; }
 	}
-	
-	
-	
+
 	String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
-        
-        int currentVersion = Integer.parseInt(currentVersionString);
-        int currentUpgrade = Integer.parseInt(currentUpgradeString);
-        int currentUpdate = Integer.parseInt(currentUpdateString);
-        
+        int currentVersion = Integer.parseInt(currentVersionString); int currentUpgrade = Integer.parseInt(currentUpgradeString); int currentUpdate = Integer.parseInt(currentUpdateString);
         currentVersionTotal = (currentVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
         currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
         currentVersionIsKnown = true;
+	
         return currentOverallVersionString;
     }
 
-    public String checkLatestOnlineVersion()
+    public String checkLatestOnlineVersion(UI ui)
     {
 //      Read the remote VERSION file
         latestOverallVersionString = "Unknown";
         try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\r\n"); }
         try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); } // null pointer at no connect
-        byteBuffer = ByteBuffer.allocate(512);
-        try
-        {
-            latestOverallVersionString = "";
-            while(latestVersionByteChannel.read(byteBuffer) > 0)
-            {
-                byteBuffer.flip();
-                while(byteBuffer.hasRemaining())
-                {
-                    latestOverallVersionString += (char) byteBuffer.get();
-                }
-            }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+
+	byteBuffer = ByteBuffer.allocate(1024);	
+	try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
         try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
 
-        latestOverallVersionString.replaceAll("\\p{C}", "?");
+        remoteContent.replaceAll("\\p{C}", "?");
+	String[] lines = remoteContent.split(System.getProperty("line.separator"));
+	
+	remoteFields = new String[lines.length];
+	remoteValues = new String[lines.length];
 
+//	Convert lines to fields array
+	int lineCounter = 0; for (String line:lines) { remoteFields[lineCounter] = line.substring(line.indexOf("[")+1, line.indexOf("]")); remoteValues[lineCounter] = line.substring(line.indexOf("{")+1, line.lastIndexOf("}")); lineCounter++; }	
+	for (int x = 0; x < (remoteFields.length); x++)
+	{
+	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
+	    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase())) { latestOverallVersionString = remoteValues[x]; }
+	}
+	
         String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
-
-        int latestVersion = Integer.parseInt(latestVersionString);
-        int latestUpgrade = Integer.parseInt(latestUpgradeString);
-        int latestUpdate = Integer.parseInt(latestUpdateString);
+        int latestVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
         latestVersionTotal = (latestVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
         latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
         latestVersionIsKnown = true;
+	
         return latestOverallVersionString;
     }
 
