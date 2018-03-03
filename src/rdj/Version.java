@@ -170,6 +170,8 @@ public class Version
             if      (currentVersionTotal < latestVersionTotal)
             {
                 returnString += getProcuct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
+		if (! getLatestReleaseNotesString().isEmpty())	    { returnString += getLatestReleaseNotesString() + "\r\n"; }
+		if (! getLatestVersionMessageString().isEmpty())    { returnString += getLatestVersionMessageString() + "\r\n"; }
             } 
             else if (currentVersionTotal > latestVersionTotal)
             {
