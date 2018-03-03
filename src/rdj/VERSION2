@@ -1,6 +1,5 @@
 [Version] =			    {1.8.2}
-[Realease Notes] =		    {Release notes: Added Release notes to "Check Update" function.}
-[New Version Alert Subject] =	    {New Version Alert Subject}
-[New Version Alert Message] =	    {New Version Alert Message}
-[Current Version Alert Subject] =   {Current Version Alert Subject}
-[Current Version Alert Message] =   {Current Version Alert Message}
+[Release Notes] =		    {Release notes: "Check Update" received messaging function}
+[Version Message] =		    {Display this message when new version is available}
+[Message Subject] =		    {Message Subject}
+[Message Body] =		    {Message Body}

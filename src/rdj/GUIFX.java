@@ -408,19 +408,25 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(() ->
         {
+	    String alertString = "";
+	    
             version = new Version(ui);
             version.checkCurrentlyInstalledVersion(this);
             version.checkLatestOnlineVersion(this);
             status(version.getUpdateStatus(), true);
-//                    setStageTitle(version.getCurrentlyInstalledOverallVersionString());
+	    alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
+	    if (! version.getLatestReleaseNotesString().isEmpty()) { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
+	    if (! version.getLatestVersionMessageString().isEmpty()) { alertString += version.getLatestVersionMessageString() + "\r\n"; }
 
             if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
             {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Download new version: " + version.getLatestOnlineOverallVersionString() + "?", ButtonType.YES, ButtonType.NO);alert.setHeaderText("Download Update?"); alert.showAndWait();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+		alert.setHeaderText("Download Update?"); alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES)
                 {
                     Thread updateThread;
-                    updateThread = new Thread(() -> {
+                    updateThread = new Thread(() ->
+		    {
                         try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
                         catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
                         catch (IOException ex) { ui.error(ex.getMessage()); }
