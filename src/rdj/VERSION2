@@ -1,5 +1,5 @@
-[Version] =			    {1.8.2}
-[Release Notes] =		    {Release: Added Update Message}
-[Version Message] =		    {Display this message when new version is available}
-[Message Subject] =		    {Message Subject}
-[Message Body] =		    {Message Body}
+[Version] =		{1.8.2}
+[Release Notes] =	{Release: Added Update Message}
+[Release Message] =	{New version message}
+[Alert Subject] =	{Alert Subject Value}
+[Alert Message] =	{Alert Message Value}

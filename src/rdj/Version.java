@@ -61,17 +61,17 @@ public class Version
     private String[] remoteFields;
     private String[] remoteValues;
     private String latestReleaseNotesString;
-    private String latestVersionMessageString;
-    private String latestMessageSubjectString;
-    private String latestMessageBodyString;
+    private String latestReleaseMessageString;
+    private String latestAlertSubjectString;
+    private String latestAlertMessageString;
 
     public Version(UI ui)
     {
         this.ui = ui;
 	latestReleaseNotesString = "";
-	latestVersionMessageString = "";
-	latestMessageSubjectString = "";
-	latestMessageBodyString = "";
+	latestReleaseMessageString = "";
+	latestAlertSubjectString = "";
+	latestAlertMessageString = "";
     }
     
     synchronized public String checkCurrentlyInstalledVersion(UI ui)
@@ -139,9 +139,9 @@ public class Version
 	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
 	    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Version Message".toLowerCase()))	{ latestVersionMessageString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Message Subject".toLowerCase()))	{ latestMessageSubjectString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Message Body".toLowerCase()))	{ latestMessageBodyString =	remoteValues[x]; }
+	    if (remoteFields[x].toLowerCase().equals("Release Message".toLowerCase()))	{ latestReleaseMessageString =	remoteValues[x]; }
+	    if (remoteFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ latestAlertSubjectString =	remoteValues[x]; }
+	    if (remoteFields[x].toLowerCase().equals("Alert Message".toLowerCase()))    { latestAlertMessageString =	remoteValues[x]; }
 	}
 
         String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
@@ -158,9 +158,9 @@ public class Version
     public String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
     public String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
     public String getLatestReleaseNotesString()			{ return latestReleaseNotesString; }
-    public String getLatestVersionMessageString()		{ return latestVersionMessageString; }
-    public String getLatestMessageSubjectString()		{ return latestMessageSubjectString; }
-    public String getLatestMessageBodyString()			{ return latestMessageBodyString; }
+    public String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
+    public String getLatestMessageSubjectString()		{ return latestAlertSubjectString; }
+    public String getLatestMessageBodyString()			{ return latestAlertMessageString; }
 
     public String getUpdateStatus() 
     {
