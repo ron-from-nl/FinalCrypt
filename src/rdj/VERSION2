@@ -1,4 +1,4 @@
-[Version] =			    {1.8.1}
+[Version] =			    {1.8.2}
 [Release Notes] =		    {Release: Added Update Message}
 [Version Message] =		    {Display this message when new version is available}
 [Message Subject] =		    {Message Subject}
