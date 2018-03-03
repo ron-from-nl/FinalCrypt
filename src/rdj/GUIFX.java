@@ -415,8 +415,8 @@ public class GUIFX extends Application implements UI, Initializable
             version.checkLatestOnlineVersion(this);
             status(version.getUpdateStatus(), true);
 	    alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
-	    if (! version.getLatestReleaseNotesString().isEmpty()) { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
-	    if (! version.getLatestVersionMessageString().isEmpty()) { alertString += version.getLatestVersionMessageString() + "\r\n"; }
+	    if (! version.getLatestReleaseNotesString().isEmpty())	{ alertString += version.getLatestReleaseNotesString() + "\r\n"; }
+	    if (! version.getLatestVersionMessageString().isEmpty())	{ alertString += version.getLatestVersionMessageString() + "\r\n"; }
 
             if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
             {

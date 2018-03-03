@@ -68,6 +68,10 @@ public class Version
     public Version(UI ui)
     {
         this.ui = ui;
+	latestReleaseNotesString = "";
+	latestVersionMessageString = "";
+	latestMessageSubjectString = "";
+	latestMessageBodyString = "";
     }
     
     synchronized public String checkCurrentlyInstalledVersion(UI ui)
@@ -134,7 +138,7 @@ public class Version
 	{
 	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
 	    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Realease Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
+	    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Version Message".toLowerCase()))	{ latestVersionMessageString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Message Subject".toLowerCase()))	{ latestMessageSubjectString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Message Body".toLowerCase()))	{ latestMessageBodyString =	remoteValues[x]; }
