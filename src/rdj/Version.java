@@ -20,6 +20,8 @@ package rdj;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -42,7 +44,13 @@ public class Version
     private static int currentVersionTotal = 0;
     private int latestVersionTotal = 0;
     private InputStream istream = null;
-    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+//    private StringBufferInputStream istream = null;
+//    private static final String LOCALVERSIONFILEURLSTRING =    "VERSION";
+//    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION";
+
+    private static final String LOCALVERSIONFILEURLSTRING =    "UPDATE";
+    private static final String REMOTEVERSIONFILEURLSTRING =    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/UPDATE";
+
     public static final String REMOTEPACKAGEDOWNLOADURISTRING = "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
@@ -60,27 +68,43 @@ public class Version
     
     public String checkCurrentlyInstalledVersion()
     {
-        istream = getClass().getResourceAsStream("VERSION");
+//        istream = (StringBufferInputStream) getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
+        istream = getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
 
 //      Read the local VERSION file
         currentOverallVersionString = "Unknown";
         currentVersionByteChannel = newChannel(istream);
-        byteBuffer = ByteBuffer.allocate(512);
-        try {
-            while(currentVersionByteChannel.read(byteBuffer) > 0)
-            {
-                byteBuffer.flip();
-                while(byteBuffer.hasRemaining())
-                {
-                    currentOverallVersionString += (char) byteBuffer.get();
-                }
-            }
-        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
+        byteBuffer = ByteBuffer.allocate(1024); byteBuffer.flip();
+//        try { 
+//            while(currentVersionByteChannel.read(byteBuffer) > 0)
+//            {
+//                byteBuffer.flip();
+//                while(byteBuffer.hasRemaining())
+//                {
+//                    currentOverallVersionString += (char) byteBuffer.get();
+//                }
+//            }
+//        } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+//        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
+//        currentOverallVersionString.replaceAll("\\p{C}", "?");
+	
+	
+	try { currentVersionByteChannel.read(byteBuffer); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
+	
+	
+	int len;
+	String line;
+	char[] chars = new char[1024];
+	Reader reader = new InputStreamReader(istream);
+	StringBuilder stringBuilder = new StringBuilder();
+	try { while( (len = reader.read(chars)) >= 0 ) { stringBuilder.append(chars, 0, len); } } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
 
-        currentOverallVersionString.replaceAll("\\p{C}", "?");
-//        currentOverallVersionString.replaceAll("[^\\d. ]", "");
-
+	ui.log(stringBuilder.toString());
+	
+	
+	
+	
         String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
