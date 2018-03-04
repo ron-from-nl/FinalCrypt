@@ -18,8 +18,6 @@
  */
 package rdj;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DeviceManager extends Thread
@@ -30,8 +28,10 @@ public class DeviceManager extends Thread
     
     public void createCipherDevice(Path cipherFilePath, Device targetDevice)
     {
-	if ( isValidFile(targetDevice.getPath(), false, false, true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", targetDevice.getPath(),		  0L,           false,             true,           true) )
 	{
+	    ui.status("Creating Cipher Device: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDevice);
 	    gpt.write(targetDevice);
@@ -43,8 +43,13 @@ public class DeviceManager extends Thread
 
     public void cloneCipherDevice(Device cipherDevice, Device targetDevice)
     {
-	if ( ( isValidFile(cipherDevice.getPath(), false, false, true) ) && ( isValidFile(targetDevice.getPath(), false, false, true) ) )
+//		           isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+	if (
+		( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),	       0L,	     false,	       false,	        true) ) &&
+		( Validate.isValidFile(   ui,            "", targetDevice.getPath(),           0L,	     false,	        true,	        true) )
+	    )
 	{
+	    ui.status("Cloning Cipher Device: " + cipherDevice.getPath() + " to " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    
 //	    Either read (clone diskGUIDs & partitionGUIDs) or create (new diskGUIDs & partitionGUIDs)
@@ -61,8 +66,10 @@ public class DeviceManager extends Thread
 //  Used by --gpt option
     public void printGPT(Device cipherDevice)
     {
-	if ( isValidFile(cipherDevice.getPath(), false, false, true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),		  0L,		false,		  false,	   true) )
 	{
+	    ui.status("Printing GUID Partition Table: " + cipherDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.read(cipherDevice);
 	    gpt.print();
@@ -71,42 +78,14 @@ public class DeviceManager extends Thread
     
     public void deleteGPT(Device targetDevice)
     {
-	if ( isValidFile(targetDevice.getPath(), false, false, true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,	    "", targetDevice.getPath(),		  0L,		false,		   true,	   true) )
 	{
+	    ui.status("Deleting GUID Partition Table: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.write(targetDevice);
 	    gpt.read(targetDevice);
 	    gpt.print();
 	}
     }
-
-    public boolean isValidDir(Path path, boolean symlink, boolean report)
-    {
-        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
-        return validdir;
-    }
-
-    public boolean isValidFile(Path path, boolean readSize, boolean symlink, boolean report)
-    {
-        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { } }
-
-        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
-        else
-        {
-            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
-            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
-        }
-        if ( ! validfile ) { if ( report )			{ ui.error("Warning: DevMgr: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        return validfile;
-    }
-
 }

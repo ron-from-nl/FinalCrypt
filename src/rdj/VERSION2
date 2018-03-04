@@ -1,4 +1,4 @@
-[Version] =		{1.8.2}
+[Version] =		{1.8.3}
 [Release Notes] =	{Release: Added Update Message}
 [Release Message] =	{WARNING!!! Decrypt all your data first before using this version}
 [Alert Subject] =	{}

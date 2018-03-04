@@ -23,13 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
@@ -161,9 +157,10 @@ public class FinalCrypt extends Thread
         {
 	    Path targetDestinPath;
 	    String fileStatusLine = "";
-            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
-            if (! Files.isDirectory(targetSourcePath))
+//							          isValidFile(UI ui, String caller, Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+            if ((! Files.isDirectory(targetSourcePath)) && (Validate.isValidFile(ui,            "",      targetSourcePath,	     1L,	 symlink,             true,          false)))
             {
                 if ((targetSourcePath.compareTo(cipherSourcePath) != 0))
                 {
@@ -474,7 +471,7 @@ public class FinalCrypt extends Thread
                         if ( (targetSourceSize != 0 ) && ( targetDestinSize != 0 ) && ( targetSourceSize == targetDestinSize ) )		{ try { Files.deleteIfExists(targetSourcePath); } catch (IOException ex)    { ui.error("\r\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; } }
                     } else { ui.log("\r\n"); } // End real run
                 } else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + cipherSourcePath.toAbsolutePath() + " (is cipher!)\r\n"); }
-            } else { ui.error("Skipping directory: " + targetSourcePath.getFileName() + "\r\n"); } // End "not a directory"
+            } // else { ui.error("Skipping directory: " + targetSourcePath.getFileName() + "\r\n"); } // End "not a directory"
             
         } // Encrypt Files Loop // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
@@ -536,7 +533,9 @@ public class FinalCrypt extends Thread
     public void deleteSelection(ArrayList<Path> targetSourcePathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, verbose, delete, symlink, returnpathlist, pattern, negatePattern);
+//        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, verbose, delete, symlink, returnpathlist, pattern, negatePattern);
+//						      MySimpleFileVisitor(UI ui, boolean verbose, boolean delete, long minSize, boolean symlink, boolean writable, boolean returnpathlist, String pattern, boolean negatePattern)
+        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(   ui,	 verbose,         delete,            0,            true,            false,         returnpathlist,        pattern,         negatePattern);
         for (Path path:targetSourcePathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
@@ -633,35 +632,6 @@ public class FinalCrypt extends Thread
         ui.log("DBM  = " + getChar((byte)dum) + " & " + getChar((byte)dnm) + " = " + getChar((byte)dbm) + "\r\n");
     }
     
-    public static boolean isValidDir(UI ui, Path path, boolean symlink, boolean report)
-    {
-        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { ui.error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
-        return validdir;
-    }
-
-    public static boolean isValidFile(UI ui, String s, Path path, boolean symlink, boolean report)
-    {
-        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0; try                                  { fileSize = Files.size(path); } catch (IOException ex) { }
-
-        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
-        else
-        {
-            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ( fileSize == 0 )                                { validfile = false; size = "[empty] "; conditions += size; }
-            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
-        }
-        if ( ! validfile ) { if ( report )			{ ui.error("Warning: " + s + " Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        return validfile;
-    }
-
     public ArrayList<Path> getPathList(File[] files)
     {
         // Converts from File[] to ArraayList<Path>
@@ -669,112 +639,6 @@ public class FinalCrypt extends Thread
         return pathList;
     }
     
-//  Called by EncryptSelected GUIFX
-    public ArrayList<Path> getExtendedPathList(File[] files, Path cipherPath, String pattern, boolean negatePattern, boolean status)
-    {
-        // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
-        ArrayList<Path> pathList = new ArrayList<>();
-        if ( cipherPath == null )
-        {
-            for (File file:files)
-            {
-                if (file.isDirectory())
-                {
-                    for (Path path:getDirectoryPathList(ui, file, symlink, pattern, negatePattern))
-                    {
-                        pathList.add(path);
-                    } 
-                }
-                else
-                {
-                    if (isValidFile(ui, "E1", file.toPath(), symlink, verbose) ) { pathList.add(file.toPath()); }
-                }
-            }
-        }
-        else
-        {
-            for (File file:files)
-            {
-                if (file.isDirectory())
-                {
-                    for (Path path:getDirectoryPathList(ui, file, symlink, pattern, negatePattern))
-                    {
-                        if ( ((path.compareTo(cipherPath) != 0)) )
-                        {
-                            pathList.add(path);
-                        } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", false); }}
-                    } 
-                }
-                else
-                {
-                    if ( ((file.toPath().compareTo(cipherPath) != 0)) )
-                    {
-                        if (isValidFile(ui, "E2", file.toPath(), symlink, verbose) ) { pathList.add(file.toPath()); }
-                    }
-                    else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", false); }}
-                }
-            }
-        }
-        return pathList;
-    }
-
-//  Called by EncryptSelected CLUI (works with PathList instead of File[] because FileChooser produces File[] array)
-    public static ArrayList<Path> getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, boolean symlink, String pattern, boolean negatePattern, boolean status)
-    {
-        // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
-        ArrayList<Path> recursivePathList = new ArrayList<>();
-        if ( cipherPath == null )
-        {
-            for (Path outerpath:userSelectedItemsPathList)
-            {
-                if ( Files.isDirectory(outerpath) )
-                {
-                    for (Path path:getDirectoryPathList(ui, outerpath.toFile(), symlink, pattern, negatePattern))
-                    {
-                        recursivePathList.add(path);
-                    }
-                }
-                else
-                {
-                    recursivePathList.add(outerpath);
-                }
-            }
-        }
-        else
-        {
-            for (Path userSelectedItemPath:userSelectedItemsPathList)
-            {
-                if ( Files.isDirectory(userSelectedItemPath) )
-                {
-                    for (Path subItemPath:getDirectoryPathList(ui, userSelectedItemPath.toFile(), symlink, pattern, negatePattern))
-                    {
-                        // cipherdetection not shown?
-                        if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
-                    }
-                }
-                else
-                {
-                    if ( ((userSelectedItemPath.compareTo(cipherPath) != 0)) ) { recursivePathList.add(userSelectedItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
-                }
-            }
-        }
-        return recursivePathList;
-    }
-
-    // Used by getExtendedPathList(File[] files)
-    public static ArrayList<Path> getDirectoryPathList(UI ui,File file, boolean symlink, String pattern, boolean negatePattern)
-    {
-        // Converts from File[] to ArraayList<Path> where as every dir is converted into additional PathLists
-        ArrayList<Path> recursivePathList = new ArrayList<>();
-        
-        EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-        MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(ui, verbose, false, symlink, true, pattern, negatePattern);
-        try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
-        recursivePathList = mySimpleFileVisitor.getPathList();
-
-        return recursivePathList;
-    }
-
 //    public Stats getStats()                                 { return stats; }
 
 //  Class Extends Thread
@@ -783,86 +647,4 @@ public class FinalCrypt extends Thread
     public void run()
     {
     }
-}
-
-// override only methods of our need (SimpleFileVisitor is a full blown class)
-class MySimpleFileVisitor extends SimpleFileVisitor<Path>
-{
-    private final UI ui;
-    private final PathMatcher pathMatcher;
-    private final boolean verbose; 
-    private final boolean delete; 
-    private final boolean symlink; 
-    private final boolean returnpathlist; 
-    private final ArrayList<Path> pathList;
-    private boolean negatePattern;
-
-//  Default CONSTRUCTOR
-
-//  regex pattern
-//  all *.bit   =   'regex:^.*\.bit$'
-//  all but *.bit   'regex:(?!.*\.bit$)^.*$'
-    
-    public MySimpleFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean returnpathlist, String pattern, boolean negatePattern)
-    {
-        this.ui = ui;
-        pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
-        this.delete = delete;
-        this.verbose = verbose;
-        this.symlink = symlink;
-        this.returnpathlist = returnpathlist;
-        pathList = new ArrayList<Path>();
-        this.negatePattern = negatePattern;
-    }
-   
-    @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
-    {
-        if ( FinalCrypt.isValidDir(ui, path, symlink, verbose) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; }
-    }
-    
-    @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
-    {
-        long fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex) { }
-        if (!negatePattern)
-        {
-            if ( (path.getFileName() != null ) && ( pathMatcher.matches(path.getFileName())) )
-            {            
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
-                else if (returnpathlist)    
-                {
-                    if (FinalCrypt.isValidFile(ui, "F1", path, symlink, verbose)) { pathList.add(path); } 
-                }
-                else { ui.status("Huh? this shouldn't have happened.\r\n", true); }
-            }   
-        }
-        else
-        {
-            if ( (path.getFileName() != null ) && ( ! pathMatcher.matches(path.getFileName())) ) // Negate Pattern; Does NOT match pattern
-            {
-                if (delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
-                else if (returnpathlist)
-                {
-                    if (FinalCrypt.isValidFile(ui, "F2", path, symlink, verbose)) { pathList.add(path); } 
-                }
-                else  { ui.status("Huh? this shouldn't have happened.\r\n", true); }
-            }   
-        }
-        return FileVisitResult.CONTINUE;
-    }
-    
-    @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
-    {
-        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\r\n");
-        return FileVisitResult.SKIP_SIBLINGS;
-    }
-    
-    @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
-    {
-        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
-        else if (returnpathlist)    {        }
-        else                        {     }
-        return FileVisitResult.CONTINUE;
-    }
-    
-    public ArrayList<Path> getPathList() { return pathList; }
 }

@@ -41,6 +41,7 @@ public class CLUI implements UI
     private UI ui;
     private final Configuration configuration;
     private boolean symlink = false;
+    private boolean verbose = false;
 
     public CLUI(String[] args)
     {
@@ -78,7 +79,7 @@ public class CLUI implements UI
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(); }
             else if (( args[paramCnt].equals("-d")) || ( args[paramCnt].equals("--debug") ))                        { finalCrypt.setDebug(true); }
-            else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); }
+            else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))                      { finalCrypt.setSymlink(true); symlink = true; }
             else if ( args[paramCnt].equals("--txt"))                                                               { finalCrypt.setTXT(true); }
@@ -89,7 +90,7 @@ public class CLUI implements UI
             else if ( args[paramCnt].equals("--gpt-print"))                                                         { printgpt = true; cfsetneeded = false; }
             else if ( args[paramCnt].equals("--gpt-delete"))                                                        { deletegpt = true; cfsetneeded = false; }
             else if ( args[paramCnt].equals("--version"))                                                           { println(version.getProcuct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
-            else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(this); log(version.getUpdateStatus()); System.exit(0); }
+            else if ( args[paramCnt].equals("--update"))                                                            { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) {log(line + "\r\n");} System.exit(0); }
             else if ( ( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(); }}
 
 //          Filtering Options
@@ -132,22 +133,24 @@ public class CLUI implements UI
 
 //      Check if targetFilesPathList elements exist on filesystem
 
-        for(Path targetPathItem : targetPathList)
+        for(Path targetPath : targetPathList)
         {
-            if (Files.exists(targetPathItem))
+            if (Files.exists(targetPath))
             {
-                if ( isValidDir(targetPathItem, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
+//			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
+                if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
                 {
-                    if (finalCrypt.getVerbose()) { status("Target parameter: " + targetPathItem + " is a valid dir\r\n", true); }
+                    if (verbose) { status("Target parameter: " + targetPath + " is a valid dir\r\n", true); }
                 }
-                else if ( isValidFile(targetPathItem, true, finalCrypt.getSymlink(), finalCrypt.getVerbose()))
+//				   isValidFile(UI ui, String caller, Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+                else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,           1L,         symlink,             true,        verbose))
                 {
-                    if (finalCrypt.getVerbose()) { status("Target parameter: " + targetPathItem + " is a valid file\r\n", true); }
+                    if (verbose) { status("Target parameter: " + targetPath + " is a valid file\r\n", true); }
                 }
             }
             else
             { 
-                    error("Target parameter: " + targetPathItem + " does not exists\r\n"); usage();
+                    error("Target parameter: " + targetPath + " does not exists\r\n"); usage();
             }            
         }
         
@@ -204,9 +207,9 @@ public class CLUI implements UI
             DeviceManager deviceManager;
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
-//              Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
-//                ArrayList<Path> targetFilesPathListExtended = finalCrypt.getExtendedPathList(targetFilesPathList, finalCrypt.getCipherFilePath(), pattern, negatePattern, false);
-                ArrayList<Path> targetFilesPathListExtended = FinalCrypt.getExtendedPathList(ui, targetPathList, cipherFilePath, symlink, pattern, negatePattern, false);
+//                Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
+//								       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
+                ArrayList<Path> targetFilesPathListExtended = Validate.getExtendedPathList(   ui,                            targetPathList,  cipherFilePath,           1L,         symlink,             true,        pattern,         negatePattern,          false);
                 encryptionStarted();
                 finalCrypt.encryptSelection(targetFilesPathListExtended, cipherFilePath);
             }
@@ -240,8 +243,8 @@ public class CLUI implements UI
         boolean ifset = false;
         Path batchFilePath;
         Path targetFilePath;
-
-        if ( isValidFile(Paths.get(batchFilePathString), true, true, true) )
+//		      isValidFile(UI ui, String caller,                       Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+        if ( Validate.isValidFile(this,  "CLUI.addBatchTargetFiles", Paths.get(batchFilePathString),           1L,         symlink,             true,           true) )
         {
             log("Adding items from batchfile: " + batchFilePathString + "\r\n");
             batchFilePath = Paths.get(batchFilePathString);
@@ -250,7 +253,8 @@ public class CLUI implements UI
                 for (String targetFilePathString:Files.readAllLines(batchFilePath))
                 {
 //                  Entry may not be a directory (gets filtered and must be a valid file)
-                    if ( isValidFile(Paths.get(targetFilePathString), true, finalCrypt.getSymlink(), true) )
+//				  isValidFile(UI ui, String caller,                        Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+                    if ( Validate.isValidFile(   ui, "CLUI.addBatchTargetFiles", Paths.get(targetFilePathString),           0L,         symlink,             true,           true) )
                     {
                         targetFilePath = Paths.get(targetFilePathString); targetFilesPathList.add(targetFilePath); ifset = true;
 //                        println("Adding: " + targetFilePathString);
@@ -266,34 +270,6 @@ public class CLUI implements UI
             error("Error: batchfile: " + batchFilePathString + " is not a valid file!\r\n");
         }
         return ifset;
-    }
-    public boolean isValidDir(Path path, boolean symlink, boolean report)
-    {
-        boolean validdir = true; String conditions = "";        String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(path))                              { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { error("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n"); } }
-        return validdir;
-    }
-
-    public boolean isValidFile(Path path, boolean readSize, boolean symlink, boolean report)
-    {
-        boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) {  } }
-
-        if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
-        else
-        {
-            if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
-            if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
-        }
-        if ( ! validfile ) { if ( report )			{ error("Warning: CLUI: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        return validfile;
     }
 
     public static void main(String[] args)

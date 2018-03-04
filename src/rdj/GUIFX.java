@@ -406,37 +406,42 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkUpdate()
     {
-        Platform.runLater(() ->
-        {
-	    String alertString = "";
-	    
-            version = new Version(ui);
-            version.checkCurrentlyInstalledVersion(this);
-            version.checkLatestOnlineVersion(this);
-            status(version.getUpdateStatus(), true);
-	    alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
-	    if (! version.getLatestReleaseNotesString().isEmpty())	{ alertString += version.getLatestReleaseNotesString() + "\r\n"; }
-	    if (! version.getLatestVersionMessageString().isEmpty())	{ alertString += version.getLatestVersionMessageString() + "\r\n"; }
-
-            if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
-            {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
-		alert.setHeaderText("Download Update?"); alert.showAndWait();
-                if (alert.getResult() == ButtonType.YES)
-                {
-                    Thread updateThread;
-                    updateThread = new Thread(() ->
+        Platform.runLater(new Runnable()
+	{
+	    @Override
+	    public void run()
+	    {
+		String alertString = "";
+		version = new Version(ui);
+		version.checkCurrentlyInstalledVersion(GUIFX.this);
+		version.checkLatestOnlineVersion(GUIFX.this);
+		String[] lines = version.getUpdateStatus().split("\r\n");
+		for (String line: lines) {status(line + "\r\n", true);}
+		alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
+		if (! version.getLatestReleaseNotesString().isEmpty())	{ alertString += version.getLatestReleaseNotesString() + "\r\n"; }
+		if (! version.getLatestVersionMessageString().isEmpty())	{ alertString += version.getLatestVersionMessageString() + "\r\n"; }
+		if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
+		{
+		    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+		    alert.setHeaderText("Download Update?");
+		    alert.showAndWait();
+		    
+		    if (alert.getResult() == ButtonType.YES)
 		    {
-                        try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
-                        catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
-                        catch (IOException ex) { ui.error(ex.getMessage()); }
-                    });
-                    updateThread.setName("encryptThread");
-                    updateThread.setDaemon(true);
-                    updateThread.start();
-                }
-            }
-        });
+			Thread updateThread;
+			updateThread = new Thread(() ->
+			{
+			    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
+			    catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
+			    catch (IOException ex) { ui.error(ex.getMessage()); }
+			});
+			updateThread.setName("encryptThread");
+			updateThread.setDaemon(true);
+			updateThread.start();
+		    }
+		}
+	    }
+	});
     }
 
 //  Custom FileChooserDelete Listener methods
@@ -605,7 +610,7 @@ public class GUIFX extends Application implements UI, Initializable
         State.targetSelected = State.INVALID;
         State.targetReady = false;
         
-        targetPathList = new ArrayList<>();
+        targetPathList = new ArrayList<>(); targetPathList.clear();
 
 	targetFileDeleteButton.setEnabled(false);
         if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0))
@@ -620,7 +625,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    Get Globbing Pattern String
 	    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 	    
-	    Validate.checkTarget(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, status, false, false);
+	    if (!encryptionRunning) { Validate.checkTarget(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, status, false, false); }
 	    cursorDefault();
 	}
 	
@@ -684,6 +689,7 @@ public class GUIFX extends Application implements UI, Initializable
                 encryptButton.setDisable(false);
                 pauseToggleButton.setDisable(true);
                 stopButton.setDisable(true);
+		status("",false); 
             }
             else
             {
@@ -692,45 +698,6 @@ public class GUIFX extends Application implements UI, Initializable
                 stopButton.setDisable(true);
             }
         }
-    }
-
-    public boolean isValidDir(Path targetDirPath, boolean symlink, boolean report)
-    {
-        boolean validdir = true; String conditions = "";		    String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(targetDirPath))				    { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(targetDirPath) )			    { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(targetDirPath) )			    { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )	    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )			    { error("Warning: Invalid Dir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
-        return validdir;
-    }
-
-    public boolean isValidFile(Path targetSourcePath, Path cipherSourcePath, boolean readSize, boolean symlink, boolean report) // fileValidation Wrapper (including target==cipherSource comparison)
-    {
-	
-        boolean validfile = true; String conditions = "";			    String cipher = "";
-	validfile = isValidFile(targetSourcePath, readSize, symlink, report);
-	if (validfile) { if ( targetSourcePath.compareTo(cipherSourcePath) == 0 )   { validfile = false; cipher = "[isCipher] "; conditions += cipher; }}	
-        if ( ! validfile ) { if ( report )					    { error("Warning: GUIFX: Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        return validfile;
-    }
-
-    public boolean isValidFile(Path targetSourcePath, boolean readSize, boolean symlink, boolean report)
-    {
-        boolean validfile = true; String conditions = "";		    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
-        long fileSize = 0;						    if ( readSize ) { try { fileSize = Files.size(targetSourcePath); } catch (IOException ex) { } }
-
-        if ( ! Files.exists(targetSourcePath))                              { validfile = false; exist = "[not found] "; conditions += exist; }
-        else
-        {
-            if ( Files.isDirectory(targetSourcePath))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-            if ((readSize) && ( fileSize == 0 ))			    { validfile = false; size = "[empty] "; conditions += size; }
-            if ( ! Files.isReadable(targetSourcePath) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(targetSourcePath) )                     { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(targetSourcePath)) )  { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
-        }
-        if ( ! validfile ) { if ( report )				    { error("Warning: GUIFX: Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        return validfile;
     }
 
     private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
@@ -900,7 +867,8 @@ public class GUIFX extends Application implements UI, Initializable
                 {
 //                  Extend chooser.selectedfiles and add to targetFilesPath
                     String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-                    ArrayList<Path> targetFilesPathList = FinalCrypt.getExtendedPathList(ui, targetPathList, cipherFilePath, symlink, pattern, negatePattern, true);
+//								     getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
+                    ArrayList<Path> targetFilesPathList = Validate.getExtendedPathList(   ui,                            targetPathList,  cipherFilePath, 1L,                   symlink,             true,        pattern,         negatePattern,           true);
 
 //                    finalCrypt.setTargetFilesPathList(targetFilesPathList);
 //                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
@@ -1062,7 +1030,6 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {                                
-                encryptionRunning = false;                
                 fileProgressBar.setProgress(0);
                 filesProgressBar.setProgress(0);
                 targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
@@ -1070,6 +1037,7 @@ public class GUIFX extends Application implements UI, Initializable
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
                 targetFileChooserPropertyCheck(false);
                 cipherFileChooserPropertyCheck();
+                encryptionRunning = false;                
             }
         });
     }    

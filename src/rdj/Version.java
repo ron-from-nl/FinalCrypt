@@ -100,7 +100,7 @@ public class Version
 	}
 	for (int x = 0; x < (localFields.length); x++)
 	{
-	    ui.log("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
+//	    ui.log("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
 	    if (localFields[x].toLowerCase().equals("Version".toLowerCase())) { currentOverallVersionString = localValues[x]; }
 	}
 
@@ -136,7 +136,7 @@ public class Version
 	int c = 0; for (String line:lines) { remoteFields[c] = line.substring(line.indexOf("[") + 1, line.indexOf("]")); remoteValues[c] = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")); c++; }	
 	for (int x = 0; x < (remoteFields.length); x++)
 	{
-	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
+//	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
 	    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
 	    if (remoteFields[x].toLowerCase().equals("Release Message".toLowerCase()))	{ latestReleaseMessageString =	remoteValues[x]; }
