@@ -159,8 +159,8 @@ public class Version
     public String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
     public String getLatestReleaseNotesString()			{ return latestReleaseNotesString; }
     public String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
-    public String getLatestMessageSubjectString()		{ return latestAlertSubjectString; }
-    public String getLatestMessageBodyString()			{ return latestAlertMessageString; }
+    public String getLatestAlertSubjectString()			{ return latestAlertSubjectString; }
+    public String getLatestAlertMessageString()			{ return latestAlertMessageString; }
 
     public String getUpdateStatus() 
     {

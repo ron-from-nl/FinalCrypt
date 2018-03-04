@@ -418,8 +418,23 @@ public class GUIFX extends Application implements UI, Initializable
 		String[] lines = version.getUpdateStatus().split("\r\n");
 		for (String line: lines) {status(line + "\r\n", true);}
 		alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
-		if (! version.getLatestReleaseNotesString().isEmpty())	{ alertString += version.getLatestReleaseNotesString() + "\r\n"; }
-		if (! version.getLatestVersionMessageString().isEmpty())	{ alertString += version.getLatestVersionMessageString() + "\r\n"; }
+		if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
+		if (! version.getLatestVersionMessageString().isEmpty())    { alertString += version.getLatestVersionMessageString() + "\r\n"; }
+		if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() ))
+		{
+		    Alert alert = new Alert(AlertType.INFORMATION);
+
+	    //      Style the Alert
+		    DialogPane dialogPane = alert.getDialogPane();
+		    dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+		    dialogPane.getStyleClass().add("myDialog");
+
+		    alert.setTitle("Information Dialog");
+		    alert.setHeaderText(version.getLatestAlertSubjectString() + "\r\n");
+		    alert.setResizable(true);
+		    alert.setContentText(version.getLatestAlertMessageString());
+		    alert.showAndWait();
+		}
 		if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
 		{
 		    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
@@ -1043,7 +1058,8 @@ public class GUIFX extends Application implements UI, Initializable
     }    
     
     @FXML
-    private void cipherInfoLabelClicked(MouseEvent event) {
+    private void cipherInfoLabelClicked(MouseEvent event)
+    {
         Alert alert = new Alert(AlertType.INFORMATION);
         
 //      Style the Alert

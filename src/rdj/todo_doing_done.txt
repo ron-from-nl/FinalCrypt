@@ -5,7 +5,7 @@ Backup update locations (properties, daily check / history)
 
 =================================== Doing ===================================
 
-Added FinalCrypt Token to every encrypted file to verify succesful decryption
+Added Aborting on wrong Cipher
 Added optional cipher password to protect cipher from unauthorized usage
 Added VERSION2 Alert Subject / Message
 
