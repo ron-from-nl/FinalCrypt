@@ -1,5 +1,5 @@
 [Version] =		{1.8.3}
-[Release Notes] =	{Release: Added Update Message}
-[Release Message] =	{WARNING!!! Decrypt all your data first before using this version}
-[Alert Subject] =	{}
-[Alert Message] =	{}
+[Release Notes] =	{Improved: Updates, Validation}
+[Release Message] =	{}
+[Alert Subject] =	{Work in progress}
+[Alert Message] =	{Correct Cipher Check}

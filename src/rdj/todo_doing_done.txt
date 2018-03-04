@@ -11,7 +11,7 @@ Added VERSION2 Alert Subject / Message
 
 =================================== Done ====================================
 
-Added Key field oriented VERSION2 file 
+Added improved Update system
 Added Validate (all userdata) Object
 
 ============================= Source Committed ==============================
