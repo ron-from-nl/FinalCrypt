@@ -115,18 +115,18 @@ public class CLUI implements UI
         
         if ( cfsetneeded )
 	{
-	    State.cipherSelected = State.INVALID;
-	    State.cipherReady = false;
-
-    //      Cipher Validation        
-	    if (Files.exists(cipherFilePath))
-	    {
+//	    State.cipherSelected = State.INVALID;
+//	    State.cipherReady = false;
+//
+//    //      Cipher Validation        
+//	    if (Files.exists(cipherFilePath))
+//	    {
 		Validate.checkCipher(this, finalCrypt, cipherFilePath);
-	    }
-	    else
-	    { 
-		error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
-	    }            
+//	    }
+//	    else
+//	    { 
+//		error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
+//	    }            
 	}
 
 //////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
@@ -208,6 +208,7 @@ public class CLUI implements UI
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
 //                Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
+		log("Retreiving targets...\r\n\r\n");
 //								       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
                 ArrayList<Path> targetFilesPathListExtended = Validate.getExtendedPathList(   ui,                            targetPathList,  cipherFilePath,           1L,         symlink,             true,        pattern,         negatePattern,          false);
                 encryptionStarted();

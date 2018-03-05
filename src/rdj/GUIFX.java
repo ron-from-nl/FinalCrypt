@@ -160,7 +160,7 @@ public class GUIFX extends Application implements UI, Initializable
     private Label targetFileChooserInfoLabel;
     @FXML
     private SwingNode targetFileSwingNode;
-    private Path cipherFilePath;
+    private Path ciphePath;
     private ArrayList<Path> targetPathList;
     private boolean symlink = false;
     
@@ -316,6 +316,7 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "4. Click [Encrypt] again to decrypt.\r\n";
                 infotext += "\r\n";
                 infotext += "Congrats! You now know the basics.\r\n";
+                infotext += "Tip:      Watch statusbar at the bottom.\r\n";
                 infotext += "\r\n";
                 infotext += "Optional:\r\n";
                 infotext += "\r\n";
@@ -602,8 +603,7 @@ public class GUIFX extends Application implements UI, Initializable
         if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
 	{
             cursorWait();
-	    cipherFilePath = cipherFileChooser.getSelectedFile().toPath();
-	    Validate.checkCipher(this, finalCrypt, cipherFilePath);
+	    Validate.checkCipher(this, finalCrypt, cipherFileChooser.getSelectedFile().toPath());
 	    cursorDefault();
 	}
         checkModeReady();
@@ -640,7 +640,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    Get Globbing Pattern String
 	    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 	    
-	    if (!encryptionRunning) { Validate.checkTarget(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, status, false, false); }
+	    if (!encryptionRunning) { Validate.checkTarget(this, finalCrypt, targetPathList, ciphePath, pattern, negatePattern, symlink, status, false, false); }
 	    cursorDefault();
 	}
 	
@@ -704,7 +704,7 @@ public class GUIFX extends Application implements UI, Initializable
                 encryptButton.setDisable(false);
                 pauseToggleButton.setDisable(true);
                 stopButton.setDisable(true);
-		status("",false); 
+//		status("",false); 
             }
             else
             {
@@ -881,15 +881,10 @@ public class GUIFX extends Application implements UI, Initializable
                 if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
                 {
 //                  Extend chooser.selectedfiles and add to targetFilesPath
-                    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+                    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
 //								     getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-                    ArrayList<Path> targetFilesPathList = Validate.getExtendedPathList(   ui,                            targetPathList,  cipherFilePath, 1L,                   symlink,             true,        pattern,         negatePattern,           true);
-
-//                    finalCrypt.setTargetFilesPathList(targetFilesPathList);
-//                    finalCrypt.setCipherFilePath(cipherFileChooser.getSelectedFile().toPath());
-
-    //                // Set Buffer Size
-//                    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+		    status("Retreiving targets...\r\n",false);
+		    ArrayList<Path> targetFilesPathList = Validate.getExtendedPathList(   ui,                              targetPathList,       ciphePath, 1L,                   symlink,             true,        pattern,         negatePattern,           true);
 
                     filesProgressBar.setProgress(0.0);
                     fileProgressBar.setProgress(0.0);

@@ -470,7 +470,7 @@ public class FinalCrypt extends Thread
                         long targetDestinSize = 0; try { targetDestinSize = Files.size(targetDestinPath); }	catch (IOException ex)  { ui.error("\r\nError: Files.size(targetDestinPath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
                         if ( (targetSourceSize != 0 ) && ( targetDestinSize != 0 ) && ( targetSourceSize == targetDestinSize ) )		{ try { Files.deleteIfExists(targetSourcePath); } catch (IOException ex)    { ui.error("\r\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; } }
                     } else { ui.log("\r\n"); } // End real run
-                } else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + cipherSourcePath.toAbsolutePath() + " (is cipher!)\r\n"); }
+                }// else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + cipherSourcePath.toAbsolutePath() + " (is cipher!)\r\n"); }
             } // else { ui.error("Skipping directory: " + targetSourcePath.getFileName() + "\r\n"); } // End "not a directory"
             
         } // Encrypt Files Loop // Encrypt Files Loop

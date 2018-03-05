@@ -31,100 +31,92 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import static rdj.FinalCrypt.verbose;
 
 public class Validate
 {
+    private static Path selectedCipherPath;
     public static void checkCipher(UI ui, FinalCrypt finalcrypt, Path cipherPath)
     {
         State.cipherSelected = State.INVALID;
         State.cipherReady = false;
-	long minSize = 1024;
+	long minSize = 1024; long cipherSize = 0; boolean symlink = false; boolean writable = false; boolean report = true;
 
-	long cipherSize = 0;
-
-	if (
-		(Files.isRegularFile(cipherPath))
-	   )
+	if (cipherPath.toAbsolutePath().toString().startsWith("/dev/"))
 	{
-            try { cipherSize = (int)Files.size(cipherPath); } catch (IOException ex) { ui.error("StateControler.validateCipher Files.size(finalCrypt.getCipherPath()) " + ex.getMessage() + "\r\n"); }
-	    if ( cipherSize >= minSize )
+	    if (cipherPath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Cipher Device Selection
 	    {
-		State.cipherSelected = State.FILE;
-		State.cipherReady = true;
-		ui.status("", false);
-	    }
-	    else
-	    {
-		State.cipherSelected = State.FILE;
-		State.cipherReady = false;
-		ui.error("Warning: Cipher smaller than " + minSize + " bytes \r\n");
-	    }
-	}
-	else if (cipherPath.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Cipher Device Selection
-	{
-	    if (!cipherPath.getFileName().endsWith("sda"))
-	    {
-		minSize = 0;
-		boolean symlink = false;
-		boolean writable = false;
-		boolean report = false;
-		if (isValidFile(ui, "Validate.checkCipher", cipherPath, minSize, symlink, writable, report))
+		if (!cipherPath.getFileName().endsWith("sda"))
 		{
-		    if (Character.isDigit(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-1)))
+		    minSize = 0; symlink = false; writable = false;	report = false;
+		    if (isValidFile(ui, "Validate.checkCipher", cipherPath, minSize, symlink, writable, report))
 		    {
-			State.cipherSelected = State.PARTITION;
+			if (Character.isDigit(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-1)))
+			{
+			    State.cipherSelected = State.PARTITION;
+			    State.cipherReady = true;
+			}
+			else
+			{
+			    State.cipherSelected = State.DEVICE;
+			}
 			State.cipherReady = true;
-		    }
-		    else
+			selectedCipherPath = cipherPath;
+    //                  Get size of partition
+			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
+			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
+		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " Selected", false);
+		    } else { ui.status("Probably no read permission on " + cipherPath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+		}
+	    }
+	    else if (cipherPath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Cipher Device Selection
+	    {
+		if (
+			( ! cipherPath.getFileName().toString().endsWith("disk0"))
+		   )
+		{
+		    minSize = 0; symlink = false; writable = false;	report = false;
+		    if (isValidFile(ui, "Validate.checkCipher", cipherPath, 0, false, false, false))
 		    {
-			State.cipherSelected = State.DEVICE;
-		    }
+			if (
+				(Character.isDigit(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-1))) &&
+				(String.valueOf(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
+			   )
+			{
+			    State.cipherSelected = State.PARTITION;
+			}
+			else
+			{
+			    State.cipherSelected = State.DEVICE;
+			}
 
-		    State.cipherReady = true;
-//                  Get size of partition
-		    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
-		    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-		} else { ui.status("Probably no read permission on " + cipherPath + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+    //                  Get size of device        
+			State.cipherReady = true;
+			selectedCipherPath = cipherPath;
+			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
+			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
+		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " Selected", false);
+		    }
+		    else { ui.status("Probably no read permission on " + cipherPath + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
+		} else { State.cipherReady = false; } // disk0
 	    }
 	}
-	else if (cipherPath.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Cipher Device Selection
+//						    minSize  symlink writable  report
+	else if ( isValidFile(   ui, "", cipherPath,   1024,   false,   false, true) )
 	{
-	    if (
-		    ( ! cipherPath.getFileName().toString().endsWith("disk0"))
-	       )
-	    {
-		minSize = 0;
-		boolean symlink = false;
-		boolean writable = false;
-		boolean report = false;
-		if (isValidFile(ui, "Validate.checkCipher", cipherPath, 0, false, false, false))
-		{
-		    if (
-			    (Character.isDigit(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-1))) &&
-			    (String.valueOf(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
-		       )
-		    {
-			State.cipherSelected = State.PARTITION;
-		    }
-		    else
-		    {
-			State.cipherSelected = State.DEVICE;
-		    }
-
-//                  Get size of device        
-		    State.cipherReady = true;
-		    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
-		    { cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-		}
-		else { ui.status("Probably no read permission on " + cipherPath + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
-	    } else { State.cipherReady = false; } // disk0
+	    State.cipherSelected = State.FILE;
+	    State.cipherReady = true;
+	    selectedCipherPath = cipherPath;
+	    cipherSize = 0; try { cipherSize = Files.size(cipherPath.toAbsolutePath()); } catch (IOException ex) { ui.error("Error: Validate: IOException: else if ( isValidFile(..) " + ex.getLocalizedMessage() + "\r\n");	}
+	    ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " Selected", false);
 	}
 	else
 	{
 	    State.cipherSelected = State.INVALID;
 	    State.cipherReady = false;
+	    selectedCipherPath = null;
 	}
 	if ((cipherSize > 0) && (cipherSize < finalcrypt.getBufferSize())) { finalcrypt.setBufferSize((int)cipherSize); }
     }
@@ -132,13 +124,15 @@ public class Validate
     public static void checkTarget(UI ui, FinalCrypt finalcrypt, ArrayList<Path> targetPathList, Path cipherFilePath, String pattern, boolean negatePattern, boolean symlink, boolean status, boolean printgpt, boolean deletegpt)
     {
 //	Test for Cipher Device Target
+	ArrayList<Path> extendedPathList = new ArrayList<>();
+	long minSize = 1024; long targetSize = 0;
 	if ((targetPathList.size() == 1))
 	{
 	    if (targetPathList.get(0).toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Cipher Device Device
 	    {
 		if  ( ! targetPathList.get(0).getFileName().toString().endsWith("sda")) // Not main disk
 		{
-		    long minSize = 0;
+		    minSize = 0;
 		    boolean writable = false;
 		    if (isValidFile(ui, "Validate.checkTarget", targetPathList.get(0), minSize, symlink, writable, status))
 		    {
@@ -146,6 +140,11 @@ public class Validate
 			{
 			    State.targetSelected = State.DEVICE;
 			    State.targetReady = true;
+			    			    
+			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetPathList.get(0), EnumSet.of(StandardOpenOption.READ)))
+			    { targetSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated", false);
+
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0))); }
 			}
@@ -153,15 +152,16 @@ public class Validate
 			{
 			    State.targetSelected = State.PARTITION;
 			    State.targetReady = false;
-			}
-		    } else { ui.status("Probably no read & write permission on " + targetPathList.get(0).toString() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
+			}			
+		    }
+		    else { ui.status("Probably no read & write permission on " + targetPathList.get(0).toString() + " execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true); }
 		}
 	    }
 	    else if (targetPathList.get(0).toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Cipher Device Device
 	    {
 		if ( ! targetPathList.get(0).getFileName().toString().endsWith("disk0")) // not primary disk
 		{
-		    long minSize = 0;
+		    minSize = 0;
 		    boolean writable = false;
 		    if (isValidFile(ui, "Validate.checkTarget", targetPathList.get(0), minSize, symlink, writable, status))
 		    {
@@ -171,7 +171,12 @@ public class Validate
 			   ) 
 			{
 			    State.targetSelected = State.DEVICE;
-			    State.targetReady = true;                    
+			    State.targetReady = true;
+			    
+			    try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetPathList.get(0), EnumSet.of(StandardOpenOption.READ)))
+			    { targetSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated", false);
+
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0))); }
 			}
@@ -180,7 +185,8 @@ public class Validate
 			    State.targetSelected = State.PARTITION;
 			    State.targetReady = false;
 			}
-		    } else { ui.status("Probably no read & write permission on " + targetPathList.get(0) + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
+		    }
+		    else { ui.status("Probably no read & write permission on " + targetPathList.get(0) + " execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
 		}
 	    }
 	    else // No Cipher Device Device Target selected
@@ -193,75 +199,106 @@ public class Validate
 //      En/Disable hasEncryptableItems
 	if (( State.cipherSelected != State.DEVICE ) && ( ! State.targetReady) && ( State.cipherReady )) // No need to scan for encryptable items without selected cipher for better performance
 	{
-	    long minSize = 1;
+	    minSize = 1;
 	    boolean writable = true;
 	    boolean report = false;
+	    ui.status("Scanning selection... ", true);
 	    if (( targetPathList.size() == 1 ) )
 	    {
-		if  (
-			(Files.isDirectory(targetPathList.get(0))) &&
-			(isValidDir(ui, targetPathList.get(0), symlink, true))
-		    )
+		if  ( (Files.isDirectory(targetPathList.get(0))) && (isValidDir(ui, targetPathList.get(0), symlink, true)) )
 		{
-//				      getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-		    for (Path path:   getExtendedPathList(   ui,                            targetPathList,  cipherFilePath,      minSize,         symlink,             true,        pattern,         negatePattern,          false) )
-		    {//                      "Validate.checkTarget singledir"
-			if ( isValidFile(ui, "vcsd", path, minSize, symlink, writable, false ) )		    { State.targetSelected = State.FILE; State.targetReady = true; }
+//				       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList,    Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
+		    extendedPathList = getExtendedPathList(   ui,                            targetPathList, selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
+		    if ( extendedPathList.size() > 0 )
+		    {
+			State.targetSelected = State.FILE;
+			State.targetReady = true;
+			ui.status("Targets validated: " + extendedPathList.size() + "\r\n", true);
+		    }
+		    else
+		    {
+			State.targetSelected = State.INVALID;
+			State.targetReady = false;
+			ui.status("Nothing selected\r\n", true);
 		    }
 		} //                     "Validate.checkTarget singlefile"
-		else if (
-			    (! Files.isDirectory(targetPathList.get(0))) &&
-			    (isValidFile(ui, "vcsf", targetPathList.get(0), minSize, symlink, writable, true))
-			)    { State.targetSelected = State.FILE; State.targetReady = true; }
-		else { State.targetSelected = State.INVALID; State.targetReady = false; }
+		else if ( (! Files.isDirectory(targetPathList.get(0))) && (isValidFile(ui, "vcsf", targetPathList.get(0), selectedCipherPath, minSize, symlink, writable, true)) )
+		{
+		    State.targetSelected = State.FILE;
+		    State.targetReady = true;
+
+		    targetSize = 0; try { targetSize = Files.size(targetPathList.get(0).toAbsolutePath()); } catch (IOException ex) { ui.error("Error: Validate: IOException: Files.size(targetPathList.get(0) " + ex.getLocalizedMessage() + "\r\n");	}
+		    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+		}
+		else
+		{
+		    State.targetSelected = State.INVALID;
+		    State.targetReady = false;
+		    ui.status("Nothing selected\r\n", true);
+		}
 	    }
 	    else if ( targetPathList.size() > 1 )
 	    {
-//			       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-		for (Path path:getExtendedPathList(   ui,                            targetPathList,  cipherFilePath,      minSize,         symlink,             true,        pattern,         negatePattern,         false) )
-		{//                      "Validate.checkTarget multifile"
-		    if ( isValidFile(ui, "vcmf",           path, minSize, symlink, writable, false ) )	    { State.targetSelected = State.FILE; State.targetReady = true; }
-		}
+//				       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
+		    extendedPathList = getExtendedPathList(   ui,                            targetPathList,  selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
+		    if ( extendedPathList.size() > 0 )
+		    {
+			State.targetSelected = State.FILE;
+			State.targetReady = true;
+			ui.status("Targets selected: " + extendedPathList.size() + "\r\n", true);
+		    }
+		    else
+		    {
+			State.targetSelected = State.INVALID;
+			State.targetReady = false;
+			ui.status("Nothing selected\r\n", true);
+		    }
+	    }
+	    else
+	    {
+		State.targetSelected = State.INVALID;
+		State.targetReady = false;
+		ui.status("Nothing selected\r\n", true);
 	    }
 	}
     }
 
     synchronized public static boolean isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
     {
-        boolean validdir = true; String conditions = "";		    String exist = ""; String read = ""; String write = ""; String symbolic = "";
-        if ( ! Files.exists(targetDirPath))				    { validdir = false; exist = "[not found] "; conditions += exist; }
-        if ( ! Files.isReadable(targetDirPath) )			    { validdir = false; read = "[not readable] "; conditions += read;  }
-        if ( ! Files.isWritable(targetDirPath) )			    { validdir = false; write = "[not writable] "; conditions += write;  }
-        if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )	    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-//        if ( validdir ) {  } else { if ( report )			    { ui.error("Warning: Validate.isValidDir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
-        if ( validdir ) {  } else { if ( report )			    { ui.error("Warning: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
+        boolean validdir = true; String conditions = "";				    String exist = ""; String read = ""; String write = ""; String symbolic = "";
+        if ( ! Files.exists(targetDirPath))						    { validdir = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.isReadable(targetDirPath) )					    { validdir = false; read = "[not readable] "; conditions += read;  }
+        if ( ! Files.isWritable(targetDirPath) )					    { validdir = false; write = "[not writable] "; conditions += write;  }
+        if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )			    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
+//        if ( validdir ) {  } else { if ( report )					    { ui.error("Warning: Validate.isValidDir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
+        if ( validdir ) {  } else { if ( report )					    { ui.error("Warning: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
         return validdir;
     }
 
-    synchronized public static boolean isValidFile(UI ui, Path targetSourcePath, Path cipherSourcePath, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==cipherSource comparison)
+    synchronized public static boolean isValidFile(UI ui, String caller, Path targetSourcepath, Path cipherSourcePath, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==cipherSource comparison)
     {
 	
-        boolean validfile = true; String conditions = "";			    String cipher = "";
-	validfile = isValidFile(ui, "Validate.isValidFileWrapper", targetSourcePath, minSize, symlink, writable, report);
-	if (validfile) { if ( targetSourcePath.compareTo(cipherSourcePath) == 0 )   { validfile = false; cipher = "[isCipher] "; conditions += cipher; }}	
-//        if ( ! validfile ) { if ( report )					    { ui.error("Warning: Validate.isValidFile(.): " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
-        if ( ! validfile ) { if ( report )					    { ui.error("Warning: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        boolean validfile = true; String conditions = "";				    String cipher = "";
+	validfile = isValidFile(ui, caller, targetSourcepath, minSize, symlink, writable, report);
+	if (validfile) { if ( targetSourcepath.compareTo(cipherSourcePath) == 0 )	    { validfile = false; cipher = "[isCipher] "; conditions += cipher; }}	
+//        if ( ! validfile ) { if ( report )						    { ui.error("Warning: Validate.isValidFile(.): " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
+        if ( ! validfile ) { if ( report )						    { ui.error("Warning: " + targetSourcepath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    
         return validfile;
     }
 
-    synchronized public static boolean isValidFile(UI ui, String caller, Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+    synchronized public static boolean isValidFile(UI ui, String caller, Path path, long minSize, boolean symlink, boolean writable, boolean report)
     {
-        boolean validfile = true; String conditions = "";		    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
+        boolean validfile = true; String conditions = "";				    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
 
-        if ( ! Files.exists(targetSourcePath))                              { validfile = false; exist = "[not found] "; conditions += exist; }
+        if ( ! Files.exists(path))							    { validfile = false; exist = "[not found] "; conditions += exist; }
         else
         {
-            if ( Files.isDirectory(targetSourcePath))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
-	    long fileSize = 0; try { fileSize = Files.size(targetSourcePath.toAbsolutePath()); } catch (IOException ex) { ui.error("Error: Validate: IOException: Files.size(" + targetSourcePath.toAbsolutePath().toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getLocalizedMessage() + "\r\n");	}
-            if ( fileSize < minSize )					    { validfile = false; size = targetSourcePath.toString() + " smaller than " + minSize + " byte "; conditions += size; }
-            if ( ! Files.isReadable(targetSourcePath) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ((writable) && ( ! Files.isWritable(targetSourcePath)))      { validfile = false; write = "[not writable] "; conditions += write; }
-            if ( (! symlink) && (Files.isSymbolicLink(targetSourcePath)) )  { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
+            if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
+	    long fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.error("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getLocalizedMessage() + "\r\n");	}
+            if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
+            if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
+            if ((writable) && ( ! Files.isWritable(path)))				    { validfile = false; write = "[not writable] "; conditions += write; }
+            if ( (! symlink) && (Files.isSymbolicLink(path)) )				    { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
         }
         
 	if ( ! validfile )
@@ -329,6 +366,22 @@ public class Validate
 
         return recursivePathList;
     }
+    
+    synchronized public static String getHumanSize(double value,int decimals)
+    {
+        int x = 0;
+        long factor;
+        double newValue = value;
+        String returnString = new String("");
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZiB","EiB","PiB","TiB","GiB","MiB","KiB","Bytes"));
+        for (factor = 70; factor > 0; factor -= 10)
+        {
+            if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
+        }
+        if (factor == 0) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%." + decimals + "f", (newValue)) + " " + magnitude.get(x); }
+        return returnString;
+    }
+    
 }
 
 // override only methods of our need (SimpleFileVisitor is a full blown class)
