@@ -69,7 +69,7 @@ public class DeviceManager extends Thread
 //		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
 	if ( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),		  0L,		false,		  false,	   true) )
 	{
-	    ui.status("Printing GUID Partition Table: " + cipherDevice.getPath().toString() + "\r\n", true);
+//	    ui.status("Printing GUID Partition Table: " + cipherDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.read(cipherDevice);
 	    gpt.print();
@@ -81,7 +81,7 @@ public class DeviceManager extends Thread
 //		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
 	if ( Validate.isValidFile(   ui,	    "", targetDevice.getPath(),		  0L,		false,		   true,	   true) )
 	{
-	    ui.status("Deleting GUID Partition Table: " + targetDevice.getPath().toString() + "\r\n", true);
+//	    ui.status("Deleting GUID Partition Table: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.write(targetDevice);
 	    gpt.read(targetDevice);

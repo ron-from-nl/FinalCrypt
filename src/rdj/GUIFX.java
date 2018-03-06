@@ -249,7 +249,7 @@ public class GUIFX extends Application implements UI, Initializable
         cipherFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { cipherFileChooserActionPerformed(evt); });
         
         cipherFileChooserComponentAlteration(cipherFileChooser);
-        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(50), ae -> 
+        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
         {
             cipherFileSwingNode.setContent(cipherFileChooser);
         }
@@ -562,8 +562,16 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 for (File file:targetFileChooser.getSelectedFiles()) 
                 {
-                    try { Desktop.getDesktop().open(file); }
-                    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+		    if	(( State.targetSelected == State.FILE ))
+		    {
+		        try { Desktop.getDesktop().open(file); }
+			catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+		    }
+		    else if (( State.targetSelected == State.DEVICE ))
+		    {
+			tab.getSelectionModel().select(1);
+			DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(new Device(this,file.toPath()));
+		    }
                 }
             }
         } else { encryptButton.setDisable(true); }
@@ -622,7 +630,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-        State.targetSelected = State.INVALID;
+        State.targetSelected = State.OBJECT;
         State.targetReady = false;
         
         targetPathList = new ArrayList<>(); targetPathList.clear();
@@ -704,7 +712,6 @@ public class GUIFX extends Application implements UI, Initializable
                 encryptButton.setDisable(false);
                 pauseToggleButton.setDisable(true);
                 stopButton.setDisable(true);
-//		status("",false); 
             }
             else
             {
@@ -723,10 +730,17 @@ public class GUIFX extends Application implements UI, Initializable
         {
             if ( cipherFileChooser.getSelectedFile().isFile() ) 
             {
-                try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-                catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
+		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
+		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
             }
-        } else { encryptButton.setDisable(true); }
+	    else if (( State.cipherSelected == State.DEVICE ))
+	    {
+		tab.getSelectionModel().select(1);
+		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(new Device(this,cipherFileChooser.getSelectedFile().toPath()));
+	    }
+        }
+	else { encryptButton.setDisable(true); }
+	
         cipherFileChooser.setFileFilter(this.nonFinalCryptFilter);
         cipherFileChooser.setFileFilter(cipherFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
         cipherFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
@@ -1153,11 +1167,15 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptTabSelectionChanged(Event event)
     {
-        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(50), ae -> 
-        {
-            targetFileSwingNode.setContent(targetFileChooser);
-        }
-        )); timeline.play();
+        String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
+        if ( platform.indexOf("mac") != -1 ) 
+	{
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
+	    {
+		targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious cipher and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+	    }
+	    )); timeline.play();
+	}
     }
 
     @FXML

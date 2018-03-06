@@ -164,7 +164,7 @@ public class CLUI implements UI
         if      
         (
 	    (State.targetSelected == State.FILE) && (State.targetReady) &&
-	    (State.cipherSelected == State.FILE) &&	(State.cipherReady)
+	    (State.cipherSelected == State.FILE) && (State.cipherReady)
 	)
         {
             Mode.modeReady = true; Mode.setMode(Mode.ENCRYPT);
@@ -232,8 +232,9 @@ public class CLUI implements UI
         }
         else
         {
-	    log(State.print());
-            status("Nothing to do.\r\n", true);
+//	    log(State.print());
+//          status("Nothing to do.\r\n", true);
+//	    usage();
         }
             
     }

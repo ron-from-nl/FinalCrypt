@@ -46,7 +46,7 @@ public class Configuration
 {    
     private UI ui;
 
-    private  String platform;
+    public   String platform;
     private  String fileSeparator;
     private  String lineTerminator;
     private  Path  dataDirPath;

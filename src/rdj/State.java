@@ -20,23 +20,23 @@ package rdj;
 
 public class State
 {
-    public final    static  int	    INVALID =            0;
-    public final    static  int	    FILE =               1;
-    public final    static  int	    DIR =                2;
-    public final    static  int	    MULTI =              3;
-    public final    static  int	    DEVICE =             4;
-    public final    static  int	    PARTITION =          5;
-    private static final String[]   ITEMSELECTDESCRIPTION = new String[] { "Invalid","File","Directory","Multi","Device","Partition" };
+    public final    static  int	    OBJECT =		    0;
+    public final    static  int	    FILE =		    1;
+    public final    static  int	    DIR =		    2;
+    public final    static  int	    MULTI =		    3;
+    public final    static  int	    DEVICE =		    4;
+    public final    static  int	    PARTITION =		    5;
+    private static final String[]   ITEMSELECTDESCRIPTION = new String[] { "Object","File","Directory","Multi","Device","Partition" };
 
-    public          static  int targetSelected =     INVALID;
-    public          static  int cipherSelected =     INVALID;
+    public          static  int targetSelected =     OBJECT;
+    public          static  int cipherSelected =     OBJECT;
     
     public          static  boolean targetReady =    false;
     public          static  boolean cipherReady =    false;
     public static   void    reset()
     {
-        targetSelected = INVALID;
-        cipherSelected = INVALID;
+        targetSelected = OBJECT;
+        cipherSelected = OBJECT;
         targetReady =    false;
         cipherReady =    false;
     }
@@ -49,8 +49,13 @@ public class State
     public static String print()
     {
 	String s = "";
-	s += "Cipher selected: " + getCipherSelectedDescription() + " ready: " + cipherReady + "\r\n";
-	s += "Target selected: " + getTargetSelectedDescription() + " ready: " + targetReady + "\r\n";
+//	s += "Cipher selected: " + getCipherSelectedDescription() + " ready: " + cipherReady + "\r\n";
+//	s += "Target selected: " + getTargetSelectedDescription() + " ready: " + targetReady + "\r\n";
+	
+	String cipherString = ""; if ( cipherReady ) { /*cipherString = "Cipher " + getCipherSelectedDescription() + " is okay\r\n";*/ } else { cipherString = "Cipher " + getCipherSelectedDescription() + " is invalid. Please select a valid Cipher.\r\n"; }
+	String targetString = ""; if ( targetReady ) { /*targetString = "Target " + getTargetSelectedDescription() + " is okay\r\n";*/ } else { targetString = "Target " + getTargetSelectedDescription() + " is invalid. Please select a valid Target.\r\n"; }
+	s += cipherString;
+	s += targetString;
 	return s;
     }
 }
