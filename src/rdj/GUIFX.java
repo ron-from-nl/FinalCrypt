@@ -620,7 +620,7 @@ public class GUIFX extends Application implements UI, Initializable
 //  FileChooser Listener methods
     private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
     {
-	if (!encryptionRunning)
+	if ((!encryptionRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
 	{
 	    targetFileChooserPropertyCheck(true);
 	}
