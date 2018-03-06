@@ -38,6 +38,7 @@ import static rdj.FinalCrypt.verbose;
 public class Validate
 {
     private static Path selectedCipherPath;
+    public static long bytesCount;
     
     public static void checkCipher(UI ui, FinalCrypt finalcrypt, Path cipherPath)
     {
@@ -68,7 +69,7 @@ public class Validate
     //                  Get size of partition
 			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
 			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " validated\r\n", false);
+		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " selected\r\n", false);
 		    }
 		    else { /*ui.status("Probably no read permission on " + cipherPath + " Run FinalCRypt with sudo (superuser) rights or execute: \"sudo usermod -a -G disk " + System.getProperty("user.name") + "\" and re-login your desktop and try again\r\n", true);*/ }
 		}
@@ -101,7 +102,7 @@ public class Validate
 			selectedCipherPath = cipherPath;
 			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(cipherPath, EnumSet.of(StandardOpenOption.READ)))
 			{ cipherSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " validated\r\n", false);
+		        ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " selected\r\n", false);
 		    }
 		    else { ui.status("Probably no read permission on " + cipherPath + " Run FinalCRypt with sudo (superuser) rights or execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true); }
 		} else { State.cipherReady = false; } // disk0
@@ -114,7 +115,7 @@ public class Validate
 	    State.cipherReady = true;
 	    selectedCipherPath = cipherPath;
 	    cipherSize = 0; try { cipherSize = Files.size(cipherPath.toAbsolutePath()); } catch (IOException ex) { ui.error("Error: Validate: IOException: else if ( isValidFile(..) " + ex.getLocalizedMessage() + "\r\n");	}
-	    ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " validated\r\n", false);
+	    ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " selected\r\n", false);
 	}
 	else
 	{
@@ -155,7 +156,7 @@ public class Validate
 
 			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetPathList.get(0), EnumSet.of(StandardOpenOption.READ)))
 			{ targetSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", true);
+			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
 			
 			if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0))); return; }
 		    }
@@ -186,7 +187,7 @@ public class Validate
 
 			try (final SeekableByteChannel deviceChannel = Files.newByteChannel(targetPathList.get(0), EnumSet.of(StandardOpenOption.READ)))
 			{ targetSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.status(ex.getMessage(), true); }
-			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", true);
+			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
 
 			if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0)));  return; }
 		    }
@@ -206,18 +207,18 @@ public class Validate
 	    minSize = 1;
 	    boolean writable = true;
 	    boolean report = false;
-	    ui.status("Scanning selection... ", true);
 	    if (( targetPathList.size() == 1 ) )
 	    {
 		if  ( (Files.isDirectory(targetPathList.get(0))) && (isValidDir(ui, targetPathList.get(0), symlink, true)) )
 		{
+		    ui.status("Scanning selection... ", true);
 //				       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList,    Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
 		    extendedPathList = getExtendedPathList(   ui,                            targetPathList, selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
 		    if ( extendedPathList.size() > 0 )
 		    {
 			State.targetSelected = State.FILE;
 			State.targetReady = true;
-			ui.status("Targets validated: " + extendedPathList.size() + "\r\n", true);
+			ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", true);
 		    }
 		    else
 		    {
@@ -231,7 +232,7 @@ public class Validate
 		    State.targetSelected = State.FILE;
 		    State.targetReady = true;
 
-		    targetSize = 0; try { targetSize = Files.size(targetPathList.get(0).toAbsolutePath()); } catch (IOException ex) { ui.error("Error: Validate: IOException: Files.size(targetPathList.get(0) " + ex.getLocalizedMessage() + "\r\n");	}
+		    targetSize = 0; try { targetSize = Files.size(targetPathList.get(0).toAbsolutePath()); bytesCount += targetSize; } catch (IOException ex) { ui.error("Error: Validate: IOException: Files.size(targetPathList.get(0) " + ex.getLocalizedMessage() + "\r\n");	}
 		    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
 		}
 		else
@@ -243,20 +244,21 @@ public class Validate
 	    }
 	    else if ( targetPathList.size() > 1 )
 	    {
-//				       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-		    extendedPathList = getExtendedPathList(   ui,                            targetPathList,  selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
-		    if ( extendedPathList.size() > 0 )
-		    {
-			State.targetSelected = State.FILE;
-			State.targetReady = true;
-			ui.status("Targets selected: " + extendedPathList.size() + "\r\n", true);
-		    }
-		    else
-		    {
-			State.targetSelected = State.OBJECT;
-			State.targetReady = false;
-			ui.status("Nothing selected\r\n", true);
-		    }
+		ui.status("Scanning selections... ", true);
+//				   getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
+		extendedPathList = getExtendedPathList(   ui,                            targetPathList,  selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
+		if ( extendedPathList.size() > 0 )
+		{
+		    State.targetSelected = State.FILE;
+		    State.targetReady = true;
+		    ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", true);
+		}
+		else
+		{
+		    State.targetSelected = State.OBJECT;
+		    State.targetReady = false;
+		    ui.status("Nothing selected\r\n", true);
+		}
 	    }
 	    else
 	    {
@@ -337,11 +339,11 @@ public class Validate
         }
         else
         {
-            for (Path userSelectedItemPath:userSelectedItemsPathList)
+            for (Path path:userSelectedItemsPathList)
             {
-                if ( Files.isDirectory(userSelectedItemPath) )
+                if ( Files.isDirectory(path) )
                 {
-                    for (Path subItemPath:getDirectoryPathList(ui, userSelectedItemPath.toFile(), minSize, symlink, writable, pattern, negatePattern))
+                    for (Path subItemPath:getDirectoryPathList(ui, path.toFile(), minSize, symlink, writable, pattern, negatePattern))
                     {
                         // cipherdetection not shown?
                         if ( ((subItemPath.toAbsolutePath().compareTo(cipherPath.toAbsolutePath()) != 0)) ) { recursivePathList.add(subItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
@@ -349,10 +351,16 @@ public class Validate
                 }
                 else
                 {
-                    if ( ((userSelectedItemPath.compareTo(cipherPath) != 0)) ) { recursivePathList.add(userSelectedItemPath); } else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
+                    if ( ((path.compareTo(cipherPath) != 0)) )
+		    {
+			recursivePathList.add(path);
+			try { bytesCount += Files.size(path); } catch (IOException ex) { ui.error("Error: IOException: bytesCount += Files.size(path) " + ex.getMessage() + "\r\n"); }
+		    }
+		    else { if (status) { ui.status("Warning: cipher-file: " + cipherPath.toAbsolutePath() + " will be excluded!\r\n", true); }}
                 }
             }
         }
+	
         return recursivePathList;
     }
 
@@ -367,6 +375,8 @@ public class Validate
         MySimpleFileVisitor mySimpleFileVisitor = new MySimpleFileVisitor(   ui,	 verbose,         false,       minSize,         symlink,             true,                   true,        pattern,         negatePattern);
         try{Files.walkFileTree(file.toPath(), opts, Integer.MAX_VALUE, mySimpleFileVisitor);} catch(IOException e){System.err.println(e);}
         recursivePathList = mySimpleFileVisitor.getPathList();
+	
+	bytesCount += mySimpleFileVisitor.bytesCount;
 
         return recursivePathList;
     }
@@ -401,6 +411,7 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
     private final boolean returnpathlist; 
     private final ArrayList<Path> pathList;
     private boolean negatePattern;
+    public long bytesCount = 0;
 
 //  Default CONSTRUCTOR
 
@@ -420,11 +431,12 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
         this.returnpathlist = returnpathlist;
         pathList = new ArrayList<Path>();
         this.negatePattern = negatePattern;
+	bytesCount = 0;
     }
    
     @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
     {
-        if ( Validate.isValidDir(ui, path, symlink, verbose) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; }
+        if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; }
     }
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
@@ -438,7 +450,11 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
                 else if (returnpathlist)    
                 {
 //				  isValidFile(UI ui,                   String caller,	Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-                    if ( Validate.isValidFile(   ui, "MySimpleFileVisitor.visitFile",                    path, this.minSize,   this.symlink,     this.writable,   this.verbose) ) { pathList.add(path); } 
+                    if ( Validate.isValidFile(   ui, "MySimpleFileVisitor.visitFile",                    path, this.minSize,   this.symlink,     this.writable,   this.verbose) )
+		    {
+			pathList.add(path);
+			try { bytesCount += Files.size(path); } catch (IOException ex) { ui.error("Error: FileVisitResult IOException: Files.size() " + ex.getMessage() + "\r\n"); }
+		    } 
                 }
                 else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
             }   
@@ -451,7 +467,11 @@ class MySimpleFileVisitor extends SimpleFileVisitor<Path>
                 else if (returnpathlist)
                 {
 //				    isValidFile(UI ui,                   String caller,	Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-                    if ( Validate.isValidFile(     ui, "MySimpleFileVisitor.visitFile",                  path, this.minSize,    this.symlink,    this.writable, this.verbose)) { pathList.add(path); } 
+                    if ( Validate.isValidFile(     ui, "MySimpleFileVisitor.visitFile",                  path, this.minSize,    this.symlink,    this.writable, this.verbose))
+		    {
+			pathList.add(path);
+			try { bytesCount += Files.size(path); } catch (IOException ex) { ui.error("Error: FileVisitResult IOException: Files.size() " + ex.getMessage() + "\r\n"); }
+		    }
                 }
                 else  { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
             }   

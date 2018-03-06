@@ -640,6 +640,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    cursorWait();
 
+	    Validate.bytesCount = 0;
 	    for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
 	    
 //	    En/Disable FileChooser deletebutton
