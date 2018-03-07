@@ -161,7 +161,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private SwingNode targetFileSwingNode;
     private Path ciphePath;
-    private ArrayList<Path> targetPathList;
+//    private ArrayList<Path> targetPathList;
+    private ArrayList<Path> extendedTargetPathList;
     private boolean symlink = false;
     
     @Override
@@ -633,7 +634,7 @@ public class GUIFX extends Application implements UI, Initializable
         State.targetSelected = State.OBJECT;
         State.targetReady = false;
         
-        targetPathList = new ArrayList<>(); targetPathList.clear();
+        ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
 
 	targetFileDeleteButton.setEnabled(false);
         if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0))
@@ -648,8 +649,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    Get Globbing Pattern String
 	    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
-	    
-	    if (!encryptionRunning) { Validate.checkTarget(this, finalCrypt, targetPathList, ciphePath, pattern, negatePattern, symlink, status, false, false); }
+//							                getTargetList(UI ui, FinalCrypt finalcrypt, ArrayList<Path> targetPathList, Path cipherPath, String pattern, boolean negatePattern, boolean symlink, boolean status, boolean printgpt, boolean deletegpt)
+	    if (!encryptionRunning) { extendedTargetPathList = Validate.getTargetList( this,            finalCrypt,                 targetPathList,       ciphePath,        pattern,         negatePattern,         symlink,         status,            false,             false); }
 	    cursorDefault();
 	}
 	
@@ -895,17 +896,11 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
                 {
-//                  Extend chooser.selectedfiles and add to targetFilesPath
-                    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
-//								     getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-		    status("Retreiving targets...\r\n",false);
-		    ArrayList<Path> targetFilesPathList = Validate.getExtendedPathList(   ui,                              targetPathList,       ciphePath, 1L,                   symlink,             true,        pattern,         negatePattern,           true);
-
                     filesProgressBar.setProgress(0.0);
                     fileProgressBar.setProgress(0.0);
-
+                    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
                     encryptionStarted();
-                    finalCrypt.encryptSelection(targetFilesPathList, cipherFileChooser.getSelectedFile().toPath());
+                    finalCrypt.encryptSelection(extendedTargetPathList, cipherFileChooser.getSelectedFile().toPath());
                 }
                 else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
                 {

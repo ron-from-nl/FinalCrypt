@@ -55,6 +55,7 @@ public class CLUI implements UI
         boolean deletegpt = false;
 
         ArrayList<Path> targetPathList = new ArrayList<>();
+        ArrayList<Path> extendedTargetPathList = new ArrayList<>();
         Path batchFilePath = null;
         Path targetFilePath = null;
         Path cipherFilePath = null;
@@ -115,18 +116,7 @@ public class CLUI implements UI
         
         if ( cfsetneeded )
 	{
-//	    State.cipherSelected = State.INVALID;
-//	    State.cipherReady = false;
-//
-//    //      Cipher Validation        
-//	    if (Files.exists(cipherFilePath))
-//	    {
-		Validate.checkCipher(this, finalCrypt, cipherFilePath);
-//	    }
-//	    else
-//	    { 
-//		error("Cipher parameter: " + cipherFilePath + " does not exists\r\n"); usage();
-//	    }            
+	    Validate.checkCipher(this, finalCrypt, cipherFilePath);
 	}
 
 //////////////////////////////////////////////////// CHECK TARGETFILE INPUT /////////////////////////////////////////////////
@@ -154,7 +144,7 @@ public class CLUI implements UI
             }            
         }
         
-	Validate.checkTarget(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, false, printgpt, deletegpt);
+	extendedTargetPathList = Validate.getTargetList(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, false, printgpt, deletegpt);
 
 	
 /////////////////////////////////////////////// SET MODE ////////////////////////////////////////////////////
@@ -207,12 +197,8 @@ public class CLUI implements UI
             DeviceManager deviceManager;
             if ( ( Mode.getMode() == Mode.ENCRYPT ) || ( Mode.getMode() == Mode.ENCRYPTRAW ))
             {
-//                Convert small PathList from parameters into ExtendedPathList (contents of subdirectory parameters as targetFile)
-		log("Retreiving targets...\r\n\r\n");
-//								       getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-                ArrayList<Path> targetFilesPathListExtended = Validate.getExtendedPathList(   ui,                            targetPathList,  cipherFilePath,           1L,         symlink,             true,        pattern,         negatePattern,          false);
                 encryptionStarted();
-                finalCrypt.encryptSelection(targetFilesPathListExtended, cipherFilePath);
+                finalCrypt.encryptSelection(extendedTargetPathList, cipherFilePath);
             }
             else if ( Mode.getMode() == Mode.CREATE_CIPHER_DEVICE )
             {
