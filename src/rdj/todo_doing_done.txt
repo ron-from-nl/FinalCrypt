@@ -7,12 +7,9 @@ Backup update locations (properties, daily check / history)
 
 Added Aborting on wrong Cipher
 Added optional cipher password to protect cipher from unauthorized usage
-Added VERSION2 Alert Subject / Message
 
 =================================== Done ====================================
 
-Added improved Update system
-Added Validate (all userdata) Object
 
 ============================= Source Committed ==============================
 
@@ -22,7 +19,11 @@ Added Validate (all userdata) Object
 
 ============================= Binaries Released =============================
 
-
+Increased GUI performance & logging
+GPT printing from GUI (Mac & Linux only)
+Added VERSION2 Alert Subject / Message
+Added improved Update system
+Added Validate (all userdata) Object
 Fixed copy filesattribute: lastModified (set attrib before shredding original)
 Removed false logging (causing a mess in logfiles and log textArea)
 Fixed OSX SeakableByteChannel.size bug with custom getDeviceSize method
