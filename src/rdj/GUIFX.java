@@ -557,24 +557,22 @@ public class GUIFX extends Application implements UI, Initializable
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-        if ((targetFileChooser != null)  && (targetFileChooser.getSelectedFiles() != null))
+        if ((targetFileChooser != null)  && (targetFileChooser.getSelectedFiles() != null) && ( targetFileChooser.getSelectedFiles().length == 1 ))
         {
-            if ( targetFileChooser.getSelectedFiles().length > 0 ) 
-            {
-                for (File file:targetFileChooser.getSelectedFiles()) 
-                {
-		    if	(( State.targetSelected == State.FILE ))
-		    {
-		        try { Desktop.getDesktop().open(file); }
-			catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
-		    }
-		    else if (( State.targetSelected == State.DEVICE ))
-		    {
-			tab.getSelectionModel().select(1);
-			DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(new Device(this,file.toPath()));
-		    }
-                }
-            }
+	    if (( State.targetSelected == State.DEVICE ))
+	    {
+		tab.getSelectionModel().select(1);
+		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(new Device(this,targetFileChooser.getSelectedFile().toPath()));
+	    }
+	    else
+	    {
+//												device  minsize	 symlink  writable  status
+		if (Validate.isValidFile(this, "", targetFileChooser.getSelectedFile().toPath(), false,      1L, symlink,    false, true))
+		{
+		    try { Desktop.getDesktop().open(targetFileChooser.getSelectedFile()); }
+		    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+		}
+	    }
         } else { encryptButton.setDisable(true); }
         targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
     }                                                

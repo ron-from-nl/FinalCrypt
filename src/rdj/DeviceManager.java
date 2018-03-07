@@ -28,8 +28,8 @@ public class DeviceManager extends Thread
     
     public void createCipherDevice(Path cipherFilePath, Device targetDevice)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,            "", targetDevice.getPath(),		  0L,           false,             true,           true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", targetDevice.getPath(),		  true,		  1L,           false,             true,           true) )
 	{
 	    ui.status("Creating Cipher Device: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
@@ -43,10 +43,10 @@ public class DeviceManager extends Thread
 
     public void cloneCipherDevice(Device cipherDevice, Device targetDevice)
     {
-//		           isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
+//		           isValidFile(UI ui, String caller,  Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	if (
-		( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),	       0L,	     false,	       false,	        true) ) &&
-		( Validate.isValidFile(   ui,            "", targetDevice.getPath(),           0L,	     false,	        true,	        true) )
+		( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),	       true,	       1L,	     false,	       false,	        true) ) &&
+		( Validate.isValidFile(   ui,            "", targetDevice.getPath(),           true,	       1L,	     false,	        true,	        true) )
 	    )
 	{
 	    ui.status("Cloning Cipher Device: " + cipherDevice.getPath() + " to " + targetDevice.getPath().toString() + "\r\n", true);
@@ -66,8 +66,8 @@ public class DeviceManager extends Thread
 //  Used by --gpt option
     public void printGPT(Device cipherDevice)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),		  0L,		false,		  false,	   true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", cipherDevice.getPath(),		  true,		  1L,		false,		  false,	   true) )
 	{
 //	    ui.status("Printing GUID Partition Table: " + cipherDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
@@ -78,8 +78,8 @@ public class DeviceManager extends Thread
     
     public void deleteGPT(Device targetDevice)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,	    "", targetDevice.getPath(),		  0L,		false,		   true,	   true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,	    "", targetDevice.getPath(),		  true,		  1L,		false,		   true,	   true) )
 	{
 //	    ui.status("Deleting GUID Partition Table: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);

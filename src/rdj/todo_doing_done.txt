@@ -19,6 +19,7 @@ Added optional cipher password to protect cipher from unauthorized usage
 
 ============================= Binaries Released =============================
 
+Removed Validate & getDesktop.open bug
 Increased GUI performance & logging
 GPT printing from GUI (Mac & Linux only)
 Added VERSION2 Alert Subject / Message

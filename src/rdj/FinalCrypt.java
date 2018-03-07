@@ -159,8 +159,8 @@ public class FinalCrypt extends Thread
 	    String fileStatusLine = "";
 //            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
-//							          isValidFile(UI ui, String caller, Path targetSourcePath, long minSize, boolean symlink, boolean writable, boolean report)
-            if ((! Files.isDirectory(targetSourcePath)) && (Validate.isValidFile(ui,            "",      targetSourcePath,	     1L,	 symlink,             true,          false)))
+//							          isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+            if ((! Files.isDirectory(targetSourcePath)) && (Validate.isValidFile(ui,            "",      targetSourcePath,	    false,	     1L,	 symlink,             true,          false)))
             {
                 if ((targetSourcePath.compareTo(cipherSourcePath) != 0))
                 {
