@@ -165,8 +165,8 @@ public class FinalCrypt extends Thread
                 if ((targetSourcePath.compareTo(cipherSourcePath) != 0))
                 {
 //                  Status    
-		    fileStatusLine += "Processing: " + targetSourcePath.toAbsolutePath() + " ";
-                    ui.status("Processing: " + targetSourcePath.toAbsolutePath() + " ", false);
+		    fileStatusLine += "Processing: " + targetSourcePath.toAbsolutePath() + " ";//				   
+                    if ( ! dry ) { ui.status("Processing: " + targetSourcePath.toAbsolutePath() + " ", false); } else { ui.status("Candidate: " + targetSourcePath.toAbsolutePath(), true); }
 
                     if ( ! dry ) // Real run passes this point
                     {
