@@ -159,6 +159,10 @@ public class CLUI implements UI
         {
             Mode.modeReady = true; Mode.setMode(Mode.ENCRYPT);
         }
+        else if ((State.targetSelected == State.FILE) && (State.targetReady) && (State.cipherSelected == State.DEVICE) && (State.cipherReady))
+        {
+            Mode.modeReady = true; Mode.setMode(Mode.ENCRYPTRAW);
+        }
         else if ((State.targetSelected == State.FILE) && (State.targetReady) && (State.cipherSelected == State.PARTITION) && (State.cipherReady))
         {
             Mode.modeReady = true; Mode.setMode(Mode.ENCRYPTRAW);

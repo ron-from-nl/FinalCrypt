@@ -59,6 +59,7 @@ public class Validate
 		    if (Character.isDigit(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-1))) // Partition
 		    {
 			State.cipherReady = true;
+			selectedCipherPath = cipherPath;
 			State.cipherSelected = State.PARTITION;
 			ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " selected\r\n", false);			    
 		    }
@@ -94,8 +95,10 @@ public class Validate
 			    (String.valueOf(cipherPath.getFileName().toString().charAt(cipherPath.getFileName().toString().length()-2)).equalsIgnoreCase("s"))
 		       )
 		    {
+			State.cipherReady = true;
+			selectedCipherPath = cipherPath;
 			State.cipherSelected = State.PARTITION;
-			ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " validated\r\n", false);
+			ui.status("Cipher " + State.getCipherSelectedDescription() + " " + cipherPath.toAbsolutePath().toString() + " " + getHumanSize(cipherSize,1) + " selected\r\n", false);
 		    }
 		    else
 		    {

@@ -676,6 +676,10 @@ public class GUIFX extends Application implements UI, Initializable
                     Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPT)); } });
                 }
             }
+            else if ((State.targetSelected == State.FILE) && (State.targetReady) && (State.cipherSelected == State.DEVICE) && (State.cipherReady))
+            {
+                Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPTRAW)); } });
+            }
             else if ((State.targetSelected == State.FILE) && (State.targetReady) && (State.cipherSelected == State.PARTITION) && (State.cipherReady))
             {
                 Mode.modeReady = true; Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setText(Mode.setMode(Mode.ENCRYPTRAW)); } });
