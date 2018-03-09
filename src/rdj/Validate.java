@@ -163,6 +163,7 @@ public class Validate
 			    State.targetReady = true;
 			    extendedPathList.add(targetPathList.get(0));
 			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			}
 			else
@@ -199,6 +200,7 @@ public class Validate
 			    State.targetReady = true;
 			    extendedPathList.add(targetPathList.get(0));
 			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0)));  return extendedPathList; }
 			}
 			else
@@ -268,7 +270,7 @@ public class Validate
 	    {
 		ui.status("Scanning selections... \r\n", true);
 //				   getExtendedPathList(UI ui, ArrayList<Path> userSelectedItemsPathList,     Path cipherPath, long minSize, boolean symlink, boolean writable, String pattern, boolean negatePattern, boolean status)
-		extendedPathList = getExtendedPathList(   ui,                            targetPathList,  selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,          false);
+		extendedPathList = getExtendedPathList(   ui,                            targetPathList,  selectedCipherPath,      minSize,         symlink,             true,        pattern,         negatePattern,           true);
 		if ( extendedPathList.size() > 0 )
 		{
 		    State.targetReady = true;
@@ -300,7 +302,7 @@ public class Validate
         if ( ! Files.isWritable(targetDirPath) )					    { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )			    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
 //        if ( validdir ) {  } else { if ( report )					    { ui.error("Warning: Validate.isValidDir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
-        if ( validdir ) {  } else { if ( report )					    { ui.status("Warning: " + targetDirPath.toString() + ": " + conditions + "\r\n", true); } }
+        if ( ! validdir )								    { if ( report ) { ui.status("Warning: " + targetDirPath.toString() + ": " + conditions + "\r\n", true); } }
         return validdir;
     }
 

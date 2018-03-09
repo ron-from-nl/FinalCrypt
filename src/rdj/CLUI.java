@@ -356,17 +356,16 @@ public class CLUI implements UI
         System.exit(1);
     }
 
-    @Override
-    public void log(String message)
+    @Override synchronized public void log(String message)
     {
         System.out.print(message);
-        Thread logThread = new Thread(new Runnable()
-        {
-//            private DeviceManager rawCipher;
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
+//        Thread logThread = new Thread(new Runnable()
+//        {
+////            private DeviceManager rawCipher;
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
                 try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
 
 //                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
@@ -377,39 +376,38 @@ public class CLUI implements UI
 //                        writeOutputFileChannel.write(outputFileBuffer);
 //                        writeOutputFileChannel.close();
 //                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
-            }
-        });
-        logThread.setName("encryptThread");
-        logThread.setDaemon(true);
-        logThread.start();
+//            }
+//        });
+//        logThread.setName("encryptThread");
+//        logThread.setDaemon(true);
+//        logThread.start();
     }
 
-    @Override
-    public void error(String message)
+    @Override synchronized public void error(String message)
     {
         status(message, true);
-            Thread errorLogThread = new Thread(new Runnable()
-            {
-//                private DeviceManager rawCipher;
-                @Override
-                @SuppressWarnings({"static-access"})
-                public void run()
-                {
-                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
+//	Thread errorLogThread = new Thread(new Runnable()
+//	{
+////          private DeviceManager rawCipher;
+//	    @Override
+//	    @SuppressWarnings({"static-access"})
+//	    public void run()
+//	    {
+		try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
 
-//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//                    {
-//                        // Encrypt targetBuffer and fill up outputBuffer
-//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//                        writeOutputFileChannel.write(outputFileBuffer);
-//                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
-                }
-            });
-            errorLogThread.setName("encryptThread");
-            errorLogThread.setDaemon(true);
-            errorLogThread.start();
+//		try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//		{
+//		    // Encrypt targetBuffer and fill up outputBuffer
+//		    ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//		    outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//		    writeOutputFileChannel.write(outputFileBuffer);
+//		    writeOutputFileChannel.close();
+//		} catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
+//	    }
+//	});
+//	errorLogThread.setName("encryptThread");
+//	errorLogThread.setDaemon(true);
+//	errorLogThread.start();
     }
 
     @Override public void status(String status, boolean log) { if (log) { log(status); } }
