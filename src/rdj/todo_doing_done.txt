@@ -5,11 +5,11 @@ Backup update locations (properties, daily check / history)
 
 =================================== Doing ===================================
 
-Added Aborting on wrong Cipher
 Added optional cipher password to protect cipher from unauthorized usage
 
 =================================== Done ====================================
 
+Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
 
 ============================= Source Committed ==============================
 

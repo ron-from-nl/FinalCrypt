@@ -567,7 +567,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else
 	    {
 //												device  minsize	 symlink  writable  status
-		if (Validate.isValidFile(this, "", targetFileChooser.getSelectedFile().toPath(), false,      1L, symlink,    false, true))
+		if (Validate.isValidFile(this, "", targetFileChooser.getSelectedFile().toPath(), false,      0L, symlink,    false, true))
 		{
 		    try { Desktop.getDesktop().open(targetFileChooser.getSelectedFile()); }
 		    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
@@ -732,15 +732,16 @@ public class GUIFX extends Application implements UI, Initializable
         this.filesProgressBar.setProgress(0);
         if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFile() != null))
         {
-            if ( cipherFileChooser.getSelectedFile().isFile() ) 
-            {
-		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
-            }
-	    else if (( State.cipherSelected == State.DEVICE ))
+	    if (( State.cipherSelected == State.DEVICE ))
 	    {
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(new Device(this,cipherFileChooser.getSelectedFile().toPath()));
+	    }
+//												 device  minsize  symlink  writable status
+	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), false,      0L, symlink,    false,  true))
+	    {
+		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
+		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
 	    }
         }
 	else { encryptButton.setDisable(true); }

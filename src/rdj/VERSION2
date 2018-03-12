@@ -1,5 +1,5 @@
-[Version] =		{1.8.6}
-[Release Notes] =	{Better validation & GUI performance}
-[Release Message] =	{}
+[Version] =		{1.9.0}
+[Release Notes] =	{Cipher Authentication}
+[Release Message] =	{Wrong Cipher Detection}
 [Alert Subject] =	{}
 [Alert Message] =	{}

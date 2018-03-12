@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,6 +55,8 @@ public class FinalCrypt extends Thread
     private boolean stopPending = false;
     private boolean pausing = false;
     private boolean targetSourceEnded;
+//							1234567890123456789012345678901234567890123456789012345678901234567890
+    private final String FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
 
 
     public FinalCrypt(UI ui)
@@ -156,35 +159,30 @@ public class FinalCrypt extends Thread
         encryptTargetloop: for (Path targetSourcePath:targetSourcePathList)
         {
 	    Path targetDestinPath;
-	    String fileStatusLine = "";
-//            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+	    String fileStatusLine = "Processing: " + targetSourcePath.toAbsolutePath() + " ";
+            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("Error: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
 //							          isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
             if ((! Files.isDirectory(targetSourcePath)) && (Validate.isValidFile(ui,            "",      targetSourcePath,	    false,	     1L,	 symlink,             true,          false)))
             {
                 if ((targetSourcePath.compareTo(cipherSourcePath) != 0))
                 {
-//                  Status    
-		    fileStatusLine += "Processing: " + targetSourcePath.toAbsolutePath() + " ";//				   
-                    if ( ! dry ) { ui.status("Processing: " + targetSourcePath.toAbsolutePath() + " ", false); } else { ui.status("Candidate: " + targetSourcePath.toAbsolutePath(), true); }
 
                     if ( ! dry ) // Real run passes this point
-                    {
-                        String prefix = new String("bit");
-                        String suffix = new String(".bit");
-                        String extension = new String("");
-                        int lastDotPos = targetSourcePath.getFileName().toString().lastIndexOf('.'); // -1 no extension
-                        int lastPos = targetSourcePath.getFileName().toString().length();
+                    {			
+                        String prefix =	    "bit";
+                        String suffix =	    ".bit";
+                        String extension =  "";
+                        int lastDotPos =    targetSourcePath.getFileName().toString().lastIndexOf('.'); // -1 no extension
+                        int lastPos =	    targetSourcePath.getFileName().toString().length();
+			
                         if (lastDotPos != -1) { extension = targetSourcePath.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
 
-                        if (!extension.equals(suffix))  { targetDestinPath = targetSourcePath.resolveSibling(targetSourcePath.getFileName().toString() + suffix); }   // Add    .bit
-                        else                            { targetDestinPath = targetSourcePath.resolveSibling(targetSourcePath.getFileName().toString().replace(suffix, "")); }               // Remove .bit
-
-
+                        if ( ! extension.equals(suffix))    { targetDestinPath = targetSourcePath.resolveSibling(targetSourcePath.getFileName().toString() + suffix); }		    // Add    .bit
+                        else				    { targetDestinPath = targetSourcePath.resolveSibling(targetSourcePath.getFileName().toString().replace(suffix, "")); }  // Remove .bit			
+			
+			
                         try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n"); }
-
-//			fileStatusLine += "Encrypting: " + " ";
-                        ui.status("Encrypting: " + targetSourcePath.toAbsolutePath() + " ", false);
 
                         // Prints printByte Header ones                
                         if ( print )
@@ -196,64 +194,63 @@ public class FinalCrypt extends Thread
                             ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
                             ui.log("|----------|-------------------|-------------------|-------------------|\r\n");
                         }
-
-                        ByteBuffer targetSourceBuffer = ByteBuffer.allocate(32); targetSourceBuffer.clear();
-                        ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(16); cipherSourceBuffer.clear();
-                        ByteBuffer targetDestinBuffer = ByteBuffer.allocate(32); targetDestinBuffer.clear();
-
-                        targetSourceEnded = false;
-                        long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
-                        long readCipherSourceChannelPosition = 0;	long readCipherSourceChannelTransfered = 0;                
-                        long writeTargetDestChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
-                        long readTargetDestChannelPosition = 0;		long readTargetDestChannelTransfered = 0;
-                        long writeTargetSourceChannelPosition = 0;      long writeTargetSourceChannelTransfered = 0;
 			
-//			0123456789ABCDEF0123456789ABCDEF
-//			Privacy Guaranteed by FinalCrypt 
-//
-//			1   open target file
-//			2   goto end - 32
-//			3   read 16 bytes Plaintext FinalCrypt Token (PFT)
-//			4   read 16 bytes Encrypted FinalCrypt Token (EFT)
-//			5   If (PFT tested positive)
-//			    {
-//				// Dealing with an encrypted file
-//				Decrypt EFT
-//				if ( PFT.equals(EFT))
-//				{
-//				    // Correct Cipher
-//				    Encrypt & remove FinalCrypt Token
-//				}
-//				else
-//				{
-//				    // Incorrect Cipher
-//				    abort, report & continue fileloop
-//				}
-//			    }
-//			    else
-//			    {
-//				// Dealing with an unencrypted file
-//				Encrypt and add FinalCrypt Token at end
-//			    }
-
+//			Testing FinalCrypt Token
 			
-			
-			
-			
-			
-			
-			
+			long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
+						
+			if ( ! targetSourcePath.getFileName().toString().endsWith(suffix) ) // Encrypt New Format
+			{
+//			    System.out.println("Encrypt New Format. Adding FinalCrypt Token to: " + targetDestinPath.toString());
+			    ui.status("Encrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ", false);
+			    fileStatusLine = "Encrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ";
+			    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
+			    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+			    {
+				// Encrypt inputBuffer and fill up outputBuffer
+				targetDestinTokenBuffer = createTargetDestinToken(cipherSourcePath);
+				writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
+				writeTargetDestinChannel.close();
+			    } catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetSourcePath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			    
+			    readTargetSourceChannelPosition = 0; // Start reading targetSource from beginning (Encrypt)
+			}
+			else if ( targetSourceHasToken(targetSourcePath) ) // Target has Token
+			{
+//			    System.out.println("Target Has Token");
+			    if ( targetHasAuthenticatedToken(targetSourcePath, cipherSourcePath) ) // Decrypt New Format
+			    {
+				fileStatusLine = "Decrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ";
+				ui.status("Decrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ", false);
+//				System.out.println("Target Has Authenticated Token");
+//				System.out.println("Decrypt New Format. Skip to Position: " + (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2));
+				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
+			    }
+			    else
+			    {
+				ui.status("Aborting: " + targetSourcePath.toString() + " - Wrong Cipher: : " + cipherSourcePath.toString() + "\r\n", true);
+				continue encryptTargetloop;
+			    }
+			}
+			else // Decrypt Old Format
+			{
+			    fileStatusLine = "Decrypt: (Old Format): " + targetSourcePath.toAbsolutePath() + " ";//				   
+			    ui.status("Decrypt: (Old Format): " + targetSourcePath.toAbsolutePath() + " ", false);
+			    readTargetSourceChannelPosition = 0;
+			}
+						
 //			Encryptor I/O Block
+
+			ByteBuffer targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
+                        ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); cipherSourceBuffer.clear();
+                        ByteBuffer targetDestinBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetDestinBuffer.clear();
 			
-                        targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
-                        cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
-                        targetDestinBuffer = ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();			
-			
-                        readTargetSourceChannelPosition = 0;	readTargetSourceChannelTransfered = 0;
-                        readCipherSourceChannelPosition = 0;	readCipherSourceChannelTransfered = 0;                
-                        writeTargetDestChannelPosition = 0;	writeTargetDestChannelTransfered = 0;
-                        readTargetDestChannelPosition = 0;	readTargetDestChannelTransfered = 0;
-                        writeTargetSourceChannelPosition = 0;	writeTargetSourceChannelTransfered = 0;
+                        targetSourceEnded = false;
+									long readTargetSourceChannelTransfered =  0;
+                        long readCipherSourceChannelPosition = 0;	long readCipherSourceChannelTransfered =  0;                
+                        long writeTargetDestChannelPosition = 0;	     writeTargetDestChannelTransfered =   0;
+                        long readTargetDestChannelPosition = 0;		long readTargetDestChannelTransfered =    0;
+                        long writeTargetSourceChannelPosition = 0;      long writeTargetSourceChannelTransfered = 0;
 
 			// Get and set the stats
                         try { allDataStats.setFileBytesTotal(Files.size(targetSourcePath)); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
@@ -264,7 +261,7 @@ public class FinalCrypt extends Thread
                         readTargetDestinStat.setFileBytesProcessed(0);
                         wrteTargetSourceStat.setFileBytesProcessed(0);
 
-                        // Open and close files after every bufferrun. Interrupted file I/O works much faster than below uninterrupted I/O encryption
+                        // Open and close files after every bufferrun. Interrupted file I/O works much faster than uninterrupted I/O encryption
                         while ( ! targetSourceEnded )
                         {
                             if (stopPending)
@@ -274,7 +271,7 @@ public class FinalCrypt extends Thread
                                 targetSourceEnded = true; ui.status("\r\n", true); break encryptTargetloop;
                             }
 
-                            //open inputFile
+                            //open targetSourcePath
                             readTargetSourceStat.setFileStartEpoch(); // allFilesStats.setFilesStartNanoTime();
                             try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
                             {
@@ -450,7 +447,7 @@ public class FinalCrypt extends Thread
                         }
 
     //                  FILE STATUS 
-			fileStatusLine += "- Encrypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
+			fileStatusLine += "- Crypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
 			fileStatusLine += "rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ";
 			fileStatusLine += "wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ";
 			fileStatusLine += "- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ";
@@ -464,12 +461,16 @@ public class FinalCrypt extends Thread
                         if ( print ) { ui.log(" ----------------------------------------------------------------------\r\n"); }
 
 
-
 //                      Delete the original
                         long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); }	catch (IOException ex)	{ ui.error("\r\nError: Files.size(targetSourcePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
                         long targetDestinSize = 0; try { targetDestinSize = Files.size(targetDestinPath); }	catch (IOException ex)  { ui.error("\r\nError: Files.size(targetDestinPath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-                        if ( (targetSourceSize != 0 ) && ( targetDestinSize != 0 ) && ( targetSourceSize == targetDestinSize ) )		{ try { Files.deleteIfExists(targetSourcePath); } catch (IOException ex)    { ui.error("\r\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; } }
-                    } else { ui.log("\r\n"); } // End real run
+                        if  (
+				( targetSourceSize != 0 ) && ( targetDestinSize != 0 ) &&
+				( Math.abs(targetSourceSize - targetDestinSize)  == (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()) * 2 ) ||
+				( targetSourceSize == targetDestinSize)
+			    )
+			{ try { Files.deleteIfExists(targetSourcePath); } catch (IOException ex)    { ui.error("\r\nFiles.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; } }
+                    } else { ui.status("Candidate: " + targetSourcePath.toAbsolutePath(), true); } // End real run
                 }// else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + cipherSourcePath.toAbsolutePath() + " (is cipher!)\r\n"); }
             } // else { ui.error("Skipping directory: " + targetSourcePath.getFileName() + "\r\n"); } // End "not a directory"
             
@@ -489,7 +490,8 @@ public class FinalCrypt extends Thread
     {
         byte targetDestinByte;
         
-        ByteBuffer targetDestinBuffer =   ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();
+//        ByteBuffer targetDestinBuffer =   ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();
+        ByteBuffer targetDestinBuffer =   ByteBuffer.allocate(cipherSourceBuffer.capacity()); targetDestinBuffer.clear();
 	
         while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
         for (int targetSourceBufferCount = 0; targetSourceBufferCount < targetSourceBuffer.limit(); targetSourceBufferCount++)
@@ -529,6 +531,114 @@ public class FinalCrypt extends Thread
         return targetDestinByte; // targetDestinByte
     }
 
+    private ByteBuffer createTargetDestinToken(Path cipherSourcePath) // Tested
+    {
+        ByteBuffer plainTextTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); plainTextTokenBuffer.clear();
+        ByteBuffer cipherBitTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherBitTokenBuffer.clear();
+        ByteBuffer encryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); encryptedTokenBuffer.clear();
+
+	ByteBuffer targetDstTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetDstTokenBuffer.clear();
+	long readCipherSourceChannelTransfered = 0;                
+
+	// Create plaint text Buffer
+	plainTextTokenBuffer.put(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.getBytes());
+	
+	// Create Cipher Buffer
+	try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	{
+//	    readCipherSourceChannel.position(readCipherSourceChannelPosition);
+	    readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherBitTokenBuffer);
+	    cipherBitTokenBuffer.flip(); readCipherSourceChannel.close();
+	} catch (IOException ex) { ui.error("Error: getTargetDestinToken: readCipherSourceChannel " + ex.getMessage() + "\r\n"); }
+	
+	// Create Encrypted Token Buffer
+	encryptedTokenBuffer = encryptBuffer(plainTextTokenBuffer, cipherBitTokenBuffer);
+	
+	// Create Target Destin Token Buffer
+	byte[] tokenArray = new byte[(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)];
+	for (int x = 0; x < plainTextTokenBuffer.capacity(); x++) { tokenArray[x] = plainTextTokenBuffer.array()[x]; }
+	for (int x = 0; x < encryptedTokenBuffer.capacity(); x++) { tokenArray[(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() + x)] = encryptedTokenBuffer.array()[x]; }
+	targetDstTokenBuffer.put(tokenArray); targetDstTokenBuffer.flip();
+//	for (byte myByte:plainTextTokenBuffer.array()) {targetDstTokenBuffer.put(myByte);}
+//	for (byte myByte:encryptedTokenBuffer.array()) {targetDstTokenBuffer.put(myByte);}
+	
+	return targetDstTokenBuffer;
+    }
+    
+    private boolean targetSourceHasToken(Path targetSourcePath) // Tested
+    {
+	
+	boolean targetSourceHasToken = false;
+	
+        ByteBuffer plainTextTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); plainTextTokenBuffer.clear();
+        ByteBuffer encryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); encryptedTokenBuffer.clear();
+	
+	long readTargetSourceChannelTransfered = 0;
+	
+	// Create Target Source Token Buffer
+	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	{
+	    // Fill up inputFileBuffer
+	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextTokenBuffer); plainTextTokenBuffer.flip();
+	    if ( readTargetSourceChannelTransfered != plainTextTokenBuffer.capacity() ) { return false; }
+	    readTargetSourceChannel.close(); 
+	} catch (IOException ex) { ui.error("Error: targetSourceHasToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
+	
+	// Compare plainTextTokenBuffer to FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN
+	String plainTextTokenString = new String(plainTextTokenBuffer.array(), StandardCharsets.UTF_8);
+//	ui.status("targetSourceHasToken plainTextTokenString: " +plainTextTokenString + "\r\n", true);
+
+	if ( plainTextTokenString.equals(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN) ) { targetSourceHasToken = true; }
+
+	return targetSourceHasToken;
+    }
+    
+    private boolean targetHasAuthenticatedToken(Path targetSourcePath, Path cipherSourcePath) // Tested
+    {
+	boolean cipherAuthenticatedTargetSource = false;
+        ByteBuffer targetSrcTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetSrcTokenBuffer.clear();
+        ByteBuffer targetEncryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.clear();
+        ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherSourceBuffer.clear();
+        ByteBuffer cipherDecryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherDecryptedTokenBuffer.clear();
+	
+	long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
+	long readCipherSourceChannelPosition = 0;	long readCipherSourceChannelTransfered = 0;                
+	
+	// Create Target Source Token Buffer
+	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	{
+	    // Fill up inputFileBuffer
+	    readTargetSourceChannel.position(readTargetSourceChannelPosition);
+	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
+	    readTargetSourceChannel.close(); 
+	} catch (IOException ex) { ui.error("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
+	
+	// Encrypted Token Buffer
+	targetEncryptedTokenBuffer.put(targetSrcTokenBuffer.array(), FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length(), FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.flip();
+	
+	if ( readTargetSourceChannelTransfered != -1 )
+	{
+	    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	    {
+		// Fill up cipherFileBuffer
+		readCipherSourceChannel.position(readCipherSourceChannelPosition);
+		readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer);
+		cipherSourceBuffer.flip(); readCipherSourceChannel.close();
+	    } catch (IOException ex) { ui.error("Error: cipherAuthenticatedTargetSource readCipherSourceChannel " + ex.getMessage() + "\r\n"); }
+	    
+	    // Create Encrypted Token Buffer
+	    cipherDecryptedTokenBuffer = encryptBuffer(targetEncryptedTokenBuffer, cipherSourceBuffer);
+	    String cipherDecryptedTokenBufferString = new String(cipherDecryptedTokenBuffer.array(), StandardCharsets.UTF_8);
+//	    ui.status("targetHasAuthenticatedToken.cipherDecryptedTokenBufferString: " + cipherDecryptedTokenBufferString + "\r\n", true);
+	    
+	    // Authenticate Cipher Token against Target Token
+	    if ( cipherDecryptedTokenBufferString.equals(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN)) { cipherAuthenticatedTargetSource = true; } else { cipherAuthenticatedTargetSource = false; }
+	    
+	} else { cipherAuthenticatedTargetSource = false; }
+	
+	return cipherAuthenticatedTargetSource;
+    }
+    
 //  Recursive Deletion of PathList
     public void deleteSelection(ArrayList<Path> targetSourcePathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
