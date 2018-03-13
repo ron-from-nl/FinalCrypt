@@ -111,9 +111,9 @@ public class FinalCrypt extends Thread
         Stats allDataStats = new Stats(); allDataStats.reset();
         
         Stat readTargetSourceStat = new Stat(); readTargetSourceStat.reset();
-        Stat readCipherSourceStat = new Stat(); readCipherSourceStat.reset();
-        Stat wrteTargetDestinStat = new Stat(); wrteTargetDestinStat.reset();
-        Stat readTargetDestinStat = new Stat(); readTargetDestinStat.reset();
+//        Stat readCipherSourceStat = new Stat(); readCipherSourceStat.reset();
+//        Stat wrteTargetDestinStat = new Stat(); wrteTargetDestinStat.reset();
+//        Stat readTargetDestinStat = new Stat(); readTargetDestinStat.reset();
         Stat wrteTargetSourceStat = new Stat(); wrteTargetSourceStat.reset();
         
         stopPending = false;
@@ -128,29 +128,25 @@ public class FinalCrypt extends Thread
 //      Setup the Progress TIMER & TASK
         updateProgressTask = new TimerTask() { @Override public void run()
         {
-            ui.encryptionProgress
-            (
-                (int) ((readTargetSourceStat.getFileBytesProcessed() + 
-                        readCipherSourceStat.getFileBytesProcessed() + 
-                        wrteTargetDestinStat.getFileBytesProcessed() + 
-                        readTargetDestinStat.getFileBytesProcessed() + 
-                        wrteTargetSourceStat.getFileBytesProcessed()) / ( (allDataStats.getFileBytesTotal() * 5 ) / 100.0)),
-                (int) ((allDataStats.getFilesBytesProcessed() * 5) / ( (allDataStats.getFilesBytesTotal() * 5 ) / 100.0))
-            );
+//	    filesize =	130
+//	    perc =	(file * 0.01) = 1.3
+//	    progress 60 / 1.3
+//	    progress 60 * (1 / 1.3)
+	    
+	    
+	    
+	    long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
+	    double fileBytesPercent =	((readTargetSourceStat.getFileBytesTotal()) / 100.0); //  1000 / 100 = (long)10     10 > 0.1 (10*0.01)
+	    int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesPercent); // 600 / 10 = 60 - 600 * (10*0.01)
+	    
+	    long filesBytesProcessed =	(allDataStats.getFilesBytesProcessed());
+	    double filesBytesPercent =	((allDataStats.getFilesBytesTotal() ) / 100.0);
+	    int filesBytesPercentage =	(int)(filesBytesProcessed / filesBytesPercent);
+
+            ui.encryptionProgress( fileBytesPercentage, filesBytesPercentage );
+	    
         }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
-
-//        updateProgressTimeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
-//            ui.encryptionProgress
-//            (
-//                (int) ((readInputFileStat.getFileBytesProcessed() + 
-//                        readCipherFileStat.getFileBytesProcessed() + 
-//                        writeOutputFileStat.getFileBytesProcessed() + 
-//                        readOutputFileStat.getFileBytesProcessed() + 
-//                        writeInputFileStat.getFileBytesProcessed()) / ( (allDataStats.getFileBytesTotal() * 5 ) / 100.0)),
-//                (int) ((allDataStats.getFilesBytesProcessed() * 5) / ( (allDataStats.getFilesBytesTotal() * 5 ) / 100.0))
-//            )
-//        )); updateProgressTimeline.setCycleCount(Animation.INDEFINITE); updateProgressTimeline.play();
 
 //      Start Files Encryption Clock
         allDataStats.setAllDataStartNanoTime();
@@ -159,8 +155,8 @@ public class FinalCrypt extends Thread
         encryptTargetloop: for (Path targetSourcePath:targetSourcePathList)
         {
 	    Path targetDestinPath;
-	    String fileStatusLine = "Processing: " + targetSourcePath.toAbsolutePath() + " ";
-            long filesize = 0; try { Files.size(targetSourcePath); } catch (IOException ex) { ui.error("Error: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+	    String fileStatusLine = "";
+            long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); } catch (IOException ex) { ui.error("Error: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
 //							          isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
             if ((! Files.isDirectory(targetSourcePath)) && (Validate.isValidFile(ui,            "",      targetSourcePath,	    false,	     1L,	 symlink,             true,          false)))
@@ -194,51 +190,58 @@ public class FinalCrypt extends Thread
                             ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
                             ui.log("|----------|-------------------|-------------------|-------------------|\r\n");
                         }
-			
+//___________________________________________________________________________________________________________________________________________________________
+//
 //			Testing FinalCrypt Token
-			
+//			🔒   Encrypt
+//			🔓   Decrypt	    (Cipher Authenticated)
+//			🔓!  Decrypt Legacy  (Cipher can't be checked! No Token present in old format)
+//			⛔   Decrypt Abort   (Cipher Failed)
+
 			long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
-						
-			if ( ! targetSourcePath.getFileName().toString().endsWith(suffix) ) // Encrypt New Format
+			
+			if ( targetSourceHasToken(targetSourcePath) ) // Target has Token, Decrypt New Format
 			{
-//			    System.out.println("Encrypt New Format. Adding FinalCrypt Token to: " + targetDestinPath.toString());
-			    ui.status("Encrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ", false);
-			    fileStatusLine = "Encrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ";
-			    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
-			    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+			    if ( targetHasAuthenticatedToken(targetSourcePath, cipherSourcePath) ) // TargetSource Has Token Decrypt New Format
 			    {
-				// Encrypt inputBuffer and fill up outputBuffer
-				targetDestinTokenBuffer = createTargetDestinToken(cipherSourcePath);
-				writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
-				writeTargetDestinChannel.close();
-			    } catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetSourcePath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-			    
-			    readTargetSourceChannelPosition = 0; // Start reading targetSource from beginning (Encrypt)
-			}
-			else if ( targetSourceHasToken(targetSourcePath) ) // Target has Token
-			{
-//			    System.out.println("Target Has Token");
-			    if ( targetHasAuthenticatedToken(targetSourcePath, cipherSourcePath) ) // Decrypt New Format
-			    {
-				fileStatusLine = "Decrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ";
-				ui.status("Decrypt: (New Format): " + targetSourcePath.toAbsolutePath() + " ", false);
-//				System.out.println("Target Has Authenticated Token");
-//				System.out.println("Decrypt New Format. Skip to Position: " + (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2));
+				fileStatusLine = "🔓 \"" + targetDestinPath.toString() + "\" ";
+				ui.status("🔓 \"" + targetDestinPath.toString() + "\" ", false);
 				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
 			    }
 			    else
 			    {
-				ui.status("Aborting: " + targetSourcePath.toString() + " - Wrong Cipher: : " + cipherSourcePath.toString() + "\r\n", true);
+				ui.status("⛔ \"" + targetSourcePath.toString() + "\" - Cipher Failed : " + cipherSourcePath.toString() + "\r\n", true);
 				continue encryptTargetloop;
 			    }
 			}
-			else // Decrypt Old Format
+			else // Traget has NO Token
 			{
-			    fileStatusLine = "Decrypt: (Old Format): " + targetSourcePath.toAbsolutePath() + " ";//				   
-			    ui.status("Decrypt: (Old Format): " + targetSourcePath.toAbsolutePath() + " ", false);
-			    readTargetSourceChannelPosition = 0;
+			    if ( ! targetSourcePath.getFileName().toString().endsWith(suffix) ) // Target has No Token and no ".bit" extension
+			    {
+				ui.status(		"🔒 \"" + targetDestinPath.toString() + "\" ", false);
+				fileStatusLine =	"🔒 \"" + targetDestinPath.toString() + "\" ";
+
+				ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
+				try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+				{
+				    targetDestinTokenBuffer = createTargetDestinToken(cipherSourcePath);
+				    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
+				    writeTargetDestinChannel.close();
+//                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
+				} catch (IOException ex) { ui.error("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+
+				readTargetSourceChannelPosition = 0; // Start reading targetSource from beginning (Encrypt)
+			    }
+			    else  // Target has No Token, but has a ".bit" extension
+			    {
+				fileStatusLine = "🔓! \"" + targetDestinPath.toString()+ "\" "; // Decrypt Old Format
+				ui.status("🔓! \"" + targetDestinPath.toString() + "\" ", false);
+				readTargetSourceChannelPosition = 0;
+			    }
 			}
-						
+			
+//___________________________________________________________________________________________________________________________________________________________
+//
 //			Encryptor I/O Block
 
 			ByteBuffer targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
@@ -253,13 +256,13 @@ public class FinalCrypt extends Thread
                         long writeTargetSourceChannelPosition = 0;      long writeTargetSourceChannelTransfered = 0;
 
 			// Get and set the stats
-                        try { allDataStats.setFileBytesTotal(Files.size(targetSourcePath)); } catch (IOException ex) { ui.error("\r\nError: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			allDataStats.setFileBytesTotal(targetSourceSize);
 
-                        readTargetSourceStat.setFileBytesProcessed(0);
-                        readCipherSourceStat.setFileBytesProcessed(0);
-                        wrteTargetDestinStat.setFileBytesProcessed(0);
-                        readTargetDestinStat.setFileBytesProcessed(0);
-                        wrteTargetSourceStat.setFileBytesProcessed(0);
+                        readTargetSourceStat.setFileBytesProcessed(0);	    readTargetSourceStat.setFileBytesTotal(targetSourceSize);
+//                        readCipherSourceStat.setFileBytesProcessed(0);      readCipherSourceStat.setFileBytesTotal(filesize);
+//                        wrteTargetDestinStat.setFileBytesProcessed(0);      wrteTargetDestinStat.setFileBytesTotal(filesize);
+//                        readTargetDestinStat.setFileBytesProcessed(0);      readTargetDestinStat.setFileBytesTotal(filesize);
+                        wrteTargetSourceStat.setFileBytesProcessed(0);	    wrteTargetSourceStat.setFileBytesTotal(targetSourceSize);
 
                         // Open and close files after every bufferrun. Interrupted file I/O works much faster than uninterrupted I/O encryption
                         while ( ! targetSourceEnded )
@@ -279,14 +282,16 @@ public class FinalCrypt extends Thread
                                 readTargetSourceChannel.position(readTargetSourceChannelPosition);
                                 readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip(); readTargetSourceChannelPosition += readTargetSourceChannelTransfered;
                                 if (( readTargetSourceChannelTransfered == -1 ) || ( targetSourceBuffer.limit() < readTargetSourceBufferSize )) { targetSourceEnded = true; } // Buffer.limit = remainder from current position to end
-                                readTargetSourceChannel.close(); readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
-                                readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered); allDataStats.addAllDataBytesProcessed(readTargetSourceChannelTransfered / 2);
-                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                        ui.log("readInputFileChannelTransfered: " + readInputFileChannelTransfered + " inputFileBuffer.limit(): " + Integer.toString(inputFileBuffer.limit()) + "\r\n");
+                                readTargetSourceChannel.close();
+				readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
+                                readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered / 2);
+				allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
+                            } catch (IOException ex) { ui.error("\r\nreadTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                            ui.log("readTargetSourceChannelTransfered: " + readTargetSourceChannelTransfered + " targetSourceBuffer.limit(): " + Integer.toString(targetSourceBuffer.limit()) + "\r\n");
 
                             if ( readTargetSourceChannelTransfered != -1 )
                             {
-                                readCipherSourceStat.setFileStartEpoch();
+//                                readCipherSourceStat.setFileStartEpoch();
                                 try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)))
                                 {
                                     // Fill up cipherFileBuffer
@@ -294,27 +299,29 @@ public class FinalCrypt extends Thread
                                     readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;
                                     if ( readCipherSourceChannelTransfered < readCipherSourceBufferSize ) { readCipherSourceChannelPosition = 0; readCipherSourceChannel.position(0); readCipherSourceChannelTransfered += readCipherSourceChannel.read(cipherSourceBuffer); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;}
                                     cipherSourceBuffer.flip();
-                                    readCipherSourceChannel.close(); readCipherSourceStat.setFileEndEpoch(); readCipherSourceStat.clock();
-                                    readCipherSourceStat.addFileBytesProcessed(readCipherSourceChannelTransfered);
-                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                            ui.log("readCipherFileChannelTransfered: " + readCipherFileChannelTransfered + " cipherFileBuffer.limit(): " + Integer.toString(cipherFileBuffer.limit()) + "\r\n");
+                                    readCipherSourceChannel.close();
+//				    readCipherSourceStat.setFileEndEpoch(); readCipherSourceStat.clock();
+//                                    readCipherSourceStat.addFileBytesProcessed(readCipherSourceChannelTransfered);
+                                } catch (IOException ex) { ui.error("\r\nreadCipherSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                                ui.log("readCipherFileChannelTransfered: " + readCipherSourceChannelTransfered + " cipherSourceBuffer.limit(): " + Integer.toString(cipherSourceBuffer.limit()) + "\r\n");
 
                                 // Open outputFile for writing
-                                wrteTargetDestinStat.setFileStartEpoch();
+//                                wrteTargetDestinStat.setFileStartEpoch();
                                 try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
                                 {
                                     // Encrypt inputBuffer and fill up outputBuffer
                                     targetDestinBuffer = encryptBuffer(targetSourceBuffer, cipherSourceBuffer);
                                     writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinBuffer); targetDestinBuffer.flip(); writeTargetDestChannelPosition += writeTargetDestChannelTransfered;
                                     if (txt) { logByteBuffer("DB", targetSourceBuffer); logByteBuffer("CB", cipherSourceBuffer); logByteBuffer("OB", targetDestinBuffer); }
-                                    writeTargetDestinChannel.close(); wrteTargetDestinStat.setFileEndEpoch(); wrteTargetDestinStat.clock();
-                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
-                                } catch (IOException ex) { ui.error("\r\noutputFileChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                            ui.log("writeOutputFileChannelTransfered: " + writeOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
+                                    writeTargetDestinChannel.close();
+//				    wrteTargetDestinStat.setFileEndEpoch(); wrteTargetDestinStat.clock();
+//                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
+                                } catch (IOException ex) { ui.error("\r\nwriteTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+    //                            ui.log("writeTargetDestChannelTransfered: " + writeTargetDestChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString(targetDestinBuffer.limit()) + "\r\n");
                             }
                             targetDestinBuffer.clear(); targetSourceBuffer.clear(); cipherSourceBuffer.clear();
                         }
-    
+            
 //    ==================================================================================================================================================================
 //                      Copy inputFilePath attributes to outputFilePath
 
@@ -398,38 +405,43 @@ public class FinalCrypt extends Thread
     
 //                      Shredding process
 
-                        ui.status("Shredding: " + targetSourcePath.toAbsolutePath() + " ", false);
+                        ui.status("🌊 \"" + targetSourcePath.toAbsolutePath() + "\" ", false);
 
-                        targetSourceEnded = false;
-                        readTargetSourceChannelPosition = 0;
-                        readTargetSourceChannelTransfered = 0;
-                        readCipherSourceChannelPosition = 0;                
-                        readCipherSourceChannelTransfered = 0;                
+			long targetDestinSize = 0; double targetDiffFactor = 1;
+//				     isValidFile(UI ui, String caller,        Path path, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+			if (Validate.isValidFile(   ui,            "", targetDestinPath,          false,            1,           false,            false,	    true))
+			{ try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = targetSourceSize / targetDestinSize;} catch (IOException ex) { ui.error("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n"); } } else 
+
+                        readTargetSourceChannelPosition = 0;	readTargetSourceChannelTransfered = 0;
+                        readCipherSourceChannelPosition = 0;    readCipherSourceChannelTransfered = 0;
+			
                         writeTargetDestChannelPosition = 0;
-
-                        targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
+			
+			targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
                         cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
                         targetDestinBuffer = ByteBuffer.allocate(wrteTargetDestinBufferSize); targetDestinBuffer.clear();
 
-                        shredloop: while ( ! targetSourceEnded )
+                        boolean targetDestinEnded = false;
+			
+                        shredloop: while ( ! targetDestinEnded )
                         {
                             while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-                            if (stopPending)    { targetSourceEnded = true; break shredloop; }
+                            if (stopPending)    { targetDestinEnded = true; break shredloop; }
 
                             //read outputFile
-                            readTargetDestinStat.setFileStartEpoch();
+//                            readTargetDestinStat.setFileStartEpoch();
                             try (final SeekableByteChannel readTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)))
                             {
                                 readTargetDestinChannel.position(readTargetDestChannelPosition);
                                 readTargetDestChannelTransfered = readTargetDestinChannel.read(targetDestinBuffer); targetDestinBuffer.flip(); readTargetDestChannelPosition += readTargetDestChannelTransfered;
-                                if (( readTargetDestChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
-                                readTargetDestinChannel.close(); readTargetDestinStat.setFileEndEpoch(); readTargetDestinStat.clock();
-                                readTargetDestinStat.addFileBytesProcessed(targetDestinBuffer.limit()); allDataStats.addAllDataBytesProcessed(targetDestinBuffer.limit()/2);
-                            } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                        ui.log("readOutputFileChannelTransfered: " + readOutputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString( outputFileBuffer.limit()) + "\r\n");
+                                if (( readTargetDestChannelTransfered < 1 )) { targetDestinEnded = true; }
+                                readTargetDestinChannel.close();
+                            } catch (IOException ex) { ui.error("\r\nreadTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                            ui.log("readTargetDestChannelTransfered: " + readTargetDestChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString( targetDestinBuffer.limit()) + "\r\n");
 
                             //shred inputFile
-                            if ( readTargetDestChannelTransfered != -1 )
+//                            if ( readTargetDestChannelTransfered < 1 )
+                            if ( targetDestinBuffer.limit() > 0 )
                             {
                                 wrteTargetSourceStat.setFileStartEpoch();
                                 try (final SeekableByteChannel writeTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE,StandardOpenOption.SYNC)))
@@ -437,21 +449,30 @@ public class FinalCrypt extends Thread
                                     // Fill up inputFileBuffer
                                     writeTargetSourceChannel.position(writeTargetSourceChannelPosition);
                                     writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip(); writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered;
-                                    if (( writeTargetSourceChannelTransfered == -1 ) || ( targetDestinBuffer.limit() < wrteTargetDestinBufferSize )) { targetSourceEnded = true; }
-                                    writeTargetSourceChannel.close(); wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();
-                                    wrteTargetSourceStat.addFileBytesProcessed(targetDestinBuffer.limit());
-                                } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.WRITE)) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-    //                            ui.log("writeInputFileChannelTransfered: " + writeInputFileChannelTransfered + " outputFileBuffer.limit(): " + Integer.toString(outputFileBuffer.limit()) + "\r\n\r\n");
+                                    if (( writeTargetSourceChannelTransfered < 1 )) { targetSourceEnded = true; }
+                                    writeTargetSourceChannel.close();
+				    wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();
+                                    wrteTargetSourceStat.addFileBytesProcessed(writeTargetSourceChannelTransfered / 2);
+				    allDataStats.addAllDataBytesProcessed("wr src", writeTargetSourceChannelTransfered / 2);
+//				    if ( targetDiffFactor < 1 )
+//				    { allDataStats.addAllDataBytesProcessed("wr src", writeTargetSourceChannelTransfered * Math.abs((long)targetDiffFactor)); } else
+//				    { allDataStats.addAllDataBytesProcessed("wr src", writeTargetSourceChannelTransfered / Math.abs((long)targetDiffFactor)); }
+				    
+                                } catch (IOException ex) { ui.error("\r\nwriteTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                                ui.log("writeTargetSourceChannelTransfered: " + writeTargetSourceChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString(targetDestinBuffer.limit()) + "\r\n");
                             }
                             targetDestinBuffer.clear(); targetSourceBuffer.clear(); cipherSourceBuffer.clear();
                         }
 
     //                  FILE STATUS 
-			fileStatusLine += "- Crypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ";
-			fileStatusLine += "- Shred: rd(" +    readTargetDestinStat.getFileBytesThroughPut() + ") -> ";
-			fileStatusLine += "wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ";
+			if (verbose)
+			{
+			    fileStatusLine += "- Crypt: rd(" +  readTargetSourceStat.getFileBytesThroughPut() + ") -> ";
+//			    fileStatusLine += "rd(" +           readCipherSourceStat.getFileBytesThroughPut() + ") -> ";
+//			    fileStatusLine += "wr(" +           wrteTargetDestinStat.getFileBytesThroughPut() + ") ";
+//			    fileStatusLine += "- Shred: rd(" +  readTargetDestinStat.getFileBytesThroughPut() + ")";
+			    fileStatusLine += "wr(" +           wrteTargetSourceStat.getFileBytesThroughPut() + ") ";
+			}
 			fileStatusLine += allDataStats.getAllDataBytesProgressPercentage();
 			
 			ui.log(fileStatusLine);
@@ -462,8 +483,8 @@ public class FinalCrypt extends Thread
 
 
 //                      Delete the original
-                        long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); }	catch (IOException ex)	{ ui.error("\r\nError: Files.size(targetSourcePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-                        long targetDestinSize = 0; try { targetDestinSize = Files.size(targetDestinPath); }	catch (IOException ex)  { ui.error("\r\nError: Files.size(targetDestinPath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                        long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); }	catch (IOException ex)	{ ui.error("\r\nError: Files.size(targetSourcePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//                        long targetDestinSize = 0; try { targetDestinSize = Files.size(targetDestinPath); }	catch (IOException ex)  { ui.error("\r\nError: Files.size(targetDestinPath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
                         if  (
 				( targetSourceSize != 0 ) && ( targetDestinSize != 0 ) &&
 				( Math.abs(targetSourceSize - targetDestinSize)  == (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()) * 2 ) ||
@@ -595,11 +616,12 @@ public class FinalCrypt extends Thread
     
     private boolean targetHasAuthenticatedToken(Path targetSourcePath, Path cipherSourcePath) // Tested
     {
-	boolean cipherAuthenticatedTargetSource = false;
-        ByteBuffer targetSrcTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetSrcTokenBuffer.clear();
-        ByteBuffer targetEncryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.clear();
-        ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherSourceBuffer.clear();
-        ByteBuffer cipherDecryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherDecryptedTokenBuffer.clear();
+	boolean readTargetSourceChannelError = false;
+	boolean cipherAuthenticatedTargetSource =   false;
+        ByteBuffer targetSrcTokenBuffer =	    ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetSrcTokenBuffer.clear();
+        ByteBuffer targetEncryptedTokenBuffer =	    ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.clear();
+        ByteBuffer cipherSourceBuffer =		    ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherSourceBuffer.clear();
+        ByteBuffer cipherDecryptedTokenBuffer =	    ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherDecryptedTokenBuffer.clear();
 	
 	long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
 	long readCipherSourceChannelPosition = 0;	long readCipherSourceChannelTransfered = 0;                
@@ -608,21 +630,23 @@ public class FinalCrypt extends Thread
 	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
 	{
 	    // Fill up inputFileBuffer
-	    readTargetSourceChannel.position(readTargetSourceChannelPosition);
-	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
+//	    readTargetSourceChannel.position(readTargetSourceChannelPosition);
+//	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
+	    readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { ui.error("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
+	} catch (IOException ex) { readTargetSourceChannelError = true; ui.error("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
 	
 	// Encrypted Token Buffer
 	targetEncryptedTokenBuffer.put(targetSrcTokenBuffer.array(), FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length(), FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.flip();
 	
-	if ( readTargetSourceChannelTransfered != -1 )
+	if ( ! readTargetSourceChannelError )
 	{
 	    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)))
 	    {
 		// Fill up cipherFileBuffer
-		readCipherSourceChannel.position(readCipherSourceChannelPosition);
-		readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer);
+//		readCipherSourceChannel.position(readCipherSourceChannelPosition);
+//		readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer);
+		readCipherSourceChannel.read(cipherSourceBuffer);
 		cipherSourceBuffer.flip(); readCipherSourceChannel.close();
 	    } catch (IOException ex) { ui.error("Error: cipherAuthenticatedTargetSource readCipherSourceChannel " + ex.getMessage() + "\r\n"); }
 	    

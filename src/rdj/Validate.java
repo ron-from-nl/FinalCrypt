@@ -162,13 +162,13 @@ public class Validate
 			{
 			    State.targetReady = true;
 			    extendedPathList.add(targetPathList.get(0));
-			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", false);
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			}
 			else
 			{
-			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", true);
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", false);
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			}
 		    }
@@ -199,20 +199,20 @@ public class Validate
 			{
 			    State.targetReady = true;
 			    extendedPathList.add(targetPathList.get(0));
-			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", false);
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			    if (deletegpt)  { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT(new Device(ui,targetPathList.get(0)));  return extendedPathList; }
 			}
 			else
 			{
-			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", true);
+			    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", false);
 			    if (printgpt)   { DeviceManager deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT(new Device(ui,targetPathList.get(0))); return extendedPathList; }
 			}
 		    }
 		    else
 		    {
 			State.targetSelected = State.PARTITION;
-			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", true);
+			ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " validated\r\n", false);
 		    }
 		}
 		else { /*ui.status("Probably no read & write permission on " + targetPathList.get(0) + " Run FinalCRypt with sudo (superuser) rights or execute: \"sudo dseditgroup -o edit -a " + System.getProperty("user.name") + " -t user operator; sudo chmod g+w /dev/disk*\" and re-login your desktop and try again\r\n", true);*/ }
@@ -241,7 +241,7 @@ public class Validate
 		    {
 			State.targetReady = true;
 			State.targetSelected = State.FILE;
-			ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", true);
+			ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", false);
 		    }
 		    else
 		    {
@@ -257,7 +257,7 @@ public class Validate
 		    extendedPathList.add(targetPathList.get(0));
 
 		    targetSize = 0; try { targetSize = Files.size(targetPathList.get(0).toAbsolutePath()); bytesCount += targetSize; } catch (IOException ex) { ui.error("Error: Validate: IOException: Files.size(targetPathList.get(0) " + ex.getLocalizedMessage() + "\r\n");	}
-		    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", true);
+		    ui.status("Target " + State.getTargetSelectedDescription() + " " + targetPathList.get(0).toAbsolutePath().toString() + " " + getHumanSize(targetSize,1) + " selected\r\n", false);
 		}
 		else
 		{
@@ -275,7 +275,7 @@ public class Validate
 		{
 		    State.targetReady = true;
 		    State.targetSelected = State.FILE;
-		    ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", true);
+		    ui.status("Targets selected: " + extendedPathList.size() + " (" + getHumanSize(bytesCount,1) +")"+ "\r\n", false);
 		}
 		else
 		{

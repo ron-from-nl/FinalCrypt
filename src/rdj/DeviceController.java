@@ -210,7 +210,7 @@ public class DeviceController
                 if (( readCipherFileChannelTransfered < 1 ) || ( cipherFileBuffer.limit() < bufferSize )) { inputEnded = true; }
                 cipherFileBuffer.flip();
                 readCipherFileChannel.close(); readCipherFileStat1.setFileEndEpoch(); readCipherFileStat1.clock();
-                readCipherFileStat1.addFileBytesProcessed(readCipherFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherFileChannelTransfered);
+                readCipherFileStat1.addFileBytesProcessed(readCipherFileChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherFileChannelTransfered);
             } catch (IOException ex) { ui.log("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); }
             
 //          Randomize raw cipher or write raw cipher straight to partition
@@ -225,13 +225,13 @@ public class DeviceController
 //              Write cipherfile to partition 1
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA) + writeOutputDeviceChannelPosition));
                 writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherFileChannelTransfered);
+                writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherFileChannelTransfered);
 //                ui.log("\r\nwriteOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
 //              Write cipherfile to partition 2
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, lastLBA + 1) + writeOutputDeviceChannelPosition));
                 writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherFileChannelTransfered);
+                writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherFileChannelTransfered);
 //                ui.log("\r\nwriteOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
                 writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
@@ -248,13 +248,13 @@ public class DeviceController
 //                  Fill in gap at end of partition 1
                     writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, firstLBA) + writeOutputDeviceChannelPosition));
                     writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherFileChannelTransfered);
+                    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherFileChannelTransfered);
 //                    ui.log("\r\nwriteOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");                
 
 //                  Fill in gap at end of partition 2
                     writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, deviceSize, lastLBA + 1) + writeOutputDeviceChannelPosition));
                     writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-                    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherFileChannelTransfered);
+                    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherFileChannelTransfered);
 //                    ui.log("\r\nwriteOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");                
                 }
 
@@ -383,7 +383,7 @@ public class DeviceController
 		    readCipherDeviceFileChannelTransferedTotal += readCipherDeviceFileChannelTransfered; readCipherDeviceFileChannelPosition += readCipherDeviceFileChannelTransfered;
 		    if ( readCipherDeviceFileChannelTransferedTotal >= cipherSize ) { inputEnded = true; cipherDeviceBuffer.limit((int)readCipherDeviceFileChannelTransferedTotal - (int)cipherSize); }
 		    readCipherDeviceFileChannel.close(); readCipherFileStat1.setFileEndEpoch(); readCipherFileStat1.clock();
-		    readCipherFileStat1.addFileBytesProcessed(readCipherDeviceFileChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
+		    readCipherFileStat1.addFileBytesProcessed(readCipherDeviceFileChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherDeviceFileChannelTransfered);
 		} catch (IOException ex) { ui.log("Files.newByteChannel(cipherFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n"); }
 
 		// For sone reason cipherDeviceBuffer does not poor any data out into the writeOutputDeviceChannel, but does output data to GPT.logBytes
@@ -396,7 +396,7 @@ public class DeviceController
     //              Write cipherfile to partition 1
 		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetDevice.getSize(), firstLBA) + writeOutputDeviceChannelPosition));
 		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
-		    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed(readCipherDeviceFileChannelTransfered);
+		    writeCipherFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readCipherDeviceFileChannelTransfered);
 
 		    writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
 		    writeOutputDeviceChannel.close(); writeCipherFileStat1.setFileEndEpoch(); writeCipherFileStat1.clock();

@@ -193,7 +193,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         targetFileDeleteButton = new javax.swing.JButton();
         targetFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
-        targetFileDeleteButton.setText("X");
+        targetFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
         targetFileDeleteButton.setEnabled(false);
         targetFileDeleteButton.setToolTipText("Delete selected item(s)");
         targetFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
@@ -201,7 +201,7 @@ public class GUIFX extends Application implements UI, Initializable
 
         cipherFileDeleteButton = new javax.swing.JButton();
         cipherFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
-        cipherFileDeleteButton.setText("X");
+        cipherFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
         cipherFileDeleteButton.setEnabled(false);
         cipherFileDeleteButton.setToolTipText("Delete selected item");
         cipherFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
