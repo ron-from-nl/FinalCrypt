@@ -1,10 +1,10 @@
 # FinalCrypt
 
-FinalCrypt uses a big personal (photo or video) file (a so called "cipher") to encrypt your data.
-Traditional encryption software only use (AES 32 byte keys). Even clustered supercomputers can't
-guess all the combinations to regenerate your personal holiday photo. That's why it's called "FinalCrypt", because encrypting is truly final.
+FinalCrypt encrypts & decrypts your data with a personal (cipher) file like your personal photo or video.
+Virtually all encryption software uses very small public / private key files (Rijndael based encryption lik: AES and DES).
+A FinalCrypt cipher file can be much larger (GigaBytes even), which makes it infinitely more hard to bruteforce attack (crack)
+as no supercomputer cluster can try all the combinations to recreate your holiday photo or video.
 
-One more reason to not trust standard encryption algorithms:
-http://www.zdnet.com/article/has-the-nsa-broken-ssl-tls-aes/
+FinalCrypt encryption is unbreakable without your personal cipher.
 
-Drop me an email if you have any questions: ronuitzaandam@gmail.com
+Email: ronuitzaandam@gmail.com
