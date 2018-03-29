@@ -37,8 +37,6 @@ import java.nio.ByteBuffer;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +74,7 @@ public class GPT
         gpt_Entries2.clear();
     }
     
-    synchronized public void read(Device cipherDevice)
+    synchronized public void read(FCPath cipherDevice)
     {
         gpt_PMBR.read(cipherDevice);
         gpt_Header1.read(cipherDevice); gpt_Entries1 =  new GPT_Entries(this.ui,this,2L, gpt_Header1.numberOfPartitionEntries);
@@ -85,32 +83,34 @@ public class GPT
         gpt_Entries2.read(cipherDevice);
     }
     
-    synchronized public void create(long cipherSize, Device targetDevice)
+    synchronized public void create(long partitionSize, FCPath targetFCPath)
     {
-	gpt_PMBR.create(targetDevice);
+	gpt_PMBR.create(targetFCPath);
 	
-	gpt_Header1.create(targetDevice);
-	gpt_Entries1.create(cipherSize);
+	gpt_Header1.create(targetFCPath);
+	gpt_Entries1.create(partitionSize);
 	gpt_Header1.setCRC32Partitions();
 	gpt_Header1.setHeaderCRC32Bytes();
 	
-	gpt_Header2.create(targetDevice);
-	gpt_Entries2.create(cipherSize);
+	gpt_Header2.create(targetFCPath);
+	gpt_Entries2.create(partitionSize);
 	gpt_Header2.setCRC32Partitions();
 	gpt_Header2.setHeaderCRC32Bytes();	
     }
     
-    synchronized public void write(Device targetDevice)
+    synchronized public void write(FCPath targetFCPath)
     {
-        gpt_PMBR.write(targetDevice);
-        gpt_Header1.write(targetDevice);
-        gpt_Entries1.write(targetDevice);
-        gpt_Entries2.write(targetDevice);
-        gpt_Header2.write(targetDevice);
+        gpt_PMBR.write(targetFCPath);
+        gpt_Header1.write(targetFCPath);
+        gpt_Entries1.write(targetFCPath);
+        gpt_Entries2.write(targetFCPath);
+        gpt_Header2.write(targetFCPath);
     }
     
-    synchronized public void writeCipher(Path cipherFilePath, Device targetDevice)  { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDevice); }
-    synchronized public void cloneCipher(Device cipherDevice, Device targetDevice)  { gpt_Entries1.cloneCipherPartitions(cipherDevice, targetDevice); }
+//    synchronized public void writeCipher(Path cipherFilePath, Device targetDevice)  { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDevice); }
+    synchronized public void createCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)  { gpt_Entries1.createCipherPartitions(cipherFCPath, targetFCPath); }
+//    synchronized public void cloneCipher(Device cipherDevice, Device targetDevice)  { gpt_Entries1.cloneCipherPartitions(cipherDevice, targetDevice); }
+    synchronized public void cloneCipherpartitions(FCPath cipherFCPath, FCPath targetFCPath)  { gpt_Entries1.cloneCipherPartitions(cipherFCPath, targetFCPath); }
     
     public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
     public GPT_Header	get_GPT_Header1()   { return gpt_Header1; }
@@ -302,12 +302,5 @@ public class GPT
             }
             catch (IOException e) { System.err.println(e); }
         }
-    }
-
-    public static long getCipherFileSize(UI ui, Path cipherFilePath)
-    {
-        long cipherSize = 0;
-        try { cipherSize = (long)Files.size(cipherFilePath); } catch (IOException ex) { ui.log("Files.size(finalCrypt.getCipherFilePath()) " + ex.getMessage() + "\r\n"); }
-        return cipherSize;
     }
 }

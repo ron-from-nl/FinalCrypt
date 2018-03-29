@@ -1,11 +1,12 @@
 =================================== Todo ====================================
 
 Progress animation
-Backup update locations (properties, daily check / history)
 
 =================================== Doing ===================================
 
 Added optional cipher password to protect cipher from unauthorized usage
+Backup update locations (properties, daily check / history)
+Encrypt / Decrypt Button
 
 =================================== Done ====================================
 

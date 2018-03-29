@@ -18,7 +18,6 @@
  */
 package rdj;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,10 +75,10 @@ public class GPT_Entry
 	setDesc();
     }
 
-   public void read(Device cipherDevice)
+   public void read(FCPath cipherFCPath)
     {
-	pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, cipherDevice.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readPos(cipherDevice, pos, LENGTH);
+	pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, cipherFCPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readPos(cipherFCPath, pos, LENGTH);
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.getBytesPart(bytes, 0, 16);
@@ -119,10 +118,10 @@ public class GPT_Entry
 	setDesc();
     }
     
-    public void write(Device device)					    { pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, device.getSize(), ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-										      new DeviceController(ui).writePos(getDesc(), getBytes(), device, pos); } // Causes exeption on OSX
-    public void writeCipherPartitions(Path cipherFilePath, Device targetDevice)	    { new DeviceController(ui).writeCipherPartition(cipherFilePath, targetDevice, startingLBA, endingLBA); }
-    public void cloneCipherPartition(Device cipherDevice, Device targetDevice)	    { new DeviceController(ui).cloneCipherPartition(cipherDevice, targetDevice, startingLBA, endingLBA); }
+    public void write(FCPath fcPath)						{ pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, fcPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+										  new DeviceController(ui).writePos(getDesc(), getBytes(), fcPath, pos); } // Causes exeption on OSX
+    public void writeCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)	{ new DeviceController(ui).writeCipherPartition(cipherFCPath, targetFCPath, startingLBA, endingLBA); }
+    public void cloneCipherPartition(FCPath cipherFCPath, FCPath targetFCPath)	{ new DeviceController(ui).cloneCipherPartition(cipherFCPath, targetFCPath, startingLBA, endingLBA); }
     
         
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(GPT_Entry.this.getBytes(), off, length); }

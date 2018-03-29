@@ -113,9 +113,9 @@ public class GPT_Header
 	setDesc();
     }
 
-    public void read(Device device)
+    public void read(FCPath fcPath)
     {
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(device, ABSTRACT_LBA, this.LENGTH);
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readLBA(fcPath, ABSTRACT_LBA, this.LENGTH);
 //      Offset        Length    When            Data
 //      0  (0x00)     8 bytes   During LBA 1    Signature ("EFI PART", 45h 46h 49h 20h 50h 41h 52h 54h or 0x5452415020494645ULL [a] on little-endian machines)
                                                 signatureBytes =			GPT.getBytesPart(bytes, 0, 8);
@@ -150,7 +150,7 @@ public class GPT_Header
 	setDesc();
     }
     
-    public void create(Device targetDevice)
+    public void create(FCPath targetFCPath)
     {
 //      Offset        Length    When            Data
 //      0  (0x00)     8 bytes   During LBA 1    Signature ("EFI PART", 45h 46h 49h 20h 50h 41h 52h 54h or 0x5452415020494645ULL [a] on little-endian machines)
@@ -165,21 +165,21 @@ public class GPT_Header
 //      20 (0x14)     4 bytes   During LBA 1    Reserved; must be zero
                                                 reservedBytes =				GPT.hex2Bytes("00 00 00 00");
 //      24 (0x18)     8 bytes   During LBA 1    Current LBA (location of this header copy) At the top of the Storage
-						if ( ABSTRACT_LBA >= 0 )		{ myLBA = ABSTRACT_LBA; } else { myLBA = (targetDevice.getSize() / DeviceController.bytesPerSector) + ABSTRACT_LBA; }
+						if ( ABSTRACT_LBA >= 0 )		{ myLBA = ABSTRACT_LBA; } else { myLBA = (targetFCPath.size / DeviceController.bytesPerSector) + ABSTRACT_LBA; }
                                                 myLBABytes =				GPT.hex2Bytes(GPT.getHexStringLittleEndian(myLBA, 8));
 //      32 (0x20)     8 bytes   Post LBA-1      Backup LBA (location of the other header copy) (at the far end of storage) Reversed in Backup Header
-                                                if ( ABSTRACT_LBA >= 0 )		{ alternateLBA = (targetDevice.getSize() / DeviceController.bytesPerSector) - ABSTRACT_LBA; } else { alternateLBA = -ABSTRACT_LBA; }
+                                                if ( ABSTRACT_LBA >= 0 )		{ alternateLBA = (targetFCPath.size / DeviceController.bytesPerSector) - ABSTRACT_LBA; } else { alternateLBA = -ABSTRACT_LBA; }
                                                 alternateLBABytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(alternateLBA, 8));
 //      40 (0x28)     8 bytes   During LBA 1    First usable LBA for partitions (primary partition table last LBA + 1) First LBA after Last Entry (Entry 128) = LBA 34
                                                 firstUsableLBA =			34L;
                                                 firstUsableLBABytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(firstUsableLBA, 8)); // Header + Entries (512L + 512L + ( 128L * 128L )) /  bytesPerSector
 //      48 (0x30)     8 bytes   Post LBA 1      Last usable LBA (secondary partition table first LBA - 1) = LBA-34 // (Capacity - (bytesPerSector * 34)) (deviceSize - (bytesPerSector*34))
-                                                lastUsableLBA =				((targetDevice.getSize() / DeviceController.bytesPerSector) - 34L);
+                                                lastUsableLBA =				((targetFCPath.size / DeviceController.bytesPerSector) - 34L);
                                                 lastUsableLBABytes =			GPT.hex2Bytes(GPT.getHexStringLittleEndian(lastUsableLBA,8));
 //      56 (0x38)     16 bytes  During LBA 1    Disk GUID (also referred as UUID on UNIXes) hex2Bytes("FD A4 3C 26 16 40 7E 43 83 D2 91 C0 6D C4 28 26"); // 
                                                 if ( ABSTRACT_LBA >= 0 )		{ diskGUIDBytes = GPT.getUUID(); } else { diskGUIDBytes = gpt.gpt_Header1.diskGUIDBytes; }
 //      72 (0x48)     8 bytes   During LBA 1    Starting LBA of array of partition entries (always 2 in primary copy)
-                                                if ( ABSTRACT_LBA >= 0 )		{ partitionEntryLBA = 2L; } else { partitionEntryLBA = (targetDevice.getSize() / DeviceController.bytesPerSector) - 33; }
+                                                if ( ABSTRACT_LBA >= 0 )		{ partitionEntryLBA = 2L; } else { partitionEntryLBA = (targetFCPath.size / DeviceController.bytesPerSector) - 33; }
                                                 partitionEntryLBABytes =		GPT.hex2Bytes(GPT.getHexStringLittleEndian(partitionEntryLBA, 8));
 //      80 (0x50)     4 bytes   During LBA 1    Number of partition entries in array
                                                 numberOfPartitionEntries =		128;
@@ -198,7 +198,7 @@ public class GPT_Header
     public void setCRC32Partitions()	    {	crc32PartitionsBytes =			getCRC32("GPT_Header1.crc32PartitionsBytes: ", gpt.get_GPT_Entries1().getBytes(), littleEndian); }
     public void setHeaderCRC32Bytes()	    {	headerCRC32Bytes =			getCRC32("GPT_Header1.headerCRC32Bytes:	    ",			      getBytes(0, headerSize), littleEndian); }
     
-    public void	write(Device device)				{ new DeviceController(ui).writeLBA(getDesc(), getBytes(false), device, ABSTRACT_LBA); }
+    public void	write(FCPath fcPath)				{ new DeviceController(ui).writeLBA(getDesc(), getBytes(false), fcPath, ABSTRACT_LBA); }
 
     public byte[]   getBytes(int off, int length)		{ return GPT.getBytesPart(getBytes(false), off, length); }
     public byte[]   getBytes(boolean headerCRC32SetToZeo)

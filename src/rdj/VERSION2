@@ -1,5 +1,5 @@
-[Version] =		{1.9.1}
-[Release Notes] =	{Cipher Authentication}
-[Release Message] =	{Wrong Cipher Detection}
+[Version] =		{2.0.0}
+[Release Notes] =	{Added seperate buttons}
+[Release Message] =	{[Encrypt]  & [Decrypt]}
 [Alert Subject] =	{}
 [Alert Message] =	{}

@@ -26,8 +26,9 @@ public interface UI
     public void status(String status, boolean log);
     public void statusNow(String status, boolean log);
     public void println(String message);
-    public void encryptionGraph(int value);
-    public void encryptionProgress(int filesProgressPercent, int fileProgressPercent);
-    public void encryptionFinished();
-    public void encryptionStarted();
+    public void processGraph(int value);
+    public void processProgress(int filesProgressPercent, int fileProgressPercent);
+    public void fileProgress();
+    public void processFinished();
+    public void processStarted();
 }

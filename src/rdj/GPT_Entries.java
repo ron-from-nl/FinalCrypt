@@ -18,7 +18,6 @@
  */
 package rdj;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class GPT_Entries
     }
     
     public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } setDesc(); }
-    public void		read(Device cipherDeviceFilePath)					    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherDeviceFilePath); } setTotalSize(); setDesc(); }
+    public void		read(FCPath cipherFCPath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherFCPath); } setTotalSize(); setDesc(); }
 
     public void		create(long cipherSize)
     {
@@ -53,13 +52,11 @@ public class GPT_Entries
 	else			 { gpt_entry[0].create(cipherSize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
 				   gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();
     }
-//    public void	create(long cipherSize)							    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].create(cipherSize); } setDesc(); }
-//    public void	write(Path targetDeviceFilePath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].write(targetDeviceFilePath); } } // OSX exeption
 
-    public void		write(Device targetDevice)						    { new DeviceController(ui).writeLBA(getDesc(), getBytes(), targetDevice, ABSTRACT_LBA); }
+    public void		write(FCPath targetFCPath)						    { new DeviceController(ui).writeLBA(getDesc(), getBytes(), targetFCPath, ABSTRACT_LBA); }
 
-    public void		writeCipherPartitions(Path cipherFilePath, Device targetDevice)		    { gpt_entry[0].writeCipherPartitions(cipherFilePath, targetDevice); }
-    public void		cloneCipherPartitions(Device cipherDevice, Device targetDevice)		    { gpt_entry[0].cloneCipherPartition(cipherDevice, targetDevice); gpt_entry[1].cloneCipherPartition(cipherDevice, targetDevice); }
+    public void		createCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)		    { gpt_entry[0].writeCipherPartitions(cipherFCPath, targetFCPath); }
+    public void		cloneCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)		    { gpt_entry[0].cloneCipherPartition(cipherFCPath, targetFCPath); gpt_entry[1].cloneCipherPartition(cipherFCPath, targetFCPath); }
     
     private int		getTotalEntries()							    { return gpt_entry.length; }
     private int		getActiveEntries()							    { int activeEntries = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { if ( gpt_entry[entry].startingLBA != 0 ) { activeEntries++; } } return activeEntries; }
