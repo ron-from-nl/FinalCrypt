@@ -6,11 +6,17 @@ Progress animation
 
 Added optional cipher password to protect cipher from unauthorized usage
 Backup update locations (properties, daily check / history)
-Encrypt / Decrypt Button
+Improve CLUI validation
 
 =================================== Done ====================================
 
-Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
+Major changes:
+Separate Encrypt Decrypt Buttons added
+Switched to proactive target properties inventory:
+Path became FCPath
+ArrayList<Path>  became ArrayList<FCPath>
+Live statistics added during processing
+Improved intuitiveness, looks and feel
 
 ============================= Source Committed ==============================
 
@@ -20,6 +26,7 @@ Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
 
 ============================= Binaries Released =============================
 
+Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
 Removed Validate & getDesktop.open bug
 Increased GUI performance & logging
 GPT printing from GUI (Mac & Linux only)

@@ -34,7 +34,7 @@
                                        <children>
                                           <AnchorPane maxHeight="40.0" minHeight="30.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" style="-fx-background-color: #EEEEEE;">
                                              <children>
-                                                <GridPane fx:id="step1GridPane" alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
                                                       <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
@@ -49,7 +49,7 @@
                                                    <children>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel2" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="40.0" prefWidth="74.0" text="STEP 1" textAlignment="CENTER" textFill="#868686" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="40.0" prefWidth="74.0" text="STEP 1" textAlignment="CENTER" textFill="#868686" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -58,7 +58,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel" alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" text="Select items to encrypt or decrypt" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" text="Select items to encrypt or decrypt" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -67,7 +67,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel1" alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Hold down: [Ctrl] / [Shift] to select more items" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Hold down: [Ctrl] / [Shift] to select more items" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -76,7 +76,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="20.0" text="info" textAlignment="CENTER" textFill="#666666" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="20.0" text="info" textAlignment="CENTER" textFill="#666666" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <cursor>
                                                                   <Cursor fx:constant="HAND" />
                                                                </cursor>
@@ -112,11 +112,11 @@
                                        <children>
                                           <AnchorPane maxHeight="40.0" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" style="-fx-background-color: #EEEEEE;">
                                              <children>
-                                                <GridPane fx:id="step2GridPane" alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel21" alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="40.0" prefWidth="74.0" text="STEP 2" textAlignment="CENTER" textFill="#868686" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" focusTraversable="false" prefHeight="40.0" prefWidth="74.0" text="STEP 2" textAlignment="CENTER" textFill="#868686" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -125,7 +125,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel10" alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" text="Select your personal cipher file" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" text="Select your personal cipher file" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -134,7 +134,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label fx:id="targetFileChooserLabel11" alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Select a personal (secret) photo / video file" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Select a personal (secret) photo / video file" textAlignment="CENTER" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -143,7 +143,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label fx:id="cipherFileChooserInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" text="info" textAlignment="CENTER" textFill="#666666" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" text="info" textAlignment="CENTER" textFill="#666666" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans Italic" size="18.0" />
                                                                </font>
@@ -204,11 +204,11 @@
             </TabPane>
             <AnchorPane maxHeight="264.0" minHeight="85.0" prefHeight="221.0" prefWidth="1327.0" VBox.vgrow="SOMETIMES">
                <children>
-                  <VBox fx:id="bottomVBox" alignment="BOTTOM_CENTER" layoutY="15.0" maxHeight="264.0" maxWidth="1.7976931348623157E308" minHeight="85.0" prefHeight="226.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                  <VBox alignment="BOTTOM_CENTER" layoutY="15.0" maxHeight="264.0" maxWidth="1.7976931348623157E308" minHeight="85.0" prefHeight="226.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                      <children>
                         <AnchorPane minHeight="135.0" prefHeight="135.0" prefWidth="1327.0">
                            <children>
-                              <GridPane fx:id="statsGridPane" alignment="TOP_CENTER" prefHeight="140.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane alignment="TOP_CENTER" prefHeight="140.0" prefWidth="1327.0" style="-fx-font-size: 12;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -517,7 +517,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
-                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="60.0" layoutY="-2.0" prefHeight="27.0" prefWidth="183.0" style="-fx-background-color: #EEEEEE;" text="Total Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="60.0" layoutY="-2.0" prefHeight="27.0" prefWidth="183.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 18;" text="Elapsed Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -526,7 +526,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
-                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="12.0" prefHeight="27.0" prefWidth="183.0" style="-fx-background-color: #EEEEEE;" text="Elapsed Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="12.0" prefHeight="27.0" prefWidth="183.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 18;" text="Remaining Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -535,7 +535,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="15" GridPane.columnSpan="3" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
-                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="185.0" style="-fx-background-color: #EEEEEE;" text="Remaining Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="BASELINE_CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="185.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 18;" text="Total Time" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -544,7 +544,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="totalTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="60.0" layoutY="10.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="elapsedTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="60.0" layoutY="10.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -553,7 +553,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="elapsedTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="3.0" layoutY="-7.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="remainingTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="3.0" layoutY="-7.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -562,7 +562,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="15" GridPane.columnSpan="3" GridPane.rowIndex="6" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="remainingTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="42.0" layoutY="-15.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="totalTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="42.0" layoutY="-15.0" prefHeight="36.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE;" text="00:00:00" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -685,7 +685,10 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="10.0" layoutY="50.0" style="-fx-background-color: #EEEEEE;" GridPane.rowIndex="3">
                                        <children>
-                                          <Label alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-3.0" layoutY="-1.0" prefHeight="18.0" prefWidth="73.0" style="-fx-background-color: #EEEEEE;" text="Decrypted" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-3.0" layoutY="-1.0" prefHeight="18.0" prefWidth="73.0" style="-fx-background-color: #EEEEEE;" text="Decrypted" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="83.0" layoutY="50.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -835,16 +838,16 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="671.0" layoutY="62.0" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="5">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutY="-5.0" scaleX="0.8" scaleY="0.5" style="-fx-background-color: #EEEEEE;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutY="-5.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 12;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
-                                                <Font name="Monospaced Regular" size="24.0" />
+                                                <Font size="12.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="671.0" layoutY="10.0" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="5">
                                        <children>
-                                          <Label alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="53.0" layoutY="-6.0" maxHeight="20.0" minHeight="20.0" prefHeight="20.0" scaleX="0.8" scaleY="0.5" style="-fx-background-color: #EEEEEE;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="53.0" layoutY="-6.0" maxHeight="20.0" minHeight="20.0" prefHeight="20.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 12;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Monospaced Regular" size="24.0" />
                                              </font>
@@ -853,7 +856,7 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="893.0" layoutY="98.0" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="15" GridPane.columnSpan="3" GridPane.rowIndex="5">
                                        <children>
-                                          <Label alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="BOTTOM" focusTraversable="false" layoutX="53.0" layoutY="-6.0" prefHeight="24.0" prefWidth="222.0" scaleX="0.8" scaleY="0.5" style="-fx-background-color: #EEEEEE;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="53.0" layoutY="-6.0" prefHeight="24.0" prefWidth="222.0" style="-fx-background-color: #EEEEEE; -fx-font-size: 12;" text="hh:mm:ss" textFill="#bbbbbb" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Monospaced Regular" size="24.0" />
                                              </font>
@@ -942,17 +945,17 @@
                               </AnchorPane>
                            </children>
                         </GridPane>
-                        <AnchorPane fx:id="fileProgressAPane" maxHeight="34.0" minHeight="10.0" prefHeight="10.0" prefWidth="1100.0">
+                        <AnchorPane maxHeight="34.0" minHeight="10.0" prefHeight="10.0" prefWidth="1100.0">
                            <children>
                               <ProgressBar fx:id="fileProgressBar" focusTraversable="false" layoutY="25.0" maxHeight="10.0" minHeight="10.0" opacity="0.25" prefHeight="10.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="filesProgressAPane" maxHeight="22.0" minHeight="15.0" prefHeight="22.0" prefWidth="1327.0">
+                        <AnchorPane maxHeight="22.0" minHeight="15.0" prefHeight="22.0" prefWidth="1327.0">
                            <children>
                               <ProgressBar fx:id="filesProgressBar" focusTraversable="false" layoutY="5.0" maxHeight="15.0" minHeight="15.0" opacity="0.6" prefHeight="15.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="statusAPane" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1237.0">
                            <children>
                               <GridPane alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>

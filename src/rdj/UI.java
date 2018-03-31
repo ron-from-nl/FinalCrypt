@@ -27,7 +27,7 @@ public interface UI
     public void statusNow(String status, boolean log);
     public void println(String message);
     public void processGraph(int value);
-    public void processProgress(int filesProgressPercent, int fileProgressPercent);
+    public void processProgress(int filesProgressPercent, int fileProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam);
     public void fileProgress();
     public void processFinished();
     public void processStarted();

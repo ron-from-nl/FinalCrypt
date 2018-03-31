@@ -141,15 +141,49 @@ public class CLUI implements UI
         if ((cfsetneeded) && ( ! cfset ))									    { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(true); }
 
                 
-//////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
+//////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
 
+	// Cipher Validation
+	if ( ! cipherFCPath.isValidCipher)
+	{
+	    String size = ""; if (cipherFCPath.size < FCPath.CIPHER_SIZE_MIN) { size += " [size < " + FCPath.CIPHER_SIZE_MIN + "] "; } 
+	    String dir = ""; if (cipherFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
+	    String sym = ""; if (cipherFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
+	    String all = size + dir + sym;
+	    
+            error("\r\nCipher parameter: -c \"" + cipherFCPath.path + "\" Invalid:" + all + "\r\n\r\n");
+	    log(Validate.getFCPathStatus(cipherFCPath)); usage(true);
+	}
+	
+	// Target Validation
+        for(Path targetPath : targetPathList)
+        {
+            if (Files.exists(targetPath))
+            {
+//			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
+                if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
+                {
+                    if (verbose) { status("Target parameter: " + targetPath + " is a valid dir\r\n", true); }
+                }
+//				   isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+                else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	     false,	      1L,         symlink,             true,        verbose))
+                {
+                    if (verbose) { status("Target parameter: " + targetPath + " is a valid file\r\n", true); }
+                }
+            }
+            else
+            { 
+                    error("Target parameter: -t \"" + targetPath + "\" does not exists\r\n"); usage(true);
+            }            
+        }
+
+//	Command line input for an optional Password keyboard.nextInt();
+
+//////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
         
 	FCPathList targetFCPathList = new FCPathList();
-//	extendedTargetPathList = Validate.getTargetList(this, finalCrypt, targetPathList, cipherFilePath, pattern, negatePattern, symlink, false, printgpt, deletegpt);
 //		 buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
 	Validate.buildSelection(       this,			        targetPathList,  cipherFCPath,		    targetFCPathList,	      symlink,	      pattern,	       negatePattern,	       false);
-//	log(targetFCPathList.getStats());
-
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
@@ -192,35 +226,35 @@ public class CLUI implements UI
 	} else { createCipherDeviceFound = false; }
 
 	
-/////////////////////////////////////////////// EXECUTE MODES ////////////////////////////////////////////////////
+/////////////////////////////////////////////// FINAL VALIDATION & EXECUTE MODES ////////////////////////////////////////////////////
 
 
 	DeviceManager deviceManager;
-	if ((encrypt) && (encryptablesFound))
+	if ((encrypt))
 	{
-	    processStarted();
-//                finalCrypt.encryptSelection(extendedTargetPathList, cipherFCPath);
-	    finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath);
+	    if ((encryptablesFound))	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath); }
+	    else			{ error("Sorry, no encryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
 	}
-	else if ((decrypt) && (decryptablesFound))
+	else if ((decrypt))
 	{
-	    processStarted();
-//                finalCrypt.encryptSelection(extendedTargetPathList, cipherFCPath);
-	    finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath);
+	    if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath); }
+	    else			{ error("Sorry, no decryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
 	}
-	else if ((create) && (createCipherDeviceFound))
+	else if (create)
 	{
-	    processStarted();
-	    deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createCipherDevice(cipherFCPath, (FCPath) createCipherList.get(0));
-	    processFinished();
+	    if (createCipherDeviceFound){ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createCipherDevice(cipherFCPath, (FCPath) createCipherList.get(0)); processFinished(); }
+	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((clone) && (cloneCipherDeviceFound))
 	{
-	    processStarted();
-	    deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) cloneCipherList.get(0));
-	    processFinished();
+	    if (cloneCipherDeviceFound) { processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) cloneCipherList.get(0));  processFinished(); }
+	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
-    }
+    } // End of default constructor
+    
+    
+    
+//  =======================================================================================================================================================================
 
 
     private boolean addBatchTargetFiles(String batchFilePathString, ArrayList<Path> targetFilesPathList)
@@ -281,26 +315,27 @@ public class CLUI implements UI
     private void usage(boolean error)
     {
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
-
         log("\r\n");
         log("Examples:\r\n");
         log("\r\n");
-        log("            <--examples>          Print commandline examples.\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.\r\n");
+        log("\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -c cipher_file -t target_file\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -c cipher_file -t target_dir\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -c cipher_file -t target_file -t target_dir\r\n");
         log("\r\n");
         log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n");
-        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI --encrypt -c mycipherfile -t file\r\n");
-        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI --encrypt -c mycipherfile -t directory\r\n");
-        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI --encrypt -c mycipherfile -t file -t directory\r\n");
         log("\r\n");
         log("Mode:\r\n");
-        log("\r\n");
-        log("            <--encrypt>           Encrypt Targets.\r\n");
-        log("            <--decrypt>           Decrypt Targets.\r\n");
-        log("            <--create>            Create Cipher Device (only unix).\r\n");
-        log("            <--clone>             Clone Cipher Device (only unix).\r\n");
+        log("            <--encrypt>           -c \"cipher_file\"   -t \"target\"	    Encrypt Targets.\r\n");
+        log("            <--decrypt>           -c \"cipher_file\"   -t \"target\"	    Decrypt Targets.\r\n");
+        log("            <--create>            -c \"cipher_file\"   -t \"target\"	    Create Cipher Device (only unix).\r\n");
+        log("            <--clone>             -c \"source_device\" -t \"target_device\"     Clone Cipher Device (only unix).\r\n");
+        log("            [--gpt-print]         -t \"target_device\"			    Print GUID Partition Table.\r\n");
+        log("            [--gpt-delete]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n");
         log("\r\n");
 	log("Options:\r\n");
-        log("            [-h] [--help]	       Shows this help page.\r\n");
+        log("            [-h] [--help]	  Shows this help page.\r\n");
         log("            [-d] [--debug]        Enables debugging mode.\r\n");
         log("            [-v] [--verbose]      Enables verbose mode.\r\n");
         log("            [-p] [--print]        Print overal data encryption.\r\n");
@@ -313,8 +348,6 @@ public class CLUI implements UI
         log("            [--hex]               Print hexadecimal calculations.\r\n");
         log("            [--chr]               Print character calculations.\r\n");
         log("                                  Warning: The above Print options slows encryption severely.\r\n");
-        log("            [--gpt-print]         Print GUID Partition Table in combination with -t \"device\".\r\n");
-        log("            [--gpt-delete]        Delete GUID Partition Table in combination with -t \"device\".\r\n");
         log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n");
         log("\r\n");
         log("Filtering Options:\r\n");
@@ -459,7 +492,7 @@ public class CLUI implements UI
     {
     }
 
-    @Override public void processProgress(int filesProgress, int fileProgress)
+    @Override public void processProgress(int filesProgress, int fileProgress, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam)
     {
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }

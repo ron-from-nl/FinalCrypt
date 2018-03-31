@@ -33,7 +33,7 @@ public class FCPath
     public static final    int	    DEVICE_INVALID =	6;
     public static final    int	    DEVICE_PROTECTED =	7;
     
-    public static final String[]   ITEMSELECTDESCRIPTION = new String[] { "Invalid","File","Directory","Symlink","Device","Partition","Device Invalid","Device Protected" };
+    public static final String[]   TYPE_DESCRIPTION_ARRAY = new String[] { "Invalid","File","Directory","Symlink","Device","Partition","Device Invalid","Device Protected" };
     
     public	    Path    path;
 
@@ -100,42 +100,6 @@ public class FCPath
     }
     
 //    public static String getCipherSelectedDescription()		{ return FCPath.ITEMSELECTDESCRIPTION[type]; }	
-    public static String getTargetSelectedDescription(int type) { return FCPath.ITEMSELECTDESCRIPTION[type]; }
+    public static String getTypeString(int type) { return FCPath.TYPE_DESCRIPTION_ARRAY[type]; }
 
-    public String getSting()
-    {
-	String returnString = "";
-	returnString += "FCPath:\r\n";
-	returnString += "\r\n";
-	returnString += "Path:			" + path.toString() + "\r\n";
-	returnString += "Exist:			" + exist + "\r\n";
-	returnString += "Type:			" + getTargetSelectedDescription(type) + "\r\n";
-	returnString += "Size:			" + size + "\r\n";
-	returnString += "Readable:		" + readable + "\r\n";
-	returnString += "Writable:		" + writable + "\r\n";
-	returnString += "Hidden:			" + isHidden + "\r\n";
-	returnString += "Match Cipher:		" + matchCipher + "\r\n";
-	returnString += "\r\n";
-	returnString += "Valid Path:		" + isValidPath + "\r\n";
-	returnString += "Valid File:		" + isValidFile + "\r\n";
-	returnString += "Valid Device:		" + isValidDevice + "\r\n";
-	returnString += "Valid Partition:	" + isValidPartition + "\r\n";
-	returnString += "Is Cipher:		" + isCipher + "\r\n";
-	returnString += "Valid Cipher:		" + isValidCipher + "\r\n";
-	returnString += "\r\n";
-	returnString += "Decrypted:		" + isDecrypted + "\r\n";
-	returnString += "Encryptable:		" + isEncryptable + "\r\n";
-	returnString += "New Encrypted:		" + isNewEncrypted + "\r\n";
-	returnString += "UnEncryptable:		" + isUnEncryptable + "\r\n";
-	returnString += "\r\n";
-//	returnString += "Has FCToken:		" + hasFCToken + "\r\n";
-	returnString += "Encrypted:		" + isEncrypted + "\r\n";
-//	returnString += "Authenticated:		" + isAuthenticated + "\r\n";
-	returnString += "Decryptable:		" + isDecryptable + "\r\n";
-	returnString += "New Decrypted:		" + isNewDecrypted + "\r\n";
-	returnString += "UnDecryptable:		" + isUnDecryptable + "\r\n";
-	returnString += "\r\n";
-
-	return returnString;
-    }
 }

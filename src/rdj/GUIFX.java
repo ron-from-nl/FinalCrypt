@@ -77,18 +77,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
 import java.nio.file.LinkOption;
 import java.nio.file.StandardOpenOption;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
@@ -132,8 +130,6 @@ public class GUIFX extends Application implements UI, Initializable
     private Version version;
 
     @FXML
-    private Label cipherFileChooserInfoLabel;
-    @FXML
     private ToggleButton pauseToggleButton;
     @FXML
     private Button stopButton;
@@ -157,8 +153,6 @@ public class GUIFX extends Application implements UI, Initializable
     private AttributeList attribList;
     private Attribute att;
     private Double value;
-    @FXML
-    private VBox bottomVBox;
     private GridPane logButtonGridPane;
     private FileFilter nonFinalCryptFilter;
     private FileNameExtensionFilter finalCryptFilter;
@@ -166,23 +160,14 @@ public class GUIFX extends Application implements UI, Initializable
     private int lineCounter;
     private Configuration configuration;
     @FXML
-    private Label targetFileChooserLabel;
-    @FXML
-    private Label targetFileChooserInfoLabel;
-    @FXML
     private SwingNode targetFileSwingNode;
     private Path cipherPath;
     private FCPath cipherFCPath;
 //    private ArrayList<Path> targetPathList;
-    private ArrayList<Path> extendedTargetPathList;
-    private FCPathList extendedFCTargetPathList;
     private boolean symlink = false;
     private final String procCPULoadAttribute = "ProcessCpuLoad";
     @FXML
     private Button decryptButton;
-    private Button advancedButton;
-    @FXML
-    private GridPane statsGridPane;
     @FXML
     private Label cipherNameLabel;
     @FXML
@@ -220,35 +205,9 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Label unencryptableSizeLabel;
     @FXML
-    private Label totalTimeLabel;
-    @FXML
-    private Label elapsedTimeLabel;
-    @FXML
-    private Label remainingTimeLabel;
-    @FXML
     private Label undecryptableLabel;
     @FXML
-    private AnchorPane fileProgressAPane;
-    @FXML
-    private AnchorPane filesProgressAPane;
-    @FXML
-    private AnchorPane statusAPane;
-    @FXML
     private Label encryptableLabel;
-    @FXML
-    private GridPane step1GridPane;
-    @FXML
-    private Label targetFileChooserLabel2;
-    @FXML
-    private Label targetFileChooserLabel1;
-    @FXML
-    private GridPane step2GridPane;
-    @FXML
-    private Label targetFileChooserLabel21;
-    @FXML
-    private Label targetFileChooserLabel10;
-    @FXML
-    private Label targetFileChooserLabel11;
     @FXML
     private Label newEncryptedLabel;
     @FXML
@@ -295,7 +254,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Label hiddenFilesSizeLabel;
     
-    private static final Background HEADER_BACKGROUND = new Background(new BackgroundFill(Color.ORANGERED, null, null));
     @FXML
     private Label targetWarningLabel;
     private FCPathList targetFCPathList;
@@ -306,6 +264,32 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList customList;
     @FXML
     private Button cipherDeviceButton;
+    @FXML
+    private Label totalTimeLabel;
+    @FXML
+    private Label remainingTimeLabel;
+    @FXML
+    private Label elapsedTimeLabel;
+    
+    private long	bytesTotal;	
+    private long	bytesProcessed;	
+    private double	processedTotalRatio;
+//    private long	bytesPerSecond;	
+   
+    private Calendar	startTimeCalendar;
+    private Calendar	start2TimeCalendar;
+    private Calendar	nowTimeCalendar;
+    private Calendar	elapsedTimeCalendar;
+   
+    private Calendar	totalTimeCalendar;
+    private Calendar	remainingTimeCalendar;
+    private long	bytesPerMilliSecond;
+    private Timeline updateClockTimeLine;
+    private int offSetHours;
+    private int offSetMinutes;
+    private int offSetSeconds;
+    private Calendar offsetTimeCalendar;
+    private boolean clockUpdated;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -629,6 +613,7 @@ public class GUIFX extends Application implements UI, Initializable
                             finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                             targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
                             cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+			    targetFileChooserPropertyCheck(true);
                         }
                     }
                 }
@@ -657,6 +642,7 @@ public class GUIFX extends Application implements UI, Initializable
                         finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                         targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
                         cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+			cipherFileChooserPropertyCheck();
                     }
                 }
             }
@@ -810,7 +796,7 @@ public class GUIFX extends Application implements UI, Initializable
 		if ((cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
 		{
 		    cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.toString());
-		    cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTargetSelectedDescription(cipherFCPath.type));
+		    cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 		    cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 		    cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
 		}
@@ -818,7 +804,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 		    cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
-		    if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTargetSelectedDescription(cipherFCPath.type));
+		    if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 		    if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 		    cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
 		}
@@ -850,27 +836,27 @@ public class GUIFX extends Application implements UI, Initializable
 	
         if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (cipherFCPath != null) && (cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
 	{
-	    cursorWait();
+		Validate.bytesCount = 0;
+		for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
 
-	    
-	    Validate.bytesCount = 0;
-	    for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
-	    
-//	    En/Disable FileChooser deletebutton
-	    targetFileDeleteButton.setEnabled(true);
+//    	    En/Disable FileChooser deletebutton
+		targetFileDeleteButton.setEnabled(true);
 
-//	    Get Globbing Pattern String
-	    String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+//    	    Get Globbing Pattern String
+		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
-	    // UPdate Dashboard during buildSelection
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { updateDashboard(targetFCPathList); } )); timeline.play();
-	    //						  buildSelection(UI ui, ArrayList<Path> pathList, Path cipherPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
-	    targetFCPathList = new FCPathList(); Validate.buildSelection( this,	          targetPathList,    cipherFCPath,		     targetFCPathList,	       symlink,	       pattern,		negatePattern,		false);	timeline.stop();
-	    updateDashboard(targetFCPathList);
+		// UPdate Dashboard during buildSelection
+		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }});
+		Timeline updateDashboardTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { updateDashboard(targetFCPathList); } )); updateDashboardTimeline.play();
+		
+		cursorWait();
+		targetFCPathList = new FCPathList(); Validate.buildSelection( this, targetPathList, cipherFCPath, targetFCPathList, symlink, pattern, negatePattern, false);
+		cursorDefault();
 
-	    cursorDefault();
+		updateDashboardTimeline.stop();
+		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(0); }});
+		updateDashboard(targetFCPathList);
 	}
-	
         checkModeReady();
     }
 
@@ -1000,16 +986,16 @@ public class GUIFX extends Application implements UI, Initializable
 	}});
     }
 
-    public static FCPathList filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
+    synchronized public static FCPathList filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
     {
 	FCPathList result = new FCPathList();
 	for (FCPath fcPathItem : fcPathList) { if (fcPath.test(fcPathItem)) { result.add(fcPathItem); } }
 	return result;
     }
     
-    public static Predicate<FCPath> isHidden() { return (FCPath fcPath) -> fcPath.isHidden; }
+    synchronized public static Predicate<FCPath> isHidden() { return (FCPath fcPath) -> fcPath.isHidden; }
     
-    public List<FCPath> filter(Predicate<FCPath> criteria, ArrayList<FCPath> list)
+    synchronized public List<FCPath> filter(Predicate<FCPath> criteria, ArrayList<FCPath> list)
     {
 	return list.stream().filter(criteria).collect(Collectors.<FCPath>toList());
     }
@@ -1024,7 +1010,7 @@ public class GUIFX extends Application implements UI, Initializable
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,12)); }
+	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,11)); }
 	    
 //            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
@@ -1089,7 +1075,7 @@ public class GUIFX extends Application implements UI, Initializable
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,12)); }
+	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,11)); }
 	    
 //            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
@@ -1335,6 +1321,24 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
+		// Clocks
+		elapsedTimeLabel.setText("00:00:00");
+		remainingTimeLabel.setText("00:00:00");
+		totalTimeLabel.setText("00:00:00");
+
+		startTimeCalendar = Calendar.getInstance(Locale.ROOT);
+		start2TimeCalendar = Calendar.getInstance(Locale.ROOT);
+		offsetTimeCalendar = Calendar.getInstance(Locale.ROOT);
+		offsetTimeCalendar.setTimeInMillis(start2TimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
+		offSetHours = offsetTimeCalendar.get(Calendar.HOUR); offSetMinutes = offsetTimeCalendar.get(Calendar.MINUTE); offSetSeconds = offsetTimeCalendar.get(Calendar.SECOND);
+		
+		nowTimeCalendar =	Calendar.getInstance(Locale.ROOT);
+		elapsedTimeCalendar =   Calendar.getInstance(Locale.ROOT);
+		remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
+		totalTimeCalendar =	Calendar.getInstance(Locale.ROOT);
+		
+		updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play();       
+		
                 processRunning = true;
                 encryptButton.setDisable(true);
                 decryptButton.setDisable(true);
@@ -1354,12 +1358,53 @@ public class GUIFX extends Application implements UI, Initializable
 //	updateDashboard(targetFCPathList);
     }
     
-    @Override public void processProgress(int fileProgressPercent, int filesProgressPercent)
+    private void updateClocks()
     {
+        Platform.runLater(new Runnable() { @Override public void run()
+	{
+	    nowTimeCalendar =	    Calendar.getInstance(Locale.ROOT);
+	    elapsedTimeCalendar =   Calendar.getInstance(Locale.ROOT);
+	    remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
+	    totalTimeCalendar =	    Calendar.getInstance(Locale.ROOT);
+
+	    totalTimeCalendar.setTimeInMillis(bytesTotal / bytesPerMilliSecond);
+	    elapsedTimeCalendar.setTimeInMillis(nowTimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
+	    remainingTimeCalendar.setTimeInMillis(totalTimeCalendar.getTimeInMillis() - elapsedTimeCalendar.getTimeInMillis());
+	    String elapsedTimeString = "";
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+		    
+	    String remainingTimeString = "";
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.SECOND));
+		    
+	    String totalTimeString = "";
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+		    
+	    elapsedTimeLabel.setText(elapsedTimeString);
+	    remainingTimeLabel.setText(remainingTimeString);
+	    totalTimeLabel.setText(totalTimeString);	    
+	    clockUpdated = true;
+	}});
+    }
+
+    @Override public void processProgress(int fileProgressPercent, int filesProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam)
+    {
+	
         Platform.runLater(new Runnable()
         {
             @Override public void run()
             {
+		// updateClocks() data
+		bytesTotal = bytesTotalParam;
+		bytesProcessed = bytesProcessedParam;
+		bytesPerMilliSecond = bytesPerMiliSecondParam;
+		
+		// update ProgressBars
                 if (finalCrypt.getVerbose()) { println("Progress File : " + filesProgressPercent / 100.0  + " factor"); }
                 if (finalCrypt.getVerbose()) { println("Progress Files: " + fileProgressPercent / 100.0 + " factor"); }
                 fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
@@ -1376,7 +1421,20 @@ public class GUIFX extends Application implements UI, Initializable
         Platform.runLater(new Runnable()
         {
             @Override public void run()
-            {                                
+            {
+		// Clocks
+		updateClockTimeLine.stop();
+		if (clockUpdated)
+		{
+		    remainingTimeLabel.setText("00:00:00");
+		    totalTimeCalendar.setTimeInMillis(elapsedTimeCalendar.getTimeInMillis());
+		    String totalTimeString = "";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+		    totalTimeLabel.setText(totalTimeString);
+		}
+		
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
                 processRunningType = NONE;
                 processRunning = false;

@@ -26,7 +26,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,6 +52,12 @@ public class DeviceController
     private static long below = 1024;
     private static long cycles = 0;
     private static boolean finished = false;
+    private Calendar	startCalendar;
+    private long bytesTotal;
+    private long bytesProcessed;
+    private long filesBytesProcessed;
+    private long bytesPerMilliSecond;
+    private Calendar processProgressCalendar;
 
 	public DeviceController(UI ui)
     {
@@ -123,6 +131,7 @@ public class DeviceController
 //  Write CipherFile to partition
     synchronized public void writeCipherPartition(FCPath cipherFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
+	startCalendar = Calendar.getInstance(Locale.ROOT);
 	boolean encryptcipher = true;
         if ( cipherFCPath.size < bufferSize)   { bufferSize = (int)cipherFCPath.size; if (FinalCrypt.verbose) ui.log("BufferSize is limited to cipherfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n"); }
 //        else                            { log("BufferSize is set to: " + getHumanSize(bufferSize, 1) + " \r\n"); }
@@ -152,19 +161,26 @@ public class DeviceController
 
 //      Setup the Progress TIMER & TASK
 
-        updateProgressTask = new TimerTask() { @Override public void run()
-        {
-            ui.processProgress
-            (
-		(int) (
-			(( readCipherFileStat1.getFileBytesProcessed() + writeCipherFileStat1.getFileBytesProcessed() + readCipherFileStat2.getFileBytesProcessed() + writeCipherFileStat2.getFileBytesProcessed() ) * 2)
-			/   ( (allDataStats.getFileBytesTotal() * 3 ) / 100.0)),
+        updateProgressTask = new TimerTask()
+	{
+	    @Override public void run()
+	    {
+		processProgressCalendar = Calendar.getInstance(Locale.ROOT);
+		bytesTotal =	    allDataStats.getFilesBytesTotal();
+		bytesProcessed =	    allDataStats.getFilesBytesProcessed();
+		bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+		ui.processProgress
+		(
+		    (int) (
+			    (( readCipherFileStat1.getFileBytesProcessed() + writeCipherFileStat1.getFileBytesProcessed() + readCipherFileStat2.getFileBytesProcessed() + writeCipherFileStat2.getFileBytesProcessed() ) * 2)
+			    /   ( (allDataStats.getFileBytesTotal() * 3 ) / 100.0)),
 
-		(int) (
-			( allDataStats.getFilesBytesProcessed() * 2) / ( (allDataStats.getFilesBytesTotal() * 3) / 100.0)
-		      )
-            );
-        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+		    (int) (
+			    ( allDataStats.getFilesBytesProcessed() * 2) / ( (allDataStats.getFilesBytesTotal() * 3) / 100.0)
+			  ), bytesTotal, bytesProcessed, bytesPerMilliSecond // long bytesPerMiliSecond
+		);
+	    }
+	}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
         allDataStats.setAllDataStartNanoTime();
 
@@ -266,6 +282,7 @@ public class DeviceController
 //    synchronized public void cloneCipherPartition(Device cipherDevice, Device targetDevice, long firstLBA, long lastLBA)
     synchronized public void cloneCipherPartition(FCPath cipherFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
+	startCalendar = Calendar.getInstance(Locale.ROOT);
 	if ( ( isValidFile(ui,cipherFCPath.path, false, false, true) ) && ( isValidFile(ui, targetFCPath.path, false, false, true) ) )
 	{
 	    long targetDeviceSize2 = targetFCPath.size;
@@ -306,6 +323,10 @@ public class DeviceController
 
     //      Setup the Progress TIMER & TASK
 
+	    processProgressCalendar = Calendar.getInstance(Locale.ROOT);
+	    bytesTotal =	    allDataStats.getFilesBytesTotal();
+	    bytesProcessed =	    allDataStats.getFilesBytesProcessed();
+	    bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 	    updateProgressTask = new TimerTask() { @Override public void run()
 	    {
 		ui.processProgress
@@ -322,7 +343,7 @@ public class DeviceController
 				( 
 					allDataStats.getFilesBytesProcessed() * 1) /
 					( (allDataStats.getFilesBytesTotal() * 1) / 100.0)
-				)
+				), bytesTotal, bytesProcessed, bytesPerMilliSecond // long bytesPerMiliSecond
 		);
 	    }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
@@ -568,4 +589,5 @@ public class DeviceController
     public static boolean getStopPending()         { return stopPending; }
     public static void setPausing(boolean val)     { pausing = val; }
     public static void setStopPending(boolean val) { stopPending = val; }
+
 }

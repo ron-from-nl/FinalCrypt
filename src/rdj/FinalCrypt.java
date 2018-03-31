@@ -31,8 +31,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TimerTask;
 
 public class FinalCrypt extends Thread
@@ -59,6 +61,9 @@ public class FinalCrypt extends Thread
     private boolean targetSourceEnded;
 //							1234567890123456789012345678901234567890123456789012345678901234567890
     public static final String FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
+    private Calendar	startCalendar;
+    private Calendar	processProgressCalendar;
+    private long	bytesPerMilliSecond = 0;
 
 
     public FinalCrypt(UI ui)
@@ -108,6 +113,8 @@ public class FinalCrypt extends Thread
         
     public void encryptSelection(FCPathList targetSourcePathList, FCPathList filteredTargetSourcePathList, FCPath cipherSourceFCPath)
     {
+	startCalendar = Calendar.getInstance(Locale.ROOT);
+
 	if ( cipherSourceFCPath.size < bufferSize ) { setBufferSize((int)cipherSourceFCPath.size); }
 	
         Stats allDataStats = new Stats(); allDataStats.reset();
@@ -128,7 +135,9 @@ public class FinalCrypt extends Thread
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
-        updateProgressTask = new TimerTask() { @Override public void run()
+        updateProgressTask = new TimerTask() { private long bytesTotal;
+	    private long bytesProcessed;
+	@Override public void run()
         {
 	    long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
 	    double fileBytesPercent =	((readTargetSourceStat.getFileBytesTotal()) / 100.0); //  1000 / 100 = (long)10     10 > 0.1 (10*0.01)
@@ -138,9 +147,13 @@ public class FinalCrypt extends Thread
 	    double filesBytesPercent =	((allDataStats.getFilesBytesTotal() ) / 100.0);
 	    int filesBytesPercentage =	(int)(filesBytesProcessed / filesBytesPercent);
 
-            ui.processProgress( fileBytesPercentage, filesBytesPercentage );
+	    processProgressCalendar = Calendar.getInstance(Locale.ROOT);
+	    bytesTotal =	    allDataStats.getFilesBytesTotal();
+	    bytesProcessed =	    allDataStats.getFileBytesProcessed();
+	    bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+            ui.processProgress( fileBytesPercentage, filesBytesPercentage, bytesTotal, bytesProcessed, bytesPerMilliSecond );
 	    
-        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 100L);
+        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 100L, 100L);
 
 
 //      Start Files Encryption Clock
@@ -406,7 +419,7 @@ public class FinalCrypt extends Thread
 
 //                      Shredding process
 
-		ui.status("🌊 \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", false);
+		ui.status("🗑 \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", false); // 🌊🗑
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 

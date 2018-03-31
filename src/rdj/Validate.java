@@ -326,7 +326,65 @@ public class Validate
 //				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesCipher,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isCipher, boolean isValidCipher, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
 	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchCipher,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isCipher,         isValidCipher,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,         isDecryptable,	 isNewDecrypted,         isUnDecryptable);
 	return fcPath;
-    }    
+    }
+
+    public static String getSting(FCPath fcPath)
+    {
+	String returnString = "";
+	returnString += "FCPath:\r\n";
+	returnString += "\r\n";
+	returnString += "Path:			" + fcPath.path.toString() + "\r\n";
+	returnString += "Exist:			" + fcPath.exist + "\r\n";
+	returnString += "Type:			" + fcPath.getTypeString(fcPath.type) + "\r\n";
+	returnString += "Size:			" + Validate.getHumanSize(fcPath.size, 1) + "\r\n";
+	returnString += "Readable:		" + fcPath.readable + "\r\n";
+	returnString += "Writable:		" + fcPath.writable + "\r\n";
+	returnString += "Hidden:			" + fcPath.isHidden + "\r\n";
+	returnString += "Match Cipher:		" + fcPath.matchCipher + "\r\n";
+	returnString += "\r\n";
+	returnString += "Valid Path:		" + fcPath.isValidPath + "\r\n";
+	returnString += "Valid File:		" + fcPath.isValidFile + "\r\n";
+	returnString += "Valid Device:		" + fcPath.isValidDevice + "\r\n";
+	returnString += "Valid Partition:	" + fcPath.isValidPartition + "\r\n";
+	returnString += "Is Cipher:		" + fcPath.isCipher + "\r\n";
+	returnString += "Valid Cipher:		" + fcPath.isValidCipher + "\r\n";
+	returnString += "\r\n";
+	returnString += "Decrypted:		" + fcPath.isDecrypted + "\r\n";
+	returnString += "Encryptable:		" + fcPath.isEncryptable + "\r\n";
+	returnString += "New Encrypted:		" + fcPath.isNewEncrypted + "\r\n";
+	returnString += "UnEncryptable:		" + fcPath.isUnEncryptable + "\r\n";
+	returnString += "\r\n";
+//	returnString += "Has FCToken:		" + fcPath.hasFCToken + "\r\n";
+	returnString += "Encrypted:		" + fcPath.isEncrypted + "\r\n";
+//	returnString += "Authenticated:		" + fcPath.isAuthenticated + "\r\n";
+	returnString += "Decryptable:		" + fcPath.isDecryptable + "\r\n";
+	returnString += "New Decrypted:		" + fcPath.isNewDecrypted + "\r\n";
+	returnString += "UnDecryptable:		" + fcPath.isUnDecryptable + "\r\n";
+	returnString += "\r\n";
+
+	return returnString;
+    }
+    
+    synchronized public static String getFCPathStatus(FCPath fcPath)
+    {
+	String returnString = "";
+
+//	String[] columnNames = { "Path", "Exist ", "Type ", "Size ", "Readable "};
+//	Object[][] data = {{path.toString(), exist, getTypeString(type), size, readable, isValidCipher}};
+
+	
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", "Path",					" | ", "Exist ", " | ", "Type",		       " | ", "Size",		" | ", "Readable ",	" | ", "Valid ",		" |"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.readable), " | ", b(fcPath.isValidCipher),	" |"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
+
+	return returnString;
+    }
+    
+    private static String b(boolean b)	{ return Boolean.toString(b); }
+    private static String t(int t)	{ return FCPath.getTypeString(t); }
+    private static String s(long s)	{ return Validate.getHumanSize(s, 1); }
 }
 
 
@@ -373,8 +431,9 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
    
     @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
     {
-        if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; }
-//	return FileVisitResult.CONTINUE;
+	if	(delete)	{ return FileVisitResult.CONTINUE; }
+	else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
+	else			{ ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); return FileVisitResult.CONTINUE; }
     }    
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
@@ -388,17 +447,17 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 		FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
 	    }
 	    else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
-	}   
+	}
         return FileVisitResult.CONTINUE;
     }
     
     @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
     {
 //        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\r\n");
-//					 getFCPath(UI ui, String caller, Path path, boolean isCipher, Path cipherPath, boolean report)
+//					 getFCPath(UI ui, String caller, Path path, boolean isCipher,	     Path cipherPath, boolean report)
 		FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
-//        return FileVisitResult.CONTINUE; // Bad performance
         return FileVisitResult.SKIP_SIBLINGS;
+//      return FileVisitResult.CONTINUE; // Bad performance
     }
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
@@ -407,7 +466,5 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
         else if (setFCPathlist)	    {     }
         else                        {     }
         return FileVisitResult.CONTINUE;
-    }
-    
-//    public ArrayList<Path> getPathList() { return pathList; }
+    }    
 }
