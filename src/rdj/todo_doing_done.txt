@@ -10,13 +10,6 @@ Improve CLUI validation
 
 =================================== Done ====================================
 
-Major changes:
-Separate Encrypt Decrypt Buttons added
-Switched to proactive target properties inventory:
-Path became FCPath
-ArrayList<Path>  became ArrayList<FCPath>
-Live statistics added during processing
-Improved intuitiveness, looks and feel
 
 ============================= Source Committed ==============================
 
@@ -25,6 +18,17 @@ Improved intuitiveness, looks and feel
 
 
 ============================= Binaries Released =============================
+
+Major changes version 2.0.0
+Modernized User Interface
+Better Function, Look & Feel
+Separate Encrypt Decrypt Buttons added
+Switched to proactive scanning mode
+Path became FCPath
+ArrayList<Path>  became ArrayList<FCPath>
+Live statistics added during processing
+Removed a number of small harmless bugs
+Improved intuitiveness, looks and feel
 
 Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
 Removed Validate & getDesktop.open bug

@@ -26,6 +26,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
@@ -111,7 +112,7 @@ public class FinalCrypt extends Thread
         wrteTargetDestinBufferSize = this.bufferSize;
     }
         
-    public void encryptSelection(FCPathList targetSourcePathList, FCPathList filteredTargetSourcePathList, FCPath cipherSourceFCPath)
+    public void encryptSelection(FCPathList targetSourcePathList, FCPathList filteredTargetSourcePathList, FCPath cipherSourceFCPath, boolean encryptmode)
     {
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 
@@ -136,7 +137,7 @@ public class FinalCrypt extends Thread
         
 //      Setup the Progress TIMER & TASK
         updateProgressTask = new TimerTask() { private long bytesTotal;
-	    private long bytesProcessed;
+	private long bytesProcessed;
 	@Override public void run()
         {
 	    long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
@@ -172,16 +173,23 @@ public class FinalCrypt extends Thread
 //							          isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	    if ((newTargetSourceFCPath.path.compareTo(cipherSourceFCPath.path) != 0))
 	    {
-		String prefix =	    "bit";
-		String suffix =	    ".bit";
-		String extension =  "";
+		String bit_extension =	    ".bit";
 		int lastDotPos =    newTargetSourceFCPath.path.getFileName().toString().lastIndexOf('.'); // -1 no extension
 		int lastPos =	    newTargetSourceFCPath.path.getFileName().toString().length();
 
-		if (lastDotPos != -1) { extension = newTargetSourceFCPath.path.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
+		String extension =  ""; if (lastDotPos != -1) { extension = newTargetSourceFCPath.path.getFileName().toString().substring(lastDotPos, lastPos); } else { extension = ""; }
 
-		if ( ! extension.equals(suffix))    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + suffix); }		  // Add    .bit
-		else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString().replace(suffix, "")); }    // Remove .bit			
+		if	(encryptmode)			    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
+		else // (decryptmode)
+		{
+//		    if (extension.equals(bit_extension))    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString().replace(bit_extension, "")); }
+		    if (extension.equals(bit_extension))    { targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
+		    else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
+		}
+		
+		// Previous situation (negating extension regardless of encrypt/decrypt-mode)
+//		if ( ! extension.equals(bit_extension))    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }		  // Add    .bit
+//		else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString().replace(bit_extension, "")); }    // Remove .bit			
 //		    ui.log("targetSourceFCPath: " + targetSourceFCPath.path.toString() + "\r\n");
 //		    ui.log("targetDestinPath: " + targetDestinPath.toString() + "\r\n");
 
@@ -206,49 +214,101 @@ public class FinalCrypt extends Thread
 //			⛔   Decrypt Abort   (Cipher Failed)
 
 		long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
-		    
-		if (newTargetSourceFCPath.isEncrypted) // Target has Token, Decrypt New Format
+		
+		
+		if (encryptmode)
 		{
-		    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
+		    if ( newTargetSourceFCPath.isDecrypted) // Target has NO Token, Decrypted
 		    {
-			fileStatusLine = "🔓 \"" + targetDestinPath.toString() + "\" ";
-			ui.status("🔓 \"" + targetDestinPath.toString() + "\" ", false);
-			readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
-		    }
-		    else
-		    {
-			ui.status("⛔ \"" + newTargetSourceFCPath.toString() + "\" - Cipher Failed : " + cipherSourceFCPath.toString() + "\r\n", true);
-			continue encryptTargetloop;
-		    }
-		}
-		else // Target has NO Token
-		{
-		    if ( ! newTargetSourceFCPath.path.getFileName().toString().endsWith(suffix) ) // Target has No Token and no ".bit" extension, so add a Token at the beginning of targetDestinPath
-		    {
-			ui.status(		"🔒 \"" + targetDestinPath.toString() + "\" ", false);
-			fileStatusLine =	"🔒 \"" + targetDestinPath.toString() + "\" ";
-
-			if ( ! dry )
+			if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			{
-			    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
-			    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-			    {
-				targetDestinTokenBuffer = createTargetDestinToken(cipherSourceFCPath.path);
-				writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
-				writeTargetDestinChannel.close();
-				// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
-			    } catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
-			}
+			    ui.status(		"🔒 \"" + targetDestinPath.toString() + "\" ", false);
+			    fileStatusLine =	"🔒 \"" + targetDestinPath.toString() + "\" ";
 
-			readTargetSourceChannelPosition = 0; // Start reading targetSource from beginning (Encrypt)
-		    }
-		    else  // Target has No Token, but has a ".bit" extension
-		    {
-			fileStatusLine = "🔓! \"" + targetDestinPath.toString()+ "\" "; // Decrypt Old Format
-			ui.status("🔓! \"" + targetDestinPath.toString() + "\" ", false);
-			readTargetSourceChannelPosition = 0;
+			    if ( ! dry )
+			    {
+				// Add Token to targetDestinPath
+				ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
+				try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+				{
+				    targetDestinTokenBuffer = createTargetDestinToken(cipherSourceFCPath.path);
+				    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
+				    writeTargetDestinChannel.close();
+				    // wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
+				} catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			    }
+			}
+			else
+			{
+			    ui.status("⚠ \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true);
+			    continue encryptTargetloop;
+			}
 		    }
 		}
+		else
+		{
+		    if (newTargetSourceFCPath.isEncrypted) // Target has Token, Decrypt New Format
+		    {
+			if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
+			{
+			    fileStatusLine = "🔓 \"" + targetDestinPath.toString() + "\" ";
+			    ui.status("🔓 \"" + targetDestinPath.toString() + "\" ", false);
+			    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
+			}
+			else
+			{
+			    ui.status("⛔ \"" + newTargetSourceFCPath.toString() + "\" - Cipher Failed : " + cipherSourceFCPath.toString() + "\r\n", true);
+			    continue encryptTargetloop;
+			}
+		    }
+		}
+		
+		
+		
+		
+		
+////		if (newTargetSourceFCPath.isEncrypted) // Target has Token, Decrypt New Format
+////		{
+////		    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
+////		    {
+////			fileStatusLine = "🔓 \"" + targetDestinPath.toString() + "\" ";
+////			ui.status("🔓 \"" + targetDestinPath.toString() + "\" ", false);
+////			readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
+////		    }
+////		    else
+////		    {
+////			ui.status("⛔ \"" + newTargetSourceFCPath.toString() + "\" - Cipher Failed : " + cipherSourceFCPath.toString() + "\r\n", true);
+////			continue encryptTargetloop;
+////		    }
+////		}
+//		else // Target has NO Token
+//		{
+//		    if ( ! newTargetSourceFCPath.path.getFileName().toString().endsWith(bit_extension) ) // Target has No Token and no ".bit" extension, so add a Token at the beginning of targetDestinPath
+//		    {
+//			ui.status(		"🔒 \"" + targetDestinPath.toString() + "\" ", false);
+//			fileStatusLine =	"🔒 \"" + targetDestinPath.toString() + "\" ";
+//
+//			if ( ! dry )
+//			{
+//			    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
+//			    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//			    {
+//				targetDestinTokenBuffer = createTargetDestinToken(cipherSourceFCPath.path);
+//				writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
+//				writeTargetDestinChannel.close();
+//				// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
+//			    } catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+//			}
+//
+//			readTargetSourceChannelPosition = 0; // Start reading targetSource from beginning (Encrypt)
+//		    }
+//		    else  // Target has No Token, but has a ".bit" extension
+//		    {
+//			fileStatusLine = "🔓! \"" + targetDestinPath.toString()+ "\" "; // Decrypt Old Format
+//			ui.status("🔓! \"" + targetDestinPath.toString() + "\" ", false);
+//			readTargetSourceChannelPosition = 0;
+//		    }
+//		}
 
 //___________________________________________________________________________________________________________________________________________________________
 //

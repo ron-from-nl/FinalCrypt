@@ -183,11 +183,12 @@ public class Validate
     
     public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath cipherFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
     {
+
 	for (Path path:pathList)
 	{
 //							      MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path cipherPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
 	    MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    cipherFCPath,                   targetFCPathList,	pattern,         negatePattern);
-	    try{Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e){System.err.println(e);}
+	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
 	}
     }
 
@@ -404,6 +405,9 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 //    private final ArrayList<Path> pathList;
     private boolean negatePattern;
     public long bytesCount = 0;
+//    private Timeline updateDashboardTimeline = null;
+//    private TimerTask updateProgressTask = null;
+//    private Timer updateDashboardTaskTimer = null;
 
 //  Default CONSTRUCTOR
 

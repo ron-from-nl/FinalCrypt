@@ -290,6 +290,8 @@ public class GUIFX extends Application implements UI, Initializable
     private int offSetSeconds;
     private Calendar offsetTimeCalendar;
     private boolean clockUpdated;
+    private TimerTask updateDashboardTask;
+    private Timer updateDashboardTaskTimer;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -384,7 +386,7 @@ public class GUIFX extends Application implements UI, Initializable
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
 //        device = new Device(this); device.start();
-        
+
         welcome();
     }
     
@@ -698,7 +700,7 @@ public class GUIFX extends Application implements UI, Initializable
 		}});
 	    }
 //												 device  minsize  symlink  writable status
-	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), false,      0L, symlink,    false,  true))
+	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), false,      0L, true,    false,  true))
 	    {
 		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
 		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
@@ -740,7 +742,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else
 	    {
 //												device  minsize	 symlink  writable  status
-		if (Validate.isValidFile(this, "", targetPath, false,      0L, symlink,    false, true))
+		if (Validate.isValidFile(this, "", targetPath, false,      0L, true,    false, true))
 		{
 		    try { Desktop.getDesktop().open(targetFCPath.path.toFile()); }
 		    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
@@ -768,51 +770,57 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void cipherFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
-        this.fileProgressBar.setProgress(0);
-        this.filesProgressBar.setProgress(0);
-	
-        // En/Disable FileChooser deletebutton
-        if (
-                (cipherFileChooser != null) &&
-                (cipherFileChooser.getSelectedFile() != null) &&
-                (
-                    (Files.isRegularFile( cipherFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
-                    (Files.isDirectory(cipherFileChooser.getSelectedFile().toPath()))
-                ) 
-           )
-        { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
-        
-        // Set Buffer Size
-        finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
-        
-        if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+	if (!processRunning)
 	{
-            cursorWait();
-	    Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
-//					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-	    cipherFCPath = Validate.getFCPath(   ui,		"",        cipherPath,             true,      cipherPath,           true);
 	    Platform.runLater(new Runnable(){ @Override public void run() 
 	    {
-		if ((cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
-		{
-		    cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.toString());
-		    cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
-		    cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
-		    cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
-		}
-		else
-		{
-		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
-		    if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
-		    if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
-		    cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
-		}
+		fileProgressBar.setProgress(0);
+		filesProgressBar.setProgress(0);
 	    }});
-	    
-	    cursorDefault();
+
+	    // En/Disable FileChooser deletebutton
+	    if (
+		    (cipherFileChooser != null) &&
+		    (cipherFileChooser.getSelectedFile() != null) &&
+		    (
+			(Files.isRegularFile( cipherFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
+			(Files.isDirectory(cipherFileChooser.getSelectedFile().toPath()))
+		    ) 
+	       )
+	    { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
+
+	    // Set Buffer Size
+	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+
+	    if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+	    {
+		cursorWait();
+		Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
+    //					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
+		cipherFCPath = Validate.getFCPath(   ui,		"",        cipherPath,             true,      cipherPath,           true);
+		Platform.runLater(new Runnable(){ @Override public void run() 
+		{
+		    if ((cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
+		    {
+			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.toString());
+			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
+			cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
+			cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+		    }
+		    else
+		    {
+			targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+			cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
+			if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
+			if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
+			cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+		    }
+		}});
+
+		cursorDefault();
+	    }
+	    checkModeReady();
 	}
-        checkModeReady();
     }
 
 //  FileChooser Listener methods
@@ -826,38 +834,71 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void targetFileChooserPropertyCheck(boolean status)
     {
-        this.fileProgressBar.setProgress(0);
-        this.filesProgressBar.setProgress(0);
-//        State.targetSelected = FCPath.INVALID;
-//        State.targetReady = false;
-        
-        ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
-	targetFileDeleteButton.setEnabled(false);
-	
-        if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (cipherFCPath != null) && (cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
+	if (!processRunning )
 	{
+	    processRunning = true;
+	    Platform.runLater(new Runnable(){ @Override public void run() 
+	    {
+		encryptButton.setDisable(true);
+		decryptButton.setDisable(true);
+		cipherDeviceButton.setDisable(true);
+		pauseToggleButton.setDisable(true);
+		stopButton.setDisable(true);
+
+		fileProgressBar.setProgress(0);
+		filesProgressBar.setProgress(0);
+	    }});
+	    
+	    ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
+	    targetFileDeleteButton.setEnabled(false);
+
+	    // En/Disable FileChooser deletebutton
+	    if (
+		    (targetFileChooser != null) &&
+		    (targetFileChooser.getSelectedFile() != null) &&
+		    (targetFileChooser.getSelectedFile().toPath() != null) &&
+		    (
+			(Files.isRegularFile( targetFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
+			(Files.isDirectory(targetFileChooser.getSelectedFile().toPath()))
+		    ) 
+	       )
+	    { targetFileDeleteButton.setEnabled(true);} else {targetFileDeleteButton.setEnabled(false); }
+
+
+	    if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (cipherFCPath != null) && (cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
+	    {
+
 		Validate.bytesCount = 0;
+
+		// Gather User Selection in list
 		for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
 
-//    	    En/Disable FileChooser deletebutton
-		targetFileDeleteButton.setEnabled(true);
-
-//    	    Get Globbing Pattern String
+    //		Get Globbing Pattern String
 		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
-		// UPdate Dashboard during buildSelection
+		// Scanning animation on main progressbar
 		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }});
-		Timeline updateDashboardTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { updateDashboard(targetFCPathList); } )); updateDashboardTimeline.play();
-		
+
+		// UPdate Dashboard during buildSelection
+
+		updateDashboardTask = new TimerTask() { @Override public void run() { updateDashboard(targetFCPathList); }};
+		updateDashboardTaskTimer = new java.util.Timer();
+		updateDashboardTaskTimer.schedule(updateDashboardTask, 200L, 200L);
+    //		Timeline updateDashboardTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { buildProgress(targetFCPathList); } )); updateDashboardTimeline.play(); // Bad performance not fluid
+
+		// BuildSelection
 		cursorWait();
 		targetFCPathList = new FCPathList(); Validate.buildSelection( this, targetPathList, cipherFCPath, targetFCPathList, symlink, pattern, negatePattern, false);
 		cursorDefault();
 
-		updateDashboardTimeline.stop();
+		if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
+    //		updateDashboardTimeline.stop();
 		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(0); }});
 		updateDashboard(targetFCPathList);
+	    }
+	    processRunning = false;
+	    checkModeReady();
 	}
-        checkModeReady();
     }
 
     private void updateDashboard(FCPathList targetFCPathList)
@@ -936,6 +977,16 @@ public class GUIFX extends Application implements UI, Initializable
 	}});
     }
     
+    private void disableButtons()
+    {
+	Platform.runLater(new Runnable(){ @Override public void run() 
+	{
+	    encryptButton.setDisable(true);
+	    decryptButton.setDisable(true);
+	    pauseToggleButton.setDisable(true);
+	    stopButton.setDisable(true);
+	}});
+    }
     private void checkModeReady()
     {
 	Platform.runLater(new Runnable(){ @Override public void run() 
@@ -1154,7 +1205,7 @@ public class GUIFX extends Application implements UI, Initializable
 		fileProgressBar.setProgress(0.0);
 		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
 		processStarted();
-		finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath);
+		finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true);
             }
         });
         encryptThread.setName("encryptThread");
@@ -1180,7 +1231,7 @@ public class GUIFX extends Application implements UI, Initializable
 		fileProgressBar.setProgress(0.0);
 		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
 		processStarted();
-		finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath);
+		finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
             }
         });
         encryptThread.setName("decryptThread");
@@ -1314,6 +1365,7 @@ public class GUIFX extends Application implements UI, Initializable
     @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
     
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
+//    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
 
     @Override public void processStarted()
     {
@@ -1330,7 +1382,10 @@ public class GUIFX extends Application implements UI, Initializable
 		start2TimeCalendar = Calendar.getInstance(Locale.ROOT);
 		offsetTimeCalendar = Calendar.getInstance(Locale.ROOT);
 		offsetTimeCalendar.setTimeInMillis(start2TimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
-		offSetHours = offsetTimeCalendar.get(Calendar.HOUR); offSetMinutes = offsetTimeCalendar.get(Calendar.MINUTE); offSetSeconds = offsetTimeCalendar.get(Calendar.SECOND);
+		
+		offSetHours =	offsetTimeCalendar.get(Calendar.HOUR);
+		offSetMinutes = offsetTimeCalendar.get(Calendar.MINUTE);
+		offSetSeconds = offsetTimeCalendar.get(Calendar.SECOND);
 		
 		nowTimeCalendar =	Calendar.getInstance(Locale.ROOT);
 		elapsedTimeCalendar =   Calendar.getInstance(Locale.ROOT);
@@ -1371,19 +1426,19 @@ public class GUIFX extends Application implements UI, Initializable
 	    elapsedTimeCalendar.setTimeInMillis(nowTimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
 	    remainingTimeCalendar.setTimeInMillis(totalTimeCalendar.getTimeInMillis() - elapsedTimeCalendar.getTimeInMillis());
 	    String elapsedTimeString = "";
-	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
-	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
-	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		    
 	    String remainingTimeString = "";
-	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
-	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
-	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.SECOND));
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		    
 	    String totalTimeString = "";
-	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
-	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";;
-	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":"; 
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		    
 	    elapsedTimeLabel.setText(elapsedTimeString);
 	    remainingTimeLabel.setText(remainingTimeString);
@@ -1429,9 +1484,9 @@ public class GUIFX extends Application implements UI, Initializable
 		    remainingTimeLabel.setText("00:00:00");
 		    totalTimeCalendar.setTimeInMillis(elapsedTimeCalendar.getTimeInMillis());
 		    String totalTimeString = "";
-		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR-offSetHours)) + ":";
-		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE-offSetMinutes)) + ":";
-		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND-offSetSeconds));
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		    totalTimeLabel.setText(totalTimeString);
 		}
 		
@@ -1469,17 +1524,18 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setHeaderText("What is your secret Cipher file?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext  = "The cipher file encrypts your selection on the left.\r\n";
-        infotext += "Choose a personal cipher file (like a photo or video).\r\n";
+        infotext  = "Any personal photo or video can be your cipher file.\r\n";
+        infotext += "FinalCrypt de/encrypts your files with your cipher file.\r\n";
+        infotext += "Data in your cipher file is like a huge binary password.\r\n";
         infotext += "\r\n";
         infotext += "Keep backups of your cipher file and keep it SECRET!\r\n";
         infotext += "Without cipher file you can NEVER decrypt your data!\r\n";
         infotext += "\r\n";
         infotext += "==================================\r\n";
         infotext += "\r\n";
-        infotext += "Best practice is a cipher file bigger than 100 KiB\r\n";
-        infotext += "Keep your cipher safe and away from your computer\r\n";
-        infotext += "to prevent someone or something copying it.\r\n";
+        infotext += "Best practice is a cipher file of at least 1 MB in size\r\n";
+        infotext += "Don't keep cipher files on your computer for too long\r\n";
+        infotext += "to prevent someone or something copying of it.\r\n";
         infotext += "\r\n";
         infotext += "Encryption / Decryption (advanced explanation):\r\n";
         infotext += "\r\n";

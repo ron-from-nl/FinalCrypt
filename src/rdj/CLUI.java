@@ -232,12 +232,12 @@ public class CLUI implements UI
 	DeviceManager deviceManager;
 	if ((encrypt))
 	{
-	    if ((encryptablesFound))	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath); }
+	    if ((encryptablesFound))	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true); }
 	    else			{ error("Sorry, no encryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((decrypt))
 	{
-	    if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath); }
+	    if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false); }
 	    else			{ error("Sorry, no decryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if (create)
@@ -505,4 +505,6 @@ public class CLUI implements UI
     public void fileProgress()
     {
     }
+
+//    @Override public void buildProgress(FCPathList targetFCPathList) {  }
 }
