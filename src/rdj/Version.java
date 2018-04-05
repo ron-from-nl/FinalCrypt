@@ -44,10 +44,19 @@ public class Version
     private InputStream istream = null;
     private static final String LOCALVERSIONFILEURLSTRING =	    "VERSION2";
     private static       String localContent =			    "";
-    private static final String REMOTEVERSIONFILEURLSTRING =	    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2";
+    private static final String REMOTEVERSIONFILEURLSTRING =		    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2";
+    private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
+									    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"
+									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"
+									};
+    
     private static       String remoteContent =			    "";
     
-    public static final String REMOTEPACKAGEDOWNLOADURISTRING =	    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    public static final String[] REMOTEPACKAGEDOWNLOADURISTRINGARRAY =	{
+									    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/"
+									    ,"https://sourceforge.net/projects/finalcrypt/files/"
+									};
     private URL remoteURL = null;
     private ReadableByteChannel currentVersionByteChannel = null;
     private ReadableByteChannel latestVersionByteChannel = null;

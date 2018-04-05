@@ -50,6 +50,8 @@ public class CLUI implements UI
     private boolean decrypt = false;
     private boolean create = false;
     private boolean clone = false;
+    private boolean print = false;
+    private boolean delete = false;
     
     private FCPathList encryptableList;
     private FCPathList decryptableList;
@@ -60,6 +62,11 @@ public class CLUI implements UI
     private boolean decryptablesFound = false;
     private boolean createCipherDeviceFound = false;
     private boolean cloneCipherDeviceFound = false;
+    private FCPathList printGPTTargetList;
+    private boolean printGPTDeviceFound;
+    private boolean deleteGPTDeviceFound;
+    private FCPathList deleteGPTTargetList;
+    private  FCPathList targetFCPathList;
 
     public CLUI(String[] args)
     {
@@ -69,8 +76,6 @@ public class CLUI implements UI
 	boolean cfsetneeded = true;
         boolean validInvocation = true;
         boolean negatePattern = false;
-        boolean printgpt = false;
-        boolean deletegpt = false;
 
         ArrayList<Path> targetPathList = new ArrayList<>();
         ArrayList<Path> extendedTargetPathList = new ArrayList<>();
@@ -100,11 +105,13 @@ public class CLUI implements UI
         {
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
-	    else if ( args[paramCnt].equals("--examples"))							    { examples(); }
-            else if ( args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)) { encrypt = true; cfsetneeded = true; } }
-            else if ( args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)) { decrypt = true; cfsetneeded = true; } }
-            else if ( args[paramCnt].equals("--create"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)) { create = true; cfsetneeded = true; } }
-            else if ( args[paramCnt].equals("--clone"))								    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)) { clone = true; cfsetneeded = true; } }
+	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
+            else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { encrypt = true; cfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { decrypt = true; cfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--create"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { create = true; cfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--clone"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { clone = true; cfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--gpt-print"))                                                        { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { print = true; cfsetneeded = false; } }
+            else if (  args[paramCnt].equals("--gpt-delete"))                                                       { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { delete = true; cfsetneeded = false; } }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
@@ -113,8 +120,6 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
             else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
             else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
-            else if (  args[paramCnt].equals("--gpt-print"))                                                        { printgpt = true; cfsetneeded = false; }
-            else if (  args[paramCnt].equals("--gpt-delete"))                                                       { deletegpt = true; cfsetneeded = false; }
             else if (  args[paramCnt].equals("--version"))                                                          { println(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if (  args[paramCnt].equals("--update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) {log(line + "\r\n");} System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(true); }}
@@ -144,7 +149,7 @@ public class CLUI implements UI
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
 
 	// Cipher Validation
-	if ( ! cipherFCPath.isValidCipher)
+	if ((cfsetneeded) && ( ! cipherFCPath.isValidCipher))
 	{
 	    String size = ""; if (cipherFCPath.size < FCPath.CIPHER_SIZE_MIN) { size += " [size < " + FCPath.CIPHER_SIZE_MIN + "] "; } 
 	    String dir = ""; if (cipherFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
@@ -181,7 +186,13 @@ public class CLUI implements UI
 
 //////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
         
-	FCPathList targetFCPathList = new FCPathList();
+	targetFCPathList = new FCPathList();
+//	if (!cfsetneeded) { cipherFCPath = (FCPath) targetPathList.get(0); }
+	if (!cfsetneeded) 
+	{
+//    					     getFCPath(UI ui, String caller,		 Path path, boolean isCipher,   Path cipherPath, boolean report)
+		     cipherFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),            false, targetPathList.get(0),           true);
+	}
 //		 buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path cipherPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
 	Validate.buildSelection(       this,			        targetPathList,  cipherFCPath,		    targetFCPathList,	      symlink,	      pattern,	       negatePattern,	       false);
 	
@@ -225,6 +236,25 @@ public class CLUI implements UI
 	    } else { cloneCipherDeviceFound = false; }
 	} else { createCipherDeviceFound = false; }
 
+	if ((print) && ((targetFCPathList.validDevices > 0) || (targetFCPathList.validDevicesProtected > 0)))
+	{
+	    printGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE || fcPath.type == FCPath.DEVICE_PROTECTED); // log("Create Cipher List:\r\n" + createCipherList.getStats());
+	    printGPTDeviceFound = true;
+	} else { printGPTDeviceFound = false; }
+	
+	if ((delete) && (targetFCPathList.validDevices > 0))
+	{
+	    deleteGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Cipher List:\r\n" + createCipherList.getStats());
+	    if ( deleteGPTTargetList.size() > 0 ) { deleteGPTDeviceFound = true; }
+	    else { deleteGPTDeviceFound = false; }
+	}
+	else if ((delete) && (targetFCPathList.validDevicesProtected > 0))
+	{
+	    deleteGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE_PROTECTED); // log("Create Cipher List:\r\n" + createCipherList.getStats());
+	    FCPath fcPath = (FCPath) deleteGPTTargetList.get(0); error("WARNING: Device: " + fcPath.path + " is protected!!!\r\n"); deleteGPTDeviceFound = false; 
+	}
+	else { deleteGPTDeviceFound = false; }
+
 	
 /////////////////////////////////////////////// FINAL VALIDATION & EXECUTE MODES ////////////////////////////////////////////////////
 
@@ -248,6 +278,16 @@ public class CLUI implements UI
 	else if ((clone) && (cloneCipherDeviceFound))
 	{
 	    if (cloneCipherDeviceFound) { processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) cloneCipherList.get(0));  processFinished(); }
+	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	}
+	else if ((print) && (printGPTDeviceFound))
+	{
+	    if (printGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT( (FCPath) printGPTTargetList.get(0)); }
+	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	}
+	else if ((delete) && (deleteGPTDeviceFound))
+	{
+	    if (deleteGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT( (FCPath) deleteGPTTargetList.get(0)); }
 	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
     } // End of default constructor
@@ -429,55 +469,13 @@ public class CLUI implements UI
     @Override synchronized public void log(String message)
     {
         System.out.print(message);
-//        Thread logThread = new Thread(new Runnable()
-//        {
-////            private DeviceManager rawCipher;
-//            @Override
-//            @SuppressWarnings({"static-access"})
-//            public void run()
-//            {
-                try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
-
-//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//                    {
-//                        // Encrypt targetBuffer and fill up outputBuffer
-//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//                        writeOutputFileChannel.write(outputFileBuffer);
-//                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
-//            }
-//        });
-//        logThread.setName("encryptThread");
-//        logThread.setDaemon(true);
-//        logThread.start();
+        try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
     }
 
     @Override synchronized public void error(String message)
     {
         status(message, true);
-//	Thread errorLogThread = new Thread(new Runnable()
-//	{
-////          private DeviceManager rawCipher;
-//	    @Override
-//	    @SuppressWarnings({"static-access"})
-//	    public void run()
-//	    {
-		try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
-
-//		try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//		{
-//		    // Encrypt targetBuffer and fill up outputBuffer
-//		    ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//		    outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//		    writeOutputFileChannel.write(outputFileBuffer);
-//		    writeOutputFileChannel.close();
-//		} catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
-//	    }
-//	});
-//	errorLogThread.setName("encryptThread");
-//	errorLogThread.setDaemon(true);
-//	errorLogThread.start();
+	try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
     }
 
     @Override public void status(String status, boolean log) { if (log) { log(status); } }
@@ -507,4 +505,10 @@ public class CLUI implements UI
     }
 
 //    @Override public void buildProgress(FCPathList targetFCPathList) {  }
+
+    @Override
+    public void buildReady(FCPathList fcPathListParam)
+    {
+	targetFCPathList = fcPathListParam;
+    }
 }

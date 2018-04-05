@@ -6,7 +6,6 @@ Progress animation
 
 Added optional cipher password to protect cipher from unauthorized usage
 Backup update locations (properties, daily check / history)
-Improve CLUI validation
 
 =================================== Done ====================================
 
@@ -18,6 +17,7 @@ Improve CLUI validation
 
 
 ============================= Binaries Released =============================
+Change Target Response
 
 Major changes version 2.0.0
 Modernized User Interface

@@ -40,6 +40,7 @@ public class Validate
 {
     private static Path selectedCipherPath;
     public static long bytesCount;
+    private static MySimpleFCFileVisitor mySimpleFCFileVisitor;
     
 
     public static void validateBuild(UI ui, FCPathList targetFCPathList, FCPath cipherFCPath, boolean printgpt, boolean deletegpt)
@@ -183,13 +184,15 @@ public class Validate
     
     public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath cipherFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
     {
-
+	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;}
+//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path cipherPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
+	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    cipherFCPath,                   targetFCPathList,	pattern,         negatePattern);
 	for (Path path:pathList)
 	{
-//							      MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path cipherPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
-	    MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    cipherFCPath,                   targetFCPathList,	pattern,         negatePattern);
-	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
+	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
 	}
+	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) ) { ui.buildReady(targetFCPathList); } else { targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList); }
+	
     }
 
     synchronized public static String getHumanSize(double value,int decimals)
@@ -396,20 +399,13 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     private final PathMatcher pathMatcher;
     private final boolean verbose; 
     private final boolean delete; 
-//    private final long minSize; 
     private final boolean symlink; 
-//    private final boolean writable; 
     private final boolean setFCPathlist; 
-    private FCPath cipherFCPath;
+    public FCPath cipherFCPath;
     private FCPathList targetFCPathList;
-//    private final ArrayList<Path> pathList;
     private boolean negatePattern;
     public long bytesCount = 0;
-//    private Timeline updateDashboardTimeline = null;
-//    private TimerTask updateProgressTask = null;
-//    private Timer updateDashboardTaskTimer = null;
-
-//  Default CONSTRUCTOR
+    public static boolean running = false; 
 
 //  regex pattern
 //  all *.bit   =   'regex:^.*\.bit$'
@@ -421,54 +417,67 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
         this.verbose = verbose;
         this.delete = delete;
-//        this.minSize = minSize;
         this.symlink = symlink;
-//        this.symlink = true;
-//        this.writable = writable;
         this.setFCPathlist = setFCPathlist;
 	this.cipherFCPath = cipherFCPath;
 	this.targetFCPathList = targetFCPathList;
-//        pathList = new ArrayList<Path>();
         this.negatePattern = negatePattern;
 	bytesCount = 0;
+	running = true;
     }
    
     @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
     {
-	if	(delete)	{ return FileVisitResult.CONTINUE; }
-	else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
-	else			{ ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); return FileVisitResult.CONTINUE; }
+	if (running)
+	{
+	    if	(delete)	{ return FileVisitResult.CONTINUE; }
+	    else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
+	    else			{ ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); return FileVisitResult.CONTINUE; }
+	}
+	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; }
     }    
     
     @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
     {
-	if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
-	{            
-	    if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
-	    else if (setFCPathlist)    
-	    {
-//					 getFCPath(UI ui, String caller, Path path, boolean isCipher,	     Path cipherPath, boolean report)
-		FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
+	if (running)
+	{
+	    if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
+	    {            
+		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
+		else if (setFCPathlist)    
+		{
+//    					     getFCPath(UI ui, String caller, Path path, boolean isCipher,	 Path cipherPath, boolean report)
+		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
+		}
+		else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
 	    }
-	    else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
+	    return FileVisitResult.CONTINUE;
 	}
-        return FileVisitResult.CONTINUE;
+	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; } 
     }
     
     @Override public FileVisitResult visitFileFailed(Path path, IOException exc)
     {
-//        ui.error("Warning: Skip File: " + path.toAbsolutePath().toString() + ": " + exc + "\r\n");
-//					 getFCPath(UI ui, String caller, Path path, boolean isCipher,	     Path cipherPath, boolean report)
-		FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
-        return FileVisitResult.SKIP_SIBLINGS;
-//      return FileVisitResult.CONTINUE; // Bad performance
+	if (running)
+	{
+//					     getFCPath(UI ui, String caller, Path path, boolean isCipher,	     Path cipherPath, boolean report)
+	    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
+	    return FileVisitResult.SKIP_SIBLINGS;
+	}
+	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; } 
     }
     
     @Override public FileVisitResult postVisitDirectory(Path path, IOException exc)
     {
-        if      (delete)            { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
-        else if (setFCPathlist)	    {     }
-        else                        {     }
-        return FileVisitResult.CONTINUE;
+	if (running)
+	{
+	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
+	    else if (setFCPathlist) {     }
+	    else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
+	    
+	    return FileVisitResult.CONTINUE;
+	}
+	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; } 
     }    
 }
+

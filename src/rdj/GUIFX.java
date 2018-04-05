@@ -292,6 +292,7 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean clockUpdated;
     private TimerTask updateDashboardTask;
     private Timer updateDashboardTaskTimer;
+    private String pattern;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -764,7 +765,6 @@ public class GUIFX extends Application implements UI, Initializable
 	if (!processRunning)
 	{
             cipherFileChooserPropertyCheck();
-	    targetFileChooserPropertyCheck(true);
 	}
     }
     
@@ -794,32 +794,54 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
 	    {
-		cursorWait();
+//		log("CC Sel Valid\r\n");
+//		cursorWait();
 		Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
+//		if ()
     //					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
 		cipherFCPath = Validate.getFCPath(   ui,		"",        cipherPath,             true,      cipherPath,           true);
+//		log(cipherFCPath.getString());
 		Platform.runLater(new Runnable(){ @Override public void run() 
 		{
-		    if ((cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
+		    if ((cipherFCPath.isValidCipher)) // Valid Cipher
 		    {
+//			log("CC Cipher Valid\r\n");
+			// Set Cipher Status Colors
 			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.toString());
 			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 			cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+			targetFileChooserPropertyCheck(true);
 		    }
-		    else
+		    else // Not Valid Cipher
 		    {
-			targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+//			log("CC Cipher Not Valid\r\n");
+			// Set Cipher Status Colors
 			cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
 			if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 			cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+			
+			MySimpleFCFileVisitor.running = false;
+		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+			if ( cipherFCPath != null ) { cipherFCPath.isValidCipher = false; }
+			targetFCPathList = new FCPathList();
+			buildReady(targetFCPathList);
 		    }
 		}});
-
-		cursorDefault();
+//		cursorDefault();
 	    }
-	    checkModeReady();
+	    else // Not a Valid Selection
+	    {
+//		log("CC Sel Not Valid\r\n");
+		MySimpleFCFileVisitor.running = false;
+	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+		if ( cipherFCPath != null ) { cipherFCPath.isValidCipher = false; }
+		targetFCPathList = new FCPathList();
+		buildReady(targetFCPathList);
+	    }
+
+//	    buildReady(targetFCPathList);
 	}
     }
 
@@ -836,7 +858,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if (!processRunning )
 	{
-	    processRunning = true;
+//	    processRunning = true;
 	    Platform.runLater(new Runnable(){ @Override public void run() 
 	    {
 		encryptButton.setDisable(true);
@@ -862,47 +884,80 @@ public class GUIFX extends Application implements UI, Initializable
 			(Files.isDirectory(targetFileChooser.getSelectedFile().toPath()))
 		    ) 
 	       )
-	    { targetFileDeleteButton.setEnabled(true);} else {targetFileDeleteButton.setEnabled(false); }
-
-
+	    { targetFileDeleteButton.setEnabled(true); } else {targetFileDeleteButton.setEnabled(false); }
+	    
+	    targetFCPathList = new FCPathList();// targetFCPathList.clear();
+	    final FCPathList targetFCPathList2 = targetFCPathList;
+	    final UI ui = this;
+	    if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
+	
+	    // All Valid
 	    if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (cipherFCPath != null) && (cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
 	    {
-
+		MySimpleFCFileVisitor.running = false;
+	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+//		log("TC All Valid\r\n");
 		Validate.bytesCount = 0;
 
 		// Gather User Selection in list
 		for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
 
     //		Get Globbing Pattern String
-		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+		pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+
+		// UPdate Dashboard during buildSelection
+
+		updateDashboardTask = new TimerTask() { @Override public void run() { updateDashboard(targetFCPathList2); }}; updateDashboardTaskTimer = new java.util.Timer(); updateDashboardTaskTimer.schedule(updateDashboardTask, 200L, 200L);
 
 		// Scanning animation on main progressbar
 		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }});
 
-		// UPdate Dashboard during buildSelection
-
-		updateDashboardTask = new TimerTask() { @Override public void run() { updateDashboard(targetFCPathList); }};
-		updateDashboardTaskTimer = new java.util.Timer();
-		updateDashboardTaskTimer.schedule(updateDashboardTask, 200L, 200L);
-    //		Timeline updateDashboardTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { buildProgress(targetFCPathList); } )); updateDashboardTimeline.play(); // Bad performance not fluid
-
 		// BuildSelection
-		cursorWait();
-		targetFCPathList = new FCPathList(); Validate.buildSelection( this, targetPathList, cipherFCPath, targetFCPathList, symlink, pattern, negatePattern, false);
-		cursorDefault();
-
-		if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
-    //		updateDashboardTimeline.stop();
-		Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(0); }});
-		updateDashboard(targetFCPathList);
+//		cursorWait();
+		Platform.runLater(new Runnable(){ @Override public void run() // Not o FX Thread
+		{
+		    Thread scanThread = new Thread(new Runnable(){@Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
+		    {
+			Validate.buildSelection( ui, targetPathList, cipherFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
+		    }});scanThread.setName("scanThread");scanThread.setDaemon(true);scanThread.start();
+		}});
 	    }
-	    processRunning = false;
-	    checkModeReady();
+	    else
+	    {
+//		log("TC Not All Valid\r\n");
+		
+		MySimpleFCFileVisitor.running = false;
+		try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+		targetFCPathList = new FCPathList();
+		buildReady(targetFCPathList);
+	    }
+	}
+    }
+    
+    @Override public void buildReady(FCPathList fcPathListParam)
+    {
+	Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(0); }});
+	if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
+	
+	if (fcPathListParam.size() > 0)
+	{
+//	    log("buildReady > 0\r\n");
+	    updateDashboard(fcPathListParam);
+	    checkModeReady(fcPathListParam);
+	}
+	else
+	{
+//	    log("buildReady == 0\r\n");
+	    fcPathListParam.clearStats();
+	    encryptableList = new FCPathList();
+	    updateDashboard(fcPathListParam);
+	    checkModeReady(fcPathListParam);
 	}
     }
 
     private void updateDashboard(FCPathList targetFCPathList)
     {
+//	log(s + "\r\n" + targetFCPathList.getStats());
 	Platform.runLater(new Runnable(){ @Override public void run() 
 	{
 	    // Skipping / Info Column
@@ -987,7 +1042,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    stopButton.setDisable(true);
 	}});
     }
-    private void checkModeReady()
+    private void checkModeReady(FCPathList targetFCPathList)
     {
 	Platform.runLater(new Runnable(){ @Override public void run() 
 	{
@@ -995,6 +1050,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
+		cipherDeviceButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 		
@@ -1015,10 +1071,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    } else { decryptButton.setDisable(true); }
 
 		    // Create Cipher Device
-		    if (cipherFCPath.type == FCPath.FILE)
+		    if ((cipherFCPath.type == FCPath.FILE) &&(cipherFCPath.isValidCipher))
 		    {
 			if (targetFCPathList.validDevices > 0)
 			{
+//			    log("1 " + cipherFCPath.getString());
 			    createCipherList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Cipher List:\r\n" + createCipherList.getStats());
 			    cipherDeviceButton.setDisable(false); cipherDeviceButton.setText("Create Cipher Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 			} else { cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }
@@ -1037,7 +1094,7 @@ public class GUIFX extends Application implements UI, Initializable
 	}});
     }
 
-    synchronized public static FCPathList filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
+    synchronized public  FCPathList filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
     {
 	FCPathList result = new FCPathList();
 	for (FCPath fcPathItem : fcPathList) { if (fcPath.test(fcPathItem)) { result.add(fcPathItem); } }
@@ -1392,7 +1449,7 @@ public class GUIFX extends Application implements UI, Initializable
 		remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
 		totalTimeCalendar =	Calendar.getInstance(Locale.ROOT);
 		
-		updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play();       
+		if ((processRunningType == ENCRYPT)  || (processRunningType == DECRYPT)) { updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play(); }
 		
                 processRunning = true;
                 encryptButton.setDisable(true);
@@ -1478,7 +1535,7 @@ public class GUIFX extends Application implements UI, Initializable
             @Override public void run()
             {
 		// Clocks
-		updateClockTimeLine.stop();
+		if ((processRunningType == ENCRYPT)  || (processRunningType == DECRYPT)) { updateClockTimeLine.stop(); }
 		if (clockUpdated)
 		{
 		    remainingTimeLabel.setText("00:00:00");

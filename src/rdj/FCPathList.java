@@ -53,6 +53,8 @@ public class FCPathList<E> extends ArrayList<E>
     public	    long validFilesSize =	    0;
     public	    long validDevices =		    0;
     public	    long validDevicesSize =	    0;
+    public	    long validDevicesProtected =    0;
+    public	    long validDevicesProtectedSize = 0;
     public	    long validPartitions =	    0;
     public	    long validPartitionsSize =	    0;
 
@@ -72,7 +74,7 @@ public class FCPathList<E> extends ArrayList<E>
     public	    long decryptRemainingFiles =    0; public	    long decryptRemainingFilesSize =	0;
     public	    long unDecryptableFiles =	    0; public	    long unDecryptableFilesSize =	0;
     
-    public FCPathList() { clear(); }
+    public FCPathList() { clear(); clearStats(); }
     
 //    @Override public void clear() { clearStats(); }
     
@@ -91,7 +93,7 @@ public class FCPathList<E> extends ArrayList<E>
 	    existing++;
 	    if ( fcPath.matchCipher )					    { matchingCipher++; }
 	    if	    ( fcPath.type == FCPath.DEVICE )			    { devices++;	    if ( fcPath.isValidDevice ) { validDevices++; validDevicesSize += fcPath.size; } }
-	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )		    { devicesProtected++;   if ( fcPath.isValidDevice ) { validDevices++; validDevicesSize += fcPath.size; } }
+	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )		    { devicesProtected++;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected++; validDevicesProtectedSize += fcPath.size; } }
 	    else if ( fcPath.type == FCPath.PARTITION )			    { partitions++;	    if ( fcPath.isValidPartition ) { validPartitions++; validPartitionsSize += fcPath.size; }}
 	    else if ( fcPath.type == FCPath.DIRECTORY )			    { directories++; }
 	    else if ( fcPath.type == FCPath.INVALID )			    { unexisting++; }
@@ -138,7 +140,7 @@ public class FCPathList<E> extends ArrayList<E>
 	    existing--;
 	    if ( fcPath.matchCipher )					    { matchingCipher--; }
 	    if	    ( fcPath.type == FCPath.DEVICE )			    { devices--;	    if ( fcPath.isValidDevice ) { validDevices--; validDevicesSize -= fcPath.size; } }
-	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )		    { devicesProtected--;   if ( fcPath.isValidDevice ) { validDevices--; validDevicesSize -= fcPath.size; } }
+	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )		    { devicesProtected--;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected--; validDevicesProtectedSize -= fcPath.size; } }
 	    else if ( fcPath.type == FCPath.PARTITION )			    { partitions--;	    if ( fcPath.isValidPartition ) { validPartitions--; validPartitionsSize -= fcPath.size; }}
 	    else if ( fcPath.type == FCPath.DIRECTORY )			    { directories--; }
 	    else if ( fcPath.type == FCPath.INVALID )			    { unexisting--; }
@@ -204,6 +206,7 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Valid Paths		: " +	validPaths + " (" + Validate.getHumanSize(validPathsSize,1) + ")\r\n";
 	returnString += "Valid Files		: " +	validFiles + " (" + Validate.getHumanSize(validFilesSize,1) + ")\r\n";
 	returnString += "Valid Devices		: " +	validDevices + " (" + Validate.getHumanSize(validDevicesSize,1) + ")\r\n";
+	returnString += "Valid Devices		: " +	validDevicesProtected + " (" + Validate.getHumanSize(validDevicesProtectedSize,1) + ")\r\n";
 	returnString += "Valid Partitions	: " +	validPartitions + " (" + Validate.getHumanSize(validPartitionsSize,1) + ")\r\n";
 	returnString += "\r\n";
 	returnString += "Decrypted Files 	: " +	decryptedFiles + " (" + Validate.getHumanSize(decryptedFilesSize,1) + ")\r\n";
@@ -225,48 +228,51 @@ public class FCPathList<E> extends ArrayList<E>
 
     public void clearStats()
     {
-    total =		    0;
-    unexisting =	    0;
-    existing =		    0;
+	this.clear();
+	total =			    0;
+	unexisting =		    0;
+	existing =		    0;
 
-    files =		    0;
-    directories =	    0;
-    symlinkFiles =	    0;
-    devices =		    0;
-    devicesProtected =	    0;
-    partitions =	    0;
-    
-    filesSize =		    0;
-    emptyFiles =	    0;
-    
-    readableFiles =	    0;
-    writableFiles =	    0;
-    hiddenFiles =	    0;
-    matchingCipher =	    0;
+	files =			    0;
+	directories =		    0;
+	symlinkFiles =		    0;
+	devices =		    0;
+	devicesProtected =	    0;
+	partitions =		    0;
 
-    validPaths =	    0;
-    validPathsSize =	    0;
-    validFiles =	    0;
-    validFilesSize =	    0;
-    validDevices =	    0;
-    validDevicesSize =	    0;
-    validPartitions =	    0;
-    validPartitionsSize =   0;
+	filesSize =		    0;
+	emptyFiles =		    0;
 
-// Decrypted Files
-    
-    decryptedFiles =	    0; decryptedFilesSize =	    0;
-    encryptableFiles =	    0; encryptableFilesSize =	    0;
-    newEncryptedFiles =	    0; newEncryptedFilesSize =	    0;
-    encryptRemainingFiles = 0; encryptRemainingFilesSize =  0;
-    unEncryptableFiles =    0; unEncryptableFilesSize =	    0;
+	readableFiles =		    0;
+	writableFiles =		    0;
+	hiddenFiles =		    0;
+	matchingCipher =	    0;
 
-// Encrypted Files
+	validPaths =		    0;
+	validPathsSize =	    0;
+	validFiles =		    0;
+	validFilesSize =	    0;
+	validDevices =		    0;
+	validDevicesSize =	    0;
+	validDevicesProtected =	    0;
+	validDevicesProtectedSize = 0;
+	validPartitions =	    0;
+	validPartitionsSize =	    0;
 
-    encryptedFiles =	    0; encryptedFilesSize =	    0;
-    decryptableFiles =	    0; decryptableFilesSize =	    0;
-    newDecryptedFiles =	    0; newDecryptedFilesSize =	    0;
-    decryptRemainingFiles = 0; decryptRemainingFilesSize =  0;
-    unDecryptableFiles =    0; unDecryptableFilesSize =	    0;
+    // Decrypted Files
+
+	decryptedFiles =	    0; decryptedFilesSize =	    0;
+	encryptableFiles =	    0; encryptableFilesSize =	    0;
+	newEncryptedFiles =	    0; newEncryptedFilesSize =	    0;
+	encryptRemainingFiles = 0; encryptRemainingFilesSize =  0;
+	unEncryptableFiles =    0; unEncryptableFilesSize =	    0;
+
+    // Encrypted Files
+
+	encryptedFiles =	    0; encryptedFilesSize =	    0;
+	decryptableFiles =	    0; decryptableFilesSize =	    0;
+	newDecryptedFiles =	    0; newDecryptedFilesSize =	    0;
+	decryptRemainingFiles = 0; decryptRemainingFilesSize =  0;
+	unDecryptableFiles =    0; unDecryptableFilesSize =	    0;
     }
 }

@@ -182,7 +182,6 @@ public class FinalCrypt extends Thread
 		if	(encryptmode)			    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		else // (decryptmode)
 		{
-//		    if (extension.equals(bit_extension))    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString().replace(bit_extension, "")); }
 		    if (extension.equals(bit_extension))    { targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
 		    else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
@@ -238,7 +237,7 @@ public class FinalCrypt extends Thread
 				} catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
 			    }
 			}
-			else
+			else // Decrypted but NOT Encryptable (should not be in the list anyway)
 			{
 			    ui.status("⚠ \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true);
 			    continue encryptTargetloop;

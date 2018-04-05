@@ -101,5 +101,7 @@ public class FCPath
     
 //    public static String getCipherSelectedDescription()		{ return FCPath.ITEMSELECTDESCRIPTION[type]; }	
     public static String getTypeString(int type) { return FCPath.TYPE_DESCRIPTION_ARRAY[type]; }
+    
+    public String getString() {return Validate.getSting(this); }
 
 }

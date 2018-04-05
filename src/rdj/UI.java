@@ -31,4 +31,5 @@ public interface UI
     public void fileProgress();
     public void processFinished();
     public void processStarted();
+    public void buildReady(FCPathList fcPathListParam);
 }
