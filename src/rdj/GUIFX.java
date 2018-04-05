@@ -88,6 +88,7 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
@@ -311,6 +312,7 @@ public class GUIFX extends Application implements UI, Initializable
         stage.setMinHeight(700);
         stage.setMaximized(true);
         stage.setOnCloseRequest(e -> Platform.exit());
+	stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent window) ->	{ System.exit(0); });
         stage.show();
         
         version = new Version(ui);
