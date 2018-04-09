@@ -284,7 +284,7 @@ public class Validate
 	    
 	    readable = Files.isReadable(path);
 	    writable = Files.isWritable(path);
-	    try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.error("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n"); }
+	    try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.error("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n"); } // SoftDown.eu error
 	    
 	    // Target =============================================================================================================================================================================================
 	    

@@ -6,6 +6,7 @@ Progress animation
 
 Added optional cipher password to protect cipher from unauthorized usage
 Backup update locations (properties, daily check / history)
+openDesktop auto decrypt, open, close, encrypt
 
 =================================== Done ====================================
 
