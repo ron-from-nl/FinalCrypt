@@ -103,8 +103,8 @@ public class FCPathList<E> extends ArrayList<E>
 		files++;
 		if ( fcPath.size > 0 )					    { filesSize += fcPath.size; } else { emptyFiles++; }
 
-		if ( fcPath.readable )					    { readableFiles++; }					    else { unreadableFiles++; unreadableFilesSize += fcPath.size; }
-		if ( fcPath.writable )					    { writableFiles++; }					    else { unwritableFiles++; unwritableFilesSize += fcPath.size; }
+		if ( fcPath.isReadable )					    { readableFiles++; }					    else { unreadableFiles++; unreadableFilesSize += fcPath.size; }
+		if ( fcPath.isWritable )					    { writableFiles++; }					    else { unwritableFiles++; unwritableFilesSize += fcPath.size; }
 		if ( fcPath.isHidden )					    { hiddenFiles++; hiddenFilesSize += fcPath.size; }
 		if ( fcPath.isValidPath )				    { validPaths++;		validPathsSize += fcPath.size; }
 		if ( fcPath.isValidFile )				    { validFiles++;		validFilesSize += fcPath.size; }
@@ -150,8 +150,8 @@ public class FCPathList<E> extends ArrayList<E>
 		files--;
 		if ( fcPath.size > 0 )					    { filesSize -= fcPath.size; } else { emptyFiles--; }
 
-		if ( fcPath.readable )					    { readableFiles--; }					    else { unreadableFiles--; unreadableFilesSize -= fcPath.size; }
-		if ( fcPath.writable )					    { writableFiles--; }					    else { unwritableFiles--; unwritableFilesSize -= fcPath.size; }
+		if ( fcPath.isReadable )					    { readableFiles--; }					    else { unreadableFiles--; unreadableFilesSize -= fcPath.size; }
+		if ( fcPath.isWritable )					    { writableFiles--; }					    else { unwritableFiles--; unwritableFilesSize -= fcPath.size; }
 		if ( fcPath.isHidden )					    { hiddenFiles--; hiddenFilesSize -= fcPath.size; }
 		if ( fcPath.isValidPath )				    { validPaths--;		validPathsSize -= fcPath.size; }
 		if ( fcPath.isValidFile )				    { validFiles--;		validFilesSize -= fcPath.size; }

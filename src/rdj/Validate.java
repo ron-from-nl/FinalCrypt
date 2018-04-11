@@ -301,32 +301,35 @@ public class Validate
 	    if (( isValid ) &&	( ( type == FCPath.DEVICE ) )		&& ( size >= FCPath.CIPHER_SIZE_MIN ) )	{ isValidDevice = true;		  isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
 
 	    //Partition validity
-	    if (( isValid ) &&	( type == FCPath.PARTITION ) && ( size >= FCPath.CIPHER_SIZE_MIN ) )						{ isValidPartition = true;  isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
+	    if (( isValid ) &&	( type == FCPath.PARTITION ) && ( size >= FCPath.CIPHER_SIZE_MIN ) )		{ isValidPartition = true;  isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
 
 	    // Decrypted File State
 	    
-	    if (( isValidFile )	    && ( ! isEncrypted ))											{ isDecrypted = true; isEncryptable = true; isUnEncryptable = false; isDecryptable = false; isUnDecryptable = true; }
+	    if (( isValidFile )	    && ( ! isEncrypted ))   { isDecrypted = true; isUnEncryptable = false; isDecryptable = false; isEncryptable = true; isUnDecryptable = true; }
 	    
 	    // Encrypted File State
 	    
-	    if ((isValidFile) )						    { isEncrypted = targetSourceHasFCToken(ui, path); if ((isEncrypted) && (cipherPath != null) && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { isDecryptable = targetHasAuthenticatedFCToken(ui, path, cipherPath); } }
+	    if (( isValidFile ))			    { isEncrypted = targetSourceHasFCToken(ui, path); if ((isEncrypted) && (cipherPath != null) && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (cipherPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, cipherPath); } }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
 	    
 	    // Cipher =============================================================================================================================================================================================
 	    
-	    if (cipherPath != null)							{ if (path.compareTo(cipherPath) == 0)   { matchCipher = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
+	    if ( cipherPath != null )							{ if (path.compareTo(cipherPath) == 0)   { matchCipher = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
 	    if ( isCipher )								{ isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
-	    if (( exist )
-			    &&	(
-					( type == FCPath.FILE )
-				    ||  ( type == FCPath.PARTITION )
-				    ||	( type == FCPath.DEVICE )
-				    ||	( type == FCPath.DEVICE_PROTECTED )
-				)
+	    if (	( exist )
+		    &&  (
+				( type == FCPath.FILE )
+			    ||  ( type == FCPath.PARTITION )
+			    ||	( type == FCPath.DEVICE )
+			    ||	( type == FCPath.DEVICE_PROTECTED )
+			)
 			    && ( size >=  1024 ) && ( readable  ) && ( isCipher ) )	{ isValidCipher = true; }
 	}
 	else { }
+
+// Return FCPath =============================================================================================================================================================================================
+
 //				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesCipher,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isCipher, boolean isValidCipher, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
 	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchCipher,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isCipher,         isValidCipher,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,         isDecryptable,	 isNewDecrypted,         isUnDecryptable);
 	return fcPath;
@@ -341,8 +344,8 @@ public class Validate
 	returnString += "Exist:			" + fcPath.exist + "\r\n";
 	returnString += "Type:			" + fcPath.getTypeString(fcPath.type) + "\r\n";
 	returnString += "Size:			" + Validate.getHumanSize(fcPath.size, 1) + "\r\n";
-	returnString += "Readable:		" + fcPath.readable + "\r\n";
-	returnString += "Writable:		" + fcPath.writable + "\r\n";
+	returnString += "Readable:		" + fcPath.isReadable + "\r\n";
+	returnString += "Writable:		" + fcPath.isWritable + "\r\n";
 	returnString += "Hidden:			" + fcPath.isHidden + "\r\n";
 	returnString += "Match Cipher:		" + fcPath.matchCipher + "\r\n";
 	returnString += "\r\n";
@@ -380,7 +383,7 @@ public class Validate
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", "Path",					" | ", "Exist ", " | ", "Type",		       " | ", "Size",		" | ", "Readable ",	" | ", "Valid ",		" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
-        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.readable), " | ", b(fcPath.isValidCipher),	" |"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.isReadable), " | ", b(fcPath.isValidCipher),	" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
 
 	return returnString;

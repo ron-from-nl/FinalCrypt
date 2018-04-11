@@ -112,7 +112,7 @@ public class FinalCrypt extends Thread
         wrteTargetDestinBufferSize = this.bufferSize;
     }
         
-    public void encryptSelection(FCPathList targetSourcePathList, FCPathList filteredTargetSourcePathList, FCPath cipherSourceFCPath, boolean encryptmode)
+    public void encryptSelection(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath cipherSourceFCPath, boolean encryptmode)
     {
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 
@@ -130,8 +130,8 @@ public class FinalCrypt extends Thread
         pausing = false;
 
         // Get TOTALS
-        allDataStats.setFilesTotal(filteredTargetSourcePathList.encryptableFiles + filteredTargetSourcePathList.decryptableFiles);
-        allDataStats.setAllDataBytesTotal(filteredTargetSourcePathList.encryptableFilesSize + filteredTargetSourcePathList.decryptableFilesSize);
+        allDataStats.setFilesTotal(filteredTargetSourceFCPathList.encryptableFiles + filteredTargetSourceFCPathList.decryptableFiles);
+        allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize);
 	ui.status(allDataStats.getStartSummary("En/Decrypting"), true);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
@@ -162,15 +162,13 @@ public class FinalCrypt extends Thread
         
         // Encrypt Files loop
 	
-	encryptTargetloop: for (Iterator it = filteredTargetSourcePathList.iterator(); it.hasNext();)
+	encryptTargetloop: for (Iterator it = filteredTargetSourceFCPathList.iterator(); it.hasNext();)
 	{
 	    FCPath newTargetSourceFCPath = (FCPath) it.next();
 	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
 	    Path targetDestinPath = null;
 	    String fileStatusLine = "";
-//            long targetSourceSize = 0; try { targetSourceSize = Files.size(targetSourcePath); } catch (IOException ex) { ui.error("Error: Files.size(targetSourcePath); " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
             if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
-//							          isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	    if ((newTargetSourceFCPath.path.compareTo(cipherSourceFCPath.path) != 0))
 	    {
 		String bit_extension =	    ".bit";
@@ -186,12 +184,6 @@ public class FinalCrypt extends Thread
 		    else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
 		
-		// Previous situation (negating extension regardless of encrypt/decrypt-mode)
-//		if ( ! extension.equals(bit_extension))    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }		  // Add    .bit
-//		else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString().replace(bit_extension, "")); }    // Remove .bit			
-//		    ui.log("targetSourceFCPath: " + targetSourceFCPath.path.toString() + "\r\n");
-//		    ui.log("targetDestinPath: " + targetDestinPath.toString() + "\r\n");
-
 		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n"); }
 
 		// Prints printByte Header ones                
@@ -574,7 +566,7 @@ public class FinalCrypt extends Thread
 //					     getFCPath(UI ui, String caller,	    Path path, boolean isCipher,		 Path cipherPath, boolean report)
 	    newTargetSourceFCPath = Validate.getFCPath(   ui,            "", targetDestinPath,		  false, cipherSourceFCPath.path,	 verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
-	    targetSourcePathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
+	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
         } // Encrypt Files Loop // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line

@@ -1,5 +1,5 @@
-[Version] =		{2.1.0}
-[Release Notes] =	{Change Target Response}
-[Release Message] =	{Modernized Interface}
+[Version] =		{2.1.1}
+[Release Notes] =	{Auto decrypt open file}
+[Release Message] =	{Fixed desktop open bug}
 [Alert Subject] =	{}
 [Alert Message] =	{}

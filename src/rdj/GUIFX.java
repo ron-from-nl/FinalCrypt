@@ -76,10 +76,15 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
 import java.nio.file.LinkOption;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javafx.animation.Animation;
@@ -263,6 +268,13 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList createCipherList;
     private FCPathList cloneCipherList;
     private FCPathList customList;
+    
+    private FCPathList emptyList; 
+    private FCPathList symlinkList;
+    private FCPathList unreadableList;
+    private FCPathList unwritableList;
+    private FCPathList hiddenList;
+    
     @FXML
     private Button cipherDeviceButton;
     @FXML
@@ -294,6 +306,16 @@ public class GUIFX extends Application implements UI, Initializable
     private TimerTask updateDashboardTask;
     private Timer updateDashboardTaskTimer;
     private String pattern;
+    @FXML
+    private Label emptyFilesHeaderLabel;
+    @FXML
+    private Label symlinkFilesHeaderLabel;
+    @FXML
+    private Label unreadableFilesHeaderLabel;
+    @FXML
+    private Label unwritableFilesHeaderLabel;
+    @FXML
+    private Label hiddenFilesHeaderLabel;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -729,8 +751,11 @@ public class GUIFX extends Application implements UI, Initializable
         if ((targetFileChooser != null)  && (targetFileChooser.getSelectedFiles() != null) && ( targetFileChooser.getSelectedFiles().length == 1 ))
         {
 	    Path targetPath = targetFileChooser.getSelectedFile().toPath();
+//	    GUIFX ui = this;
+//	    if (ui == null) { log("Fuck me dearly\r\n"); }
+	    if (cipherFCPath == null)	{ Path path = Paths.get("."); cipherFCPath = Validate.getFCPath(   ui,		"",        path,             true,      path,           true); }
 //					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-	    FCPath targetFCPath = Validate.getFCPath(   ui,		 "", targetPath,	    false,	cipherPath,	     true);
+	    FCPath targetFCPath = Validate.getFCPath( this, "", targetPath, false, cipherFCPath.path, true);
 	    
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
@@ -744,17 +769,52 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	    else
 	    {
-//												device  minsize	 symlink  writable  status
-		if (Validate.isValidFile(this, "", targetPath, false,      0L, true,    false, true))
+//							device  minsize	 symlink  writable  status
+//		if (Validate.isValidFile(this, "", targetPath, false,      0L, true,    false, true))
+//		log("Item not Dev\r\n" + targetFCPath.getString());
+		if ((targetFCPath.isValidFile) || (targetFCPath.type == FCPath.SYMLINK))
 		{
-		    try { Desktop.getDesktop().open(targetFCPath.path.toFile()); }
-		    catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+//		    log("Item validfile or symlink: \r\n" + targetFCPath.getString());
+		    if ((targetFCPath.isEncrypted) && ( targetFCPath.isDecryptable ))
+		    {
+//			log("Item Encrypted && Decryptable\r\n" + targetFCPath.getString());
+			Thread encryptThread = new Thread(new Runnable()
+			{
+//			    private DeviceManager deviceManager;
+			    @Override
+			    @SuppressWarnings({"static-access"})
+			    public void run()
+			    {
+				FCPathList targetFCPathList = new FCPathList(); FCPathList fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
+				decrypt(targetFCPathList, fileteredTargetFCPathList, cipherFCPath); Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
+				try { Thread.sleep(300); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
+				
+				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+//				while (true)
+//				{
+//				    log("" + desktop.toString() + "\r\n");
+//				    try { Thread.sleep(300); } catch (InterruptedException ex) {  }
+//				}
+//				log("closeFile: " + newPath.toString() + "\r\n");
+//				try { Thread.sleep(300); } catch (InterruptedException ex) {  }
+//				FCPath targetFCPath = Validate.getFCPath(   ui,		 "", newPath,	    false,	cipherFCPath.path,	     true);
+//				targetFCPathList = new FCPathList(); fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
+//				encrypt(targetFCPathList, fileteredTargetFCPathList, cipherFCPath);
+			    }
+			});
+			encryptThread.setName("encryptThread");
+			encryptThread.setDaemon(true);
+			encryptThread.start();
+		    }
+		    else
+		    { 
+			try { Desktop.getDesktop().open(targetFCPath.path.toFile()); } catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+		    }
+		    
+		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(new Runnable(){ @Override public void run() {
-			encryptButton.setDisable(true); decryptButton.setDisable(true);
-			cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device");
-		    }});
-		}
+		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
         targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
@@ -916,12 +976,12 @@ public class GUIFX extends Application implements UI, Initializable
 
 		// BuildSelection
 //		cursorWait();
-		Platform.runLater(new Runnable(){ @Override public void run() // Not o FX Thread
+		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
-		    Thread scanThread = new Thread(new Runnable(){@Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
+		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
 			Validate.buildSelection( ui, targetPathList, cipherFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
-		    }});scanThread.setName("scanThread");scanThread.setDaemon(true);scanThread.start();
+		    }});scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
 		}});
 	    }
 	    else
@@ -1046,7 +1106,9 @@ public class GUIFX extends Application implements UI, Initializable
     }
     private void checkModeReady(FCPathList targetFCPathList)
     {
-	Platform.runLater(new Runnable(){ @Override public void run() 
+	Platform.runLater(new Runnable()
+	{
+	@Override public void run() 
 	{
 	    if (!processRunning)
 	    {
@@ -1061,17 +1123,24 @@ public class GUIFX extends Application implements UI, Initializable
 		    // Encryptables
 		    if (targetFCPathList.encryptableFiles > 0)
 		    {
-			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable); // log("Encryptable List:\r\n" + encryptableList.getStats());
+			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { encryptButton.setDisable(true); }
 
 		    // Encryptables
 		    if (targetFCPathList.decryptableFiles > 0)
 		    {
-			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable); // log("Decryptable List:\r\n" + decryptableList.getStats());
+			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { decryptButton.setDisable(true); }
 
+		    // Others empty sym read write hidden
+		    if (targetFCPathList.emptyFiles > 0)	{ emptyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.size == 0); } else { emptyList = null; }
+		    if (targetFCPathList.symlinkFiles > 0)	{ symlinkList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.SYMLINK); } else { symlinkList = null; }
+		    if (targetFCPathList.unreadableFiles > 0)	{ unreadableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isReadable); } else { unreadableList = null; }
+		    if (targetFCPathList.unwritableFiles > 0)	{ unwritableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isWritable); } else { unwritableList = null; }
+		    if (targetFCPathList.hiddenFiles > 0)	{ hiddenList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden); } else { hiddenList = null; }
+		    
 		    // Create Cipher Device
 		    if ((cipherFCPath.type == FCPath.FILE) &&(cipherFCPath.isValidCipher))
 		    {
@@ -1249,9 +1318,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptButtonAction(ActionEvent event)
     {
-        // Needs Threading to early split off from the UI Event Dispatch Thread
-        final GUIFX guifx = this;
-        final UI ui = this;
         Thread encryptThread = new Thread(new Runnable()
         {
             private DeviceManager deviceManager;
@@ -1259,12 +1325,7 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		processRunningType = ENCRYPT;
-		filesProgressBar.setProgress(0.0);
-		fileProgressBar.setProgress(0.0);
-		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
-		processStarted();
-		finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true);
+		encrypt(targetFCPathList, encryptableList, cipherFCPath);
             }
         });
         encryptThread.setName("encryptThread");
@@ -1272,12 +1333,15 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
+    private void encrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath cipherSourceFCPath) // Only run within thread
+    {
+	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true);
+    }
+
     @FXML
     private void decryptButtonAction(ActionEvent event)
     {
-        // Needs Threading to early split off from the UI Event Dispatch Thread
-        final GUIFX guifx = this;
-        final UI ui = this;
         Thread encryptThread = new Thread(new Runnable()
         {
             private DeviceManager deviceManager;
@@ -1285,17 +1349,36 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		processRunningType = DECRYPT;
-		filesProgressBar.setProgress(0.0);
-		fileProgressBar.setProgress(0.0);
-		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
-		processStarted();
-		finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
+		decrypt(targetFCPathList, encryptableList, cipherFCPath);
             }
         });
         encryptThread.setName("decryptThread");
         encryptThread.setDaemon(true);
         encryptThread.start();
+//        // Needs Threading to early split off from the UI Event Dispatch Thread
+////        final GUIFX guifx = this;
+////        final UI this_ui = this;
+//        Thread encryptThread = new Thread(new Runnable()
+//        {
+//            private DeviceManager deviceManager;
+//            @Override
+//            @SuppressWarnings({"static-access"})
+//            public void run()
+//            {
+//		processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+////		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { this_ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
+//		processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
+//            }
+//        });
+//        encryptThread.setName("decryptThread");
+//        encryptThread.setDaemon(true);
+//        encryptThread.start();
+    }
+
+    private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath cipherSourceFCPath) // Only run within thread
+    {
+	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
     }
 
     @FXML
@@ -1685,4 +1768,99 @@ public class GUIFX extends Application implements UI, Initializable
     private void logTabSelectionChanged(Event event)
     {
     }
+
+    @FXML
+    private void emptyFilesHeaderLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n"); for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void symlinkFilesHeaderLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n"); for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void unreadableFilesHeaderLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unreadable Files:\r\n\r\n"); for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void unwritableFilesHeaderLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void hiddenFilesHeaderLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n"); for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void emptyFilesLabelOnMouseClicked(MouseEvent event)
+    {
+    }
+
+    @FXML
+    private void symlinkFilesLabelOnMouseClicked(MouseEvent event)
+    {
+    }
+
+    @FXML
+    private void unreadableFilesLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n"); for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+	Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+        targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+    }
+
+    @FXML
+    private void unwritableFilesLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+	Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+        targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+    }
+
+    @FXML
+    private void hiddenFilesLabelOnMouseClicked(MouseEvent event)
+    {
+    }
+    
+    private void setAttribute(FCPath fcPath, boolean read, boolean write)
+    {
+	attributeViewloop: for (String view:fcPath.path.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
+	{
+//                            ui.println(view);
+//	    if ( view.toLowerCase().equals("basic") )
+//	    {
+//	    }
+	    if ( view.toLowerCase().equals("dos") )
+	    {
+		try
+		{
+		    if (read) { Files.setAttribute(fcPath.path, "dos:readonly", true); }
+		    if (write) { Files.setAttribute(fcPath.path, "dos:readonly", false); }
+		}
+		catch (IOException ex) { error("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n"); }
+	    }
+	    else if ( view.toLowerCase().equals("posix") )
+	    {
+		try
+		{
+		    Set<PosixFilePermission> permissions = new HashSet<>();
+		    if (read) { permissions.add(PosixFilePermission.OWNER_READ); }
+		    if (write) { permissions.add(PosixFilePermission.OWNER_READ); permissions.add(PosixFilePermission.OWNER_WRITE); }
+		    Files.setPosixFilePermissions(fcPath.path, permissions);
+		}
+		catch (IOException ex) { error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
+	    }
+	} // End attributeViewloop // End attributeViewloop
+    }
+    
 }

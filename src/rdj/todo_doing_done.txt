@@ -6,10 +6,12 @@ Progress animation
 
 Added optional cipher password to protect cipher from unauthorized usage
 Backup update locations (properties, daily check / history)
-openDesktop auto decrypt, open, close, encrypt
+auto encrypt on exit getDesktop.open(..
+Skipping: single click (get list) double click change attributes
 
 =================================== Done ====================================
 
+openDesktop auto encrypt (open, close, encrypt)
 
 ============================= Source Committed ==============================
 
@@ -18,8 +20,10 @@ openDesktop auto decrypt, open, close, encrypt
 
 
 ============================= Binaries Released =============================
-Change Target Response
+Auto decrypt open file
+Fixed desktop open bug
 
+Change Target Response
 Major changes version 2.0.0
 Modernized User Interface
 Better Function, Look & Feel

@@ -40,8 +40,8 @@ public class FCPath
     public	    boolean exist =		    false;
     public	    int	    type =		    INVALID;
     public	    long    size =		    0;
-    public	    boolean readable =		    false;
-    public	    boolean writable =		    false;
+    public	    boolean isReadable =	    false;
+    public	    boolean isWritable =	    false;
     public	    boolean isHidden =		    false;
     public	    boolean matchCipher =	    false;
 
@@ -79,7 +79,7 @@ public class FCPath
 	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
     )
     {
-	this.path = path; this.exist = exist; this.type = type; this.size = size; this.readable = readable; this.writable = writable; this.isHidden = isHidden;	this.matchCipher = matchCipher;
+	this.path = path; this.exist = exist; this.type = type; this.size = size; this.isReadable = readable; this.isWritable = writable; this.isHidden = isHidden;	this.matchCipher = matchCipher;
 	this.isValidPath = isValidPath; this.isValidFile = isValidFile; this.isValidDeviceProtected = isValidDeviceProtected; this.isValidDevice = isValidDevice; this.isValidPartition = isValidPartition; this.isCipher = isCipher; this.isValidCipher = isValidCipher;
 	
 	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
@@ -90,7 +90,7 @@ public class FCPath
     public FCPath clone(FCPath fcPath) // Used by FCPathList.updateStat(FCPath oldFCPath, FCPath newFCPath) Basically does a proper deep clone
     {
 	FCPath newFCPath = new FCPath(fcPath.path);
-	newFCPath.path = fcPath.path; newFCPath.exist = fcPath.exist; newFCPath.type =fcPath. type; newFCPath.size = fcPath.size; newFCPath.readable = fcPath.readable; newFCPath.writable = fcPath.writable;
+	newFCPath.path = fcPath.path; newFCPath.exist = fcPath.exist; newFCPath.type =fcPath. type; newFCPath.size = fcPath.size; newFCPath.isReadable = fcPath.isReadable; newFCPath.isWritable = fcPath.isWritable;
 	newFCPath.isHidden = fcPath.isHidden; newFCPath.matchCipher = fcPath.matchCipher;
 	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isCipher = fcPath.isCipher; newFCPath.isValidCipher = fcPath.isValidCipher;
 	newFCPath.isDecrypted = fcPath.isDecrypted; newFCPath.isEncryptable = fcPath.isEncryptable; newFCPath.isNewEncrypted = fcPath.isNewEncrypted; newFCPath.isUnEncryptable = fcPath.isUnEncryptable; 
