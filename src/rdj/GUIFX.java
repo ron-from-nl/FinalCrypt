@@ -1686,8 +1686,8 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "==================================\r\n";
         infotext += "\r\n";
         infotext += "Best practice is a cipher file of at least 1 MB in size\r\n";
-        infotext += "Don't keep cipher files on your computer for too long\r\n";
-        infotext += "to prevent someone or something copying of it.\r\n";
+        infotext += "Don't keep cipher file(s) on your computer for too long\r\n";
+        infotext += "to prevent someone or something copying it.\r\n";
         infotext += "\r\n";
         infotext += "Encryption / Decryption (advanced explanation):\r\n";
         infotext += "\r\n";
