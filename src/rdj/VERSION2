@@ -1,4 +1,4 @@
-[Version] =		{2.1.1}
+[Version] =		{2.1.2}
 [Release Notes] =	{Auto decrypt open file}
 [Release Message] =	{Fixed desktop open bug}
 [Alert Subject] =	{}

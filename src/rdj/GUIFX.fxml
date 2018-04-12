@@ -505,7 +505,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                        <children>
-                                          <Label fx:id="encryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="encryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" onMouseClicked="#encryptableLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list encryptable files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="7" GridPane.rowIndex="6">
@@ -626,7 +629,10 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="254.0" layoutY="89.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="4" GridPane.rowIndex="4">
                                        <children>
-                                          <Label fx:id="decryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="6.0" layoutY="-5.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="decryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="6.0" layoutY="-5.0" onMouseClicked="#decryptableLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list decryptable files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -714,7 +720,10 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="83.0" layoutY="50.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                        <children>
-                                          <Label fx:id="decryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="decryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" onMouseClicked="#decryptedLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list decrypted files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="156.0" layoutY="50.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="2" GridPane.rowIndex="3">
@@ -729,7 +738,10 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="83.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="4" GridPane.rowIndex="3">
                                        <children>
-                                          <Label fx:id="encryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="encryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" onMouseClicked="#encryptedLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list encrypted files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="156.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="5" GridPane.rowIndex="3">

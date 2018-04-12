@@ -262,9 +262,16 @@ public class GUIFX extends Application implements UI, Initializable
     
     @FXML
     private Label targetWarningLabel;
-    private FCPathList targetFCPathList;
+    
+    private FCPathList targetFCPathList; // Main List
+
+    // Filtered Lists
+    private FCPathList decryptedList; 
     private FCPathList encryptableList;
+
+    private FCPathList encryptedList; 
     private FCPathList decryptableList;
+    
     private FCPathList createCipherList;
     private FCPathList cloneCipherList;
     private FCPathList customList;
@@ -869,7 +876,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 //			log("CC Cipher Valid\r\n");
 			// Set Cipher Status Colors
-			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.toString());
+			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.getFileName().toString());
 			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 			cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
@@ -1125,14 +1132,14 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-		    } else { encryptButton.setDisable(true); }
+		    } else { encryptButton.setDisable(true); encryptableList = null; }
 
-		    // Encryptables
+		    // Decryptables
 		    if (targetFCPathList.decryptableFiles > 0)
 		    {
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-		    } else { decryptButton.setDisable(true); }
+		    } else { decryptButton.setDisable(true); decryptableList = null; }
 
 		    // Others empty sym read write hidden
 		    if (targetFCPathList.emptyFiles > 0)	{ emptyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.size == 0); } else { emptyList = null; }
@@ -1140,6 +1147,9 @@ public class GUIFX extends Application implements UI, Initializable
 		    if (targetFCPathList.unreadableFiles > 0)	{ unreadableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isReadable); } else { unreadableList = null; }
 		    if (targetFCPathList.unwritableFiles > 0)	{ unwritableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isWritable); } else { unwritableList = null; }
 		    if (targetFCPathList.hiddenFiles > 0)	{ hiddenList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden); } else { hiddenList = null; }
+
+		    if (targetFCPathList.decryptedFiles > 0)	{ decryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecrypted); } else { decryptedList = null; }
+		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
 		    
 		    // Create Cipher Device
 		    if ((cipherFCPath.type == FCPath.FILE) &&(cipherFCPath.isValidCipher))
@@ -1861,6 +1871,30 @@ public class GUIFX extends Application implements UI, Initializable
 		catch (IOException ex) { error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
 	    }
 	} // End attributeViewloop // End attributeViewloop
+    }
+
+    @FXML
+    private void encryptableLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encryptable Files:\r\n\r\n"); for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void decryptableLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decryptable Files:\r\n\r\n"); for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void decryptedLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decrypted Files:\r\n\r\n"); for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void encryptedLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encrypted Files:\r\n\r\n"); for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
     
 }
