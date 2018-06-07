@@ -1,0 +1,24 @@
+name: finalcrypt
+version: '2.1.2'
+summary: Encryption program with strong Personal Cipher Encryption
+description: |
+  FinalCrypt encrypts your files with a personal cipher file (a personal photo or video).
+  Personal Cipher Encryption can not be cracked, as personal ciphers are too large to be
+  brute force attacked and too personal to be corrupted or backdoored by others.
+
+confinement: strict
+grade: stable
+
+apps:
+ guifx:
+    command: usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java -jar $SNAP/jar/FinalCrypt.jar
+    adapter: none
+    environment:
+       JAVA_HOME: $SNAP/usr/lib/jvm/default-java
+       CLASSPATH: $SNAP/jar/FinalCrypt.jar
+       PATH: $SNAP/usr/lib/jvm/default-java/bin:$PATH
+
+parts:
+    local:
+        plugin: ant
+        source: .
