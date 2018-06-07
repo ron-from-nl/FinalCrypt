@@ -4,14 +4,23 @@ Progress animation
 
 =================================== Doing ===================================
 
+Build Password Repository?
+Social Media Share buttons?
 Added optional cipher password to protect cipher from unauthorized usage
 Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
-Skipping: single click (get list) double click change attributes
+Directory CheckSum Comparison?
+Reproduce pause / stop buildSelection bug maybe?
+list invalid files?
+
+=============================== Don't forget ================================
+
+Change FinalCrypt -> properties -> splash screen -> icon on Windows
+Set version nbproject/project.properties application.implementation.version=1.2.3
+Set version on file: Version & Version2
 
 =================================== Done ====================================
 
-openDesktop auto encrypt (open, close, encrypt)
 
 ============================= Source Committed ==============================
 
@@ -20,9 +29,18 @@ openDesktop auto encrypt (open, close, encrypt)
 
 
 ============================= Binaries Released =============================
+
+New: Cipher device types
+Better: printing, clocks
+ 
+Goto website button
+Added additional unix storage device types 
+Added additional print file lists from stats
+24 hour clocks & pause clocks
+Set correct version on native package
+
 Auto decrypt open file
 Fixed desktop open bug
-
 Change Target Response
 Major changes version 2.0.0
 Modernized User Interface

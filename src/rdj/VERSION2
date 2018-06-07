@@ -1,5 +1,5 @@
-[Version] =		{2.1.2}
-[Release Notes] =	{Auto decrypt open file}
-[Release Message] =	{Fixed desktop open bug}
+[Version] =		{2.2.0}
+[Release Notes] =	{New: Cipher Device Types}
+[Release Message] =	{Better: Printing, Clocks}
 [Alert Subject] =	{}
 [Alert Message] =	{}

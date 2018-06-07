@@ -192,7 +192,6 @@ public class Validate
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
 	}
 	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) ) { ui.buildReady(targetFCPathList); } else { targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList); }
-	
     }
 
     synchronized public static String getHumanSize(double value,int decimals)
@@ -216,10 +215,33 @@ public class Validate
 
 	if (path.toAbsolutePath().toString().startsWith("/dev/"))
 	{
-	    if	    (path.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux Cipher Device Selection
+	    if	    (path.toAbsolutePath().toString().startsWith("/dev/hd")) // Linux IDE Cipher Device Selection
+	    {
+		if  (Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) { returnFCPathType = FCPath.PARTITION; }
+		else { if ( ! path.getFileName().endsWith("hda")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+	    }
+	    else if	    (path.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux SATA Cipher Device Selection
 	    {
 		if  (Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) { returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().endsWith("sda")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+	    }
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/mmcblk")) // (mmcblk0p1) Linux SD-Card / MultiMedia Card
+	    {
+		if  (
+			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
+			(String.valueOf(path.getFileName().toString().charAt(path.getFileName().toString().length()-2)).equalsIgnoreCase("p"))
+		    )
+		{ returnFCPathType = FCPath.PARTITION; }
+		else { if ( ! path.getFileName().toString().endsWith("mmcblk0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+	    }
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/nvme")) // (nvme0n1p1) Linux High Speed Non-Volatile Memory Express storage device
+	    {
+		if  (
+			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
+			(String.valueOf(path.getFileName().toString().charAt(path.getFileName().toString().length()-2)).equalsIgnoreCase("p"))
+		    )
+		{ returnFCPathType = FCPath.PARTITION; }
+		else { if ( ! path.getFileName().toString().endsWith("nvme0n1")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
 	    }
 	    else if (path.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Cipher Device Selection
 	    {

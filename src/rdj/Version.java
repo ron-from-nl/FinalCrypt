@@ -52,6 +52,7 @@ public class Version
     
     private static       String remoteContent =			    "";
     
+    public static final String WEBSITEURISTRING =			    "https://sites.google.com/site/ronuitholland/home/finalcrypt";
     public static final String REMOTEPACKAGEDOWNLOADURISTRING =		    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
     public static final String[] REMOTEPACKAGEDOWNLOADURISTRINGARRAY =	{
 									    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/"
@@ -73,6 +74,8 @@ public class Version
     private String latestReleaseMessageString;
     private String latestAlertSubjectString;
     private String latestAlertMessageString;
+    public int currentInstalledVersion;
+    public int latestRemoteVersion;
 
     public Version(UI ui)
     {
@@ -95,7 +98,8 @@ public class Version
         try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
 
 //        localContent.replaceAll("\\p{C}", "?");
-	String[] lines = localContent.split(System.getProperty("line.separator"));
+//	String[] lines = localContent.split(System.getProperty("line.separator"));
+	String[] lines = localContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
 	
 	localFields = new String[lines.length];
 	localValues = new String[lines.length];
@@ -112,12 +116,14 @@ public class Version
 //	    ui.log("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
 	    if (localFields[x].toLowerCase().equals("Version".toLowerCase())) { currentOverallVersionString = localValues[x]; }
 	}
-
+	
+//	ui.log("currentOverallVersionString: " + currentOverallVersionString + "\r\n");
 	String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
-        int currentVersion = Integer.parseInt(currentVersionString); int currentUpgrade = Integer.parseInt(currentUpgradeString); int currentUpdate = Integer.parseInt(currentUpdateString);
-        currentVersionTotal = (currentVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
+        currentInstalledVersion = Integer.parseInt(currentVersionString); int currentUpgrade = Integer.parseInt(currentUpgradeString); int currentUpdate = Integer.parseInt(currentUpdateString);
+        currentVersionTotal = (currentInstalledVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
+//	ui.log("currentVersion: " + currentVersion + "\r\n");
         currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
         currentVersionIsKnown = true;
 	
@@ -136,8 +142,9 @@ public class Version
         try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
 
 //        remoteContent.replaceAll("\\p{C}", "?");
-	String[] lines = remoteContent.split(System.getProperty("line.separator"));
-	
+//	String[] lines = remoteContent.split(System.getProperty("line.separator"));
+	String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
+
 	remoteFields = new String[lines.length];
 	remoteValues = new String[lines.length];
 
@@ -156,8 +163,8 @@ public class Version
         String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
         String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
         String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
-        int latestVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
-        latestVersionTotal = (latestVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
+        latestRemoteVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
+        latestVersionTotal = (latestRemoteVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
         latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
         latestVersionIsKnown = true;
 	

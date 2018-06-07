@@ -1,8 +1,7 @@
 # FinalCrypt
 
-FinalCrypt encrypts your files with any (personal photo or video) file.
-A so called "cipher file". Even supercomputers can't reproduce your photo or video out of thin air.
-Why FinalCrypt? Virtually all encryption software uses small (32 bytes) key files to (AES) encrypt your data.
-FinalCrypt's "Personal Cipher Encryption" is unbreakable, fully OpenSource and guaranteed to be free of malware or backdoors!
+FinalCrypt encrypts your files with a personal cipher file (a personal photo or video). Personal Cipher Encryption can't be cracked
+as personal ciphers are too large to be brute force attacked and too personal to be corrupted or backdoored by others. Government approved
+encryption standards like DES / RSA / AES deliberately limit key file size (2048 bits / 256 bytes) misleading the public they are safe.
 
 Email: ronuitzaandam@gmail.com

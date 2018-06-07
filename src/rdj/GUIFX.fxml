@@ -37,8 +37,8 @@
                                                 <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="111.0" prefWidth="111.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="339.0" minWidth="300.0" prefWidth="339.0" />
                                                       <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                                                       <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
                                                   </columnConstraints>
@@ -159,8 +159,8 @@
                                                    </children>
                                                    <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="130.0" prefWidth="130.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="320.0" minWidth="300.0" prefWidth="320.0" />
                                                       <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                                                       <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
                                                    </columnConstraints>
@@ -248,26 +248,20 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                        <children>
-                                          <Label fx:id="emptyFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" onMouseClicked="#emptyFilesHeaderLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #CCCCCC;" text="Empty" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip text="Click to list empty files" />
-                                             </tooltip></Label>
+                                          <Label fx:id="emptyFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #CCCCCC;" text="Empty" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" />
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                                        <children>
-                                          <Label fx:id="symlinkFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="1.0" onMouseClicked="#symlinkFilesHeaderLabelOnMouseClicked" prefHeight="17.0" prefWidth="73.0" style="-fx-background-color: #CCCCCC;" text="Symlink" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip text="Click to list symlinks" />
-                                             </tooltip></Label>
+                                          <Label fx:id="symlinkFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="1.0" prefHeight="17.0" prefWidth="73.0" style="-fx-background-color: #CCCCCC;" text="Symlink" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                                        <children>
                                           <Label fx:id="unreadableFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-3.0" layoutY="-5.0" onMouseClicked="#unreadableFilesHeaderLabelOnMouseClicked" prefHeight="17.0" prefWidth="73.0" style="-fx-background-color: #CCCCCC;" text="Unreadable -" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list unreadable files" />
+                                                <Tooltip text="Click to set read permission on list" />
                                              </tooltip></Label>
                                        </children>
                                     </AnchorPane>
@@ -285,7 +279,7 @@
                                        <children>
                                           <Label fx:id="unwritableFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" layoutY="-4.0" onMouseClicked="#unwritableFilesHeaderLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #CCCCCC;" text="Unwritable -" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list unwritable files" />
+                                                <Tooltip text="Click to set write permission on list" />
                                              </tooltip></Label>
                                        </children>
                                     </AnchorPane>
@@ -296,10 +290,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="7">
                                        <children>
-                                          <Label fx:id="hiddenFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-6.0" onMouseClicked="#hiddenFilesHeaderLabelOnMouseClicked" prefHeight="17.0" prefWidth="74.0" style="-fx-background-color: #CCCCCC;" text="Hidden -" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip text="Click to list hidden files" />
-                                             </tooltip></Label>
+                                          <Label fx:id="hiddenFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-6.0" prefHeight="17.0" prefWidth="74.0" style="-fx-background-color: #CCCCCC;" text="Hidden -" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3">
@@ -329,19 +320,25 @@
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="emptyFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#emptyFilesLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="emptyFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#emptyFilesLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list empty files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="symlinkFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="-6.0" onMouseClicked="#symlinkFilesLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="symlinkFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="-6.0" onMouseClicked="#symlinkFilesLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list symlinks" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="unreadableFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="-2.0" onMouseClicked="#unreadableFilesLabelOnMouseClicked" prefHeight="17.0" prefWidth="73.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to set read permission on list" />
+                                                <Tooltip text="Click to list unreadable files" />
                                              </tooltip></Label>
                                        </children>
                                     </AnchorPane>
@@ -354,7 +351,7 @@
                                        <children>
                                           <Label fx:id="unwritableFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" onMouseClicked="#unwritableFilesLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to set write permission on list" />
+                                                <Tooltip text="Click to list unwritable files" />
                                              </tooltip></Label>
                                        </children>
                                     </AnchorPane>
@@ -365,7 +362,10 @@
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="7" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="hiddenFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="7.0" layoutY="-1.0" onMouseClicked="#hiddenFilesLabelOnMouseClicked" prefHeight="17.0" prefWidth="74.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="hiddenFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="7.0" layoutY="-1.0" onMouseClicked="#hiddenFilesLabelOnMouseClicked" prefHeight="17.0" prefWidth="74.0" style="-fx-background-color: #555555;" text="0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list hidden files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="8" GridPane.rowIndex="1">
@@ -415,7 +415,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="newEncryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="newEncryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" onMouseClicked="#newEncryptedLabelOnMouseClicked" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list encrypted files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="6">
@@ -425,7 +428,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                        <children>
-                                          <Label fx:id="unencryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="4.0" layoutY="-7.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="unencryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="4.0" layoutY="-7.0" onMouseClicked="#unencryptableLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list unencryptable files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="2" GridPane.rowIndex="5">
@@ -460,7 +466,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="4" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="newDecryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="6.0" layoutY="-5.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="newDecryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="6.0" layoutY="-5.0" onMouseClicked="#newDecryptedLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list decrypted files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="4" GridPane.rowIndex="6">
@@ -470,7 +479,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="4" GridPane.rowIndex="7">
                                        <children>
-                                          <Label fx:id="undecryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="3.0" layoutY="-4.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="undecryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="3.0" layoutY="-4.0" onMouseClicked="#undecryptableLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list undecryptable files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="5" GridPane.rowIndex="5">
@@ -513,8 +525,10 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="7" GridPane.rowIndex="6">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="-2.0" prefHeight="27.0" prefWidth="61.0" style="-fx-background-color: #EEEEEE;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                          <Label fx:id="invalidFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" prefHeight="18.0" prefWidth="74.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="invalidFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" onMouseClicked="#invalidFilesLabelOnMouseClicked" prefHeight="18.0" prefWidth="74.0" style="-fx-background-color: #EEEEEE;" text="0" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Click to list invalid files" />
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #EEEEEE;" GridPane.columnIndex="7" GridPane.rowIndex="7">
@@ -906,9 +920,10 @@
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                               <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -946,18 +961,18 @@
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </opaqueInsets>
                                  <children>
-                                    <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="211.0" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6">
+                              <AnchorPane GridPane.columnIndex="6">
                                  <children>
-                                    <Button fx:id="updateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#updateButtonAction" prefHeight="35.0" prefWidth="211.0" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="updateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#updateButtonAction" prefHeight="35.0" prefWidth="160.0" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
-                                          <Font name="Open Sans" size="18.0" />
+                                          <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
@@ -969,11 +984,20 @@
                               </AnchorPane>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
                                  <children>
-                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" prefWidth="211.0" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </ToggleButton>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="1126.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="7">
+                                 <children>
+                                    <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="35.0" text="Visit Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
                                  </children>
                               </AnchorPane>
                            </children>

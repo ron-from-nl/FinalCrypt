@@ -281,6 +281,15 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList unreadableList;
     private FCPathList unwritableList;
     private FCPathList hiddenList;
+
+    private FCPathList newEncryptedList;
+    private FCPathList encryptRemainingList;
+    private FCPathList unencryptableList;
+    private FCPathList newDecryptedList;
+    private FCPathList decryptRemainingList;
+    private FCPathList undecryptableList;
+    private FCPathList invalidFilesList;
+
     
     @FXML
     private Button cipherDeviceButton;
@@ -323,6 +332,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Label unwritableFilesHeaderLabel;
     @FXML
     private Label hiddenFilesHeaderLabel;
+    @FXML
+    private Button websiteButton;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -613,7 +624,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
 			    catch (IOException ex) { ui.error(ex.getMessage()); }
 			});
-			updateThread.setName("encryptThread");
+			updateThread.setName("updateThread");
 			updateThread.setDaemon(true);
 			updateThread.start();
 		    }
@@ -1033,14 +1044,14 @@ public class GUIFX extends Application implements UI, Initializable
 	    if ( (targetFCPathList.emptyFiles > 0) || (targetFCPathList.symlinkFiles > 0)  || (targetFCPathList.unreadableFiles > 0) || (targetFCPathList.unwritableFiles > 0))
 	    { targetWarningLabel.setTextFill(Color.ORANGE); targetWarningLabel.setText("Skipping"); } else { targetWarningLabel.setTextFill(Color.GRAY); targetWarningLabel.setText("Info"); }
 	    
-	    if ( targetFCPathList.emptyFiles > 0 )  { emptyFilesLabel.setTextFill(Color.ORANGE); } else { emptyFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.symlinkFiles > 0 )  { symlinkFilesLabel.setTextFill(Color.ORANGE); } else { symlinkFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unreadableFiles > 0 )  { unreadableFilesLabel.setTextFill(Color.ORANGE); } else { unreadableFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unreadableFilesSize > 0 )  { unreadableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unreadableFilesSizeLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unwritableFiles > 0 )  { unwritableFilesLabel.setTextFill(Color.ORANGE); } else { unwritableFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unwritableFilesSize > 0 )  { unwritableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unwritableFilesSizeLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.hiddenFiles > 0 )  { hiddenFilesLabel.setTextFill(Color.YELLOW); } else { hiddenFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.hiddenFilesSize > 0 )  { hiddenFilesSizeLabel.setTextFill(Color.YELLOW); } else { hiddenFilesSizeLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.emptyFiles > 0 )	    { emptyFilesLabel.setTextFill(Color.ORANGE); } else { emptyFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.symlinkFiles > 0 )	    { symlinkFilesLabel.setTextFill(Color.ORANGE); } else { symlinkFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.unreadableFiles > 0 )	    { unreadableFilesLabel.setTextFill(Color.ORANGE); } else { unreadableFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.unreadableFilesSize > 0 ) { unreadableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unreadableFilesSizeLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.unwritableFiles > 0 )	    { unwritableFilesLabel.setTextFill(Color.ORANGE); } else { unwritableFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.unwritableFilesSize > 0 ) { unwritableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unwritableFilesSizeLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.hiddenFiles > 0 )	    { hiddenFilesLabel.setTextFill(Color.YELLOW); } else { hiddenFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.hiddenFilesSize > 0 )	    { hiddenFilesSizeLabel.setTextFill(Color.YELLOW); } else { hiddenFilesSizeLabel.setTextFill(Color.GRAY); }
 
 	    emptyFilesLabel.setText(Long.toString(targetFCPathList.emptyFiles));
 	    symlinkFilesLabel.setText(Long.toString(targetFCPathList.symlinkFiles));
@@ -1093,7 +1104,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
 	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1));
 
-	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files- targetFCPathList.validFiles));
+	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
 	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1));
 
 	    totalFilesLabel.setText(Long.toString(targetFCPathList.files));
@@ -1127,29 +1138,52 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		if ((cipherFCPath != null) && (cipherFCPath.isValidCipher))
 		{
-		    // Encryptables
-		    if (targetFCPathList.encryptableFiles > 0)
+// ================================================================================================================================================================================================
+		    // Decrypted Files
+		    
+		    if (targetFCPathList.decryptedFiles > 0)	{ decryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecrypted); } else { decryptedList = null; }
+		    if (targetFCPathList.encryptableFiles > 0) // Encryptables
 		    {
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { encryptButton.setDisable(true); encryptableList = null; }
+		    if (targetFCPathList.newEncryptedFiles > 0)	    { newEncryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewEncrypted); } else { newEncryptedList = null; }
+//		    if (targetFCPathList.encryptRemainingFiles > 0) { encryptRemainingList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.); } else { encryptRemainingList = null; }
+		    if (targetFCPathList.unEncryptableFiles > 0)    { unencryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isUnEncryptable); } else { unencryptableList = null; }
+
+// ================================================================================================================================================================================================
+		    // Encrypted Files
 
 		    // Decryptables
+		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
 		    if (targetFCPathList.decryptableFiles > 0)
 		    {
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { decryptButton.setDisable(true); decryptableList = null; }
+		    if (targetFCPathList.newDecryptedFiles > 0)	    { newDecryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewDecrypted); } else { newDecryptedList = null; }
+//		    if (targetFCPathList.decryptRemainingFiles > 0) { decryptRemainingList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.); } else { decryptRemainingList = null; }
+		    if (targetFCPathList.unDecryptableFiles > 0)    { undecryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isUnDecryptable); } else { undecryptableList = null; }
 
+// ================================================================================================================================================================================================
 		    // Others empty sym read write hidden
-		    if (targetFCPathList.emptyFiles > 0)	{ emptyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.size == 0); } else { emptyList = null; }
+
+		    if (targetFCPathList.emptyFiles > 0)	{ emptyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.size == 0 && fcPath.type == FCPath.FILE); } else { emptyList = null; }
 		    if (targetFCPathList.symlinkFiles > 0)	{ symlinkList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.SYMLINK); } else { symlinkList = null; }
 		    if (targetFCPathList.unreadableFiles > 0)	{ unreadableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isReadable); } else { unreadableList = null; }
 		    if (targetFCPathList.unwritableFiles > 0)	{ unwritableList = filter(targetFCPathList,(FCPath fcPath) -> ! fcPath.isWritable); } else { unwritableList = null; }
 		    if (targetFCPathList.hiddenFiles > 0)	{ hiddenList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden); } else { hiddenList = null; }
+		    
+		    if ((targetFCPathList.files - targetFCPathList.validFiles) > 0) { invalidFilesList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.INVALID); } else { invalidFilesList = null; }
 
-		    if (targetFCPathList.decryptedFiles > 0)	{ decryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecrypted); } else { decryptedList = null; }
-		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
+
+//    private FCPathList newEncryptedList;
+//    private FCPathList encryptRemainingList;
+//    private FCPathList unencryptableList;
+//    private FCPathList newDecryptedList;
+//    private FCPathList decryptRemainingList;
+//    private FCPathList undecryptableList;
+//    private FCPathList invalidFilesList;
 		    
 		    // Create Cipher Device
 		    if ((cipherFCPath.type == FCPath.FILE) &&(cipherFCPath.isValidCipher))
@@ -1535,7 +1569,7 @@ public class GUIFX extends Application implements UI, Initializable
 		offsetTimeCalendar = Calendar.getInstance(Locale.ROOT);
 		offsetTimeCalendar.setTimeInMillis(start2TimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
 		
-		offSetHours =	offsetTimeCalendar.get(Calendar.HOUR);
+		offSetHours =	offsetTimeCalendar.get(Calendar.HOUR_OF_DAY);
 		offSetMinutes = offsetTimeCalendar.get(Calendar.MINUTE);
 		offSetSeconds = offsetTimeCalendar.get(Calendar.SECOND);
 		
@@ -1578,23 +1612,27 @@ public class GUIFX extends Application implements UI, Initializable
 	    elapsedTimeCalendar.setTimeInMillis(nowTimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
 	    remainingTimeCalendar.setTimeInMillis(totalTimeCalendar.getTimeInMillis() - elapsedTimeCalendar.getTimeInMillis());
 	    String elapsedTimeString = "";
-	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
 	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
 	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
-		    
+
 	    String remainingTimeString = "";
-	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
 	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
 	    remainingTimeString += String.format("%02d", remainingTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
-		    
+
 	    String totalTimeString = "";
-	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
 	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":"; 
 	    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
-		    
-	    elapsedTimeLabel.setText(elapsedTimeString);
-	    remainingTimeLabel.setText(remainingTimeString);
-	    totalTimeLabel.setText(totalTimeString);	    
+
+		elapsedTimeLabel.setText(elapsedTimeString);
+		
+	    if (!pauseToggleButton.isSelected())
+	    {
+		remainingTimeLabel.setText(remainingTimeString);
+		totalTimeLabel.setText(totalTimeString);	    
+	    }
 	    clockUpdated = true;
 	}});
     }
@@ -1636,7 +1674,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    remainingTimeLabel.setText("00:00:00");
 		    totalTimeCalendar.setTimeInMillis(elapsedTimeCalendar.getTimeInMillis());
 		    String totalTimeString = "";
-		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR) - offSetHours) + ":";
+		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
 		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
 		    totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		    totalTimeLabel.setText(totalTimeString);
@@ -1779,67 +1817,86 @@ public class GUIFX extends Application implements UI, Initializable
     {
     }
 
-    @FXML
+//  Headers
+//  ==================================================================================================================================================================
+
     private void emptyFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n"); for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n");
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
-    @FXML
     private void symlinkFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n"); for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n");
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void unreadableFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unreadable Files:\r\n\r\n"); for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (unreadableList != null) && (unreadableList.size() > 0) )
+	{
+	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n");
+	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
+	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+	}
     }
 
     @FXML
     private void unwritableFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (unwritableList != null) && (unwritableList.size() > 0) )
+	{
+	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n");
+	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
+	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+	}
     }
 
-    @FXML
     private void hiddenFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n"); for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1);
+	log("Hidden Files:\r\n\r\n"); for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void emptyFilesLabelOnMouseClicked(MouseEvent event)
     {
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n");
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void symlinkFilesLabelOnMouseClicked(MouseEvent event)
     {
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n");
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void unreadableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n"); for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
-	targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
-        targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1);
+	log("Unreadable Files:\r\n\r\n"); for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void unwritableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
-	targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
-        targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1);
+	log("Unwritable Files:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void hiddenFilesLabelOnMouseClicked(MouseEvent event)
     {
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1);
+	log("Hidden Files:\r\n\r\n"); for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
     
     private void setAttribute(FCPath fcPath, boolean read, boolean write)
@@ -1876,25 +1933,81 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encryptable Files:\r\n\r\n"); for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encryptable Files:\r\n\r\n");
+	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void decryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decryptable Files:\r\n\r\n"); for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decryptable Files:\r\n\r\n");
+	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void decryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decrypted Files:\r\n\r\n"); for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Decrypted Files:\r\n\r\n");
+	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
     }
 
     @FXML
     private void encryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encrypted Files:\r\n\r\n"); for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("Encrypted Files:\r\n\r\n");
+	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void newEncryptedLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("New Encrypted Files:\r\n\r\n");
+	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+
+    @FXML
+    private void unencryptableLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unencryptable Files:\r\n\r\n");
+	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void newDecryptedLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("New Decrypted Files:\r\n\r\n");
+	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+
+    @FXML
+    private void undecryptableLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Undecryptable Files:\r\n\r\n");
+	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void invalidFilesLabelOnMouseClicked(MouseEvent event)
+    {
+	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { tab.getSelectionModel().select(1); log("Invalid Files:\r\n\r\n");
+	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+    }
+
+    @FXML
+    private void openWebsiteAction(ActionEvent event)
+    {
+	Thread updateThread;
+	updateThread = new Thread(() ->
+	{
+	    try { try {  Desktop.getDesktop().browse(new URI(Version.WEBSITEURISTRING)); }
+	    catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
+	    catch (IOException ex) { ui.error(ex.getMessage()); }
+	});
+	updateThread.setName("updateThread");
+	updateThread.setDaemon(true);
+	updateThread.start();
     }
     
 }
