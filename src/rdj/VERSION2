@@ -1,5 +1,5 @@
-[Version] =		{2.2.0}
-[Release Notes] =	{New: Cipher Device Types}
-[Release Message] =	{Better: Printing, Clocks}
+[Version] =		{2.2.1}
+[Release Notes] =	{Fixed print un-rd/wr files}
+[Release Message] =	{Minor update for printing}
 [Alert Subject] =	{}
 [Alert Message] =	{}

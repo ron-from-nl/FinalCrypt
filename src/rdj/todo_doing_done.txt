@@ -11,7 +11,7 @@ Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
 Directory CheckSum Comparison?
 Reproduce pause / stop buildSelection bug maybe?
-list invalid files?
+list invalid files
 
 =============================== Don't forget ================================
 
@@ -21,6 +21,7 @@ Set version on file: Version & Version2
 
 =================================== Done ====================================
 
+Fixed filter print unreadable / unwritable files list
 
 ============================= Source Committed ==============================
 
@@ -30,9 +31,11 @@ Set version on file: Version & Version2
 
 ============================= Binaries Released =============================
 
+Fixed print un-rd/wr files
+Minor update for printing
+
 New: Cipher device types
 Better: printing, clocks
- 
 Goto website button
 Added additional unix storage device types 
 Added additional print file lists from stats
