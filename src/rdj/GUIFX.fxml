@@ -298,19 +298,14 @@
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #CCCCCC;" text="Cipher" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="3">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15">
                                        <children>
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="56.0" layoutY="-3.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #CCCCCC;" text="Type" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15">
-                                       <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" layoutY="-6.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #CCCCCC;" text="Size" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-5.0" prefHeight="17.0" prefWidth="74.0" style="-fx-background-color: #CCCCCC;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" layoutY="-6.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #CCCCCC;" text="Size" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="17">
@@ -375,22 +370,17 @@
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #555555;" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="1">
-                                       <children>
-                                          <Label fx:id="cipherTypeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="17.0" layoutY="-2.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #555555;" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="cipherNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #555555;" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-68.0" layoutY="-3.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="cipherTypeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="17.0" layoutY="-2.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #555555;" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.rowIndex="1">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="9.0" layoutY="-5.0" prefHeight="30.0" prefWidth="62.0" style="-fx-background-color: #555555; -fx-text-fill: #00FF66;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="cipherSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-68.0" layoutY="-3.0" prefHeight="30.0" prefWidth="61.0" style="-fx-background-color: #555555;" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="17" GridPane.rowIndex="1">
@@ -908,6 +898,26 @@
                                                 <Font name="Monospaced Regular" size="24.0" />
                                              </font>
                                           </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="3">
+                                       <children>
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" style="-fx-background-color: #CCCCCC;" text="SHA1" textFill="#666666" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label fx:id="checksumLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" onMouseClicked="#checksumLabelOnMouseClicked" prefHeight="15.0" prefWidth="222.0" style="-fx-background-color: #555555;" textFill="#909090" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="11.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip fx:id="checksumTooltip" text="Empty Tooltip">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                  </children>

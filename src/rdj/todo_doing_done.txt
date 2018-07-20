@@ -11,8 +11,6 @@ Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
 Directory CheckSum Comparison?
 Reproduce pause / stop buildSelection bug maybe?
-list invalid files
-
 =============================== Don't forget ================================
 
 Change FinalCrypt -> properties -> splash screen -> icon on Windows
@@ -22,6 +20,7 @@ Set version on file: Version & Version2
 =================================== Done ====================================
 
 Fixed filter print unreadable / unwritable files list
+Added Cipher Checksum 
 
 ============================= Source Committed ==============================
 

@@ -1,5 +1,5 @@
-[Version] =		{2.2.1}
-[Release Notes] =	{Fixed print un-rd/wr files}
-[Release Message] =	{Minor update for printing}
+[Version] =		{2.2.2}
+[Release Notes] =	{Added Cipher Checksum SHA-1}
+[Release Message] =	{Standardized encrypt method}
 [Alert Subject] =	{}
 [Alert Message] =	{}

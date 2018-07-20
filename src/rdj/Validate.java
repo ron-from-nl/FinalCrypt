@@ -168,7 +168,7 @@ public class Validate
 	    } catch (IOException ex) { ui.error("Error: cipherAuthenticatedTargetSource readCipherSourceChannel " + ex.getMessage() + "\r\n"); }
 	    
 	    // Create Encrypted Token Buffer
-	    cipherDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, cipherSourceBuffer);
+	    cipherDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, cipherSourceBuffer, false);
 	    String cipherDecryptedTokenBufferString = new String(cipherDecryptedTokenBuffer.array(), StandardCharsets.UTF_8);
 //	    ui.status("targetHasAuthenticatedToken.cipherDecryptedTokenBufferString: " + cipherDecryptedTokenBufferString + "\r\n", true);
 	    

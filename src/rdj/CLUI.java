@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /* commandline test routine
 
 clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -jar FinalCrypt.jar
-clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --print -c 2 -t 1
+clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --encrypt --print -c 2 -t 1
 clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar rdj/CLUI --print -c b -t a
 
 */
@@ -115,11 +115,11 @@ public class CLUI implements UI
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
-            else if (  args[paramCnt].equals("--txt"))                                                              { finalCrypt.setTXT(true); }
-            else if (  args[paramCnt].equals("--bin"))                                                              { finalCrypt.setBin(true); }
-            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
-            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
-            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
+//            else if (  args[paramCnt].equals("--txt"))                                                              { finalCrypt.setTXT(true); }
+//            else if (  args[paramCnt].equals("--bin"))                                                              { finalCrypt.setBin(true); }
+//            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
+//            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
+//            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
             else if (  args[paramCnt].equals("--version"))                                                          { println(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if (  args[paramCnt].equals("--update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) {log(line + "\r\n");} System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(true); }}
@@ -263,32 +263,37 @@ public class CLUI implements UI
 	if ((encrypt))
 	{
 	    if ((encryptablesFound))	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true); }
-	    else			{ error("Sorry, no encryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			{ error("No encryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((decrypt))
 	{
 	    if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false); }
-	    else			{ error("Sorry, no decryptable targets found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			
+	    {
+		error("No decryptable targets found\r\n\r\n");
+		if ( targetFCPathList.encryptedFiles > 0 ) { error("Wrong cipher? \"" + cipherFCPath.path.toString() + "\"\r\n\r\n"); }
+		log(targetFCPathList.getStats());
+	    }
 	}
 	else if (create)
 	{
 	    if (createCipherDeviceFound){ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createCipherDevice(cipherFCPath, (FCPath) createCipherList.get(0)); processFinished(); }
-	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((clone) && (cloneCipherDeviceFound))
 	{
 	    if (cloneCipherDeviceFound) { processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) cloneCipherList.get(0));  processFinished(); }
-	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((print) && (printGPTDeviceFound))
 	{
 	    if (printGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT( (FCPath) printGPTTargetList.get(0)); }
-	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
 	else if ((delete) && (deleteGPTDeviceFound))
 	{
 	    if (deleteGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT( (FCPath) deleteGPTTargetList.get(0)); }
-	    else			{ error("Sorry, no valid target device found:\r\n"); log(targetFCPathList.getStats()); }
+	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
     } // End of default constructor
     
@@ -382,11 +387,11 @@ public class CLUI implements UI
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n");
         log("                 [--version]      Print " + version.getProduct() + " version.\r\n");
         log("                 [--update]       Check for online updates.\r\n");
-        log("            [--txt]               Print text calculations.\r\n");
-        log("            [--bin]               Print binary calculations.\r\n");
-        log("            [--dec]               Print decimal calculations.\r\n");
-        log("            [--hex]               Print hexadecimal calculations.\r\n");
-        log("            [--chr]               Print character calculations.\r\n");
+//        log("            [--txt]               Print text calculations.\r\n");
+//        log("            [--bin]               Print binary calculations.\r\n");
+//        log("            [--dec]               Print decimal calculations.\r\n");
+//        log("            [--hex]               Print hexadecimal calculations.\r\n");
+//        log("            [--chr]               Print character calculations.\r\n");
         log("                                  Warning: The above Print options slows encryption severely.\r\n");
         log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n");
         log("\r\n");

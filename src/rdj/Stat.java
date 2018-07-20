@@ -91,6 +91,7 @@ public class Stat
     {
         String returnString = new String();
         double percentage = ( ((double)fileBytesProcessed / (((double)fileBytesTotal / 100.0 )))); // *1000 from mSec to Sec
+	if (percentage > 100.0) { percentage = 100.0; }
         String throughputString = String.format("%.0f", Math.floor(percentage));
         returnString = " " + throughputString + "%\r\n";
         

@@ -127,9 +127,8 @@ public class Stats
     public String getAllDataBytesProgressPercentage()                               
     {
         String returnString = new String();
-        double percentage = (
-                                 (double)(filesBytesProcessed) / (double)(filesBytesTotal) * 100.0 
-                            ); // *1000 from mSec to Sec
+        double percentage = ((double)(filesBytesProcessed) / (double)(filesBytesTotal) * 100.0 ); // *1000 from mSec to Sec
+	if (percentage > 100.0) { percentage = 100.0; }
 //        String throughputString = String.format("%.1f", Math.floor(percentage));
         String throughputString = String.format("%.1f", percentage);
         returnString = throughputString + "%\r\n";

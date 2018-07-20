@@ -75,11 +75,16 @@ import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -334,6 +339,11 @@ public class GUIFX extends Application implements UI, Initializable
     private Label hiddenFilesHeaderLabel;
     @FXML
     private Button websiteButton;
+    @FXML
+    private Label checksumLabel;
+    @FXML
+    private Tooltip checksumTooltip;
+    private boolean cipherSourceEnded;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -850,6 +860,7 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void cipherFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
+	cipherSourceEnded = true;
 	if (!processRunning)
 	{
 	    Platform.runLater(new Runnable(){ @Override public void run() 
@@ -874,13 +885,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
 	    {
-//		log("CC Sel Valid\r\n");
-//		cursorWait();
 		Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
-//		if ()
-    //					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-		cipherFCPath = Validate.getFCPath(   ui,		"",        cipherPath,             true,      cipherPath,           true);
-//		log(cipherFCPath.getString());
+//				        getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
+		cipherFCPath = Validate.getFCPath(   ui,	    "", cipherPath,             true,      cipherPath,           true);
+
 		Platform.runLater(new Runnable(){ @Override public void run() 
 		{
 		    if ((cipherFCPath.isValidCipher)) // Valid Cipher
@@ -888,9 +896,14 @@ public class GUIFX extends Application implements UI, Initializable
 //			log("CC Cipher Valid\r\n");
 			// Set Cipher Status Colors
 			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.getFileName().toString());
+//			checksumLabel.setTextFill(Color.LIGHTGRAY);
+			checksumLabel.setText("CLR"); checksumTooltip.setText("");
+			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+
 			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 			cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+						
 			targetFileChooserPropertyCheck(true);
 		    }
 		    else // Not Valid Cipher
@@ -900,6 +913,7 @@ public class GUIFX extends Application implements UI, Initializable
 			cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
 			if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
+			checksumLabel.setText(""); checksumTooltip.setText("");
 			cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
 			
 			MySimpleFCFileVisitor.running = false;
@@ -908,8 +922,30 @@ public class GUIFX extends Application implements UI, Initializable
 			targetFCPathList = new FCPathList();
 			buildReady(targetFCPathList);
 		    }
-		}});
-//		cursorDefault();
+		}});		
+		cipherSourceEnded = false;
+		
+		// Checksum Calculation
+		if ((cipherFCPath.isValidCipher)) // Valid Cipher
+		{
+		    if ( cipherFCPath.size < (100 * 1024 * 1024) )
+		    {
+			Platform.runLater(new Runnable(){ @Override public void run() 
+			{
+			    checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
+			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+			    calculateChecksum();
+			}});
+		    }
+		    else
+		    {
+			Platform.runLater(new Runnable(){ @Override public void run() 
+			{
+			    checksumLabel.setText("Click for checksum"); checksumTooltip.setText("");
+			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+			}});
+		    }
+		}
 	    }
 	    else // Not a Valid Selection
 	    {
@@ -920,10 +956,73 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList();
 		buildReady(targetFCPathList);
 	    }
-
-//	    buildReady(targetFCPathList);
 	}
     }
+
+    private void calculateChecksum()
+    {
+	Platform.runLater(new Runnable(){ @Override public void run() 
+	{
+	    if ((cipherFCPath.isValidCipher)) // Valid Cipher
+	    {
+		// Calculate Cipher SHA-1 Checksum 
+		checksumBlock:
+		{
+		    cipherSourceEnded = false;
+		    Thread calcCipherThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
+		    {
+			long    readCipherSourceChannelPosition =  0; 
+			long    readCipherSourceChannelTransfered =  0; 
+			int readCipherSourceBufferSize = (1 * 1024 * 1024);
+			ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
+			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) {ui.error("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n");}
+			boolean readEnded = false;
+			int x = 0;
+			while ( ! cipherSourceEnded )
+			{
+			    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+			    {
+				readCipherSourceChannel.position(readCipherSourceChannelPosition);
+				readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer); cipherSourceBuffer.flip(); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;
+				readCipherSourceChannel.close();
+
+    //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
+				messageDigest.update(cipherSourceBuffer);
+				if ( readCipherSourceChannelTransfered < 0 ) { cipherSourceEnded = true; }
+			    } catch (IOException ex)
+			    {
+				Platform.runLater(new Runnable(){ @Override public void run()
+				{
+				    cipherSourceEnded = true;
+//				    ui.error("readCipherSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
+				}});
+			    }
+			    x++;
+			    cipherSourceBuffer.clear();
+			}
+			if (readCipherSourceChannelTransfered < 0)
+			{
+			    byte[] hashBytes = messageDigest.digest();
+			    String hashString = getHexString(hashBytes,2);
+			    Platform.runLater(new Runnable(){ @Override public void run() {	checksumLabel.setText(hashString); checksumTooltip.setText(hashString);	}});
+			}
+		    }});calcCipherThread.setName("calcCipherThread"); calcCipherThread.setDaemon(true); calcCipherThread.start();
+
+		}
+		targetFileChooserPropertyCheck(true);
+	    }
+	}});
+    }
+    
+    @FXML private void checksumLabelOnMouseClicked(MouseEvent event)
+    {
+	checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
+	try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+	Platform.runLater(new Runnable(){ @Override public void run() { calculateChecksum(); }});
+    }
+    
+    synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
+    synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
 
 //  FileChooser Listener methods
     private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
@@ -2008,6 +2107,5 @@ public class GUIFX extends Application implements UI, Initializable
 	updateThread.setName("updateThread");
 	updateThread.setDaemon(true);
 	updateThread.start();
-    }
-    
+    }    
 }

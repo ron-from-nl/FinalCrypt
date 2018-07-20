@@ -205,7 +205,7 @@ public class DeviceController
 //          Randomize raw cipher or write raw cipher straight to partition
 	    SecureRandom random = new SecureRandom();
 //	    if (encryptcipher)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = encryptBuffer(cipherFileBuffer, randomizedBuffer); }
-	    if (encryptcipher)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = FinalCrypt.encryptBuffer(cipherFileBuffer, randomizedBuffer); }
+	    if (encryptcipher)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = FinalCrypt.encryptBuffer(cipherFileBuffer, randomizedBuffer, false); }
 	    else		{ outputDeviceBuffer.put(cipherFileBuffer); outputDeviceBuffer.flip(); }
             
 //          Write Device
