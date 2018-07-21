@@ -20,14 +20,21 @@
 package rdj;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
+import static rdj.GUIFX.getHexString;
 
 /* commandline test routine
 
@@ -50,8 +57,9 @@ public class CLUI implements UI
     private boolean decrypt = false;
     private boolean create = false;
     private boolean clone = false;
-    private boolean print = false;
-    private boolean delete = false;
+    private boolean cipher_checksum = false;
+    private boolean printgpt = false;
+    private boolean deletegpt = false;
     
     private FCPathList encryptableList;
     private FCPathList decryptableList;
@@ -67,11 +75,13 @@ public class CLUI implements UI
     private boolean deleteGPTDeviceFound;
     private FCPathList deleteGPTTargetList;
     private  FCPathList targetFCPathList;
+    private boolean cipherSourceChecksumReadEnded = false;
 
     public CLUI(String[] args)
     {
         this.ui = this;
         boolean tfset = false;
+	boolean tfsetneeded = false;
 	boolean cfset = false;
 	boolean cfsetneeded = true;
         boolean validInvocation = true;
@@ -106,12 +116,14 @@ public class CLUI implements UI
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
-            else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { encrypt = true; cfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { decrypt = true; cfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--create"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { create = true; cfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--clone"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { clone = true; cfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--gpt-print"))                                                        { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { print = true; cfsetneeded = false; } }
-            else if (  args[paramCnt].equals("--gpt-delete"))                                                       { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!print)&&(!delete)) { delete = true; cfsetneeded = false; } }
+            else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { encrypt = true; cfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { decrypt = true; cfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--create"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { create = true; cfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--clone"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { clone = true; cfsetneeded = true; tfsetneeded = true; } }
+            else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
+            else if (( args[paramCnt].equals("--cipher-checksum") ))						    { cipher_checksum = true; cfsetneeded = true; }
+            else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { printgpt = true; cfsetneeded = false; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; cfsetneeded = false; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
@@ -131,10 +143,10 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-            else if (  args[paramCnt].equals("--encrypt"))							    { encrypt = true; }
-            else if (  args[paramCnt].equals("--decrypt"))							    { decrypt = true;; }
-            else if (  args[paramCnt].equals("--create"))							    { create = true; }
-            else if (  args[paramCnt].equals("--clone"))							    { clone = true; }
+//            else if (  args[paramCnt].equals("--encrypt"))							    { encrypt = true; }
+//            else if (  args[paramCnt].equals("--decrypt"))							    { decrypt = true;; }
+//            else if (  args[paramCnt].equals("--create"))							    { create = true; }
+//            else if (  args[paramCnt].equals("--clone"))							    { clone = true; }
             else if ( ( args[paramCnt].equals("-c")) && (paramCnt+1 < args.length) )				    { cipherFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); cfset = true; paramCnt++; }
             else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
@@ -142,8 +154,8 @@ public class CLUI implements UI
             else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(true); }
         }
         
-        if ( ! tfset )												    { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(true); }
         if ((cfsetneeded) && ( ! cfset ))									    { error("\r\nError: Missing valid parameter <-c \"cipherfile\">" + "\r\n"); usage(true); }
+        if ((tfsetneeded) && ( ! tfset ))									    { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(true); }
 
                 
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
@@ -161,28 +173,70 @@ public class CLUI implements UI
 	}
 	
 	// Target Validation
-        for(Path targetPath : targetPathList)
-        {
-            if (Files.exists(targetPath))
-            {
-//			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
-                if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
-                {
-                    if (verbose) { status("Target parameter: " + targetPath + " is a valid dir\r\n", true); }
-                }
-//				   isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-                else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	     false,	      1L,         symlink,             true,        verbose))
-                {
-                    if (verbose) { status("Target parameter: " + targetPath + " is a valid file\r\n", true); }
-                }
-            }
-            else
-            { 
-                    error("Target parameter: -t \"" + targetPath + "\" does not exists\r\n"); usage(true);
-            }            
-        }
+	
+	if (tfsetneeded)
+	{
+	    for(Path targetPath : targetPathList)
+	    {
+		if (Files.exists(targetPath))
+		{
+    //			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
+		    if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
+		    {
+			if (verbose) { status("Target parameter: " + targetPath + " is a valid dir\r\n", true); }
+		    }
+    //				   isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	     false,	      1L,         symlink,             true,        verbose))
+		    {
+			if (verbose) { status("Target parameter: " + targetPath + " is a valid file\r\n", true); }
+		    }
+		}
+		else
+		{ 
+			error("Target parameter: -t \"" + targetPath + "\" does not exists\r\n"); usage(true);
+		}            
+	    }
+	}
 
 //	Command line input for an optional Password keyboard.nextInt();
+
+//////////////////////////////////////////////////// CIPHER CHECKSUM =================================================
+
+	if (cipher_checksum)
+	{
+	    System.out.println("\r\nCipher CheckSum: (SHA-1): \"" + cipherFCPath.path.toAbsolutePath().toString() + "\"...");
+	    long    readCipherSourceChannelPosition =  0; 
+	    long    readCipherSourceChannelTransfered =  0; 
+	    int readCipherSourceBufferSize = (1 * 1024 * 1024);
+	    ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) {ui.error("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n");}
+	    int x = 0;
+	    while ( ! cipherSourceChecksumReadEnded )
+	    {
+		try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+		{
+		    readCipherSourceChannel.position(readCipherSourceChannelPosition);
+		    readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer); cipherSourceBuffer.flip(); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;
+		    readCipherSourceChannel.close();
+
+    //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
+		    messageDigest.update(cipherSourceBuffer);
+		    if ( readCipherSourceChannelTransfered < 0 ) { cipherSourceChecksumReadEnded = true; }
+		} catch (IOException ex)
+		{
+		    Platform.runLater(new Runnable(){ @Override public void run()
+		    {
+			cipherSourceChecksumReadEnded = true;
+			error("readCipherSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
+		    }});
+		}
+		x++;
+		cipherSourceBuffer.clear();
+	    }
+	    byte[] hashBytes = messageDigest.digest();
+	    String hashString = getHexString(hashBytes,2);
+	    System.out.println("Message Digest: " + hashString + "\r\n");
+	}
 
 //////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
         
@@ -236,19 +290,19 @@ public class CLUI implements UI
 	    } else { cloneCipherDeviceFound = false; }
 	} else { createCipherDeviceFound = false; }
 
-	if ((print) && ((targetFCPathList.validDevices > 0) || (targetFCPathList.validDevicesProtected > 0)))
+	if ((printgpt) && ((targetFCPathList.validDevices > 0) || (targetFCPathList.validDevicesProtected > 0)))
 	{
 	    printGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE || fcPath.type == FCPath.DEVICE_PROTECTED); // log("Create Cipher List:\r\n" + createCipherList.getStats());
 	    printGPTDeviceFound = true;
 	} else { printGPTDeviceFound = false; }
 	
-	if ((delete) && (targetFCPathList.validDevices > 0))
+	if ((deletegpt) && (targetFCPathList.validDevices > 0))
 	{
 	    deleteGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Cipher List:\r\n" + createCipherList.getStats());
 	    if ( deleteGPTTargetList.size() > 0 ) { deleteGPTDeviceFound = true; }
 	    else { deleteGPTDeviceFound = false; }
 	}
-	else if ((delete) && (targetFCPathList.validDevicesProtected > 0))
+	else if ((deletegpt) && (targetFCPathList.validDevicesProtected > 0))
 	{
 	    deleteGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE_PROTECTED); // log("Create Cipher List:\r\n" + createCipherList.getStats());
 	    FCPath fcPath = (FCPath) deleteGPTTargetList.get(0); error("WARNING: Device: " + fcPath.path + " is protected!!!\r\n"); deleteGPTDeviceFound = false; 
@@ -285,12 +339,12 @@ public class CLUI implements UI
 	    if (cloneCipherDeviceFound) { processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) cloneCipherList.get(0));  processFinished(); }
 	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
-	else if ((print) && (printGPTDeviceFound))
+	else if ((printgpt) && (printGPTDeviceFound))
 	{
 	    if (printGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT( (FCPath) printGPTTargetList.get(0)); }
 	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
 	}
-	else if ((delete) && (deleteGPTDeviceFound))
+	else if ((deletegpt) && (deleteGPTDeviceFound))
 	{
 	    if (deleteGPTDeviceFound) { deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT( (FCPath) deleteGPTTargetList.get(0)); }
 	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
@@ -376,14 +430,15 @@ public class CLUI implements UI
         log("            <--decrypt>           -c \"cipher_file\"   -t \"target\"	    Decrypt Targets.\r\n");
         log("            <--create>            -c \"cipher_file\"   -t \"target\"	    Create Cipher Device (only unix).\r\n");
         log("            <--clone>             -c \"source_device\" -t \"target_device\"     Clone Cipher Device (only unix).\r\n");
-        log("            [--gpt-print]         -t \"target_device\"			    Print GUID Partition Table.\r\n");
-        log("            [--gpt-delete]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n");
+        log("            [--print-gpt]         -t \"target_device\"			    Print GUID Partition Table.\r\n");
+        log("            [--delete-gpt]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n");
         log("\r\n");
 	log("Options:\r\n");
         log("            [-h] [--help]	  Shows this help page.\r\n");
+        log("            [--cipher-checksum]        -c \"cipher_file\"			    Calculate cipher checksum.\r\n");
         log("            [-d] [--debug]        Enables debugging mode.\r\n");
         log("            [-v] [--verbose]      Enables verbose mode.\r\n");
-        log("            [-p] [--print]        Print overal data encryption.\r\n");
+        log("            [--print]		  Print all encrypted bytes.\r\n");
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n");
         log("                 [--version]      Print " + version.getProduct() + " version.\r\n");
         log("                 [--update]       Check for online updates.\r\n");
@@ -455,10 +510,10 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI --create -c mycipherfile -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Print GUID Partition Table\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt-print -t /dev/sdb\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --print-gpt -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Delete GUID Partition Table\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI --gpt-delete -t /dev/sdb\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --delete-gpt -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Clone Cipher Device (-c sourcecipherdevice -t destinationcipherdevice)\r\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI --clone -c /dev/sdb -t /dev/sdc\r\n");

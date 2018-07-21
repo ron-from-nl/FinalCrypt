@@ -232,7 +232,7 @@ public class Validate
 			(String.valueOf(path.getFileName().toString().charAt(path.getFileName().toString().length()-2)).equalsIgnoreCase("p"))
 		    )
 		{ returnFCPathType = FCPath.PARTITION; }
-		else { if ( ! path.getFileName().toString().endsWith("mmcblk0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+		else { if ( ! path.getFileName().toString().endsWith("mmcblk0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE/*_PROTECTED*/; } }
 	    }
 	    else if (path.toAbsolutePath().toString().startsWith("/dev/nvme")) // (nvme0n1p1) Linux High Speed Non-Volatile Memory Express storage device
 	    {

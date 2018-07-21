@@ -98,6 +98,8 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
@@ -341,9 +343,9 @@ public class GUIFX extends Application implements UI, Initializable
     private Button websiteButton;
     @FXML
     private Label checksumLabel;
-    @FXML
     private Tooltip checksumTooltip;
-    private boolean cipherSourceEnded;
+    private boolean cipherSourceChecksumReadEnded;
+    private boolean cipherSourceChecksumReadCanceled;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -483,7 +485,9 @@ public class GUIFX extends Application implements UI, Initializable
         
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
                 cpuIndicator.setProgress(getProcessCpuLoad())
-        )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();       
+        )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
+	
+	checksumTooltip = new Tooltip(""); checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
         
         Platform.runLater(new Runnable()
         {
@@ -860,7 +864,8 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void cipherFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
-	cipherSourceEnded = true;
+	cipherSourceChecksumReadEnded = true;
+	cipherSourceChecksumReadCanceled = true;
 	if (!processRunning)
 	{
 	    Platform.runLater(new Runnable(){ @Override public void run() 
@@ -896,8 +901,11 @@ public class GUIFX extends Application implements UI, Initializable
 //			log("CC Cipher Valid\r\n");
 			// Set Cipher Status Colors
 			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.getFileName().toString());
-//			checksumLabel.setTextFill(Color.LIGHTGRAY);
-			checksumLabel.setText("CLR"); checksumTooltip.setText("");
+			checksumLabel.setTextFill(Color.WHITESMOKE);
+			checksumLabel.setText("");
+			Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			Tooltip.install(checksumLabel, checksumTooltip); 
+			
 			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 
 			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
@@ -914,6 +922,8 @@ public class GUIFX extends Application implements UI, Initializable
 			if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
 			if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
 			checksumLabel.setText(""); checksumTooltip.setText("");
+			Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			Tooltip.install(checksumLabel, checksumTooltip); 
 			cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
 			
 			MySimpleFCFileVisitor.running = false;
@@ -923,16 +933,18 @@ public class GUIFX extends Application implements UI, Initializable
 			buildReady(targetFCPathList);
 		    }
 		}});		
-		cipherSourceEnded = false;
 		
 		// Checksum Calculation
 		if ((cipherFCPath.isValidCipher)) // Valid Cipher
 		{
-		    if ( cipherFCPath.size < (100 * 1024 * 1024) )
+		    if ( cipherFCPath.size < (1024L * 1024L * 1024L * 1L) )
 		    {
 			Platform.runLater(new Runnable(){ @Override public void run() 
 			{
-			    checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
+			    checksumLabel.setTextFill(Color.WHITESMOKE);
+			    checksumLabel.setText("Calculating...");
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			    Tooltip.install(checksumLabel, checksumTooltip); 
 			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			    calculateChecksum();
 			}});
@@ -941,7 +953,10 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			Platform.runLater(new Runnable(){ @Override public void run() 
 			{
-			    checksumLabel.setText("Click for checksum"); checksumTooltip.setText("");
+			    checksumLabel.setTextFill(Color.WHITESMOKE);
+			    checksumLabel.setText("Click for checksum");
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			    Tooltip.install(checksumLabel, checksumTooltip); 
 			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			}});
 		    }
@@ -959,7 +974,7 @@ public class GUIFX extends Application implements UI, Initializable
 	}
     }
 
-    private void calculateChecksum()
+    synchronized private void calculateChecksum()
     {
 	Platform.runLater(new Runnable(){ @Override public void run() 
 	{
@@ -968,7 +983,8 @@ public class GUIFX extends Application implements UI, Initializable
 		// Calculate Cipher SHA-1 Checksum 
 		checksumBlock:
 		{
-		    cipherSourceEnded = false;
+		    cipherSourceChecksumReadEnded = false;
+		    cipherSourceChecksumReadCanceled = false;
 		    Thread calcCipherThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
 			long    readCipherSourceChannelPosition =  0; 
@@ -976,11 +992,10 @@ public class GUIFX extends Application implements UI, Initializable
 			int readCipherSourceBufferSize = (1 * 1024 * 1024);
 			ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
 			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) {ui.error("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n");}
-			boolean readEnded = false;
 			int x = 0;
-			while ( ! cipherSourceEnded )
+			while (( ! cipherSourceChecksumReadEnded ) && ( ! cipherSourceChecksumReadCanceled ))
 			{
-			    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+			    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
 			    {
 				readCipherSourceChannel.position(readCipherSourceChannelPosition);
 				readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer); cipherSourceBuffer.flip(); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;
@@ -988,23 +1003,35 @@ public class GUIFX extends Application implements UI, Initializable
 
     //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
 				messageDigest.update(cipherSourceBuffer);
-				if ( readCipherSourceChannelTransfered < 0 ) { cipherSourceEnded = true; }
+				if ( readCipherSourceChannelTransfered < 0 ) { cipherSourceChecksumReadEnded = true; }
 			    } catch (IOException ex)
 			    {
 				Platform.runLater(new Runnable(){ @Override public void run()
 				{
-				    cipherSourceEnded = true;
+				    cipherSourceChecksumReadEnded = true;
 //				    ui.error("readCipherSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
 				}});
 			    }
 			    x++;
 			    cipherSourceBuffer.clear();
 			}
-			if (readCipherSourceChannelTransfered < 0)
+			if ( ! cipherSourceChecksumReadCanceled )
 			{
 			    byte[] hashBytes = messageDigest.digest();
 			    String hashString = getHexString(hashBytes,2);
-			    Platform.runLater(new Runnable(){ @Override public void run() {	checksumLabel.setText(hashString); checksumTooltip.setText(hashString);	}});
+			    Platform.runLater(new Runnable(){ @Override public void run() {
+				checksumLabel.setTextFill(Color.GREENYELLOW);
+				checksumLabel.setText(hashString);
+				checksumTooltip.setText(hashString);
+//				Tooltip.uninstall(checksumLabel, checksumTooltip);
+				Tooltip.install(checksumLabel, checksumTooltip); 
+			    }});
+			}
+			else
+			{
+			    messageDigest.reset();
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			    Tooltip.install(checksumLabel, checksumTooltip); 
 			}
 		    }});calcCipherThread.setName("calcCipherThread"); calcCipherThread.setDaemon(true); calcCipherThread.start();
 
@@ -1016,6 +1043,7 @@ public class GUIFX extends Application implements UI, Initializable
     
     @FXML private void checksumLabelOnMouseClicked(MouseEvent event)
     {
+	checksumLabel.setTextFill(Color.WHITESMOKE);
 	checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
 	try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 	Platform.runLater(new Runnable(){ @Override public void run() { calculateChecksum(); }});

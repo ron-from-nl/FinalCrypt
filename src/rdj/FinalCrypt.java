@@ -360,7 +360,7 @@ public class FinalCrypt extends Thread
 		    if ( readTargetSourceChannelTransfered != -1 )
 		    {
 //                                readCipherSourceStat.setFileStartEpoch();
-			try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+			try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourceFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
 			{
 			    // Fill up cipherFileBuffer
 			    readCipherSourceChannel.position(readCipherSourceChannelPosition);
