@@ -185,8 +185,8 @@ public class CLUI implements UI
 		    {
 			if (verbose) { status("Target parameter: " + targetPath + " is a valid dir\r\n", true); }
 		    }
-    //				   isValidFile(UI ui, String caller, Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	     false,	      1L,         symlink,             true,        verbose))
+    //				   isValidFile(UI ui, String caller, Path targetSourcePath,  isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
 		    {
 			if (verbose) { status("Target parameter: " + targetPath + " is a valid file\r\n", true); }
 		    }
@@ -361,8 +361,8 @@ public class CLUI implements UI
         boolean ifset = false;
         Path batchFilePath;
         Path targetFilePath;
-//		      isValidFile(UI ui, String caller,                       Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-        if ( Validate.isValidFile(this,  "CLUI.addBatchTargetFiles", Paths.get(batchFilePathString),          false,	       1L,         symlink,             true,           true) )
+//		      isValidFile(UI ui, String caller,                       Path targetSourcePath, isCipher	boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+        if ( Validate.isValidFile(this,  "CLUI.addBatchTargetFiles", Paths.get(batchFilePathString), false,              false,	          1L,         symlink,             true,           true) )
         {
             log("Adding items from batchfile: " + batchFilePathString + "\r\n");
             batchFilePath = Paths.get(batchFilePathString);
@@ -371,8 +371,8 @@ public class CLUI implements UI
                 for (String targetFilePathString:Files.readAllLines(batchFilePath))
                 {
 //                  Entry may not be a directory (gets filtered and must be a valid file)
-//				  isValidFile(UI ui, String caller,                        Path targetSourcePath, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-                    if ( Validate.isValidFile(   ui, "CLUI.addBatchTargetFiles", Paths.get(targetFilePathString),          false,	    0L,         symlink,             true,           true) )
+//				  isValidFile(UI ui, String caller,                        Path targetSourcePath, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+                    if ( Validate.isValidFile(   ui, "CLUI.addBatchTargetFiles", Paths.get(targetFilePathString),          false,	     false,	      0L,         symlink,             true,           true) )
                     {
                         targetFilePath = Paths.get(targetFilePathString); targetFilesPathList.add(targetFilePath); ifset = true;
 //                        println("Adding: " + targetFilePathString);

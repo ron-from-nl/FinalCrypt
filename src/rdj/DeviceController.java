@@ -283,7 +283,8 @@ public class DeviceController
     synchronized public void cloneCipherPartition(FCPath cipherFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
 	startCalendar = Calendar.getInstance(Locale.ROOT);
-	if ( ( isValidFile(ui,cipherFCPath.path, false, false, true) ) && ( isValidFile(ui, targetFCPath.path, false, false, true) ) )
+//	       isValidFile(UI ui, Path path,      boolean readSize,     boolean isCipher, boolean symlink, boolean report)
+	if ( ( isValidFile(   ui,cipherFCPath.path,          false,cipherFCPath.isCipher,           false,           true) ) && ( isValidFile(ui, targetFCPath.path, targetFCPath.isCipher, false, false, true) ) )
 	{
 	    long targetDeviceSize2 = targetFCPath.size;
 	    long cipherPartitionSize = getCipherPartitionSize(ui, cipherFCPath);
@@ -427,12 +428,12 @@ public class DeviceController
     }
 
 //  Wrapper method
-    synchronized public static long getDeviceSize(UI ui, Path path)
+    synchronized public static long getDeviceSize(UI ui, Path path, boolean isCipher)
     {
-	long size = getDeviceSize2(ui, path, true); return size; // Customized method (platform independent)
+	long size = getDeviceSize2(ui, path, isCipher, true); return size; // Customized method (platform independent)
     }
 
-//  Get size of device        
+//  Get size of device NOT USED!
     synchronized public static long getDeviceSize1(UI ui, Path path)
     {
         long deviceSize = 0;
@@ -440,7 +441,7 @@ public class DeviceController
         return deviceSize;
     }
 
-    synchronized public static long getDeviceSize2(UI ui, Path path, boolean firstcall) // OS Independent half or dubbel guess size test (Files.size(..) doesn't work on Apple OSX)
+    synchronized public static long getDeviceSize2(UI ui, Path path, boolean isCipher, boolean firstcall) // OS Independent half or dubbel guess size test (Files.size(..) doesn't work on Apple OSX)
     {
 	boolean verbose = false;
 //	deviceSize = 0;
@@ -455,7 +456,8 @@ public class DeviceController
 			cycles = 0;
 			finished = false;
 	}
-	if (isValidFile(ui, path, false, false, true ))
+//	    isValidFile(UI ui, Path path, boolean readSize, boolean isCipher, boolean symlink, boolean report)
+	if (isValidFile(   ui,      path,            false,         isCipher,           false,           true ))
 	{
 	    while (! finished)
 	    {
@@ -476,7 +478,8 @@ public class DeviceController
 		    if (step < 0) {step = 1;}
 		    currpos = above; step = 1;
 		    lastpos = currpos;
-		    getDeviceSize2(ui,path, false);
+//		    getDeviceSize2(ui, path, isCipher, true)
+		    getDeviceSize2(ui,path, isCipher, false);
 		}
 	    }
 	}
@@ -567,7 +570,7 @@ public class DeviceController
         return validdir;
     }
 
-    public static boolean isValidFile(UI ui, Path path, boolean readSize, boolean symlink, boolean report)
+    public static boolean isValidFile(UI ui, Path path, boolean readSize, boolean isCipher, boolean symlink, boolean report)
     {
         boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
         long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { } }
@@ -578,7 +581,7 @@ public class DeviceController
             if ( Files.isDirectory(path))                       { validfile = false; dir = "[is directory] "; conditions += dir; }
             if ((readSize) && ( fileSize == 0 ))                { validfile = false; size = "[empty] "; conditions += size; }
             if ( ! Files.isReadable(path) )                     { validfile = false; read = "[not readable] "; conditions += read; }
-            if ( ! Files.isWritable(path) )                     { validfile = false; write = "[not writable] "; conditions += write; }
+            if (( ! isCipher ) && ( ! Files.isWritable(path)) ) { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )  { validfile = false; symbolic = "[symlink]"; conditions += symbolic; }
         }
         if ( ! validfile ) { if ( report )			{ ui.error("Warning: DevCTRL: Invalid File: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } }                    

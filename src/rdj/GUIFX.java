@@ -756,8 +756,8 @@ public class GUIFX extends Application implements UI, Initializable
 		    cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device");
 		}});
 	    }
-//												 device  minsize  symlink  writable status
-	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), false,      0L, true,    false,  true))
+//												  isCipher device  minsize  symlink  writable status
+	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), true,     false,      0L, true,    false,  true))
 	    {
 		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
 		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
@@ -888,11 +888,12 @@ public class GUIFX extends Application implements UI, Initializable
 	    // Set Buffer Size
 	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
 
+	    // Validate CipherFile
 	    if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
 	    {
 		Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
 //				        getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-		cipherFCPath = Validate.getFCPath(   ui,	    "", cipherPath,             true,      cipherPath,           true);
+		cipherFCPath = Validate.getFCPath(   this,	    "", cipherPath,             true,      cipherPath,           true);
 
 		Platform.runLater(new Runnable(){ @Override public void run() 
 		{

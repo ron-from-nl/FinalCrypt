@@ -19,8 +19,6 @@ Set version on file: Version & Version2
 
 =================================== Done ====================================
 
-Fixed filter print unreadable / unwritable files list
-Added Cipher Checksum 
 
 ============================= Source Committed ==============================
 
@@ -30,6 +28,9 @@ Added Cipher Checksum
 
 ============================= Binaries Released =============================
 
+Improved Cipher Validation 
+Fixed filter print unreadable / unwritable files list
+Added Cipher Checksum 
 Fixed print un-rd/wr files
 Minor update for printing
 

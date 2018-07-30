@@ -482,8 +482,8 @@ public class FinalCrypt extends Thread
 
 		if ( ! dry)
 		{
-//				     isValidFile(UI ui, String caller,        Path path, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-		    if (Validate.isValidFile(   ui,            "", targetDestinPath,          false,            1,           false,            false,	    true))
+//				     isValidFile(UI ui, String caller,    Path path, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1,           false,            false,	    true))
 		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.error("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n"); } } else 
 
 		    readTargetSourceChannelPosition = 0;	readTargetSourceChannelTransfered = 0;

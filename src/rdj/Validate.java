@@ -63,13 +63,13 @@ public class Validate
     {
 	
         boolean validfile = true; String conditions = "";				    String cipher = "";
-	validfile = isValidFile(ui, caller, path, device, minSize, symlink, writable, report);
+	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
 	if ((cipherPath != null) && validfile) { if (path.compareTo(cipherPath) == 0) { validfile = false; cipher = "[is cipher] "; conditions += cipher; }}	
         if ( ! validfile ) { if ( report )						    { ui.status("Warning: " + path.toString() + ": " + conditions + "\r\n", true); } }                    
         return validfile;
     }
 
-    synchronized public static boolean isValidFile(UI ui, String caller, Path path, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+    synchronized public static boolean isValidFile(UI ui, String caller, Path path, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
     {
         boolean validfile = true; String conditions = "";				    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
 
@@ -77,11 +77,11 @@ public class Validate
         else
         {
             if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
-	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path); }
+	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isCipher); }
 	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.error("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n"); } }
             if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
             if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
-            if ((writable) && ( ! Files.isWritable(path)))				    { validfile = false; write = "[not writable] "; conditions += write; }
+            if ((! isCipher) && (writable) && ( ! Files.isWritable(path)))		    { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )				    { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
         }
 
@@ -300,7 +300,7 @@ public class Validate
 	    type = getFCPathType(path);
 	    if (exist)
 	    {
-		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path); }
+		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isCipher); }
 		else if( (exist) && ((type == FCPath.FILE) /*|| (type == FCPath.SYMLINK)*/) )			    { try { size = Files.size(path); } catch (IOException ex)  { ui.error("Error: IOException: Validate.getFCPath: Files.size() "+ ex.getMessage() + "\r\n"); } } // Symlinks give Files.size() errors on broken links
 	    }
 	    
@@ -311,7 +311,8 @@ public class Validate
 	    // Target =============================================================================================================================================================================================
 	    
 	    // isValid in general
-	    if (( exist ) && ( size >  0 ) && ( readable ) && ( writable ))					{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; }
+	    if ( isCipher ) { if (( exist ) && ( size >  0 ) && ( readable ) )			{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    else	    { if (( exist ) && ( size >  0 ) && ( readable ) && ( writable ))	{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    
 	    // File validity
 	    if (( isValid ) && ( type == FCPath.FILE ))								{ isValidFile = true; } else { isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }

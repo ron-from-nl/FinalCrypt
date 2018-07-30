@@ -1,5 +1,5 @@
-[Version] =		{2.3.0}
-[Release Notes] =	{Added Cipher Checksum SHA-1}
-[Release Message] =	{Standardized encrypt method}
+[Version] =		{2.3.1}
+[Release Notes] =	{Improved Cipher validation}
+[Release Message] =	{Added Cipher Checksum SHA1}
 [Alert Subject] =	{}
 [Alert Message] =	{}
