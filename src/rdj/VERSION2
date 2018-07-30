@@ -1,5 +1,5 @@
 [Version] =		{2.3.1}
 [Release Notes] =	{Improved Cipher validation}
-[Release Message] =	{Added Cipher Checksum SHA1}
+[Release Message] =	{Fixed MacOSX Update Stats}
 [Alert Subject] =	{}
 [Alert Message] =	{}

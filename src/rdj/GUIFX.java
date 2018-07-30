@@ -1037,7 +1037,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    }});calcCipherThread.setName("calcCipherThread"); calcCipherThread.setDaemon(true); calcCipherThread.start();
 
 		}
-		targetFileChooserPropertyCheck(true);
+//		targetFileChooserPropertyCheck(true);
 	    }
 	}});
     }
