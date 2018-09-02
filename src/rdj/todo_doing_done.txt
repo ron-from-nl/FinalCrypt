@@ -19,9 +19,10 @@ Set version on file: Version & Version2
 
 =================================== Done ====================================
 
-
 ============================= Source Committed ==============================
 
+[Release Notes] =	{Major Cosmetic GUI Change}
+[Release Message] =	{Minor fixes filter stats}
 
 ============================= Source Published ==============================
 

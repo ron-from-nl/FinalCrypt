@@ -91,39 +91,39 @@ public class FCPathList<E> extends ArrayList<E>
 	if ( fcPath.exist )
 	{
 	    existing++;
-	    if ( fcPath.matchCipher )					    { matchingCipher++; }
-	    if	    ( fcPath.type == FCPath.DEVICE )			    { devices++;	    if ( fcPath.isValidDevice ) { validDevices++; validDevicesSize += fcPath.size; } }
-	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )		    { devicesProtected++;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected++; validDevicesProtectedSize += fcPath.size; } }
-	    else if ( fcPath.type == FCPath.PARTITION )			    { partitions++;	    if ( fcPath.isValidPartition ) { validPartitions++; validPartitionsSize += fcPath.size; }}
-	    else if ( fcPath.type == FCPath.DIRECTORY )			    { directories++; }
-	    else if ( fcPath.type == FCPath.INVALID )			    { unexisting++; }
-	    else if ( fcPath.type == FCPath.SYMLINK )			    { symlinkFiles++; }
+	    if ( fcPath.matchCipher )							    { matchingCipher++; }
+	    if	    ( fcPath.type == FCPath.DEVICE )					    { devices++;	    if ( fcPath.isValidDevice ) { validDevices++; validDevicesSize += fcPath.size; } }
+	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )				    { devicesProtected++;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected++; validDevicesProtectedSize += fcPath.size; } }
+	    else if ( fcPath.type == FCPath.PARTITION )					    { partitions++;	    if ( fcPath.isValidPartition ) { validPartitions++; validPartitionsSize += fcPath.size; }}
+	    else if ( fcPath.type == FCPath.DIRECTORY )					    { directories++; }
+	    else if ( fcPath.type == FCPath.INVALID )					    { unexisting++; }
+	    else if ( fcPath.type == FCPath.SYMLINK )					    { symlinkFiles++; }
 	    else if ( fcPath.type == FCPath.FILE )
 	    {
 		files++;
-		if ( fcPath.size > 0 )					    { filesSize += fcPath.size; } else { emptyFiles++; }
+		if ( fcPath.size > 0 )								{ filesSize += fcPath.size; } else { emptyFiles++; }
 
-		if ( fcPath.isReadable )					    { readableFiles++; }					    else { unreadableFiles++; unreadableFilesSize += fcPath.size; }
-		if ( fcPath.isWritable )					    { writableFiles++; }					    else { unwritableFiles++; unwritableFilesSize += fcPath.size; }
-		if ( fcPath.isHidden )					    { hiddenFiles++; hiddenFilesSize += fcPath.size; }
-		if ( fcPath.isValidPath )				    { validPaths++;		validPathsSize += fcPath.size; }
-		if ( fcPath.isValidFile )				    { validFiles++;		validFilesSize += fcPath.size; }
+		if ( fcPath.isReadable )							{ readableFiles++; }					    else { unreadableFiles++; unreadableFilesSize += fcPath.size; }
+		if ( fcPath.isWritable )						        { writableFiles++; }					    else { unwritableFiles++; unwritableFilesSize += fcPath.size; }
+		if ( fcPath.isHidden )								{ hiddenFiles++; hiddenFilesSize += fcPath.size; }
+		if ( fcPath.isValidPath )							{ validPaths++;		validPathsSize += fcPath.size; }
+		if ( fcPath.isValidFile )							{ validFiles++;		validFilesSize += fcPath.size; }
 
 //		Decrypted files
 
-		if ( fcPath.isDecrypted )				    { decryptedFiles++;		decryptedFilesSize += fcPath.size; }
-		if ( fcPath.isEncryptable )				    { encryptableFiles++;	encryptableFilesSize += fcPath.size; }
-		if ( fcPath.isNewEncrypted )				    { newEncryptedFiles++;	newEncryptedFilesSize += fcPath.size; }
-		if ( fcPath.isEncryptable )				    { encryptRemainingFiles++;  encryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
-		if ( fcPath.isUnEncryptable )				    { unEncryptableFiles++;	unEncryptableFilesSize += fcPath.size; }
+		if ( fcPath.isDecrypted )							{ decryptedFiles++;		decryptedFilesSize += fcPath.size; }
+		if ( fcPath.isEncryptable )						        { encryptableFiles++;	encryptableFilesSize += fcPath.size; }
+		if ( fcPath.isNewEncrypted )							{ newEncryptedFiles++;	newEncryptedFilesSize += fcPath.size; }
+		if ( fcPath.isEncryptable )						        { encryptRemainingFiles++;  encryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
+		if ( (fcPath.size > 0) && (fcPath.isDecrypted) && (fcPath.isUnEncryptable ))	{ unEncryptableFiles++;	unEncryptableFilesSize += fcPath.size; }
 
 //		Encrypted files
 
-		if ( fcPath.isEncrypted )				    { encryptedFiles++;		encryptedFilesSize += fcPath.size; }
-		if ( fcPath.isDecryptable )				    { decryptableFiles++;	decryptableFilesSize += fcPath.size; }
-		if ( fcPath.isNewDecrypted )				    { newDecryptedFiles++;	newDecryptedFilesSize += fcPath.size; }
-		if (fcPath.isDecryptable)				    { decryptRemainingFiles++;  decryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
-		if (fcPath.isUnDecryptable)				    { unDecryptableFiles++;	unDecryptableFilesSize += fcPath.size; }
+		if ( fcPath.isEncrypted )							{ encryptedFiles++;		encryptedFilesSize += fcPath.size; }
+		if ( fcPath.isDecryptable )						        { decryptableFiles++;	decryptableFilesSize += fcPath.size; }
+		if ( fcPath.isNewDecrypted )							{ newDecryptedFiles++;	newDecryptedFilesSize += fcPath.size; }
+		if ( fcPath.isDecryptable)							{ decryptRemainingFiles++;  decryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
+		if ( (fcPath.size > 0) && (fcPath.isEncrypted) && (fcPath.isUnDecryptable))	{ unDecryptableFiles++;	unDecryptableFilesSize += fcPath.size; }
 	    }
 	} else { unexisting++; }
     }

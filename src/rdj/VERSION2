@@ -1,5 +1,5 @@
-[Version] =		{2.3.1}
-[Release Notes] =	{Improved Cipher validation}
-[Release Message] =	{Fixed MacOSX Update Stats}
+[Version] =		{2.4.0}
+[Release Notes] =	{Major Cosmetic GUI Change}
+[Release Message] =	{Minor fixes filter stats}
 [Alert Subject] =	{}
 [Alert Message] =	{}
