@@ -21,8 +21,9 @@ Set version on file: Version & Version2
 
 ============================= Source Committed ==============================
 
-[Release Notes] =	{Major Cosmetic GUI Change}
-[Release Message] =	{Minor fixes filter stats}
+Cleared cipher info on cipher dir selection
+Major Cosmetic GUI Change
+Minor fixes filter stats
 
 ============================= Source Published ==============================
 

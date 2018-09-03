@@ -919,13 +919,26 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 //			log("CC Cipher Not Valid\r\n");
 			// Set Cipher Status Colors
-			cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
-			if (cipherFCPath.type != FCPath.FILE) { cipherTypeLabel.setTextFill(Color.ORANGERED); } else { cipherTypeLabel.setTextFill(Color.ORANGE); } cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
-			if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
-			checksumLabel.setText(""); checksumTooltip.setText("");
-			Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			Tooltip.install(checksumLabel, checksumTooltip); 
-			cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+			if (cipherFCPath.type == FCPath.DIRECTORY)
+			{
+			    cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
+			    cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
+			    cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
+			    cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+			}
+			else
+			{
+			    cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
+			    if (cipherFCPath.type != FCPath.FILE)	{ cipherTypeLabel.setTextFill(Color.ORANGERED); }
+			    else					{ cipherTypeLabel.setTextFill(Color.ORANGE); }
+			    cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
+			    if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
+			    checksumLabel.setText(""); checksumTooltip.setText("");
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+			    // Tooltip.install(checksumLabel, checksumTooltip); 
+			    cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));			    
+			}
 			
 			MySimpleFCFileVisitor.running = false;
 		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
