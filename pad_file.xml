@@ -12,15 +12,15 @@ Portable Application Description, or PAD(TM) 2004 Association of Software Profes
 <CERTIFICATE_LICENSE></CERTIFICATE_LICENSE>
 </MASTER_PAD_VERSION_INFO>
 <RoboSoft>
-<Company_UIN>Ron's Freeware</Company_UIN>
+<Company_UIN>Ron de Jong</Company_UIN>
 <Product_UIN>FinalCrypt</Product_UIN>
 <Publish_on_CD>FALSE</Publish_on_CD>
 <NewsFeed_Search_String/>
-<Search_String>FinalCrypt - File Encryption Program</Search_String>
+<Search_String>FinalCrypt - Free File Encryption</Search_String>
 <Press_Release_Search_String/>
 <Backlink/>
 <Comments_For_Reviewer/>
-<Search_String_Unique>FinalCrypt - File Encryption Program</Search_String_Unique>
+<Search_String_Unique>FinalCrypt - - Free File Encryption</Search_String_Unique>
 <Search_Engine_Search_String/>
 <Web_Directories_Search_String/>
 <Company_Description/>
@@ -35,7 +35,7 @@ Portable Application Description, or PAD(TM) 2004 Association of Software Profes
 <Zip_Postal_Code></Zip_Postal_Code>
 <Address_1></Address_1>
 <Address_2/>
-<Company_WebSite_URL>https://github.com/ron-from-nl/FinalCrypt/releases</Company_WebSite_URL>
+<Company_WebSite_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt</Company_WebSite_URL>
 <Contact_Info>
 <Contact_First_Name>Ron</Contact_First_Name>
 <Contact_Last_Name>Jong, de</Contact_Last_Name>
@@ -50,7 +50,7 @@ Portable Application Description, or PAD(TM) 2004 Association of Software Profes
 <Support_Email>ronuitzaandam@gmail.com</Support_Email>
 <General_Email>ronuitzaandam@gmail.com</General_Email>
 <Sales_Phone></Sales_Phone>
-<Support_Phone></Support_Phone>
+<Support_Phone>+31-6-8013-7899</Support_Phone>
 <General_Phone></General_Phone>
 <Fax_Phone></Fax_Phone>
 </Support_Info>
@@ -67,28 +67,28 @@ Portable Application Description, or PAD(TM) 2004 Association of Software Profes
 <Program_Info>
 <AppID>app-0500956b6dd2</AppID>
 <Program_Name>FinalCrypt</Program_Name>
-<Program_Version>2.1.2</Program_Version>
-<Program_Release_Month>4</Program_Release_Month>
-<Program_Release_Day>22</Program_Release_Day>
+<Program_Version>2.4.0</Program_Version>
+<Program_Release_Month>9</Program_Release_Month>
+<Program_Release_Day>4</Program_Release_Day>
 <Program_Release_Year>2018</Program_Release_Year>
 <Program_Cost_Dollars>0</Program_Cost_Dollars>
-<Program_Type>Freeware</Program_Type>
+<Program_Type>OpenSource</Program_Type>
 <Program_Category_Class>Security & Privacy::Encryption Tools</Program_Category_Class>
 <Program_Specific_Category>Utilities</Program_Specific_Category>
 <Program_Categories>
 Security Tools :: File Security,Utilities :: Security & Encryption
 </Program_Categories>
-<Program_Release_Status>Major Update</Program_Release_Status>
+<Program_Release_Status>Stable</Program_Release_Status>
 <Program_Install_Support>Install and Uninstall</Program_Install_Support>
 <Program_Target_Platform>Windows</Program_Target_Platform>
 <Program_OS_Support>
-Win2000,WinXP,Win7 x32,Win7 x64,Windows 8,Windows 10,WinServer,WinOther,WinVista,WinVista x64
+Win2000,WinXP,Win7 x32,Win7 x64,Windows 8,Windows 10,WinServer,WinOther,WinVista,WinVista x64,Linux,MacOS,OSX
 </Program_OS_Support>
 <Program_Language>
 English
 </Program_Language>
 <Program_Change_Info>
-Added Dry Run --dry to Command Line Interface and 100% file & dir validation. Excluded symlinked directories in target filelist (prevent double encryption)
+Major cosmetic change
 </Program_Change_Info>
 <Program_System_Requirements>
 100 MB disk space; x86-64 architecture; 512MB RAM
@@ -98,9 +98,9 @@ None
 </Limitations>
 <Awards/>
 <File_Info>
-<File_Size_Bytes>71913472</File_Size_Bytes>
-<File_Size_K>71913</File_Size_K>
-<File_Size_MB>71.91</File_Size_MB>
+<File_Size_Bytes>72613888</File_Size_Bytes>
+<File_Size_K>72613</File_Size_K>
+<File_Size_MB>72.61</File_Size_MB>
 </File_Info>
 <Expire_Info>
 <Has_Expire_Info>N</Has_Expire_Info>
@@ -128,7 +128,7 @@ https://sites.google.com/site/ronuitholland/home/finalcrypt
 <Application_Screenshot_URL>
 https://7ac49971-a-62cb3a1a-s-sites.googlegroups.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Encrypt.png
 </Application_Screenshot_URL>
-<Application_Icon_URL>https://sites.google.com/site/ronuitholland/_/rsrc/1513112627292/home/finalcrypt/FinalCrypt_Icon_32x32.png</Application_Icon_URL>
+<Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon2.png</Application_Icon_URL>
 <Application_XML_File_URL>
 https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/pad_file.xml
 </Application_XML_File_URL>
@@ -145,9 +145,9 @@ https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/pad_file.xml
 <Keywords>
 data encryption, file encryption, encrypt files, best encryption software, folder encryption, prevent data breaches, truecrypt alternative
 </Keywords>
-<Char_Desc_45>FinalCrypt - File Encryption Program</Char_Desc_45>
+<Char_Desc_45>FinalCrypt - Free File Encryption</Char_Desc_45>
 <Char_Desc_80>
-Encrypt files with personal photo or video files (cipher files).
+Encrypt with your personal photo or video file
 </Char_Desc_80>
 <Char_Desc_250>
 FinalCrypt is a file encryption program that encrypts (large) files in a completely different way. FinalCrypt uses (large) cipher files, which can be any unique file like a personal photo or video. Unbreakable encryption without your cipher file.
@@ -156,7 +156,7 @@ FinalCrypt is a file encryption program that encrypts (large) files in a complet
 FinalCrypt is a file encryption program that encrypts (large) files in a completely different way. FinalCrypt uses (large) cipher files, which can be any unique file like a personal photo or video. Conventional encryption software uses relatively small key(file)s to encrypt and decrypt files by means of virtually incomprehensible mathematics leaving you completely in the dark about true safety. FinalCrypt encryption therefore is unbreakable.
 </Char_Desc_450>
 <Char_Desc_2000>
-FinalCrypt is a file encryption program that encrypts (large) files in a completely different way. FinalCrypt uses (large) cipher files, which can be any unique file like a personal photo or video. Conventional encryption software uses relatively small key(file)s to encrypt and decrypt files by means of incomprehensible mathematics (to most people) leaving you completely in the dark about true safety. FinalCrypt's power relies on the uniqueness of your personal cipher file that doesn't exist anywhere else in the world. FinalCrypt encrypts your data-files with all the unique data in your cipher file. The enormous amounts of unique bit patterns in your cipher file negate the bit patterns in your data files. Decrypting is simply done by encrypting your data files again with the same unique cipher. No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file. Therefore security and secrecy is guaranteed for as long as you keep your cipher file secret! FinalCrypt supports raw cipher partitions on Linux and Apple OSX (e.g. on USB mem sticks etc.) to safeguard your ciphers more securely. On top of raw ciphers, optional password injection will be introduced to further protect possibly exposed personal ciphers.
+FinalCrypt is a file encryption program that encrypts (large) files in a completely different way. FinalCrypt uses (large) cipher files, which can be any unique file like a personal photo or video. Conventional encryption software uses relatively small key(file)s to encrypt and decrypt files by means of incomprehensible mathematics (to most people) leaving you completely in the dark about true safety. FinalCrypt's power relies on the uniqueness of your personal cipher file that doesn't exist anywhere else in the world. FinalCrypt encrypts your data-files with all the unique data in your cipher file. The enormous amounts of unique bit patterns in your cipher file negate the bit patterns in your data files. Decrypting is simply done by encrypting your data files again with the same unique cipher. No supercomputer can brute-force attack generate a cipher file that looks just like your secret personal photo or video file. Therefore security and secrecy is guaranteed for as long as you keep your cipher file secret! FinalCrypt supports raw cipher devices on Linux and Apple OSX (e.g. on USB mem sticks etc.) to safeguard your ciphers more securely. On top of cipher devices, optional password injection will be introduced to further protect personal cipher files.
 </Char_Desc_2000>
 </English>
 </Program_Descriptions>
@@ -249,7 +249,7 @@ Because it uses images or videos to generate encryption keys, your file's protec
 When it comes to protecting private files, you can expect nothing less than ironclad encryption capabilities from FinalCrypt. 
 
 Pros:
-The software uses images and videos to generate unique encryption keys. The smallest modification in an image can make all the difference between correct and incorrect cipher files. The application is free, it doesn't use too many resources and it is quite easy to use. 
+The software uses personal image and videofiles to encryption personal files. The smallest modification in an image can make all the difference between correct and incorrect cipher files. The application is free, it doesn't use too many resources and it is quite easy to use.
 
 Cons:
 There are no obvious drawbacks to complain about.
@@ -264,8 +264,7 @@ FinalCrypt - Powerful file encryption utility
 Jetico's new file encryption is now out! BestCrypt Container Encryption v.9 can work with dynamic containers and encrypt files and folders on Windows 10.
 </Summary>
 <Press_Release_Plain>
-FinalCrypt - Powerful file encryption utility
-    
+FinalCrypt - Free File Encryption
  There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
 
 FinalCrypt is offered completely free of charge and it can be used on any modern Windows platform. It doesn't take long to install it and you don't have to go through a complex procedure. The hardware requirements are modest and there is no need to meet any special requirements. 
@@ -279,7 +278,7 @@ Because it uses images or videos to generate encryption keys, your file's protec
 When it comes to protecting private files, you can expect nothing less than ironclad encryption capabilities from FinalCrypt. 
 
 Pros:
-The software uses images and videos to generate unique encryption keys. The smallest modification in an image can make all the difference between correct and incorrect cipher files. The application is free, it doesn't use too many resources and it is quite easy to use. 
+The software uses personal image and videofiles to encryption personal files. The smallest modification in an image can make all the difference between correct and incorrect cipher files. The application is free, it doesn't use too many resources and it is quite easy to use. 
 
 Cons:
 There are no obvious drawbacks to complain about.
@@ -296,16 +295,16 @@ http://finalcrypt.findmysoft.com/
 <Site_Site_Title>FinalCrypt - File Encryption Program</Site_Site_Title>
 <Site_Site_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt</Site_Site_URL>
 <Site_Keywords>
-encrypt files, secure delete, encryption software
+encrypt files, secure delete, file encryption software
 </Site_Keywords>
 <Site_Description_100>
-FinalCrypt - File Encryption Program
+FinalCrypt - Free File Encryption
 </Site_Description_100>
 <Site_Description_250>
-FinalCrypt - File Encryption Program
+FinalCrypt - Free File Encryption
 </Site_Description_250>
 <Site_Description_450>
-FinalCrypt - File Encryption Program
+FinalCrypt - Free File Encryption
 </Site_Description_450>
 <Site_Contact_First_Name>Ron</Site_Contact_First_Name>
 <Site_Contact_Last_Name>Jong, de</Site_Contact_Last_Name>
