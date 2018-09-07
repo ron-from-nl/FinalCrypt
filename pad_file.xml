@@ -128,14 +128,14 @@ https://sites.google.com/site/ronuitholland/home/finalcrypt
 <Application_Screenshot_URL>
 https://7ac49971-a-62cb3a1a-s-sites.googlegroups.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Encrypt.png
 </Application_Screenshot_URL>
-<Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon2.png</Application_Icon_URL>
+<Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon_32x32.png</Application_Icon_URL>
 <Application_XML_File_URL>
 https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/pad_file.xml
 </Application_XML_File_URL>
 </Application_URLs>
 <Download_URLs>
 <Primary_Download_URL>https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt_Windows_Installer.msi</Primary_Download_URL>
-<Secondary_Download_URL/>
+<Secondary_Download_URL>http://files1.majorgeeks.com/ca8032a4ce311bf7f776f1e97ae3bb06bf3fc461/drives/FinalCrypt_Windows_Installer.msi</Secondary_Download_URL>
 <Additional_Download_URL_1/>
 <Additional_Download_URL_2/>
 </Download_URLs>
@@ -143,7 +143,7 @@ https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/pad_file.xml
 <Program_Descriptions>
 <English>
 <Keywords>
-data encryption, file encryption, encrypt files, best encryption software, folder encryption, prevent data breaches, truecrypt alternative
+Encrypt, Decrypt, file encryption, one-time pad, folder encryption
 </Keywords>
 <Char_Desc_45>FinalCrypt - Free File Encryption</Char_Desc_45>
 <Char_Desc_80>
@@ -255,13 +255,13 @@ Cons:
 There are no obvious drawbacks to complain about.
 </Press_Release>
 <Keywords>
-file encryption, encrypt files, TrueCrypt alternative, container encryption
+file encryption, encrypt, decrypt, one-time pad
 </Keywords>
 <Headline>
-FinalCrypt - Powerful file encryption utility
+FinalCrypt - Encrypt your files with a personal photo or video
 </Headline>
 <Summary>
-Jetico's new file encryption is now out! BestCrypt Container Encryption v.9 can work with dynamic containers and encrypt files and folders on Windows 10.
+FinalCrypt new file encryption released! FinalCrypt v.2.4.0 can encrypt your files with a personal photo or video
 </Summary>
 <Press_Release_Plain>
 FinalCrypt - Free File Encryption
