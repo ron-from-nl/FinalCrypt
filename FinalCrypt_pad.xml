@@ -103,15 +103,15 @@
   </Program_Info>
   <Web_Info>
     <Application_URLs>
-      <Application_Info_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt/</Application_Info_URL>
-      <Application_Order_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt/</Application_Order_URL>
+      <Application_Info_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Application_Info_URL>
+      <Application_Order_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Application_Order_URL>
       <Application_Screenshot_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Encrypt_800x600.png</Application_Screenshot_URL>
       <Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon_32x32.png</Application_Icon_URL>
       <Application_XML_File_URL>https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/FinalCrypt_pad.xml</Application_XML_File_URL>
     </Application_URLs>
     <Download_URLs>
       <Primary_Download_URL>https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt_Windows_Installer.msi</Primary_Download_URL>
-      <Secondary_Download_URL>http://files1.majorgeeks.com/ca8032a4ce311bf7f776f1e97ae3bb06bf3fc461/drives/FinalCrypt_Windows_Installer.msi</Secondary_Download_URL>
+      <Secondary_Download_URL>https://p-ams2.pcloud.com/cBZ9dUuSpZqIP2aFZUa7AZ7ZHO7cU7Z2ZZ2K4ZkZPPG40ZTVZ9XZ9kZm7Zn0ZnXZGkZg0ZO7ZHZYXZgZM7Z4kZGtoD7Z6v3alc9O7t4HPmUEr2K5K8od0k9k/FinalCrypt_Windows_Installer.msi</Secondary_Download_URL>
       <Additional_Download_URL_1></Additional_Download_URL_1>
       <Additional_Download_URL_2></Additional_Download_URL_2>
     </Download_URLs>
