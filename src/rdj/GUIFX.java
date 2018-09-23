@@ -19,7 +19,6 @@
 
 package rdj;
 
-import com.sun.javafx.application.PlatformImpl;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -463,10 +462,23 @@ public class GUIFX extends Application implements UI, Initializable
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion(this);
         status("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false);        
-        log("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n");
-        log("Copyright: " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n");
-        log("Email:     " + Version.getAuthorEmail() + "\r\n");
-        log("Logfiles:  " + configuration.getLogDirPath().toString() + "\r\n");
+        log(   "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n");
+        log("\r\n");
+        log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n");
+        log(   "Email:           " + Version.getAuthorEmail() + "\r\n");
+        log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n");//System.getProperty("java.version")
+        log("\r\n");
+        log(   "OS Name:         " + System.getProperty("os.name") + "\r\n");
+        log(   "OS Architecture: " + System.getProperty("os.arch") + "\r\n");
+        log(   "OS Version:      " + System.getProperty("os.version") + "\r\n");
+        log("\r\n");
+        log(   "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n");
+        log(   "Java Version:    " + System.getProperty("java.version") + "\r\n");
+        log(   "Class Version:   " + System.getProperty("java.class.version") + "\r\n");
+        log("\r\n");
+        log(   "User Name:   " + System.getProperty("user.name") + "\r\n");
+        log(   "User Home:   " + System.getProperty("user.home") + "\r\n");
+        log(   "User Dir:    " + System.getProperty("user.dir") + "\r\n");
         log("\r\n");
         log("Tip: FinalCrypt command line (DOS) usage:\r\n");
         log("java -cp FinalCrypt.jar rdj/CLUI --help\r\n");
@@ -650,7 +662,8 @@ public class GUIFX extends Application implements UI, Initializable
 //  Custom FileChooserDelete Listener methods
     private void targetFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {
-        PlatformImpl.runAndWait(new Runnable()
+//        PlatformImpl.runAndWait(new Runnable()
+        Platform.runLater(new Runnable()
         {
             @Override
             public void run() {
@@ -682,7 +695,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void cipherFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-        PlatformImpl.runAndWait(new Runnable()
+//        PlatformImpl.runAndWait(new Runnable()
+        Platform.runLater(new Runnable()
         {
             @Override
             public void run()
@@ -864,6 +878,15 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void cipherFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
+        Platform.runLater(new Runnable(){ @Override public void run() 
+        {
+            cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
+            cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
+            cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
+            cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+            checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+        }});
+
 	cipherSourceChecksumReadEnded = true;
 	cipherSourceChecksumReadCanceled = true;
 	if (!processRunning)
@@ -983,6 +1006,16 @@ public class GUIFX extends Application implements UI, Initializable
 	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 		if ( cipherFCPath != null ) { cipherFCPath.isValidCipher = false; }
 		targetFCPathList = new FCPathList();
+                
+                Platform.runLater(new Runnable(){ @Override public void run() 
+                {
+                    cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
+                    cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
+                    cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
+                    cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+                    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+                }});
+
 		buildReady(targetFCPathList);
 	    }
 	}
@@ -1686,7 +1719,8 @@ public class GUIFX extends Application implements UI, Initializable
 	if (log) { log(status); } 
     }
 
-    public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
+//    public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
+    public void setStageTitle(String title) { Platform.runLater(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
     public void statusDirect(String status) { statusLabel.setText(status); }
 
     @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
@@ -1821,20 +1855,35 @@ public class GUIFX extends Application implements UI, Initializable
 		    totalTimeLabel.setText(totalTimeString);
 		}
 		
-		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-                processRunningType = NONE;
-                processRunning = false;
+		targetFCPathList = new FCPathList();
+                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected cipher
+//                             Validate.getFCPath(UI ui, String caller, Path path, boolean isCipher, Path cipherPath, boolean report)
+                cipherFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
+                updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
                 fileProgressBar.setProgress(0);
                 filesProgressBar.setProgress(0);
+
+                targetFileChooser.setSelectedFile(new File(""));
+                File[] files = { new File("") };
+                targetFileChooser.setSelectedFiles(files);
+                targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
                 targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
+
+                cipherFileChooser.setSelectedFile(new File(""));
+                cipherFileChooser.setCurrentDirectory(cipherFileChooser.getCurrentDirectory());
+                cipherFileChooser.setFileFilter(cipherFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+
                 targetFileChooserPropertyCheck(false);
-                cipherFileChooserPropertyCheck();		
+                cipherFileChooserPropertyCheck();
+                
+                processRunningType = NONE;
+                processRunning = false;
             }
         });
     }    

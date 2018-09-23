@@ -65,7 +65,14 @@ public class FinalCrypt extends Thread
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private long	bytesPerMilliSecond = 0;
-
+    
+    private final String UTF8_UNENCRYPTABLE_SYMBOL =    "⚠";
+    private final String UTF8_ENCRYPT_SYMBOL =          "🔒";
+    private final String UTF8_ENCRYPT_LEGACY_SYMBOL =   "🔓!";
+    private final String UTF8_UNDECRYPTABLE_SYMBOL =    "⛔";
+    private final String UTF8_DECRYPT_SYMBOL =          "🔓";
+    private final String UTF8_DECRYPT_ABORT_SYMBOL =    "⛔";
+    private final String UTF8_SHRED_SYMBOL =            "🗑";
 
     public FinalCrypt(UI ui)
     {   
@@ -219,8 +226,8 @@ public class FinalCrypt extends Thread
 		    {
 			if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			{
-			    ui.status(		"🔒 \"" + targetDestinPath.toString() + "\" ", false);
-			    fileStatusLine =	"🔒 \"" + targetDestinPath.toString() + "\" ";
+			    ui.status(		UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", false);
+			    fileStatusLine =	UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ";
 
 			    if ( ! dry )
 			    {
@@ -237,7 +244,7 @@ public class FinalCrypt extends Thread
 			}
 			else // Decrypted but NOT Encryptable (should not be in the list anyway)
 			{
-			    ui.status("⚠ \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true);
+			    ui.status(UTF8_UNENCRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true);
 			    continue encryptTargetloop;
 			}
 		    }
@@ -248,13 +255,13 @@ public class FinalCrypt extends Thread
 		    {
 			if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
 			{
-			    fileStatusLine = "🔓 \"" + targetDestinPath.toString() + "\" ";
-			    ui.status("🔓 \"" + targetDestinPath.toString() + "\" ", false);
+			    fileStatusLine = UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ";
+			    ui.status(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", false);
 			    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
 			}
 			else
 			{
-			    ui.status("⛔ \"" + newTargetSourceFCPath.toString() + "\" - Cipher Failed : " + cipherSourceFCPath.toString() + "\r\n", true);
+			    ui.status(UTF8_UNDECRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Cipher Failed : " + cipherSourceFCPath.toString() + "\r\n", true);
 			    continue encryptTargetloop;
 			}
 		    }
@@ -476,7 +483,7 @@ public class FinalCrypt extends Thread
 
 //                      Shredding process
 
-		ui.status("🗑 \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", false); // 🌊🗑
+		ui.status(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", false); // 🌊🗑
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 

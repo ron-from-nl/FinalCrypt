@@ -19,17 +19,20 @@ Set version on file: Version & Version2
 
 =================================== Done ====================================
 
+
 ============================= Source Committed ==============================
 
-Cleared cipher info on cipher dir selection
-Major Cosmetic GUI Change
-Minor fixes filter stats
 
 ============================= Source Published ==============================
 
 
 ============================= Binaries Released =============================
 
+Fixed MultiOS GUI bug
+Fixed MacOSX busy-bug
+Cleared cipher info on cipher dir selection
+Major Cosmetic GUI Change
+Minor fixes filter stats
 Improved Cipher Validation 
 Fixed filter print unreadable / unwritable files list
 Added Cipher Checksum 

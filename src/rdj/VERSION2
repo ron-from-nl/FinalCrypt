@@ -1,5 +1,5 @@
-[Version] =		{2.4.0}
-[Release Notes] =	{Major Cosmetic GUI Change}
-[Release Message] =	{Minor fixes filter stats}
+[Version] =		{2.4.2}
+[Release Notes] =	{Fixed MultiOS GUI bug}
+[Release Message] =	{Fixed MacOSX busy-bug}
 [Alert Subject] =	{}
 [Alert Message] =	{}
