@@ -476,9 +476,9 @@ public class GUIFX extends Application implements UI, Initializable
         log(   "Java Version:    " + System.getProperty("java.version") + "\r\n");
         log(   "Class Version:   " + System.getProperty("java.class.version") + "\r\n");
         log("\r\n");
-        log(   "User Name:   " + System.getProperty("user.name") + "\r\n");
-        log(   "User Home:   " + System.getProperty("user.home") + "\r\n");
-        log(   "User Dir:    " + System.getProperty("user.dir") + "\r\n");
+        log(   "User Name:       " + System.getProperty("user.name") + "\r\n");
+        log(   "User Home:       " + System.getProperty("user.home") + "\r\n");
+        log(   "User Dir:        " + System.getProperty("user.dir") + "\r\n");
         log("\r\n");
         log("Tip: FinalCrypt command line (DOS) usage:\r\n");
         log("java -cp FinalCrypt.jar rdj/CLUI --help\r\n");
