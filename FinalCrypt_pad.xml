@@ -2,7 +2,7 @@
 <XML_DIZ_INFO>
   <MASTER_PAD_VERSION_INFO>
     <MASTER_PAD_VERSION>4.0</MASTER_PAD_VERSION>
-    <MASTER_PAD_EDITOR>FinalCrypt 2.4.0</MASTER_PAD_EDITOR>
+    <MASTER_PAD_EDITOR>FinalCrypt 2.4.2</MASTER_PAD_EDITOR>
     <MASTER_PAD_EDITOR_URL>http://publisher.appvisor.com</MASTER_PAD_EDITOR_URL>
     <MASTER_PAD_INFO>Portable Application Description, or PAD(TM) 2004 Association of Software Professionals (ASP)http://www.asp-shareware.org/pad is a data set standard and specification that is commercialsoftware publishers to disseminate certified information about their software application. The PAD format is copyright of the ASP and cannot be used without the formal licensing and permission of both the Association of Software Professionals and its agent AppVisor.com.</MASTER_PAD_INFO>
     <CERTIFIED>N</CERTIFIED>
@@ -30,8 +30,8 @@
     <Country>The Netherlands</Country>
     <State_Province>---------</State_Province>
     <City_Town>Zaandijk</City_Town>
-    <Zip_Postal_Code>1544 NZ</Zip_Postal_Code>
-    <Address_1>George Gershwinstraat</Address_1>
+    <Zip_Postal_Code>1544</Zip_Postal_Code>
+    <Address_1>Discreet</Address_1>
     <Address_2></Address_2>
     <Company_WebSite_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Company_WebSite_URL>
     <Contact_Info>
@@ -65,7 +65,7 @@
   <Program_Info>
     <AppID>app-800017a7c458</AppID>
     <Program_Name>FinalCrypt</Program_Name>
-    <Program_Version>2.4.0</Program_Version>
+    <Program_Version>2.4.2</Program_Version>
     <Program_Release_Month>09</Program_Release_Month>
     <Program_Release_Day>04</Program_Release_Day>
     <Program_Release_Year>2018</Program_Release_Year>
@@ -215,7 +215,7 @@ Cons:
 There are no obvious drawbacks to complain about.
 </Press_Release>
     <Headline>Encrypt files with a personal photo or video</Headline>
-    <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.4.0 can encrypt your files with a personal photo or video</Summary>
+    <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.4.2 can encrypt your files with a personal photo or video</Summary>
     <Press_Release_Plain>FinalCrypt - Free File Encryption
  There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
 
