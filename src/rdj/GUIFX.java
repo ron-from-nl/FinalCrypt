@@ -1999,13 +1999,17 @@ public class GUIFX extends Application implements UI, Initializable
 	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
 	    {
 		targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious cipher and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
 	    }
 	    )); timeline.play();
 	}
-	Platform.runLater(new Runnable(){ @Override public void run()
+	else
 	{
-	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
-	}});
+	    Platform.runLater(new Runnable(){ @Override public void run()
+	    {
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
+	    }});
+	}
     }
 
     @FXML
