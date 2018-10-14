@@ -29,6 +29,8 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+FileChooser Refresh Update
+
 Fixed MultiOS GUI bug
 Fixed MacOSX busy-bug
 Cleared cipher info on cipher dir selection

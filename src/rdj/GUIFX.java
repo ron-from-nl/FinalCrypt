@@ -1884,6 +1884,8 @@ public class GUIFX extends Application implements UI, Initializable
                 
                 processRunningType = NONE;
                 processRunning = false;
+
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
             }
         });
     }    
@@ -2000,6 +2002,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	    )); timeline.play();
 	}
+	Platform.runLater(new Runnable(){ @Override public void run()
+	{
+	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
+	}});
     }
 
     @FXML
@@ -2199,4 +2205,15 @@ public class GUIFX extends Application implements UI, Initializable
 	updateThread.setDaemon(true);
 	updateThread.start();
     }    
+
+    @FXML
+    private void copyrightLabelOnMouseClicked(MouseEvent event)
+    {
+        Platform.runLater(new Runnable()
+        {
+            @Override public void run()
+            {
+            }
+        });
+    }
 }

@@ -1004,7 +1004,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="25.0" prefWidth="300.0" style="-fx-background-color: #444444;" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
                                        <children>
-                                          <Label fx:id="copyrightLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="TEXT_ONLY" focusTraversable="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" prefWidth="234.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="copyright" textAlignment="RIGHT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="copyrightLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="TEXT_ONLY" focusTraversable="false" maxHeight="25.0" minHeight="25.0" onMouseClicked="#copyrightLabelOnMouseClicked" prefHeight="25.0" prefWidth="234.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="copyright" textAlignment="RIGHT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="12.0" />
                                              </font>

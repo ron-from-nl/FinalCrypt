@@ -1,5 +1,5 @@
-[Version] =		{2.4.2}
-[Release Notes] =	{Fixed MultiOS GUI bug}
-[Release Message] =	{Fixed MacOSX busy-bug}
+[Version] =		{2.4.3}
+[Release Notes] =	{FileChooser Refresh Update}
+[Release Message] =	{}
 [Alert Subject] =	{}
 [Alert Message] =	{}
