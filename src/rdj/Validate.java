@@ -38,12 +38,12 @@ import java.util.EnumSet;
 
 public class Validate
 {
-    private static Path selectedCipherPath;
+    private static Path selectedKeyPath;
     public static long bytesCount;
     private static MySimpleFCFileVisitor mySimpleFCFileVisitor;
     
 
-    public static void validateBuild(UI ui, FCPathList targetFCPathList, FCPath cipherFCPath, boolean printgpt, boolean deletegpt)
+    public static void validateBuild(UI ui, FCPathList targetFCPathList, FCPath keyFCPath, boolean printgpt, boolean deletegpt)
     {
     }
 
@@ -59,29 +59,29 @@ public class Validate
         return validdir;
     }
 
-    synchronized public static boolean isValidFile(UI ui, String caller, Path path, Path cipherPath, boolean device, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==cipherSource comparison)
+    synchronized public static boolean isValidFile(UI ui, String caller, Path path, Path keyPath, boolean device, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==keySource comparison)
     {
 	
-        boolean validfile = true; String conditions = "";				    String cipher = "";
+        boolean validfile = true; String conditions = "";				    String key = "";
 	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
-	if ((cipherPath != null) && validfile) { if (path.compareTo(cipherPath) == 0) { validfile = false; cipher = "[is cipher] "; conditions += cipher; }}	
+	if ((keyPath != null) && validfile) { if (path.compareTo(keyPath) == 0) { validfile = false; key = "[is key] "; conditions += key; }}	
         if ( ! validfile ) { if ( report )						    { ui.status("Warning: " + path.toString() + ": " + conditions + "\r\n", true); } }                    
         return validfile;
     }
 
-    synchronized public static boolean isValidFile(UI ui, String caller, Path path, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+    synchronized public static boolean isValidFile(UI ui, String caller, Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
     {
-        boolean validfile = true; String conditions = "";				    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String cipher = "";
+        boolean validfile = true; String conditions = "";				    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String key = "";
 
         if ( ! Files.exists(path))							    { validfile = false; exist = "[not found] "; conditions += exist; }
         else
         {
             if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
-	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isCipher); }
+	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isKey); }
 	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.error("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n"); } }
             if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
             if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
-            if ((! isCipher) && (writable) && ( ! Files.isWritable(path)))		    { validfile = false; write = "[not writable] "; conditions += write; }
+            if ((! isKey) && (writable) && ( ! Files.isWritable(path)))		    { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )				    { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
         }
 
@@ -99,9 +99,9 @@ public class Validate
 //
 //			Testing FinalCrypt Token
 //			🔒   Encrypt
-//			🔓   Decrypt	    (Cipher Authenticated)
-//			🔓!  Decrypt Legacy  (Cipher can't be checked! No Token present in old format)
-//			⛔   Decrypt Abort   (Cipher Failed)
+//			🔓   Decrypt	    (Key Authenticated)
+//			🔓!  Decrypt Legacy  (Key can't be checked! No Token present in old format)
+//			⛔   Decrypt Abort   (Key Failed)
 
     synchronized public static boolean targetSourceHasFCToken(UI ui, Path targetSourcePath) // Tested
     {
@@ -131,17 +131,17 @@ public class Validate
 	return targetSourceHasToken;
     }
     
-    synchronized public static boolean targetHasAuthenticatedFCToken(UI ui, Path targetSourcePath, Path cipherSourcePath) // Tested
+    synchronized public static boolean targetHasAuthenticatedFCToken(UI ui, Path targetSourcePath, Path keySourcePath) // Tested
     {
 	boolean readTargetSourceChannelError = false;
-	boolean cipherAuthenticatedTargetSource =   false;
+	boolean keyAuthenticatedTargetSource =   false;
         ByteBuffer targetSrcTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetSrcTokenBuffer.clear();
         ByteBuffer targetEncryptedTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.clear();
-        ByteBuffer cipherSourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherSourceBuffer.clear();
-        ByteBuffer cipherDecryptedTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); cipherDecryptedTokenBuffer.clear();
+        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); keySourceBuffer.clear();
+        ByteBuffer keyDecryptedTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); keyDecryptedTokenBuffer.clear();
 	
 	long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
-	long readCipherSourceChannelPosition = 0;	long readCipherSourceChannelTransfered = 0;                
+	long readKeySourceChannelPosition = 0;	long readKeySourceChannelTransfered = 0;                
 	
 	// Create Target Source Token Buffer
 	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
@@ -158,35 +158,35 @@ public class Validate
 	
 	if ( ! readTargetSourceChannelError )
 	{
-	    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
 	    {
-		// Fill up cipherFileBuffer
-//		readCipherSourceChannel.position(readCipherSourceChannelPosition);
-//		readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer);
-		readCipherSourceChannel.read(cipherSourceBuffer);
-		cipherSourceBuffer.flip(); readCipherSourceChannel.close();
-	    } catch (IOException ex) { ui.error("Error: cipherAuthenticatedTargetSource readCipherSourceChannel " + ex.getMessage() + "\r\n"); }
+		// Fill up keyFileBuffer
+//		readKeySourceChannel.position(readKeySourceChannelPosition);
+//		readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer);
+		readKeySourceChannel.read(keySourceBuffer);
+		keySourceBuffer.flip(); readKeySourceChannel.close();
+	    } catch (IOException ex) { ui.error("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n"); }
 	    
 	    // Create Encrypted Token Buffer
-	    cipherDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, cipherSourceBuffer, false);
-	    String cipherDecryptedTokenBufferString = new String(cipherDecryptedTokenBuffer.array(), StandardCharsets.UTF_8);
-//	    ui.status("targetHasAuthenticatedToken.cipherDecryptedTokenBufferString: " + cipherDecryptedTokenBufferString + "\r\n", true);
+	    keyDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, keySourceBuffer, false);
+	    String keyDecryptedTokenBufferString = new String(keyDecryptedTokenBuffer.array(), StandardCharsets.UTF_8);
+//	    ui.status("targetHasAuthenticatedToken.keyDecryptedTokenBufferString: " + keyDecryptedTokenBufferString + "\r\n", true);
 	    
-	    // Authenticate Cipher Token against Target Token
-	    if ( cipherDecryptedTokenBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN)) { cipherAuthenticatedTargetSource = true; } else { cipherAuthenticatedTargetSource = false; }
+	    // Authenticate Key Token against Target Token
+	    if ( keyDecryptedTokenBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
 	    
-	} else { cipherAuthenticatedTargetSource = false; }
+	} else { keyAuthenticatedTargetSource = false; }
 	
-	return cipherAuthenticatedTargetSource;
+	return keyAuthenticatedTargetSource;
     }
 
 
     
-    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath cipherFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
+    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
     {
 	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;}
-//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path cipherPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
-	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    cipherFCPath,                   targetFCPathList,	pattern,         negatePattern);
+//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
+	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    keyFCPath,                   targetFCPathList,	pattern,         negatePattern);
 	for (Path path:pathList)
 	{
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
@@ -215,12 +215,12 @@ public class Validate
 
 	if (path.toAbsolutePath().toString().startsWith("/dev/"))
 	{
-	    if	    (path.toAbsolutePath().toString().startsWith("/dev/hd")) // Linux IDE Cipher Device Selection
+	    if	    (path.toAbsolutePath().toString().startsWith("/dev/hd")) // Linux IDE Key Device Selection
 	    {
 		if  (Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) { returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().endsWith("hda")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
 	    }
-	    else if	    (path.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux SATA Cipher Device Selection
+	    else if	    (path.toAbsolutePath().toString().startsWith("/dev/sd")) // Linux SATA Key Device Selection
 	    {
 		if  (Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) { returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().endsWith("sda")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
@@ -243,7 +243,7 @@ public class Validate
 		{ returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().toString().endsWith("nvme0n1")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
 	    }
-	    else if (path.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Cipher Device Selection
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Key Device Selection
 	    {
 		if  (
 			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
@@ -263,7 +263,7 @@ public class Validate
 	return returnFCPathType;
     }
     
-    synchronized public static FCPath getFCPath(UI ui, String caller, Path path, boolean isCipher, Path cipherPath, boolean report)
+    synchronized public static FCPath getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
     {
 	boolean exist =			    false;
 	int	type =			    FCPath.INVALID;
@@ -271,7 +271,7 @@ public class Validate
 	boolean readable =		    false;
 	boolean writable =		    false;
 	boolean isHidden =		    false;
-	boolean matchCipher =		    false;
+	boolean matchKey =		    false;
 	
 	boolean isValid =		    false;
 	boolean isValidFile =		    false;
@@ -291,7 +291,7 @@ public class Validate
 	boolean isNewDecrypted =	    false;	
 	boolean isUnDecryptable =	    false;	
 	
-	boolean isValidCipher =		    false;	
+	boolean isValidKey =		    false;	
 
         if ( Files.exists(path, LinkOption.NOFOLLOW_LINKS) ) // Does not check if symbolic link target file exist
 //        if ( Files.exists(path) )
@@ -300,7 +300,7 @@ public class Validate
 	    type = getFCPathType(path);
 	    if (exist)
 	    {
-		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isCipher); }
+		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isKey); }
 		else if( (exist) && ((type == FCPath.FILE) /*|| (type == FCPath.SYMLINK)*/) )			    { try { size = Files.size(path); } catch (IOException ex)  { ui.error("Error: IOException: Validate.getFCPath: Files.size() "+ ex.getMessage() + "\r\n"); } } // Symlinks give Files.size() errors on broken links
 	    }
 	    
@@ -311,7 +311,7 @@ public class Validate
 	    // Target =============================================================================================================================================================================================
 	    
 	    // isValid in general
-	    if ( isCipher ) { if (( exist ) && ( size >  0 ) && ( readable ) )			{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    if ( isKey ) { if (( exist ) && ( size >  0 ) && ( readable ) )			{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    else	    { if (( exist ) && ( size >  0 ) && ( readable ) && ( writable ))	{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    
 	    // File validity
@@ -332,14 +332,14 @@ public class Validate
 	    
 	    // Encrypted File State
 	    
-	    if (( isValidFile ))			    { isEncrypted = targetSourceHasFCToken(ui, path); if ((isEncrypted) && (cipherPath != null) && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (cipherPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, cipherPath); } }
+	    if (( isValidFile ))			    { isEncrypted = targetSourceHasFCToken(ui, path); if ((isEncrypted) && (keyPath != null) && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, keyPath); } }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
 	    
-	    // Cipher =============================================================================================================================================================================================
+	    // Key =============================================================================================================================================================================================
 	    
-	    if ( cipherPath != null )							{ if (path.compareTo(cipherPath) == 0)   { matchCipher = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
-	    if ( isCipher )								{ isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
+	    if ( keyPath != null )							{ if (path.compareTo(keyPath) == 0)   { matchKey = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
+	    if ( isKey )								{ isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
 	    if (	( exist )
 		    &&  (
 				( type == FCPath.FILE )
@@ -347,14 +347,14 @@ public class Validate
 			    ||	( type == FCPath.DEVICE )
 			    ||	( type == FCPath.DEVICE_PROTECTED )
 			)
-			    && ( size >=  1024 ) && ( readable  ) && ( isCipher ) )	{ isValidCipher = true; }
+			    && ( size >=  1024 ) && ( readable  ) && ( isKey ) )	{ isValidKey = true; }
 	}
 	else { }
 
 // Return FCPath =============================================================================================================================================================================================
 
-//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesCipher,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isCipher, boolean isValidCipher, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
-	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchCipher,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isCipher,         isValidCipher,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,         isDecryptable,	 isNewDecrypted,         isUnDecryptable);
+//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
+	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isKey,         isValidKey,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,         isDecryptable,	 isNewDecrypted,         isUnDecryptable);
 	return fcPath;
     }
 
@@ -370,14 +370,14 @@ public class Validate
 	returnString += "Readable:		" + fcPath.isReadable + "\r\n";
 	returnString += "Writable:		" + fcPath.isWritable + "\r\n";
 	returnString += "Hidden:			" + fcPath.isHidden + "\r\n";
-	returnString += "Match Cipher:		" + fcPath.matchCipher + "\r\n";
+	returnString += "Match Key:		" + fcPath.matchKey + "\r\n";
 	returnString += "\r\n";
 	returnString += "Valid Path:		" + fcPath.isValidPath + "\r\n";
 	returnString += "Valid File:		" + fcPath.isValidFile + "\r\n";
 	returnString += "Valid Device:		" + fcPath.isValidDevice + "\r\n";
 	returnString += "Valid Partition:	" + fcPath.isValidPartition + "\r\n";
-	returnString += "Is Cipher:		" + fcPath.isCipher + "\r\n";
-	returnString += "Valid Cipher:		" + fcPath.isValidCipher + "\r\n";
+	returnString += "Is Key:		" + fcPath.isKey + "\r\n";
+	returnString += "Valid Key:		" + fcPath.isValidKey + "\r\n";
 	returnString += "\r\n";
 	returnString += "Decrypted:		" + fcPath.isDecrypted + "\r\n";
 	returnString += "Encryptable:		" + fcPath.isEncryptable + "\r\n";
@@ -400,13 +400,13 @@ public class Validate
 	String returnString = "";
 
 //	String[] columnNames = { "Path", "Exist ", "Type ", "Size ", "Readable "};
-//	Object[][] data = {{path.toString(), exist, getTypeString(type), size, readable, isValidCipher}};
+//	Object[][] data = {{path.toString(), exist, getTypeString(type), size, readable, isValidKey}};
 
 	
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", "Path",					" | ", "Exist ", " | ", "Type",		       " | ", "Size",		" | ", "Readable ",	" | ", "Valid ",		" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
-        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.isReadable), " | ", b(fcPath.isValidCipher),	" |"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.isReadable), " | ", b(fcPath.isValidKey),	" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
 
 	return returnString;
@@ -427,7 +427,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     private final boolean delete; 
     private final boolean symlink; 
     private final boolean setFCPathlist; 
-    public FCPath cipherFCPath;
+    public FCPath keyFCPath;
     private FCPathList targetFCPathList;
     private boolean negatePattern;
     public long bytesCount = 0;
@@ -437,7 +437,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 //  all *.bit   =   'regex:^.*\.bit$'
 //  all but *.bit   'regex:(?!.*\.bit$)^.*$'
     
-    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath cipherFCPath, FCPathList targetFCPathList, String pattern, boolean negatePattern)
+    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList targetFCPathList, String pattern, boolean negatePattern)
     {
         this.ui = ui;
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
@@ -445,7 +445,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
         this.delete = delete;
         this.symlink = symlink;
         this.setFCPathlist = setFCPathlist;
-	this.cipherFCPath = cipherFCPath;
+	this.keyFCPath = keyFCPath;
 	this.targetFCPathList = targetFCPathList;
         this.negatePattern = negatePattern;
 	bytesCount = 0;
@@ -472,8 +472,8 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
 		else if (setFCPathlist)    
 		{
-//    					     getFCPath(UI ui, String caller, Path path, boolean isCipher,	 Path cipherPath, boolean report)
-		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
+//    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean report)
+		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path,           true); targetFCPathList.add(fcPath);
 		}
 		else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
 	    }
@@ -486,8 +486,8 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-//					     getFCPath(UI ui, String caller, Path path, boolean isCipher,	     Path cipherPath, boolean report)
-	    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.cipherFCPath.path,           true); targetFCPathList.add(fcPath);
+//					     getFCPath(UI ui, String caller, Path path, boolean isKey,	     Path keyPath, boolean report)
+	    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path,           true); targetFCPathList.add(fcPath);
 	    return FileVisitResult.SKIP_SIBLINGS;
 	}
 	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; } 

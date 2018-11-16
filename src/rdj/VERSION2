@@ -1,5 +1,5 @@
-[Version] =		{2.4.3}
-[Release Notes] =	{FileChooser Refresh Update}
-[Release Message] =	{}
+[Version] =		{2.6.0}
+[Release Notes] =	{Added Create OTP Key}
+[Release Message] =	{Cipher now called Key}
 [Alert Subject] =	{}
 [Alert Message] =	{}

@@ -36,7 +36,7 @@ public class GPT_Entry
     public long                 startingLBA;
     private byte[]              startingLBABytes;
     public long                 endingLBA;
-    public long                 cipherSizeLBA;
+    public long                 keySizeLBA;
     private byte[]              endingLBABytes;
     private byte[]              attributesBytes;
     private byte[]              partitionNameBytes;
@@ -75,10 +75,10 @@ public class GPT_Entry
 	setDesc();
     }
 
-   public void read(FCPath cipherFCPath)
+   public void read(FCPath keyFCPath)
     {
-	pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, cipherFCPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
-        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readPos(cipherFCPath, pos, LENGTH);
+	pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, keyFCPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
+        byte[] bytes = new byte[(int)LENGTH]; bytes = new DeviceController(ui).readPos(keyFCPath, pos, LENGTH);
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.getBytesPart(bytes, 0, 16);
@@ -96,19 +96,19 @@ public class GPT_Entry
 	setDesc();
     }
     
-    public void create(long cipherSize, byte[] uniquePartitionGUIDBytes)
+    public void create(long keySize, byte[] uniquePartitionGUIDBytes)
     {
-        cipherSizeLBA =  (long)((Math.floor((cipherSize - 1L) / DeviceController.bytesPerSector )));
+        keySizeLBA =  (long)((Math.floor((keySize - 1L) / DeviceController.bytesPerSector )));
 //      Offset      Length      When            Data
 //      0 (0x00)    16 bytes    During LBA 2    Partition type GUID
                                                 partitionTypeGUIDBytes =		    GPT.hex2Bytes("AF 3D C6 0F 83 84 72 47 8E 79 3D 69 D8 47 7D E4");
 //      16 (0x10)   16 bytes    During LBA 2    Unique partition GUID
                                                 this.uniquePartitionGUIDBytes = uniquePartitionGUIDBytes;
 //      32 (0x20)   8 bytes     During LBA 2    First LBA (little endian) LBA 2048
-                                                startingLBA =				    FIRST_LBA + (ENTRYNUMBER * cipherSizeLBA) + ENTRYNUMBER;
+                                                startingLBA =				    FIRST_LBA + (ENTRYNUMBER * keySizeLBA) + ENTRYNUMBER;
                                                 startingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(startingLBA, 8));
 //      40 (0x28)   8 bytes     During LBA 2    Last LBA (inclusive, usually odd)
-                                                endingLBA =				    startingLBA + cipherSizeLBA;
+                                                endingLBA =				    startingLBA + keySizeLBA;
                                                 endingLBABytes =			    GPT.hex2Bytes(GPT.getHexStringLittleEndian(endingLBA, 8));
 //      48 (0x30)   8 bytes     During LBA 2    Attribute flags (e.g. bit 60 denotes read-only)
                                                 attributesBytes =			    GPT.hex2Bytes("00 00 00 00 00 00 00 00");
@@ -120,8 +120,8 @@ public class GPT_Entry
     
     public void write(FCPath fcPath)						{ pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, fcPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
 										  new DeviceController(ui).writePos(getDesc(), getBytes(), fcPath, pos); } // Causes exeption on OSX
-    public void writeCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)	{ new DeviceController(ui).writeCipherPartition(cipherFCPath, targetFCPath, startingLBA, endingLBA); }
-    public void cloneCipherPartition(FCPath cipherFCPath, FCPath targetFCPath)	{ new DeviceController(ui).cloneCipherPartition(cipherFCPath, targetFCPath, startingLBA, endingLBA); }
+    public void writeKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)	{ new DeviceController(ui).writeKeyPartition(keyFCPath, targetFCPath, startingLBA, endingLBA); }
+    public void cloneKeyPartition(FCPath keyFCPath, FCPath targetFCPath)	{ new DeviceController(ui).cloneKeyPartition(keyFCPath, targetFCPath, startingLBA, endingLBA); }
     
         
     public byte[] getBytes(int off, int length) { return GPT.getBytesPart(GPT_Entry.this.getBytes(), off, length); }

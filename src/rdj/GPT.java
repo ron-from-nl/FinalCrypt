@@ -74,13 +74,13 @@ public class GPT
         gpt_Entries2.clear();
     }
     
-    synchronized public void read(FCPath cipherDevice)
+    synchronized public void read(FCPath keyDevice)
     {
-        gpt_PMBR.read(cipherDevice);
-        gpt_Header1.read(cipherDevice); gpt_Entries1 =  new GPT_Entries(this.ui,this,2L, gpt_Header1.numberOfPartitionEntries);
-        gpt_Entries1.read(cipherDevice);
-        gpt_Header2.read(cipherDevice); gpt_Entries2 =  new GPT_Entries(this.ui,this,-33, gpt_Header2.numberOfPartitionEntries);
-        gpt_Entries2.read(cipherDevice);
+        gpt_PMBR.read(keyDevice);
+        gpt_Header1.read(keyDevice); gpt_Entries1 =  new GPT_Entries(this.ui,this,2L, gpt_Header1.numberOfPartitionEntries);
+        gpt_Entries1.read(keyDevice);
+        gpt_Header2.read(keyDevice); gpt_Entries2 =  new GPT_Entries(this.ui,this,-33, gpt_Header2.numberOfPartitionEntries);
+        gpt_Entries2.read(keyDevice);
     }
     
     synchronized public void create(long partitionSize, FCPath targetFCPath)
@@ -107,10 +107,10 @@ public class GPT
         gpt_Header2.write(targetFCPath);
     }
     
-//    synchronized public void writeCipher(Path cipherFilePath, Device targetDevice)  { gpt_Entries1.writeCipherPartitions(cipherFilePath, targetDevice); }
-    synchronized public void createCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)  { gpt_Entries1.createCipherPartitions(cipherFCPath, targetFCPath); }
-//    synchronized public void cloneCipher(Device cipherDevice, Device targetDevice)  { gpt_Entries1.cloneCipherPartitions(cipherDevice, targetDevice); }
-    synchronized public void cloneCipherpartitions(FCPath cipherFCPath, FCPath targetFCPath)  { gpt_Entries1.cloneCipherPartitions(cipherFCPath, targetFCPath); }
+//    synchronized public void writeKey(Path keyFilePath, Device targetDevice)  { gpt_Entries1.writeKeyPartitions(keyFilePath, targetDevice); }
+    synchronized public void createKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.createKeyPartitions(keyFCPath, targetFCPath); }
+//    synchronized public void cloneKey(Device keyDevice, Device targetDevice)  { gpt_Entries1.cloneKeyPartitions(keyDevice, targetDevice); }
+    synchronized public void cloneKeypartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.cloneKeyPartitions(keyFCPath, targetFCPath); }
     
     public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
     public GPT_Header	get_GPT_Header1()   { return gpt_Header1; }

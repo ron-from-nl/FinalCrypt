@@ -45,7 +45,7 @@ public class FCPathList<E> extends ArrayList<E>
     public	    long unwritableFilesSize =	    0;
     public	    long hiddenFiles =		    0;
     public	    long hiddenFilesSize =	    0;
-    public	    long matchingCipher =	    0;
+    public	    long matchingKey =	    0;
 
     public	    long validPaths =		    0;
     public	    long validPathsSize =	    0;
@@ -91,7 +91,7 @@ public class FCPathList<E> extends ArrayList<E>
 	if ( fcPath.exist )
 	{
 	    existing++;
-	    if ( fcPath.matchCipher )							    { matchingCipher++; }
+	    if ( fcPath.matchKey )							    { matchingKey++; }
 	    if	    ( fcPath.type == FCPath.DEVICE )					    { devices++;	    if ( fcPath.isValidDevice ) { validDevices++; validDevicesSize += fcPath.size; } }
 	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )				    { devicesProtected++;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected++; validDevicesProtectedSize += fcPath.size; } }
 	    else if ( fcPath.type == FCPath.PARTITION )					    { partitions++;	    if ( fcPath.isValidPartition ) { validPartitions++; validPartitionsSize += fcPath.size; }}
@@ -138,7 +138,7 @@ public class FCPathList<E> extends ArrayList<E>
 	if ( fcPath.exist )
 	{
 	    existing--;
-	    if ( fcPath.matchCipher )								{ matchingCipher--; }
+	    if ( fcPath.matchKey )								{ matchingKey--; }
 	    if	    ( fcPath.type == FCPath.DEVICE )						{ devices--;	    if ( fcPath.isValidDevice ) { validDevices--; validDevicesSize -= fcPath.size; } }
 	    else if ( fcPath.type == FCPath.DEVICE_PROTECTED )					{ devicesProtected--;   if ( fcPath.isValidDeviceProtected ) { validDevicesProtected--; validDevicesProtectedSize -= fcPath.size; } }
 	    else if ( fcPath.type == FCPath.PARTITION )						{ partitions--;	    if ( fcPath.isValidPartition ) { validPartitions--; validPartitionsSize -= fcPath.size; }}
@@ -202,7 +202,7 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Readable Files		: " +	readableFiles + "\r\n";
 	returnString += "Writable Files		: " +	writableFiles + "\r\n";
 	returnString += "Hidden Files		: " +	hiddenFiles + "\r\n";
-	returnString += "Cipher Matching 	: " +	matchingCipher + "\r\n";
+	returnString += "Key Matching 	: " +	matchingKey + "\r\n";
 	returnString += "Valid Paths		: " +	validPaths + " (" + Validate.getHumanSize(validPathsSize,1) + ")\r\n";
 	returnString += "Valid Files		: " +	validFiles + " (" + Validate.getHumanSize(validFilesSize,1) + ")\r\n";
 	returnString += "Valid Devices		: " +	validDevices + " (" + Validate.getHumanSize(validDevicesSize,1) + ")\r\n";
@@ -221,7 +221,7 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Decrypt Remaining Files : " +	decryptRemainingFiles + " (" + Validate.getHumanSize(decryptRemainingFilesSize,1) + ")\r\n";
 	returnString += "UnDecryptable Files	: " +	unDecryptableFiles + " (" + Validate.getHumanSize(unDecryptableFilesSize,1) + ")\r\n";
 	returnString += "\r\n";
-//	returnString += "File  Valid Ciphers	: " +	filesValidCipher + "\r\n"; // Targets can't be ciphers (only match cipherpaths)
+//	returnString += "File  Valid Keys	: " +	filesValidKey + "\r\n"; // Targets can't be keys (only match keypaths)
 
 	return returnString;
     }
@@ -246,7 +246,7 @@ public class FCPathList<E> extends ArrayList<E>
 	readableFiles =		    0;
 	writableFiles =		    0;
 	hiddenFiles =		    0;
-	matchingCipher =	    0;
+	matchingKey =	    0;
 
 	validPaths =		    0;
 	validPathsSize =	    0;

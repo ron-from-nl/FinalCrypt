@@ -131,13 +131,13 @@ public class GUIFX extends Application implements UI, Initializable
     GUIFX guifx;
     private JFileChooser targetFileChooser;
     private boolean negatePattern;
-    private JFileChooser cipherFileChooser;
+    private JFileChooser keyFileChooser;
     @FXML
-    private SwingNode cipherFileSwingNode;
+    private SwingNode keyFileSwingNode;
     private JButton targetFileDeleteButton;
-    private JButton cipherFileDeleteButton;
+    private JButton keyFileDeleteButton;
 //    private boolean hasEncryptable;
-//    private boolean hasCipherItem;
+//    private boolean hasKeyItem;
     private Object root;
     private Version version;
 
@@ -173,21 +173,21 @@ public class GUIFX extends Application implements UI, Initializable
     private Configuration configuration;
     @FXML
     private SwingNode targetFileSwingNode;
-    private Path cipherPath;
-    private FCPath cipherFCPath;
+    private Path keyPath;
+    private FCPath keyFCPath;
 //    private ArrayList<Path> targetPathList;
     private boolean symlink = false;
     private final String procCPULoadAttribute = "ProcessCpuLoad";
     @FXML
     private Button decryptButton;
     @FXML
-    private Label cipherNameLabel;
+    private Label keyNameLabel;
     @FXML
-    private Label cipherTypeLabel;
+    private Label keyTypeLabel;
     @FXML
-    private Label cipherSizeLabel;
+    private Label keySizeLabel;
     @FXML
-    private Label cipherValidLabel;
+    private Label keyValidLabel;
     @FXML
     private Label encryptedLabel;
     @FXML
@@ -278,8 +278,8 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList encryptedList; 
     private FCPathList decryptableList;
     
-    private FCPathList createCipherList;
-    private FCPathList cloneCipherList;
+    private FCPathList createKeyList;
+    private FCPathList cloneKeyList;
     private FCPathList customList;
     
     private FCPathList emptyList; 
@@ -298,7 +298,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     
     @FXML
-    private Button cipherDeviceButton;
+    private Button keyDeviceButton;
     @FXML
     private Label totalTimeLabel;
     @FXML
@@ -343,8 +343,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Label checksumLabel;
     private Tooltip checksumTooltip;
-    private boolean cipherSourceChecksumReadEnded;
-    private boolean cipherSourceChecksumReadCanceled;
+    private boolean keySourceChecksumReadEnded;
+    private boolean keySourceChecksumReadCanceled;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -381,13 +381,13 @@ public class GUIFX extends Application implements UI, Initializable
         targetFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
         { public void actionPerformed(java.awt.event.ActionEvent evt) { targetFileDeleteButtonActionPerformed(evt); } });
 
-        cipherFileDeleteButton = new javax.swing.JButton();
-        cipherFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
-        cipherFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
-        cipherFileDeleteButton.setEnabled(false);
-        cipherFileDeleteButton.setToolTipText("Delete selected item");
-        cipherFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-        { public void actionPerformed(java.awt.event.ActionEvent evt) { cipherFileDeleteButtonActionPerformed(evt); } });
+        keyFileDeleteButton = new javax.swing.JButton();
+        keyFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
+        keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
+        keyFileDeleteButton.setEnabled(false);
+        keyFileDeleteButton.setToolTipText("Delete selected item");
+        keyFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
+        { public void actionPerformed(java.awt.event.ActionEvent evt) { keyFileDeleteButtonActionPerformed(evt); } });
         
 //      Create filefilters        
         finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
@@ -417,24 +417,24 @@ public class GUIFX extends Application implements UI, Initializable
         targetFileChooserComponentAlteration(targetFileChooser);
         targetFileSwingNode.setContent(targetFileChooser);
 
-//        cipherFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-        cipherFileChooser = new JFileChooser();
-        cipherFileChooser.setControlButtonsAreShown(false);
-        cipherFileChooser.setToolTipText("Right mousclick for Refresh");
-        cipherFileChooser.setMultiSelectionEnabled(false);
-        cipherFileChooser.setFocusable(true);
-//        cipherFileChooser.setFocusCycleRoot(true);
-//        cipherFileChooser.setFocusTraversalKeysEnabled(true);
-//        cipherFileChooser.setFocusTraversalPolicyProvider(true);
-        cipherFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
-        cipherFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        cipherFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { cipherFileChooserPropertyChange(evt); });
-        cipherFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { cipherFileChooserActionPerformed(evt); });
+//        keyFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+        keyFileChooser = new JFileChooser();
+        keyFileChooser.setControlButtonsAreShown(false);
+        keyFileChooser.setToolTipText("Right mousclick for Refresh");
+        keyFileChooser.setMultiSelectionEnabled(false);
+        keyFileChooser.setFocusable(true);
+//        keyFileChooser.setFocusCycleRoot(true);
+//        keyFileChooser.setFocusTraversalKeysEnabled(true);
+//        keyFileChooser.setFocusTraversalPolicyProvider(true);
+        keyFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
+        keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        keyFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { keyFileChooserPropertyChange(evt); });
+        keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
         
-        cipherFileChooserComponentAlteration(cipherFileChooser);
+        keyFileChooserComponentAlteration(keyFileChooser);
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
         {
-            cipherFileSwingNode.setContent(cipherFileChooser);
+            keyFileSwingNode.setContent(keyFileChooser);
         }
         )); timeline.play();
 
@@ -510,7 +510,7 @@ public class GUIFX extends Application implements UI, Initializable
                 String header = "Brief Introduction:";
                 String infotext = 
                             "Step 1 Select items to en/decrypt on the left side.\r\n";
-                infotext += "Step 2 Select personal cipher file on the right side.\r\n";
+                infotext += "Step 2 Select personal key file on the right side.\r\n";
                 infotext += "Step 3 Click [Encrypt] or [Decrypt] at the bottom left.\r\n";
                 infotext += "\r\n";
                 infotext += "That's it! Not hard right?\r\n";
@@ -684,7 +684,7 @@ public class GUIFX extends Application implements UI, Initializable
                             String pattern = "glob:*";
                             finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                             targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
-                            cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                            keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 			    targetFileChooserPropertyCheck(true);
                         }
                     }
@@ -693,7 +693,7 @@ public class GUIFX extends Application implements UI, Initializable
         });
     }                                               
 
-    private void cipherFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
+    private void keyFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
 //        PlatformImpl.runAndWait(new Runnable()
         Platform.runLater(new Runnable()
@@ -705,17 +705,17 @@ public class GUIFX extends Application implements UI, Initializable
                 Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES)
                 {
-                    if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFiles() != null))
+                    if ((keyFileChooser != null)  && (keyFileChooser.getSelectedFiles() != null))
                     {
                         ArrayList<Path> pathList = new ArrayList<>();
-                        pathList.add(cipherFileChooser.getSelectedFile().toPath());
+                        pathList.add(keyFileChooser.getSelectedFile().toPath());
                         boolean delete = true;
                         boolean returnpathlist = false;
                         String pattern = "glob:*";
                         finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
                         targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
-                        cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
-			cipherFileChooserPropertyCheck();
+                        keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+			keyFileChooserPropertyCheck();
                     }
                 }
             }
@@ -725,13 +725,13 @@ public class GUIFX extends Application implements UI, Initializable
     private void cursorWait()
     {
             targetFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
-            cipherFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));        
+            keyFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));        
     }
     
     private void cursorDefault()
     {
             targetFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));
-            cipherFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));        
+            keyFileChooser.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.DEFAULT_CURSOR));        
     }
     
     private String getSelectedPatternFromFileChooser( javax.swing.filechooser.FileFilter fileFilter)
@@ -754,39 +754,43 @@ public class GUIFX extends Application implements UI, Initializable
         return pattern;
     }
     
-    private void cipherFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
+    private void keyFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
-        if ((cipherFileChooser != null)  && (cipherFileChooser.getSelectedFile() != null))
+        if ((keyFileChooser != null)  && (keyFileChooser.getSelectedFile() != null))
         {
-	    if (( cipherFCPath.type == FCPath.DEVICE ) || ( cipherFCPath.type == FCPath.DEVICE_PROTECTED ))
+	    if (( keyFCPath.type == FCPath.DEVICE ) || ( keyFCPath.type == FCPath.DEVICE_PROTECTED ))
 	    {
 		tab.getSelectionModel().select(1);
-		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(cipherFCPath);
+		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(keyFCPath);
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device");
+		    keyDeviceButton.setDisable(true); keyDeviceButton.setText("Create Key File");
 		}});
 	    }
-//												  isCipher device  minsize  symlink  writable status
-	    else if (Validate.isValidFile(this, "", cipherFileChooser.getSelectedFile().toPath(), true,     false,      0L, true,    false,  true))
+//												  isKey device  minsize  symlink  writable status
+	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      0L, true,    false,  true))
 	    {
-		try { Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); }
-		catch (IOException ex) { error("Error: Desktop.getDesktop().open(cipherFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
+		try { Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); }
+		catch (IOException ex) { error("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
 		}});
 	    }
         }
-	else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
+	else
+	{
+	    encryptButton.setDisable(true); decryptButton.setDisable(true);
+	    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
+	}
 	
-        cipherFileChooser.setFileFilter(this.nonFinalCryptFilter);
-        cipherFileChooser.setFileFilter(cipherFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
-        cipherFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
+        keyFileChooser.setFileFilter(this.nonFinalCryptFilter);
+        keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+        keyFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
     }
 
 //  Doubleclick open file
@@ -799,9 +803,9 @@ public class GUIFX extends Application implements UI, Initializable
 	    Path targetPath = targetFileChooser.getSelectedFile().toPath();
 //	    GUIFX ui = this;
 //	    if (ui == null) { log("Fuck me dearly\r\n"); }
-	    if (cipherFCPath == null)	{ Path path = Paths.get("."); cipherFCPath = Validate.getFCPath(   ui,		"",        path,             true,      path,           true); }
-//					   getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-	    FCPath targetFCPath = Validate.getFCPath( this, "", targetPath, false, cipherFCPath.path, true);
+	    if (keyFCPath == null)	{ Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,		"",        path,             true,      path,           true); }
+//					   getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
+	    FCPath targetFCPath = Validate.getFCPath( this, "", targetPath, false, keyFCPath.path, true);
 	    
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
@@ -810,7 +814,7 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
 		}});
 	    }
 	    else
@@ -832,7 +836,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    public void run()
 			    {
 				FCPathList targetFCPathList = new FCPathList(); FCPathList fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
-				decrypt(targetFCPathList, fileteredTargetFCPathList, cipherFCPath); Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
+				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath); Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
 				try { Thread.sleep(300); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
 				
 				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
@@ -843,9 +847,9 @@ public class GUIFX extends Application implements UI, Initializable
 //				}
 //				log("closeFile: " + newPath.toString() + "\r\n");
 //				try { Thread.sleep(300); } catch (InterruptedException ex) {  }
-//				FCPath targetFCPath = Validate.getFCPath(   ui,		 "", newPath,	    false,	cipherFCPath.path,	     true);
+//				FCPath targetFCPath = Validate.getFCPath(   ui,		 "", newPath,	    false,	keyFCPath.path,	     true);
 //				targetFCPathList = new FCPathList(); fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
-//				encrypt(targetFCPathList, fileteredTargetFCPathList, cipherFCPath);
+//				encrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath);
 			    }
 			});
 			encryptThread.setName("encryptThread");
@@ -859,7 +863,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
 		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
@@ -868,27 +872,27 @@ public class GUIFX extends Application implements UI, Initializable
 
 /////////////////////////////////////////////////////////////////////////////////////////////
     
-    private void cipherFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
+    private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
     {
 	if (!processRunning)
 	{
-            cipherFileChooserPropertyCheck();
+            keyFileChooserPropertyCheck();
 	}
     }
     
-    private void cipherFileChooserPropertyCheck() // getFCPath, checkModeReady
+    private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
         Platform.runLater(new Runnable(){ @Override public void run() 
         {
-            cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
-            cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
-            cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
-            cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+            keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
+            keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
+            keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
+            keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
             checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
         }});
 
-	cipherSourceChecksumReadEnded = true;
-	cipherSourceChecksumReadCanceled = true;
+	keySourceChecksumReadEnded = true;
+	keySourceChecksumReadCanceled = true;
 	if (!processRunning)
 	{
 	    Platform.runLater(new Runnable(){ @Override public void run() 
@@ -899,32 +903,32 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    // En/Disable FileChooser deletebutton
 	    if (
-		    (cipherFileChooser != null) &&
-		    (cipherFileChooser.getSelectedFile() != null) &&
+		    (keyFileChooser != null) &&
+		    (keyFileChooser.getSelectedFile() != null) &&
 		    (
-			(Files.isRegularFile( cipherFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
-			(Files.isDirectory(cipherFileChooser.getSelectedFile().toPath()))
+			(Files.isRegularFile( keyFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
+			(Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
 		    ) 
 	       )
-	    { cipherFileDeleteButton.setEnabled(true);} else {cipherFileDeleteButton.setEnabled(false); }
+	    { keyFileDeleteButton.setEnabled(true);} else {keyFileDeleteButton.setEnabled(false); }
 
 	    // Set Buffer Size
 	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
 
-	    // Validate CipherFile
-	    if ((cipherFileChooser != null) && (cipherFileChooser.getSelectedFile() != null))
+	    // Validate KeyFile
+	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null))
 	    {
-		Path cipherPath = cipherFileChooser.getSelectedFile().toPath();
-//				        getFCPath(UI ui, String caller,  Path path, boolean isCipher, Path cipherPath, boolean report)
-		cipherFCPath = Validate.getFCPath(   this,	    "", cipherPath,             true,      cipherPath,           true);
+		Path keyPath = keyFileChooser.getSelectedFile().toPath();
+//				        getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
+		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
 
 		Platform.runLater(new Runnable(){ @Override public void run() 
 		{
-		    if ((cipherFCPath.isValidCipher)) // Valid Cipher
+		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
-//			log("CC Cipher Valid\r\n");
-			// Set Cipher Status Colors
-			cipherNameLabel.setTextFill(Color.GREENYELLOW); cipherNameLabel.setText(cipherFCPath.path.getFileName().toString());
+//			log("CC Key Valid\r\n");
+			// Set Key Status Colors
+			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.getFileName().toString());
 			checksumLabel.setTextFill(Color.WHITESMOKE);
 			checksumLabel.setText("");
 			Tooltip.uninstall(checksumLabel, checksumTooltip);
@@ -932,49 +936,49 @@ public class GUIFX extends Application implements UI, Initializable
 			
 			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 
-			cipherTypeLabel.setTextFill(Color.GREENYELLOW); cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
-			cipherSizeLabel.setTextFill(Color.GREENYELLOW); cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
-			cipherValidLabel.setTextFill(Color.GREENYELLOW); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));
+			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
+			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
 						
 			targetFileChooserPropertyCheck(true);
 		    }
-		    else // Not Valid Cipher
+		    else // Not Valid Key
 		    {
-//			log("CC Cipher Not Valid\r\n");
-			// Set Cipher Status Colors
-			if (cipherFCPath.type == FCPath.DIRECTORY)
+//			log("CC Key Not Valid\r\n");
+			// Set Key Status Colors
+			if (keyFCPath.type == FCPath.DIRECTORY)
 			{
-			    cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
-			    cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
-			    cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
-			    cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+			    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
+			    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
+			    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
+			    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
 			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
 			}
 			else
 			{
-			    cipherNameLabel.setTextFill(Color.ORANGE); cipherNameLabel.setText(cipherFCPath.path.toString());
-			    if (cipherFCPath.type != FCPath.FILE)	{ cipherTypeLabel.setTextFill(Color.ORANGERED); }
-			    else					{ cipherTypeLabel.setTextFill(Color.ORANGE); }
-			    cipherTypeLabel.setText(FCPath.getTypeString(cipherFCPath.type));
-			    if ( cipherFCPath.size < FCPath.CIPHER_SIZE_MIN ) { cipherSizeLabel.setTextFill(Color.ORANGERED); } else { cipherSizeLabel.setTextFill(Color.ORANGE); } cipherSizeLabel.setText(Validate.getHumanSize(cipherFCPath.size,1));
+			    keyNameLabel.setTextFill(Color.ORANGE); keyNameLabel.setText(keyFCPath.path.toString());
+			    if (keyFCPath.type != FCPath.FILE)	{ keyTypeLabel.setTextFill(Color.ORANGERED); }
+			    else					{ keyTypeLabel.setTextFill(Color.ORANGE); }
+			    keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
+			    if ( keyFCPath.size < FCPath.CIPHER_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 			    checksumLabel.setText(""); checksumTooltip.setText("");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 			    // Tooltip.install(checksumLabel, checksumTooltip); 
-			    cipherValidLabel.setTextFill(Color.ORANGE); cipherValidLabel.setText(Boolean.toString(cipherFCPath.isValidCipher));			    
+			    keyValidLabel.setTextFill(Color.ORANGE); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));			    
 			}
 			
 			MySimpleFCFileVisitor.running = false;
 		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-			if ( cipherFCPath != null ) { cipherFCPath.isValidCipher = false; }
+			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 			targetFCPathList = new FCPathList();
 			buildReady(targetFCPathList);
 		    }
 		}});		
 		
 		// Checksum Calculation
-		if ((cipherFCPath.isValidCipher)) // Valid Cipher
+		if ((keyFCPath.isValidKey)) // Valid Key
 		{
-		    if ( cipherFCPath.size < (1024L * 1024L * 1024L * 1L) )
+		    if ( keyFCPath.size < (1024L * 1024L * 1024L * 1L) )
 		    {
 			Platform.runLater(new Runnable(){ @Override public void run() 
 			{
@@ -1004,15 +1008,15 @@ public class GUIFX extends Application implements UI, Initializable
 //		log("CC Sel Not Valid\r\n");
 		MySimpleFCFileVisitor.running = false;
 	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-		if ( cipherFCPath != null ) { cipherFCPath.isValidCipher = false; }
+		if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 		targetFCPathList = new FCPathList();
                 
                 Platform.runLater(new Runnable(){ @Override public void run() 
                 {
-                    cipherNameLabel.setTextFill(Color.GREY); cipherNameLabel.setText("");
-                    cipherTypeLabel.setTextFill(Color.GREY); cipherTypeLabel.setText("");
-                    cipherSizeLabel.setTextFill(Color.GREY); cipherSizeLabel.setText("");
-                    cipherValidLabel.setTextFill(Color.GREY); cipherValidLabel.setText("");
+                    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
+                    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
+                    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
+                    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
                     checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
                 }});
 
@@ -1025,44 +1029,44 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run() 
 	{
-	    if ((cipherFCPath.isValidCipher)) // Valid Cipher
+	    if ((keyFCPath.isValidKey)) // Valid Key
 	    {
-		// Calculate Cipher SHA-1 Checksum 
+		// Calculate Key SHA-1 Checksum 
 		checksumBlock:
 		{
-		    cipherSourceChecksumReadEnded = false;
-		    cipherSourceChecksumReadCanceled = false;
-		    Thread calcCipherThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
+		    keySourceChecksumReadEnded = false;
+		    keySourceChecksumReadCanceled = false;
+		    Thread calcKeyThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
-			long    readCipherSourceChannelPosition =  0; 
-			long    readCipherSourceChannelTransfered =  0; 
-			int readCipherSourceBufferSize = (1 * 1024 * 1024);
-			ByteBuffer cipherSourceBuffer = ByteBuffer.allocate(readCipherSourceBufferSize); cipherSourceBuffer.clear();
+			long    readKeySourceChannelPosition =  0; 
+			long    readKeySourceChannelTransfered =  0; 
+			int readKeySourceBufferSize = (1 * 1024 * 1024);
+			ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
 			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) {ui.error("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n");}
 			int x = 0;
-			while (( ! cipherSourceChecksumReadEnded ) && ( ! cipherSourceChecksumReadCanceled ))
+			while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
 			{
-			    try (final SeekableByteChannel readCipherSourceChannel = Files.newByteChannel(cipherFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+			    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
 			    {
-				readCipherSourceChannel.position(readCipherSourceChannelPosition);
-				readCipherSourceChannelTransfered = readCipherSourceChannel.read(cipherSourceBuffer); cipherSourceBuffer.flip(); readCipherSourceChannelPosition += readCipherSourceChannelTransfered;
-				readCipherSourceChannel.close();
+				readKeySourceChannel.position(readKeySourceChannelPosition);
+				readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
+				readKeySourceChannel.close();
 
     //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
-				messageDigest.update(cipherSourceBuffer);
-				if ( readCipherSourceChannelTransfered < 0 ) { cipherSourceChecksumReadEnded = true; }
+				messageDigest.update(keySourceBuffer);
+				if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
 			    } catch (IOException ex)
 			    {
 				Platform.runLater(new Runnable(){ @Override public void run()
 				{
-				    cipherSourceChecksumReadEnded = true;
-//				    ui.error("readCipherSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
+				    keySourceChecksumReadEnded = true;
+//				    ui.error("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
 				}});
 			    }
 			    x++;
-			    cipherSourceBuffer.clear();
+			    keySourceBuffer.clear();
 			}
-			if ( ! cipherSourceChecksumReadCanceled )
+			if ( ! keySourceChecksumReadCanceled )
 			{
 			    byte[] hashBytes = messageDigest.digest();
 			    String hashString = getHexString(hashBytes,2);
@@ -1080,7 +1084,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 //			    Tooltip.install(checksumLabel, checksumTooltip); 
 			}
-		    }});calcCipherThread.setName("calcCipherThread"); calcCipherThread.setDaemon(true); calcCipherThread.start();
+		    }});calcKeyThread.setName("calcKeyThread"); calcKeyThread.setDaemon(true); calcKeyThread.start();
 
 		}
 //		targetFileChooserPropertyCheck(true);
@@ -1117,7 +1121,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		cipherDeviceButton.setDisable(true);
+		keyDeviceButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 
@@ -1146,7 +1150,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
 	
 	    // All Valid
-	    if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (cipherFCPath != null) && (cipherFCPath.isCipher) && (cipherFCPath.isValidCipher))
+	    if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
 	    {
 		MySimpleFCFileVisitor.running = false;
 	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
@@ -1172,7 +1176,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
-			Validate.buildSelection( ui, targetPathList, cipherFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
+			Validate.buildSelection( ui, targetPathList, keyFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
 		    }});scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
 		}});
 	    }
@@ -1306,11 +1310,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		cipherDeviceButton.setDisable(true);
+		keyDeviceButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 		
-		if ((cipherFCPath != null) && (cipherFCPath.isValidCipher))
+		if ((keyFCPath != null) && (keyFCPath.isValidKey))
 		{
 // ================================================================================================================================================================================================
 		    // Decrypted Files
@@ -1359,26 +1363,32 @@ public class GUIFX extends Application implements UI, Initializable
 //    private FCPathList undecryptableList;
 //    private FCPathList invalidFilesList;
 		    
-		    // Create Cipher Device
-		    if ((cipherFCPath.type == FCPath.FILE) &&(cipherFCPath.isValidCipher))
+		    // Create Key Device
+		    if ((keyFCPath.type == FCPath.FILE) && (keyFCPath.isValidKey))
 		    {
 			if (targetFCPathList.validDevices > 0)
 			{
-//			    log("1 " + cipherFCPath.getString());
-			    createCipherList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Cipher List:\r\n" + createCipherList.getStats());
-			    cipherDeviceButton.setDisable(false); cipherDeviceButton.setText("Create Cipher Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else { cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }
+//			    log("1 " + keyFCPath.getString());
+			    createKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Key List:\r\n" + createKeyList.getStats());
+			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key Device");
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
 		    }		
-		    else if (cipherFCPath.type == FCPath.DEVICE)
+		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
-			// Clone Cipher Device
-			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingCipher == 0))
+			// Clone Key Device
+			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
-			    cloneCipherList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(cipherFCPath.path) != 0); // log("Clone Cipher List:\r\n" + cloneCipherList.getStats());
-			    cipherDeviceButton.setDisable(false); cipherDeviceButton.setText("Clone Cipher Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else { cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }
-		    } else { cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }
-		} else { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }
+			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
+			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Clone Key Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
+		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
+		}
+		else
+		{
+		    encryptButton.setDisable(true); decryptButton.setDisable(true);
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); // Default enabler
+		}
 	    }
 	}});
     }
@@ -1467,7 +1477,7 @@ public class GUIFX extends Application implements UI, Initializable
         return false;
     }
 
-    public boolean cipherFileChooserComponentAlteration(Container container)
+    public boolean keyFileChooserComponentAlteration(Container container)
     {
         Component[] components = container.getComponents();
         for (Component component : components)
@@ -1479,11 +1489,11 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 if (   ! ((JToggleButton)component).isSelected()   )
                 {
-                    TimerTask cipherFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+                    TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
                     {
                         ((JToggleButton)component).doClick();
                     }};
-                    Timer cipherFileChoosershowDetailsTaskTimer = new java.util.Timer(); cipherFileChoosershowDetailsTaskTimer.schedule(cipherFileChoosershowDetailsTask, 1500L);
+                    Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 1500L);
                 }
             }
             
@@ -1493,8 +1503,8 @@ public class GUIFX extends Application implements UI, Initializable
                 if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
                 {
 //                    component.getParent().add(this.targetFileDeleteButton);
-//                    if (targetFileChooserContainer) { component.getParent().add(this.targetFileDeleteButton); } else { component.getParent().add(this.cipherFileDeleteButton); }
-                    component.getParent().add(this.cipherFileDeleteButton);
+//                    if (targetFileChooserContainer) { component.getParent().add(this.targetFileDeleteButton); } else { component.getParent().add(this.keyFileDeleteButton); }
+                    component.getParent().add(this.keyFileDeleteButton);
                 }
             }
             
@@ -1527,7 +1537,7 @@ public class GUIFX extends Application implements UI, Initializable
             
             if (component instanceof Container)
             {
-                if( cipherFileChooserComponentAlteration((Container) component) ) return true;
+                if( keyFileChooserComponentAlteration((Container) component) ) return true;
             }
         }
         return false;
@@ -1543,7 +1553,7 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		encrypt(targetFCPathList, encryptableList, cipherFCPath);
+		encrypt(targetFCPathList, encryptableList, keyFCPath);
             }
         });
         encryptThread.setName("encryptThread");
@@ -1551,10 +1561,10 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    private void encrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath cipherSourceFCPath) // Only run within thread
+    private void encrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
 	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, cipherFCPath, true);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true);
     }
 
     @FXML
@@ -1567,7 +1577,7 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		decrypt(targetFCPathList, encryptableList, cipherFCPath);
+		decrypt(targetFCPathList, encryptableList, keyFCPath);
             }
         });
         encryptThread.setName("decryptThread");
@@ -1585,7 +1595,7 @@ public class GUIFX extends Application implements UI, Initializable
 //            {
 //		processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 ////		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { this_ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
-//		processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
+//		processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false);
 //            }
 //        });
 //        encryptThread.setName("decryptThread");
@@ -1593,14 +1603,14 @@ public class GUIFX extends Application implements UI, Initializable
 //        encryptThread.start();
     }
 
-    private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath cipherSourceFCPath) // Only run within thread
+    private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
 	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, cipherFCPath, false);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false);
     }
 
     @FXML
-    private void cipherDeviceButtonAction(ActionEvent event)
+    private void keyDeviceButtonAction(ActionEvent event)
     {
         // Needs Threading to early split off from the UI Event Dispatch Thread
         final GUIFX guifx = this;
@@ -1612,27 +1622,35 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		if	( cipherDeviceButton.getText().equals("Create Cipher Device") )
+		if	( keyDeviceButton.getText().equals("Create Key File") )
+		{
+		    processRunningType = CREATE;
+		    tab.getSelectionModel().select(1);
+                    processStarted();
+                    processFinished();
+		}
+		else if	( keyDeviceButton.getText().equals("Create Key Device") )
 		{
 		    processRunningType = CREATE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
                     deviceManager = new DeviceManager(guifx); deviceManager.start();
-                    deviceManager.createCipherDevice(cipherFCPath, (FCPath) targetFCPathList.get(0));
+                    deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
                     processFinished();
 		}
-		else if ( cipherDeviceButton.getText().equals("Clone Cipher Device") )
+		else if ( keyDeviceButton.getText().equals("Clone Key Device") )
 		{
 		    processRunningType = CLONE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
                     deviceManager = new DeviceManager(ui); deviceManager.start();
-                    deviceManager.cloneCipherDevice(cipherFCPath, (FCPath) targetFCPathList.get(0));
+                    deviceManager.cloneKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
                     processFinished();
 		}
+		
             }
         });
-        encryptThread.setName("cipherDeviceThread");
+        encryptThread.setName("keyDeviceThread");
         encryptThread.setDaemon(true);
         encryptThread.start();
     }
@@ -1655,7 +1673,7 @@ public class GUIFX extends Application implements UI, Initializable
 
             Thread logThread = new Thread(new Runnable()
             {
-//                private DeviceManager rawCipher;
+//                private DeviceManager rawKey;
                 @Override
                 @SuppressWarnings({"static-access"})
                 public void run()
@@ -1669,7 +1687,7 @@ public class GUIFX extends Application implements UI, Initializable
 //                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
 //                        writeOutputFileChannel.write(outputFileBuffer);
 //                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
+//                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
                 }
             });
             logThread.setName("logThread");
@@ -1686,7 +1704,7 @@ public class GUIFX extends Application implements UI, Initializable
 
             Thread errorLogThread = new Thread(new Runnable()
             {
-//                private DeviceManager rawCipher;
+//                private DeviceManager rawKey;
                 @Override
                 @SuppressWarnings({"static-access"})
                 public void run()
@@ -1700,7 +1718,7 @@ public class GUIFX extends Application implements UI, Initializable
 //                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
 //                        writeOutputFileChannel.write(outputFileBuffer);
 //                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nFiles.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
+//                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
                 }
             });
             errorLogThread.setName("errorThread");
@@ -1764,7 +1782,7 @@ public class GUIFX extends Application implements UI, Initializable
                 filesProgressBar.setProgress(0.0);
                 fileProgressBar.setProgress(0.0);
                 targetFileChooser.rescanCurrentDirectory();
-                cipherFileChooser.rescanCurrentDirectory();
+                keyFileChooser.rescanCurrentDirectory();
             }
         });
     }
@@ -1856,9 +1874,9 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		
 		targetFCPathList = new FCPathList();
-                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected cipher
-//                             Validate.getFCPath(UI ui, String caller, Path path, boolean isCipher, Path cipherPath, boolean report)
-                cipherFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
+                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected key
+//                             Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
+                keyFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
                 updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
@@ -1874,18 +1892,18 @@ public class GUIFX extends Application implements UI, Initializable
                 targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
                 targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
 
-                cipherFileChooser.setSelectedFile(new File(""));
-                cipherFileChooser.setCurrentDirectory(cipherFileChooser.getCurrentDirectory());
-                cipherFileChooser.setFileFilter(cipherFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
-                cipherFileChooser.rescanCurrentDirectory(); cipherFileChooser.validate();
+                keyFileChooser.setSelectedFile(new File(""));
+                keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
+                keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+                keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 
                 targetFileChooserPropertyCheck(false);
-                cipherFileChooserPropertyCheck();
+                keyFileChooserPropertyCheck();
                 
                 processRunningType = NONE;
                 processRunning = false;
 
-		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
             }
         });
     }    
@@ -1893,7 +1911,7 @@ public class GUIFX extends Application implements UI, Initializable
 //  ================================================= END UPDATE PROGRESS ===========================================================
 
     @FXML
-    private void cipherInfoLabelClicked(MouseEvent event)
+    private void keyInfoLabelClicked(MouseEvent event)
     {
         Alert alert = new Alert(AlertType.INFORMATION);
         
@@ -1903,25 +1921,25 @@ public class GUIFX extends Application implements UI, Initializable
         dialogPane.getStyleClass().add("myDialog");
         
         alert.setTitle("Information Dialog");
-        alert.setHeaderText("What is your secret Cipher file?");
+        alert.setHeaderText("What is your secret Key file?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext  = "Any personal photo or video can be your cipher file.\r\n";
-        infotext += "FinalCrypt de/encrypts your files with your cipher file.\r\n";
-        infotext += "Data in your cipher file is like a huge binary password.\r\n";
+        infotext  = "Any personal photo or video can be your key file.\r\n";
+        infotext += "FinalCrypt de/encrypts your files with your key file.\r\n";
+        infotext += "Data in your key file is like a huge binary password.\r\n";
         infotext += "\r\n";
-        infotext += "Keep backups of your cipher file and keep it SECRET!\r\n";
-        infotext += "Without cipher file you can NEVER decrypt your data!\r\n";
+        infotext += "Keep backups of your key file and keep it SECRET!\r\n";
+        infotext += "Without key file you can NEVER decrypt your data!\r\n";
         infotext += "\r\n";
         infotext += "==================================\r\n";
         infotext += "\r\n";
-        infotext += "Best practice is a cipher file of at least 1 MB in size\r\n";
-        infotext += "Don't keep cipher file(s) on your computer for too long\r\n";
+        infotext += "Best practice is a key file of at least 1 MB in size\r\n";
+        infotext += "Don't keep key file(s) on your computer for too long\r\n";
         infotext += "to prevent someone or something copying it.\r\n";
         infotext += "\r\n";
         infotext += "Encryption / Decryption (advanced explanation):\r\n";
         infotext += "\r\n";
-        infotext += "Your cipher bit patterns negate your file bit patterns.\r\n";
+        infotext += "Your key bit patterns negate your file bit patterns.\r\n";
         infotext += "\r\n";
         infotext += "                  Encrypt                      Decrypt\r\n";
         infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\r\n";
@@ -1998,8 +2016,8 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
 	    {
-		targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious cipher and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
+		targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
 	    }
 	    )); timeline.play();
 	}
@@ -2007,7 +2025,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
-		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); cipherFileChooser.setVisible(false); cipherFileChooser.setVisible(true); // Reldraw FileChoosers
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
 	    }});
 	}
     }
@@ -2040,7 +2058,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n");
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
@@ -2053,7 +2071,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n");
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); cipherDeviceButton.setDisable(true); cipherDeviceButton.setText("Cipher Device"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }

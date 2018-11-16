@@ -125,7 +125,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select your personal cipher file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select a key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -134,7 +134,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Select a personal (secret) photo / video file" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Photo / Video / OTP-Key" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -143,7 +143,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#cipherInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans Italic" size="18.0" />
                                                                </font>
@@ -157,7 +157,7 @@
                                                    <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
                                                       <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="130.0" prefWidth="130.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="320.0" minWidth="300.0" prefWidth="320.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
                                                       <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                                                       <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
                                                    </columnConstraints>
@@ -175,7 +175,7 @@
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="571.0" prefWidth="663.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="cipherFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
+                                                      <SwingNode fx:id="keyFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -299,7 +299,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Cipher" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Key" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12">
@@ -379,22 +379,22 @@
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherTypeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="17.0" layoutY="-2.0" prefHeight="30.0" prefWidth="183.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="keyTypeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="17.0" layoutY="-2.0" prefHeight="30.0" prefWidth="183.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-68.0" layoutY="-3.0" prefHeight="30.0" prefWidth="61.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="keySizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-68.0" layoutY="-3.0" prefHeight="30.0" prefWidth="61.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="cipherValidLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-3.0" prefHeight="30.0" prefWidth="62.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="keyValidLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-3.0" prefHeight="30.0" prefWidth="62.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="5">
@@ -880,52 +880,52 @@
                         </AnchorPane>
                         <GridPane maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="1100.0" VBox.vgrow="ALWAYS">
                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="16.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="16.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
                               <ColumnConstraints hgrow="NEVER" minWidth="60.0" prefWidth="60.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" percentWidth="12.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="16.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="16.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" percentWidth="16.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                              <AnchorPane>
                                  <children>
-                                    <Button fx:id="encryptButton" disable="true" focusTraversable="false" maxHeight="51.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="51.0" prefWidth="210.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="encryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="46.0" prefWidth="139.0" GridPane.columnIndex="1">
+                              <AnchorPane GridPane.columnIndex="1">
                                  <children>
-                                    <Button fx:id="decryptButton" disable="true" focusTraversable="false" maxHeight="51.0" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="35.0" prefWidth="210.0" text="Decrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="decryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" text="Decrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                              <AnchorPane GridPane.columnIndex="5">
                                  <children>
-                                    <Button fx:id="cipherDeviceButton" disable="true" focusTraversable="false" maxHeight="46.0" mnemonicParsing="false" onAction="#cipherDeviceButtonAction" prefHeight="37.0" prefWidth="211.0" text="Cipher Device" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="keyDeviceButton" focusTraversable="false" mnemonicParsing="false" onAction="#keyDeviceButtonAction" text="Create Key File" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
-                                          <Font name="Open Sans" size="18.0" />
+                                          <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5">
+                              <AnchorPane GridPane.columnIndex="3">
                                  <opaqueInsets>
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </opaqueInsets>
                                  <children>
-                                    <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
@@ -934,30 +934,30 @@
                               </AnchorPane>
                               <AnchorPane GridPane.columnIndex="6">
                                  <children>
-                                    <Button fx:id="updateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#updateButtonAction" prefHeight="35.0" prefWidth="160.0" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="updateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#updateButtonAction" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                              <AnchorPane GridPane.columnIndex="4">
                                  <children>
-                                    <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" prefHeight="35.0" prefWidth="60.0" progress="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" progress="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4">
+                              <AnchorPane GridPane.columnIndex="2">
                                  <children>
-                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font name="Open Sans" size="18.0" />
                                        </font>
                                     </ToggleButton>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane layoutX="1126.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="7">
+                              <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">
                                  <children>
-                                    <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="35.0" text="Visit Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#openWebsiteAction" text="Visit Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -987,9 +987,9 @@
                                   <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS">
+                                    <AnchorPane>
                                        <children>
-                                          <Label fx:id="statusLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="923.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="statusLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1093.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Monospaced Regular" size="12.0" />
                                              </font>

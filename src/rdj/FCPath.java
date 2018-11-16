@@ -43,7 +43,7 @@ public class FCPath
     public	    boolean isReadable =	    false;
     public	    boolean isWritable =	    false;
     public	    boolean isHidden =		    false;
-    public	    boolean matchCipher =	    false;
+    public	    boolean matchKey =	    false;
 
     public	    boolean isValidPath =	    false;
     public	    boolean isValidFile =	    false;
@@ -51,8 +51,8 @@ public class FCPath
     public	    boolean isValidDevice =	    false;
     public	    boolean isValidPartition =	    false;
     
-    public	    boolean isCipher =		    false;
-    public	    boolean isValidCipher =	    false;
+    public	    boolean isKey =		    false;
+    public	    boolean isValidKey =	    false;
 
 //  Decrypted
     
@@ -74,13 +74,13 @@ public class FCPath
     
     public FCPath
     (
-	Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchCipher,boolean isValidPath, boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isCipher, boolean isValidCipher
+	Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchKey,boolean isValidPath, boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey
 //	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean hasFCToken, boolean isEncrypted, boolean isAuthenticated,boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
 	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
     )
     {
-	this.path = path; this.exist = exist; this.type = type; this.size = size; this.isReadable = readable; this.isWritable = writable; this.isHidden = isHidden;	this.matchCipher = matchCipher;
-	this.isValidPath = isValidPath; this.isValidFile = isValidFile; this.isValidDeviceProtected = isValidDeviceProtected; this.isValidDevice = isValidDevice; this.isValidPartition = isValidPartition; this.isCipher = isCipher; this.isValidCipher = isValidCipher;
+	this.path = path; this.exist = exist; this.type = type; this.size = size; this.isReadable = readable; this.isWritable = writable; this.isHidden = isHidden;	this.matchKey = matchKey;
+	this.isValidPath = isValidPath; this.isValidFile = isValidFile; this.isValidDeviceProtected = isValidDeviceProtected; this.isValidDevice = isValidDevice; this.isValidPartition = isValidPartition; this.isKey = isKey; this.isValidKey = isValidKey;
 	
 	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
 //	this.hasFCToken = hasFCToken; this.isEncrypted = isEncrypted; this.isAuthenticated = isAuthenticated; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
@@ -91,15 +91,15 @@ public class FCPath
     {
 	FCPath newFCPath = new FCPath(fcPath.path);
 	newFCPath.path = fcPath.path; newFCPath.exist = fcPath.exist; newFCPath.type =fcPath. type; newFCPath.size = fcPath.size; newFCPath.isReadable = fcPath.isReadable; newFCPath.isWritable = fcPath.isWritable;
-	newFCPath.isHidden = fcPath.isHidden; newFCPath.matchCipher = fcPath.matchCipher;
-	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isCipher = fcPath.isCipher; newFCPath.isValidCipher = fcPath.isValidCipher;
+	newFCPath.isHidden = fcPath.isHidden; newFCPath.matchKey = fcPath.matchKey;
+	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isKey = fcPath.isKey; newFCPath.isValidKey = fcPath.isValidKey;
 	newFCPath.isDecrypted = fcPath.isDecrypted; newFCPath.isEncryptable = fcPath.isEncryptable; newFCPath.isNewEncrypted = fcPath.isNewEncrypted; newFCPath.isUnEncryptable = fcPath.isUnEncryptable; 
 //	newFCPath.hasFCToken = fcPath.hasFCToken; newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.isAuthenticated = fcPath.isAuthenticated; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
 	newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
 	return newFCPath;
     }
     
-//    public static String getCipherSelectedDescription()		{ return FCPath.ITEMSELECTDESCRIPTION[type]; }	
+//    public static String getKeySelectedDescription()		{ return FCPath.ITEMSELECTDESCRIPTION[type]; }	
     public static String getTypeString(int type) { return FCPath.TYPE_DESCRIPTION_ARRAY[type]; }
     
     public String getString() {return Validate.getSting(this); }

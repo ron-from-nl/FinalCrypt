@@ -43,20 +43,20 @@ public class GPT_Entries
     }
     
     public void		clear()									    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].clear(); } setDesc(); }
-    public void		read(FCPath cipherFCPath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(cipherFCPath); } setTotalSize(); setDesc(); }
+    public void		read(FCPath keyFCPath)						    { for(int entry = 0; entry < gpt_entry.length; entry++)   { gpt_entry[entry].read(keyFCPath); } setTotalSize(); setDesc(); }
 
-    public void		create(long cipherSize)
+    public void		create(long keySize)
     {
-	if ( ABSTRACT_LBA >= 0 ) { gpt_entry[0].create(cipherSize, GPT.getUUID());
-				   gpt_entry[1].create(cipherSize, GPT.getUUID()); }
-	else			 { gpt_entry[0].create(cipherSize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
-				   gpt_entry[1].create(cipherSize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();
+	if ( ABSTRACT_LBA >= 0 ) { gpt_entry[0].create(keySize, GPT.getUUID());
+				   gpt_entry[1].create(keySize, GPT.getUUID()); }
+	else			 { gpt_entry[0].create(keySize, gpt.gpt_Entries1.getEntry(0).uniquePartitionGUIDBytes);
+				   gpt_entry[1].create(keySize, gpt.gpt_Entries1.getEntry(1).uniquePartitionGUIDBytes); } setTotalSize(); setDesc();
     }
 
     public void		write(FCPath targetFCPath)						    { new DeviceController(ui).writeLBA(getDesc(), getBytes(), targetFCPath, ABSTRACT_LBA); }
 
-    public void		createCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)		    { gpt_entry[0].writeCipherPartitions(cipherFCPath, targetFCPath); }
-    public void		cloneCipherPartitions(FCPath cipherFCPath, FCPath targetFCPath)		    { gpt_entry[0].cloneCipherPartition(cipherFCPath, targetFCPath); gpt_entry[1].cloneCipherPartition(cipherFCPath, targetFCPath); }
+    public void		createKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].writeKeyPartitions(keyFCPath, targetFCPath); }
+    public void		cloneKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].cloneKeyPartition(keyFCPath, targetFCPath); gpt_entry[1].cloneKeyPartition(keyFCPath, targetFCPath); }
     
     private int		getTotalEntries()							    { return gpt_entry.length; }
     private int		getActiveEntries()							    { int activeEntries = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { if ( gpt_entry[entry].startingLBA != 0 ) { activeEntries++; } } return activeEntries; }

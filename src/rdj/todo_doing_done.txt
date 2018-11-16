@@ -6,11 +6,16 @@ Progress animation
 
 Build Password Repository?
 Social Media Share buttons?
-Added optional cipher password to protect cipher from unauthorized usage
+Added optional key password to protect key from unauthorized usage
 Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
 Directory CheckSum Comparison?
 Reproduce pause / stop buildSelection bug maybe?
+
+Added Create OTP Key
+Disable Key Device Button during create Key Device
+Move pause stop to left and Key Device button to right
+
 =============================== Don't forget ================================
 
 Change FinalCrypt -> properties -> splash screen -> icon on Windows
@@ -20,6 +25,7 @@ Set version in FinalCrypt_pad.xml file
 
 =================================== Done ====================================
 
+Renamed Cipher to Key
 
 ============================= Source Committed ==============================
 
@@ -33,16 +39,16 @@ FileChooser Refresh Update
 
 Fixed MultiOS GUI bug
 Fixed MacOSX busy-bug
-Cleared cipher info on cipher dir selection
+Cleared key info on key dir selection
 Major Cosmetic GUI Change
 Minor fixes filter stats
-Improved Cipher Validation 
+Improved Key Validation 
 Fixed filter print unreadable / unwritable files list
-Added Cipher Checksum 
+Added Key Checksum 
 Fixed print un-rd/wr files
 Minor update for printing
 
-New: Cipher device types
+New: Key device types
 Better: printing, clocks
 Goto website button
 Added additional unix storage device types 
@@ -64,7 +70,7 @@ Live statistics added during processing
 Removed a number of small harmless bugs
 Improved intuitiveness, looks and feel
 
-Added Cipher Authentication (Wrong Cipher Aborts encryption / decryption)
+Added Key Authentication (Wrong Key Aborts encryption / decryption)
 Removed Validate & getDesktop.open bug
 Increased GUI performance & logging
 GPT printing from GUI (Mac & Linux only)
@@ -76,9 +82,9 @@ Removed false logging (causing a mess in logfiles and log textArea)
 Fixed OSX SeakableByteChannel.size bug with custom getDeviceSize method
 Normalized GPT Tooling Object Model
 Extended GUID Partition Table Tooling
-Added read/write file-permission test on (raw cipher) device files 
+Added read/write file-permission test on (raw key) device files 
 Replaced JavaFX Timeline with Timer(Task) objects on all CLUI related objects.
-Fixed updateProgressBars on creating raw cipher device and clone raw cipher device.
+Fixed updateProgressBars on creating raw key device and clone raw key device.
 
 Replaced all UNIX new lines "\n" to international new line standard "\r\n"
 Added filelogger (regular & error logs) for Command Line & Graphical UI
@@ -97,18 +103,18 @@ Fixed small statusfield growth issue
 
 Line breaking during processing catches
 Clear Log TextArea every 1000 writes for better performance
-Added Cipher Device support to Command Line User Interface
+Added Key Device support to Command Line User Interface
 Fixed pauze & stop buttons in new Statemachine
 Fixed CLUI relative paths bug in absolute paths
-Adding Cipher Device Device Cloning on Linux and Apple
-Added Cipher Device Device randomizing, including gap at end of partitions
-Added Cipher Device Device Support including GPT Tooling
+Adding Key Device Device Cloning on Linux and Apple
+Added Key Device Device randomizing, including gap at end of partitions
+Added Key Device Device Support including GPT Tooling
 Added a small language improvement on reporting totals
 Changed README.md for a better explanation and motivation of FinalCrypt 
 Synchroniously encrypting & shredding files for guaranteed data consistency
 
 Fixed filechooser focusowner conflict bug under OSX
-Skipped scan encryptable items without selected cipher (better performance)
+Skipped scan encryptable items without selected key (better performance)
 Undo file-rename after file-open action
 Disabled focusable ability on all widgets
 Reset to "All-Files" filefilter after encryption
@@ -121,7 +127,7 @@ Changed to user preferences so user can Hide Intro permanently
 Added a brief first-time introduction window (user preferences persistent).
 Locked encrypt, pause and stop buttons from filechooser events during encryption
 Added support for Globbing Pattern and RegEx file filtering to CLUI
-Detect and removed cipherfile from extendedPathList returnList as extra safety
+Detect and removed keyfile from extendedPathList returnList as extra safety
 Added improved Encrypt, Pause, Stop Button behavior after rescan fileChoosers
 Fixed a versionUpdate comparison bug that did not properly add up version segments
 Cached statusLAbel and logTextArea and set default * on wildcard extension in CLUI

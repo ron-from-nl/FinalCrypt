@@ -24,38 +24,38 @@ public class DeviceManager extends Thread
         
     public DeviceManager(UI ui) { this.ui = ui; }
     
-    public void createCipherDevice(FCPath cipherFCPath, FCPath targetFCPath)
+    public void createKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,            "", targetFCPath.path, targetFCPath.isCipher,	    true,  	    1L,           false,             true,           true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", targetFCPath.path, targetFCPath.isKey,	    true,  	    1L,           false,             true,           true) )
 	{
-	    ui.status("Creating Cipher Device: " + targetFCPath.path.toString() + "\r\n", true);
+	    ui.status("Creating Key Device: " + targetFCPath.path.toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
-//	    gpt.create(GPT.getCipherFileSize(ui, cipherFilePath), targetDevice);
-	    gpt.create(cipherFCPath.size, targetFCPath);
+//	    gpt.create(GPT.getKeyFileSize(ui, keyFilePath), targetDevice);
+	    gpt.create(keyFCPath.size, targetFCPath);
 	    gpt.write(targetFCPath);
-	    gpt.createCipherPartitions(cipherFCPath, targetFCPath);
+	    gpt.createKeyPartitions(keyFCPath, targetFCPath);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
 
-    public void cloneCipherDevice(FCPath cipherFCPath, FCPath targetFCPath)
+    public void cloneKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
     {
-//		           isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isCipher,     boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+//		           isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey,     boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	if (
-		( Validate.isValidFile(   ui,            "",	  cipherFCPath.path, cipherFCPath.isCipher,	     true,	     1L,	   false,	     false,	     true) ) &&
-		( Validate.isValidFile(   ui,            "",	  targetFCPath.path, targetFCPath.isCipher,          true,	     1L,	   false,	      true,	     true) )
+		( Validate.isValidFile(   ui,            "",	  keyFCPath.path, keyFCPath.isKey,	     true,	     1L,	   false,	     false,	     true) ) &&
+		( Validate.isValidFile(   ui,            "",	  targetFCPath.path, targetFCPath.isKey,          true,	     1L,	   false,	      true,	     true) )
 	    )
 	{
-	    ui.status("Cloning Cipher Device: " + cipherFCPath.path.toString() + " to " + targetFCPath.path.toString() + "\r\n", true);
+	    ui.status("Cloning Key Device: " + keyFCPath.path.toString() + " to " + targetFCPath.path.toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    
 //	    Either read (clone diskGUIDs & partitionGUIDs) or create (new diskGUIDs & partitionGUIDs)
-//            gpt.read(cipherDeviceFilePath); // Copies currentLBA and backupLBA which causes invalid headers on a different size USB Stick
-	    gpt.create(DeviceController.getCipherPartitionSize(ui, cipherFCPath), targetFCPath);
+//            gpt.read(keyDeviceFilePath); // Copies currentLBA and backupLBA which causes invalid headers on a different size USB Stick
+	    gpt.create(DeviceController.getKeyPartitionSize(ui, keyFCPath), targetFCPath);
 	    gpt.write(targetFCPath);
-	    gpt.cloneCipherpartitions(cipherFCPath, targetFCPath);
+	    gpt.cloneKeypartitions(keyFCPath, targetFCPath);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
@@ -64,10 +64,10 @@ public class DeviceManager extends Thread
 //  Used by --gpt option
     public void printGPT(FCPath fcPath)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,            "", fcPath.path,		fcPath.isCipher,	  true,		  1L,		false,		  false,	   true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,            "", fcPath.path,		fcPath.isKey,	  true,		  1L,		false,		  false,	   true) )
 	{
-//	    ui.status("Printing GUID Partition Table: " + cipherDevice.getPath().toString() + "\r\n", true);
+//	    ui.status("Printing GUID Partition Table: " + keyDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
 	    gpt.read(fcPath);
 	    gpt.print();
@@ -76,8 +76,8 @@ public class DeviceManager extends Thread
     
     public void deleteGPT(FCPath fcPath)
     {
-//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isCipher, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-	if ( Validate.isValidFile(   ui,	    "",		   fcPath.path,	 fcPath.isCipher,	    true,	    1L,		  false,	     true,	    true) )
+//		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	if ( Validate.isValidFile(   ui,	    "",		   fcPath.path,	 fcPath.isKey,	    true,	    1L,		  false,	     true,	    true) )
 	{
 //	    ui.status("Deleting GUID Partition Table: " + targetDevice.getPath().toString() + "\r\n", true);
 	    GPT gpt = new GPT(ui);
