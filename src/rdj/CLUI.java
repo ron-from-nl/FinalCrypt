@@ -245,7 +245,7 @@ public class CLUI implements UI
 
 		    SecureRandom random = new SecureRandom();
 
-		    write1loop: while ( (writeKeyFileChannelTransfered < filesizeInBytes) && (! inputEnded ))
+		    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
 		    {
 			remainder = (filesizeInBytes - totalTranfered);
 
