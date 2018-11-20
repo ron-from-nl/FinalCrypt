@@ -53,7 +53,7 @@
                               <Font name="System Bold" size="9.0" />
                            </font>
                         </Button>
-                        <Button fx:id="decreaseButton" disable="true" layoutX="415.0" layoutY="241.0" mnemonicParsing="false" onAction="#decreaseButtonOnAction" onMousePressed="#decreaseButtonOnMousePressed" onMouseReleased="#decreaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="14.0" text="↓">
+                        <Button fx:id="decreaseButton" disable="true" layoutX="415.0" layoutY="241.0" mnemonicParsing="false" onAction="#decreaseButtonOnAction" onMousePressed="#decreaseButtonOnMousePressed" onMouseReleased="#decreaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="20.0" text="↓">
                            <font>
                               <Font name="System Bold" size="9.0" />
                            </font>
