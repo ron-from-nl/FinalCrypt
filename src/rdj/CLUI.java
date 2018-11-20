@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -55,7 +56,8 @@ public class CLUI implements UI
     
     private boolean encrypt = false;
     private boolean decrypt = false;
-    private boolean create = false;
+    private boolean createkeydev = false;
+    private boolean createkeyfile = false;
     private boolean clone = false;
     private boolean key_checksum = false;
     private boolean printgpt = false;
@@ -76,14 +78,19 @@ public class CLUI implements UI
     private FCPathList deleteGPTTargetList;
     private  FCPathList targetFCPathList;
     private boolean keySourceChecksumReadEnded = false;
+    private int bufferSize;
+    private Long totalTranfered;
+//    private Long filesizeInBytes;
+    private Long filesizeInBytes = 100L * (1024L * 1024L);  // Create OTP Key File Size
+    private Path keyPath;
 
     public CLUI(String[] args)
     {
         this.ui = this;
         boolean tfset = false;
 	boolean tfsetneeded = false;
-	boolean cfset = false;
-	boolean cfsetneeded = true;
+	boolean kfset = false;
+	boolean kfsetneeded = true;
         boolean validInvocation = true;
         boolean negatePattern = false;
 
@@ -116,14 +123,15 @@ public class CLUI implements UI
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
-            else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { encrypt = true; cfsetneeded = true; tfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { decrypt = true; cfsetneeded = true; tfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--create"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { create = true; cfsetneeded = true; tfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--clone"))							    { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { clone = true; cfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { createkeydev = true; kfsetneeded = true; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--create-keyfile"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { createkeyfile = true; kfsetneeded = false; tfsetneeded = false; } }
+            else if (  args[paramCnt].equals("--clone"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { clone = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
-            else if (( args[paramCnt].equals("--key-chksum") ))							    { key_checksum = true; cfsetneeded = true; }
-            else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { printgpt = true; cfsetneeded = false; tfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!create)&&(!clone)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; cfsetneeded = false; tfsetneeded = true; } }
+            else if (( args[paramCnt].equals("--key-chksum") ))							    { key_checksum = true; kfsetneeded = true; }
+            else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { printgpt = true; kfsetneeded = false; tfsetneeded = true; } }
+            else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clone)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; kfsetneeded = false; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
@@ -135,6 +143,7 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--version"))                                                          { println(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString()); System.exit(0); }
             else if (  args[paramCnt].equals("--update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) {log(line + "\r\n");} System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-b size]" + "\r\n"); usage(true); }}
+            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { error("\r\nError: Invalid Option Value [-S size]" + "\r\n"); usage(true); }}
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
@@ -143,27 +152,24 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-//            else if (  args[paramCnt].equals("--encrypt"))							    { encrypt = true; }
-//            else if (  args[paramCnt].equals("--decrypt"))							    { decrypt = true;; }
-//            else if (  args[paramCnt].equals("--create"))							    { create = true; }
-//            else if (  args[paramCnt].equals("--clone"))							    { clone = true; }
-            else if ( ( args[paramCnt].equals("-k")) && (paramCnt+1 < args.length) )				    { keyFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); cfset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-k")) && (paramCnt+1 < args.length) )				    { keyFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); kfset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-K")) && (!args[paramCnt+1].isEmpty()) )				    { keyPath = Paths.get(args[paramCnt+1]); paramCnt++; } // Create OTP Key File
             else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
 	    
             else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(true); }
         }
         
-        if ((cfsetneeded) && ( ! cfset ))									    { error("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n"); usage(true); }
+        if ((kfsetneeded) && ( ! kfset ))									    { error("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n"); usage(true); }
         if ((tfsetneeded) && ( ! tfset ))									    { error("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n"); usage(true); }
 
                 
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
 
 	// Key Validation
-	if ((cfsetneeded) && ( ! keyFCPath.isValidKey))
+	if ((kfsetneeded) && ( ! keyFCPath.isValidKey))
 	{
-	    String size = ""; if (keyFCPath.size < FCPath.CIPHER_SIZE_MIN) { size += " [size < " + FCPath.CIPHER_SIZE_MIN + "] "; } 
+	    String size = ""; if (keyFCPath.size < FCPath.KEY_SIZE_MIN) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] "; } 
 	    String dir = ""; if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
 	    String sym = ""; if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
 	    String all = size + dir + sym;
@@ -200,7 +206,111 @@ public class CLUI implements UI
 
 //	Command line input for an optional Password keyboard.nextInt();
 
-//////////////////////////////////////////////////// CIPHER CHECKSUM =================================================
+
+///////////////////////////////////////////////// CREATE OTP KEY FILE =================================================
+
+	if (createkeyfile)
+	{
+	    Long factor = 0L;
+	    bufferSize = 1048576;
+	    totalTranfered = 0L;
+
+//	    ====================================================================================================================
+//	    Start writing key file
+//	    ====================================================================================================================
+	    
+//	    Thread createKeyThread = new Thread(new Runnable()
+//	    {
+////			    private DeviceManager deviceManager;
+//		@Override
+//		@SuppressWarnings({"static-access"})
+//		public void run()
+//		{
+		    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }
+
+		    boolean inputEnded = false;
+		    long writeKeyFileChannelPosition = 0L;
+		    long writeKeyFileChannelTransfered = 0L;
+		    totalTranfered = 0L;
+		    Long remainder = 0L;
+
+	    //      Write the keyfile to 1st partition
+		    byte[]      randomBytes1 =	    new byte[bufferSize];
+		    byte[]      randomBytes2 =	    new byte[bufferSize];
+		    byte[]      randomBytes3 =	    new byte[bufferSize];
+		    ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+		    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+		    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+
+
+		    SecureRandom random = new SecureRandom();
+
+		    write1loop: while ( (writeKeyFileChannelTransfered < filesizeInBytes) && (! inputEnded ))
+		    {
+			remainder = (filesizeInBytes - totalTranfered);
+
+			if	    ( remainder >= bufferSize )				
+			{
+			    randomBytes1 =	    new byte[bufferSize];
+			    randomBytes2 =	    new byte[bufferSize];
+			    randomBytes3 =	    new byte[bufferSize];
+			    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+			    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+			    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+			}
+			else if (( remainder > 0 ) && ( remainder < bufferSize ))
+			{
+			    randomBytes1 =	    new byte[remainder.intValue()];
+			    randomBytes2 =	    new byte[remainder.intValue()];
+			    randomBytes3 =	    new byte[remainder.intValue()];
+			    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
+			    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
+			    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
+			}
+			else							{ inputEnded = true; }
+	    //          Randomize raw key or write raw key straight to partition
+			random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
+			random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
+
+			randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, false); // Encrypt
+
+	    //          Write Device
+			try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+			{
+			    writeKeyFileChannel.position(writeKeyFileChannelPosition);
+			    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
+			    totalTranfered += writeKeyFileChannelTransfered; 
+	//		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
+
+			    writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
+
+			    writeKeyFileChannel.close();
+			} catch (IOException ex) { error("Error: " + ex.getMessage()); inputEnded = true; break; }
+			randomBuffer1.clear(); randomBuffer2.clear(); randomBuffer3.clear();
+		    }
+		    writeKeyFileChannelPosition = 0;                
+		    writeKeyFileChannelTransfered = 0;                
+		    inputEnded = false;
+
+
+		    log("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")\r\n");
+		    System.exit(0);
+//		}
+//	    });
+//	    createKeyThread.setName("createKeyThread");
+//	    createKeyThread.setDaemon(true);
+//	    createKeyThread.start();
+
+	    
+
+//	====================================================================================================================
+//	Finieshed writing key file
+//	====================================================================================================================
+	    
+	}
+	
+
+//////////////////////////////////////////////////// KEY CHECKSUM =====================================================
 
 	if (key_checksum)
 	{
@@ -237,12 +347,13 @@ public class CLUI implements UI
 	    String hashString = getHexString(hashBytes,2);
 	    System.out.println("Message Digest: " + hashString + "\r\n");
 	}
-
+	
+	
 //////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
         
 	targetFCPathList = new FCPathList();
 //	if (!cfsetneeded) { keyFCPath = (FCPath) targetPathList.get(0); }
-	if (!cfsetneeded) 
+	if (!kfsetneeded) 
 	{
 //    					     getFCPath(UI ui, String caller,		 Path path, boolean isKey,   Path keyPath, boolean report)
 		     keyFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),            false, targetPathList.get(0),           true);
@@ -329,7 +440,7 @@ public class CLUI implements UI
 		log(targetFCPathList.getStats());
 	    }
 	}
-	else if (create)
+	else if (createkeydev)
 	{
 	    if (createKeyDeviceFound){ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createKeyDevice(keyFCPath, (FCPath) createKeyList.get(0)); processFinished(); }
 	    else			{ error("No valid target device found:\r\n"); log(targetFCPathList.getStats()); }
@@ -428,7 +539,8 @@ public class CLUI implements UI
         log("Mode:\r\n");
         log("            <--encrypt>           -k \"key_file\"   -t \"target\"	    Encrypt Targets.\r\n");
         log("            <--decrypt>           -k \"key_file\"   -t \"target\"	    Decrypt Targets.\r\n");
-        log("            <--create>            -k \"key_file\"   -t \"target\"	    Create Key Device (only unix).\r\n");
+        log("            <--create-keydev>     -k \"key_file\"   -t \"target\"	    Create Key Device (only unix).\r\n");
+        log("            <--create-keyfile>    -K \"key_file\"   -S \"Size (bytes)\"	    Create OTP Key File.\r\n");
         log("            <--clone>             -k \"source_device\" -t \"target_device\"     Clone Key Device (only unix).\r\n");
         log("            [--print-gpt]         -t \"target_device\"			    Print GUID Partition Table.\r\n");
         log("            [--delete-gpt]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n");
@@ -449,6 +561,7 @@ public class CLUI implements UI
 //        log("            [--chr]               Print character calculations.\r\n");
         log("                                  Warning: The above Print options slows encryption severely.\r\n");
         log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n");
+        log("            [-S size]             OTP Key File Size (size = bytes). See --create-keyfile \r\n");
         log("\r\n");
         log("Filtering Options:\r\n");
         log("\r\n");
@@ -507,7 +620,7 @@ public class CLUI implements UI
         log("\r\n");
         log("            # Create Key Device with 2 key partitions (e.g. on USB Mem Stick)\r\n");
         log("            # Beware: keyfile gets randomized before writing to Device\r\n");
-        log("            java -cp FinalCrypt.jar rdj/CLUI --create -k mykeyfile -t /dev/sdb\r\n");
+        log("            java -cp FinalCrypt.jar rdj/CLUI --create-keydev -k mykeyfile -t /dev/sdb\r\n");
         log("\r\n");
         log("            # Print GUID Partition Table\r\n");
         log("            java -cp FinalCrypt.jar rdj/CLUI --print-gpt -t /dev/sdb\r\n");

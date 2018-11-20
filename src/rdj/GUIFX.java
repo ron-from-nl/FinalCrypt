@@ -131,7 +131,7 @@ public class GUIFX extends Application implements UI, Initializable
     GUIFX guifx;
     private JFileChooser targetFileChooser;
     private boolean negatePattern;
-    private JFileChooser keyFileChooser;
+    public JFileChooser keyFileChooser;
     @FXML
     private SwingNode keyFileSwingNode;
     private JButton targetFileDeleteButton;
@@ -345,6 +345,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Tooltip checksumTooltip;
     private boolean keySourceChecksumReadEnded;
     private boolean keySourceChecksumReadCanceled;
+    private Stage createOTPKeyStage;
+    private CreateOTPKey createOTPKey;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -683,9 +685,7 @@ public class GUIFX extends Application implements UI, Initializable
                             boolean returnpathlist = false;
                             String pattern = "glob:*";
                             finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
-                            targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
-                            keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-			    targetFileChooserPropertyCheck(true);
+			    updateFileChoosers();
                         }
                     }
                 }
@@ -713,9 +713,7 @@ public class GUIFX extends Application implements UI, Initializable
                         boolean returnpathlist = false;
                         String pattern = "glob:*";
                         finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
-                        targetFileChooser.rescanCurrentDirectory();  targetFileChooser.validate();
-                        keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-			keyFileChooserPropertyCheck();
+			updateFileChoosers();
                     }
                 }
             }
@@ -767,7 +765,7 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(true); keyDeviceButton.setText("Create Key File");
+		    keyDeviceButton.setDisable(true); keyDeviceButton.setText("Create OTP Key File");
 		}});
 	    }
 //												  isKey device  minsize  symlink  writable status
@@ -778,14 +776,14 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
 		}});
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
+	    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
 	}
 	
         keyFileChooser.setFileFilter(this.nonFinalCryptFilter);
@@ -814,7 +812,7 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
 		}});
 	    }
 	    else
@@ -863,7 +861,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
+		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
@@ -960,7 +958,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    if (keyFCPath.type != FCPath.FILE)	{ keyTypeLabel.setTextFill(Color.ORANGERED); }
 			    else					{ keyTypeLabel.setTextFill(Color.ORANGE); }
 			    keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
-			    if ( keyFCPath.size < FCPath.CIPHER_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+			    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 			    checksumLabel.setText(""); checksumTooltip.setText("");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 			    // Tooltip.install(checksumLabel, checksumTooltip); 
@@ -1372,7 +1370,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    createKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Key List:\r\n" + createKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key Device");
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
 		    }		
 		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
@@ -1381,13 +1379,13 @@ public class GUIFX extends Application implements UI, Initializable
 			{
 			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
 			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Clone Key Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
-		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
+		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
 		}
 		else
 		{
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); // Default enabler
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); // Default enabler
 		}
 	    }
 	}});
@@ -1615,19 +1613,28 @@ public class GUIFX extends Application implements UI, Initializable
         // Needs Threading to early split off from the UI Event Dispatch Thread
         final GUIFX guifx = this;
         final UI ui = this;
-        Thread encryptThread = new Thread(new Runnable()
+
+//	Platform.runLater(new Runnable() { @Override public void run()
+//	{
+//	}});
+
+	Thread encryptThread = new Thread(new Runnable()
         {
             private DeviceManager deviceManager;
             @Override
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		if	( keyDeviceButton.getText().equals("Create Key File") )
+		
+		if ( keyDeviceButton.getText().equals("Create OTP Key File") )
 		{
-		    processRunningType = CREATE;
-		    tab.getSelectionModel().select(1);
-                    processStarted();
-                    processFinished();
+		    Platform.runLater(new Runnable() { @Override public void run()
+		    {
+			createOTPKeyStage = new Stage();
+			createOTPKey = new CreateOTPKey();
+			try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+			createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
+		    }});
 		}
 		else if	( keyDeviceButton.getText().equals("Create Key Device") )
 		{
@@ -1910,6 +1917,37 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  ================================================= END UPDATE PROGRESS ===========================================================
 
+    public void updateFileChoosers()
+    {
+        Platform.runLater(new Runnable() { @Override public void run()
+        {
+	    targetFileChooser.setSelectedFile(new File(""));
+	    File[] files = { new File("") };
+	    targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
+	    targetFileChooser.setSelectedFiles(files);
+	    targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+	    targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
+	    
+//	    targetFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+	    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
+	    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+	    keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+	    keyFileChooser.setSelectedFile(new File(""));
+
+//	    keyFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//	    keyFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//	    keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+	    
+	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+
+	    targetFileChooserPropertyCheck(false);
+	    keyFileChooserPropertyCheck();
+        }});
+    }
+    
     @FXML
     private void keyInfoLabelClicked(MouseEvent event)
     {
@@ -1924,27 +1962,26 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setHeaderText("What is your secret Key file?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext  = "Any personal photo or video can be your key file.\r\n";
-        infotext += "FinalCrypt de/encrypts your files with your key file.\r\n";
-        infotext += "Data in your key file is like a huge binary password.\r\n";
+        infotext = "FinalCrypt de/encrypts your files with a key file.\r\n";
+        infotext += "Any personal photo or video can be your key file.\r\n";
+        infotext += "Best is to create a One-Time Pad Key File below.\r\n";
         infotext += "\r\n";
-        infotext += "Keep backups of your key file and keep it SECRET!\r\n";
-        infotext += "Without key file you can NEVER decrypt your data!\r\n";
+        infotext += "Keep keys secret and backed up (on USB sticks)\r\n";
+        infotext += "Without keys you can NEVER decrypt your files!\r\n";
         infotext += "\r\n";
-        infotext += "==================================\r\n";
+        infotext += "==============================\r\n";
         infotext += "\r\n";
-        infotext += "Best practice is a key file of at least 1 MB in size\r\n";
-        infotext += "Don't keep key file(s) on your computer for too long\r\n";
-        infotext += "to prevent someone or something copying it.\r\n";
+        infotext += "Don't keep key file(s) on your computer too long\r\n";
+        infotext += "to prevent someone or something copying them.\r\n";
         infotext += "\r\n";
-        infotext += "Encryption / Decryption (advanced explanation):\r\n";
-        infotext += "\r\n";
-        infotext += "Your key bit patterns negate your file bit patterns.\r\n";
-        infotext += "\r\n";
-        infotext += "                  Encrypt                      Decrypt\r\n";
-        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\r\n";
-        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\r\n";
-        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\r\n\r\n";
+//        infotext += "Encryption / Decryption (advanced explanation):\r\n";
+//        infotext += "\r\n";
+//        infotext += "Your key bit patterns negate your file bit patterns.\r\n";
+//        infotext += "\r\n";
+//        infotext += "                  Encrypt                      Decrypt\r\n";
+//        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\r\n";
+//        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\r\n";
+//        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\r\n\r\n";
 //        infotext += " \r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
@@ -1969,7 +2006,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "Encrypted files get the \".bit\" extension added.\r\n";
         infotext += "Decrypted files get the \".bit\" extension removed.\r\n";
         infotext += "\r\n";
-        infotext += "Original files are securely deleted after en / decryption.\r\n";
+        infotext += "Original files are securely deleted after encryption.\r\n";
         infotext += "\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
@@ -2058,7 +2095,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n");
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
@@ -2071,7 +2108,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n");
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key File"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
