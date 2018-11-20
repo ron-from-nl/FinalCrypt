@@ -350,7 +350,7 @@ public class CreateOTPKey extends Application implements Initializable
 
 	    SecureRandom random = new SecureRandom();
 
-	    write1loop: while ( (writeKeyFileChannelTransfered < filesizeInBytes) && (! inputEnded ))
+	    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
 	    {
 		remainder = (filesizeInBytes - totalTranfered);
 

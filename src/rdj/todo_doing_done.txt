@@ -12,10 +12,6 @@ auto encrypt on exit getDesktop.open(..
 Directory CheckSum Comparison?
 Reproduce pause / stop buildSelection bug maybe?
 
-Added Create OTP Key
-Disable Key Device Button during create Key Device
-Move pause stop to left and Key Device button to right
-
 =============================== Don't forget ================================
 
 Change FinalCrypt -> properties -> splash screen -> icon on Windows
@@ -25,7 +21,6 @@ Set version in FinalCrypt_pad.xml file
 
 =================================== Done ====================================
 
-Renamed Cipher to Key
 
 ============================= Source Committed ==============================
 
@@ -35,6 +30,9 @@ Renamed Cipher to Key
 
 ============================= Binaries Released =============================
 
+Fix OTP Key Size Bug
+Added Create OTP Key
+Renamed Cipher to Key
 FileChooser Refresh Update
 
 Fixed MultiOS GUI bug
