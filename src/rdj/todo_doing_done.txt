@@ -29,8 +29,8 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
-Auto Update Check 1/day
-Improved Logging System 
+Automat Update Check
+Improved Log System 
 
 Fix OTP Key Size Bug
 Added Create OTP Key
