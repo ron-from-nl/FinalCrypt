@@ -4,7 +4,6 @@ Progress animation
 
 =================================== Doing ===================================
 
-Build Password Repository?
 Social Media Share buttons?
 Added optional key password to protect key from unauthorized usage
 Backup update locations (properties, daily check / history)
@@ -30,11 +29,13 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Auto Update Check 1/day
+Improved Logging System 
+
 Fix OTP Key Size Bug
 Added Create OTP Key
 Renamed Cipher to Key
 FileChooser Refresh Update
-
 Fixed MultiOS GUI bug
 Fixed MacOSX busy-bug
 Cleared key info on key dir selection

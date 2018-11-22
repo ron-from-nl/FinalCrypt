@@ -252,7 +252,7 @@ public class GPT
     
     synchronized public boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
-    public void print()	{ ui.log(toString()); }    
+    public void print()	{ ui.log(toString(), false, true, true, false, false); }    
 
     @Override
     public String toString()
@@ -273,14 +273,14 @@ public class GPT
         FileSystem fs = FileSystems.getDefault();
         Iterable<FileStore> stores = fs.getFileStores();
 
-	ui.log("\r\n");
-        ui.log(String.format("%-70s", "Name"));
-        ui.log(String.format("%-20s", "Type"));
-        ui.log(String.format("%-20s", "Tot"));
-        ui.log(String.format("%-20s", "Used"));
-        ui.log(String.format("%-20s", "Avail"));
-        ui.log(String.format("%-20s", "rd-Only"));
-        ui.log("\r\n");
+	ui.log("\r\n", true, true, true, false, false);
+        ui.log(String.format("%-70s", "Name"), true, true, true, false, false);
+        ui.log(String.format("%-20s", "Type"), true, true, true, false, false);
+        ui.log(String.format("%-20s", "Tot"), true, true, true, false, false);
+        ui.log(String.format("%-20s", "Used"), true, true, true, false, false);
+        ui.log(String.format("%-20s", "Avail"), true, true, true, false, false);
+        ui.log(String.format("%-20s", "rd-Only"), true, true, true, false, false);
+        ui.log("\r\n", true, true, true, false, false);
         for (FileStore store : stores)
         {
             try
@@ -291,13 +291,13 @@ public class GPT
                 boolean is_read_only = store.isReadOnly();
                 if ( total_space > 0 )
                 {
-                    ui.log(String.format("%-70s", store.name()));
-                    ui.log(String.format("%-20s", store.type()));
-                    ui.log(String.format("%-20s", getHumanSize(total_space, 1)));
-                    ui.log(String.format("%-20s", getHumanSize(used_space,1)));
-                    ui.log(String.format("%-20s", getHumanSize(available_space,1)));
-                    ui.log(String.format("%-20s", is_read_only));
-                    ui.log("\r\n");
+                    ui.log(String.format("%-70s", store.name()), true, true, true, false, false);
+                    ui.log(String.format("%-20s", store.type()), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(total_space, 1)), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(used_space,1)), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(available_space,1)), true, true, true, false, false);
+                    ui.log(String.format("%-20s", is_read_only), true, true, true, false, false);
+                    ui.log("\r\n", true, true, true, false, false);
                 }
             }
             catch (IOException e) { System.err.println(e); }

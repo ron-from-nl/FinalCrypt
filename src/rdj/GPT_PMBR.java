@@ -187,7 +187,7 @@ public class GPT_PMBR // Protective MBR
         return GPT.byteListToByteArray(definitiveByteList);
     }
 
-    public void print() { ui.log(toString()); }
+    public void print() { ui.log(toString(), true, true, true, false, false); }
     
     private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - Protective MBR (" + getBytes().length + " Bytes) Storage: " + GPT.getLBAHumanSize(sizeInLBABytes,1) + " ]"); }
     private String getDesc() { return DESCSTRING; }

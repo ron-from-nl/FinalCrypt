@@ -1,4 +1,4 @@
-[Version] =		{2.6.1}
+[Version] =		{2.6.2}
 [Release Notes] =	{Added Create OTP Key}
 [Release Message] =	{Fix OTP Key Size Bug}
 [Alert Subject] =	{}

@@ -55,7 +55,7 @@ public class Validate
         if ( ! Files.isWritable(targetDirPath) )					    { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )			    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
 //        if ( validdir ) {  } else { if ( report )					    { ui.error("Warning: Validate.isValidDir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
-        if ( ! validdir )								    { if ( report ) { ui.status("Warning: skipping dir: " + targetDirPath.toString() + ": " + conditions + "\r\n", true); } }
+        if ( ! validdir )								    { if ( report ) { ui.log("Warning: skipping dir: " + targetDirPath.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }
         return validdir;
     }
 
@@ -65,7 +65,7 @@ public class Validate
         boolean validfile = true; String conditions = "";				    String key = "";
 	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
 	if ((keyPath != null) && validfile) { if (path.compareTo(keyPath) == 0) { validfile = false; key = "[is key] "; conditions += key; }}	
-        if ( ! validfile ) { if ( report )						    { ui.status("Warning: " + path.toString() + ": " + conditions + "\r\n", true); } }                    
+        if ( ! validfile ) { if ( report )						    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }                    
         return validfile;
     }
 
@@ -78,7 +78,7 @@ public class Validate
         {
             if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
 	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isKey); }
-	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.error("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n"); } }
+	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.log("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n", true, true, true, true, false); } }
             if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
             if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
             if ((! isKey) && (writable) && ( ! Files.isWritable(path)))		    { validfile = false; write = "[not writable] "; conditions += write; }
@@ -90,7 +90,7 @@ public class Validate
 	    if ( report )
 //	    { ui.error("Warning: Validate.isValidFile(...): " + caller + " Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } 
 //	    { ui.status("Warning: " + caller + " " + path.toString() + ": " + conditions + "\r\n", true); } 
-	    { ui.status("Warning: " + path.toString() + ": " + conditions + "\r\n", true); } 
+	    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } 
 	}                    
         return validfile;
     }
@@ -120,7 +120,7 @@ public class Validate
 	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextTokenBuffer); plainTextTokenBuffer.flip();
 	    if ( readTargetSourceChannelTransfered != plainTextTokenBuffer.capacity() ) { return false; }
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { ui.error("Error: targetSourceHasToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
+	} catch (IOException ex) { ui.log("Error: targetSourceHasToken: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Compare plainTextTokenBuffer to FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN
 	String plainTextTokenString = new String(plainTextTokenBuffer.array(), StandardCharsets.UTF_8);
@@ -151,7 +151,7 @@ public class Validate
 //	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
 	    readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { readTargetSourceChannelError = true; ui.error("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n"); }
+	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Encrypted Token Buffer
 	targetEncryptedTokenBuffer.put(targetSrcTokenBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.flip();
@@ -165,7 +165,7 @@ public class Validate
 //		readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer);
 		readKeySourceChannel.read(keySourceBuffer);
 		keySourceBuffer.flip(); readKeySourceChannel.close();
-	    } catch (IOException ex) { ui.error("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n"); }
+	    } catch (IOException ex) { ui.log("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    
 	    // Create Encrypted Token Buffer
 	    keyDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, keySourceBuffer, false);
@@ -189,7 +189,7 @@ public class Validate
 	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    keyFCPath,                   targetFCPathList,	pattern,         negatePattern);
 	for (Path path:pathList)
 	{
-	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.error("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n"); }
+	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n", true, true, true, true, false); }
 	}
 	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) ) { ui.buildReady(targetFCPathList); } else { targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList); }
     }
@@ -301,12 +301,12 @@ public class Validate
 	    if (exist)
 	    {
 		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isKey); }
-		else if( (exist) && ((type == FCPath.FILE) /*|| (type == FCPath.SYMLINK)*/) )			    { try { size = Files.size(path); } catch (IOException ex)  { ui.error("Error: IOException: Validate.getFCPath: Files.size() "+ ex.getMessage() + "\r\n"); } } // Symlinks give Files.size() errors on broken links
+		else if( (exist) && ((type == FCPath.FILE) /*|| (type == FCPath.SYMLINK)*/) )			    { try { size = Files.size(path); } catch (IOException ex)  { ui.log("Error: IOException: Validate.getFCPath: Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } } // Symlinks give Files.size() errors on broken links
 	    }
 	    
 	    readable = Files.isReadable(path);
 	    writable = Files.isWritable(path);
-	    try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.error("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n"); } // SoftDown.eu error
+	    try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.log("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // SoftDown.eu error
 	    
 	    // Target =============================================================================================================================================================================================
 	    
@@ -458,7 +458,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	{
 	    if	(delete)	{ return FileVisitResult.CONTINUE; }
 	    else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
-	    else			{ ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); return FileVisitResult.CONTINUE; }
+	    else			{ ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); return FileVisitResult.CONTINUE; }
 	}
 	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; }
     }    
@@ -469,13 +469,13 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	{
 	    if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
 	    {            
-		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
+		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 		else if (setFCPathlist)    
 		{
 //    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean report)
 		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path,           true); targetFCPathList.add(fcPath);
 		}
-		else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
+		else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    }
 	    return FileVisitResult.CONTINUE;
 	}
@@ -497,9 +497,9 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.error("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n"); } }
+	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 	    else if (setFCPathlist) {     }
-	    else { ui.status("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true); }
+	    else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    
 	    return FileVisitResult.CONTINUE;
 	}

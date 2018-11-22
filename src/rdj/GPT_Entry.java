@@ -137,7 +137,7 @@ public class GPT_Entry
         return GPT.byteListToByteArray(byteList);
     }
     
-    public void print() { ui.log(toString()); }
+    public void print() { ui.log(toString(), true, true, true, false, false); }
     
     private void setDesc()			    { DESCSTRING = ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1) + " ]"); }
     private String getDesc()			    { return DESCSTRING; }

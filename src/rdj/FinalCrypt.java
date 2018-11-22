@@ -139,7 +139,7 @@ public class FinalCrypt extends Thread
         // Get TOTALS
         allDataStats.setFilesTotal(filteredTargetSourceFCPathList.encryptableFiles + filteredTargetSourceFCPathList.decryptableFiles);
         allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize);
-	ui.status(allDataStats.getStartSummary("En/Decrypting"), true);
+	ui.log(allDataStats.getStartSummary("En/Decrypting"), true, true, true, false, false);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
@@ -191,7 +191,7 @@ public class FinalCrypt extends Thread
 		    else				    { targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
 		
-		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n"); }
+		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
 		// Prints printByte Header ones                
 		if ( print )
@@ -202,12 +202,12 @@ public class FinalCrypt extends Thread
 //		    ui.log("| ---------|-------------------|-------------------|-------------------|\r\n");
 //		    ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
 //		    ui.log("|----------|-------------------|-------------------|-------------------|\r\n");
-		    ui.log("\r\n");
-		    ui.log(" -----------------------------------------------------------\r\n");
-		    ui.log("|       Input       |      Key       |      Output       |\r\n");
-		    ui.log("|-------------------|-------------------|-------------------|\r\n");
-		    ui.log("| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
-		    ui.log("|-------------------|-------------------|-------------------|\r\n");
+		    ui.log("\r\n", true, true, true, false, false);
+		    ui.log(" -----------------------------------------------------------\r\n", true, true, true, false, false);
+		    ui.log("|       Input       |      Key       |      Output       |\r\n", true, true, true, false, false);
+		    ui.log("|-------------------|-------------------|-------------------|\r\n", true, true, true, false, false);
+		    ui.log("| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n", true, true, true, false, false);
+		    ui.log("|-------------------|-------------------|-------------------|\r\n", true, true, true, false, false);
 		}
 //___________________________________________________________________________________________________________________________________________________________
 //
@@ -226,7 +226,7 @@ public class FinalCrypt extends Thread
 		    {
 			if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			{
-			    ui.status(		UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", false);
+			    ui.log(		UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
 			    fileStatusLine =	UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ";
 
 			    if ( ! dry )
@@ -239,12 +239,12 @@ public class FinalCrypt extends Thread
 				    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
 				    writeTargetDestinChannel.close();
 				    // wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
-				} catch (IOException ex) { ui.error("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+				} catch (IOException ex) { ui.log("Error: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 			    }
 			}
 			else // Decrypted but NOT Encryptable (should not be in the list anyway)
 			{
-			    ui.status(UTF8_UNENCRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true);
+			    ui.log(UTF8_UNENCRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Not Encryptable!\r\n", true, true, false, false, false);
 			    continue encryptTargetloop;
 			}
 		    }
@@ -256,12 +256,12 @@ public class FinalCrypt extends Thread
 			if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
 			{
 			    fileStatusLine = UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ";
-			    ui.status(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", false);
+			    ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
 			    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
 			}
 			else
 			{
-			    ui.status(UTF8_UNDECRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Key Failed : " + keySourceFCPath.toString() + "\r\n", true);
+			    ui.log(UTF8_UNDECRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Key Failed : " + keySourceFCPath.toString() + "\r\n", true, true, false, false, false);
 			    continue encryptTargetloop;
 			}
 		    }
@@ -345,8 +345,8 @@ public class FinalCrypt extends Thread
 		    if (stopPending)
 		    {
 //                          Delete broken outputFile and keep original
-			try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.error("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n"); }
-			targetSourceEnded = true; ui.status("\r\n", true); break encryptTargetloop;
+			try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			targetSourceEnded = true; ui.log("\r\n", true, true, false, false, false); break encryptTargetloop;
 		    }
 
 		    //open targetSourcePath
@@ -361,7 +361,7 @@ public class FinalCrypt extends Thread
 			readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
 			readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered / 2);
 			allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
-		    } catch (IOException ex) { ui.error("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+		    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("readTargetSourceChannelTransfered: " + readTargetSourceChannelTransfered + " targetSourceBuffer.limit(): " + Integer.toString(targetSourceBuffer.limit()) + "\r\n");
 
 		    if ( readTargetSourceChannelTransfered != -1 )
@@ -377,7 +377,7 @@ public class FinalCrypt extends Thread
 			    readKeySourceChannel.close();
 //				    readKeySourceStat.setFileEndEpoch(); readKeySourceStat.clock();
 //                                    readKeySourceStat.addFileBytesProcessed(readKeySourceChannelTransfered);
-			} catch (IOException ex) { ui.error("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			} catch (IOException ex) { ui.log("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                                ui.log("readKeyFileChannelTransfered: " + readKeySourceChannelTransfered + " keySourceBuffer.limit(): " + Integer.toString(keySourceBuffer.limit()) + "\r\n");
 
 			// Open outputFile for writing
@@ -391,7 +391,7 @@ public class FinalCrypt extends Thread
 			    writeTargetDestinChannel.close();
 //				    wrteTargetDestinStat.setFileEndEpoch(); wrteTargetDestinStat.clock();
 //                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
-			} catch (IOException ex) { ui.error("Error: writeTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			} catch (IOException ex) { ui.log("Error: writeTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("writeTargetDestChannelTransfered: " + writeTargetDestChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString(targetDestinBuffer.limit()) + "\r\n");
 		    }
 		    targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
@@ -439,8 +439,8 @@ public class FinalCrypt extends Thread
 				    Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
 				    Files.setAttribute(targetDestinPath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
 				}
-				catch (IOException ex) { ui.error("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n"); }
-			    }   catch (IOException ex) { ui.error("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+				catch (IOException ex) { ui.log("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
 			}
 			else if ( view.toLowerCase().equals("dos") )
 			{
@@ -455,8 +455,8 @@ public class FinalCrypt extends Thread
 				    Files.setAttribute(targetDestinPath, "dos:readonly",              msdosAttributes.isReadOnly());
 				    Files.setAttribute(targetDestinPath, "dos:archive",               msdosAttributes.isArchive());
 				}
-				catch (IOException ex) { ui.error("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n"); }
-			    }   catch (IOException ex) { ui.error("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+				catch (IOException ex) { ui.log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
 			}
 			else if ( view.toLowerCase().equals("posix") )
 			{
@@ -471,8 +471,8 @@ public class FinalCrypt extends Thread
 				    Files.setPosixFilePermissions(targetDestinPath,                   posixAttributes.permissions());
 				    Files.setLastModifiedTime(targetDestinPath,                       posixAttributes.lastModifiedTime());
 				}
-				catch (IOException ex) { ui.error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
-			    }   catch (IOException ex) { ui.error("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage()); }
+				catch (IOException ex) { ui.log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
 			}
 		    } // End attributeViewloop // End attributeViewloop
 		} // End ! dry
@@ -483,7 +483,7 @@ public class FinalCrypt extends Thread
 
 //                      Shredding process
 
-		ui.status(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", false); // 🌊🗑
+		ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 
@@ -491,7 +491,7 @@ public class FinalCrypt extends Thread
 		{
 //				     isValidFile(UI ui, String caller,    Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1,           false,            false,	    true))
-		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.error("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n"); } } else 
+		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.log("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n", true, true, true, true, false); } } else 
 
 		    readTargetSourceChannelPosition = 0;	readTargetSourceChannelTransfered = 0;
 		    readKeySourceChannelPosition = 0;    readKeySourceChannelTransfered = 0;
@@ -517,7 +517,7 @@ public class FinalCrypt extends Thread
 			    readTargetDestChannelTransfered = readTargetDestinChannel.read(targetDestinBuffer); targetDestinBuffer.flip(); readTargetDestChannelPosition += readTargetDestChannelTransfered;
 			    if (( readTargetDestChannelTransfered < 1 )) { targetDestinEnded = true; }
 			    readTargetDestinChannel.close();
-			} catch (IOException ex) { ui.error("Error: readTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			} catch (IOException ex) { ui.log("Error: readTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("readTargetDestChannelTransfered: " + readTargetDestChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString( targetDestinBuffer.limit()) + "\r\n");
 
 			//shred inputFile
@@ -539,7 +539,7 @@ public class FinalCrypt extends Thread
 //				    { allDataStats.addAllDataBytesProcessed("wr src", writeTargetSourceChannelTransfered * Math.abs((long)targetDiffFactor)); } else
 //				    { allDataStats.addAllDataBytesProcessed("wr src", writeTargetSourceChannelTransfered / Math.abs((long)targetDiffFactor)); }
 
-			    } catch (IOException ex) { ui.error("Error: writeTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); continue encryptTargetloop; }
+			    } catch (IOException ex) { ui.log("Error: writeTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                                ui.log("writeTargetSourceChannelTransfered: " + writeTargetSourceChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString(targetDestinBuffer.limit()) + "\r\n");
 			}
 			targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
@@ -556,7 +556,7 @@ public class FinalCrypt extends Thread
 		    }
 		} // End ! dry
 
-		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage(); ui.log(fileStatusLine);
+		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage(); ui.log(fileStatusLine, true, true, true, false, false);
 
 		allDataStats.addFilesProcessed(1);
 
@@ -572,7 +572,7 @@ public class FinalCrypt extends Thread
 			( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()) * 2 ) ||
 			( newTargetSourceFCPath.size == targetDestinSize)
 		    )
-		    { try { Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.error("Error: Files.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n"); continue encryptTargetloop; } }
+		    { try { Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; } }
 		}
 	    } // else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + keySourcePath.toAbsolutePath() + " (is key!)\r\n"); }
 	    
@@ -582,10 +582,10 @@ public class FinalCrypt extends Thread
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
         } // Encrypt Files Loop // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
-        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
+        if ( stopPending ) { ui.log("\r\n", true, false, false, false, false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 
 //      Print the stats
-        ui.status(allDataStats.getEndSummary("En/Decrypting"), true);
+        ui.log(allDataStats.getEndSummary("En/Decrypting"), true, true, true, false, false);
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
 //        updateProgressTimeline.stop();
@@ -659,7 +659,7 @@ public class FinalCrypt extends Thread
 //	    readKeySourceChannel.position(readKeySourceChannelPosition);
 	    readKeySourceChannelTransfered = readKeySourceChannel.read(keyBitTokenBuffer);
 	    keyBitTokenBuffer.flip(); readKeySourceChannel.close();
-	} catch (IOException ex) { ui.error("Error: getTargetDestinToken: readKeySourceChannel " + ex.getMessage() + "\r\n"); }
+	} catch (IOException ex) { ui.log("Error: getTargetDestinToken: readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Create Encrypted Token Buffer
 	encryptedTokenBuffer = encryptBuffer(plainTextTokenBuffer, keyBitTokenBuffer, false);

@@ -224,7 +224,7 @@ public class GPT_Header
         return GPT.byteListToByteArray(definitiveByteList);
     }
     
-    public void print() { ui.log(toString()); }
+    public void print() { ui.log(toString(), true, true, true, false, false); }
     
     private void setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + HEADERCLASS + " GPT Header (" + getBytes(false).length + " Bytes) Storage: " + GPT.getHumanSize(Math.abs(lastUsableLBA - firstUsableLBA)*DeviceController.bytesPerSector,1) + " ]"); }
     private String getDesc() { return DESCSTRING; }

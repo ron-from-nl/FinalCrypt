@@ -35,7 +35,7 @@ public class Version
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
     private static final String AUTHOREMAIL = "ronuitzaandam@gmail.com";
-    private static final String COPYRIGHTTYPE = "Creative Commons License: (CC BY-NC-ND 4.0)" + Calendar.getInstance().get(Calendar.YEAR);
+    private static final String LICENCE = "Creative Commons License: (CC BY-NC-ND 4.0)";
     private static final String COPYRIGHT = "© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     private static String currentOverallVersionString = "";
     private String latestOverallVersionString = "";
@@ -44,7 +44,6 @@ public class Version
     private InputStream istream = null;
     private static final String LOCALVERSIONFILEURLSTRING =	    "VERSION2";
     private static       String localContent =			    "";
-    private static final String REMOTEVERSIONFILEURLSTRING =		    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2";
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
 									    "https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"
 									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"
@@ -94,8 +93,11 @@ public class Version
         currentOverallVersionString = "Unknown";
         currentVersionByteChannel = newChannel(istream);
         byteBuffer = ByteBuffer.allocate(1024); byteBuffer.clear(); localContent = "";
-        try { while(currentVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()){localContent += (char) byteBuffer.get();}}} catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-        try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }        
+        
+	try { while(currentVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()){localContent += (char) byteBuffer.get();}}}
+	catch (IOException ex) { ui.log("Error: Version.checkCurrentlyInstalledVersion IOException: Channel.read(..) " + ex.getMessage()+"\r\n", true, true, true, true, false); }
+        
+	try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.log("Error: Version.checkCurrentlyInstalledVersion IOException: Channel.close(..) " +ex.getMessage()+"\r\n", true, true, true, true, false); }        
 
 //        localContent.replaceAll("\\p{C}", "?");
 //	String[] lines = localContent.split(System.getProperty("line.separator"));
@@ -133,42 +135,64 @@ public class Version
     synchronized public String checkLatestOnlineVersion(UI ui)
     {
 //      Read the remote VERSION file
+	latestVersionIsKnown = false;
         latestOverallVersionString = "Unknown";
-        try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); } catch (MalformedURLException ex) { ui.error(ex.getMessage()+"\r\n"); }
-        try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); } // null pointer at no connect
-
-	byteBuffer = ByteBuffer.allocate(1024);	byteBuffer.clear(); remoteContent = "";
-	try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-        try { latestVersionByteChannel.close(); } catch (IOException ex) { ui.error(ex.getMessage()+"\r\n"); }
-
-//        remoteContent.replaceAll("\\p{C}", "?");
-//	String[] lines = remoteContent.split(System.getProperty("line.separator"));
-	String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
-
-	remoteFields = new String[lines.length];
-	remoteValues = new String[lines.length];
-
-//	Convert lines to fields array
-	int c = 0; for (String line:lines) { remoteFields[c] = line.substring(line.indexOf("[") + 1, line.indexOf("]")); remoteValues[c] = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")); c++; }	
-	for (int x = 0; x < (remoteFields.length); x++)
-	{
-//	    ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
-	    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Release Message".toLowerCase()))	{ latestReleaseMessageString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ latestAlertSubjectString =	remoteValues[x]; }
-	    if (remoteFields[x].toLowerCase().equals("Alert Message".toLowerCase()))    { latestAlertMessageString =	remoteValues[x]; }
-	}
-
-        String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
-        String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
-        String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
-        latestRemoteVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
-        latestVersionTotal = (latestRemoteVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
-        latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
-        latestVersionIsKnown = true;
 	
-        return latestOverallVersionString;
+	
+	for(String REMOTEVERSIONFILEURLSTRING:REMOTEVERSIONFILEURLSTRINGARRAY)
+	{
+	    boolean failed = false;
+	    byteBuffer = ByteBuffer.allocate(1024); byteBuffer.clear(); remoteContent = "";
+	    ui.log("Checking: " + REMOTEVERSIONFILEURLSTRING + "\r\n", false, false, true, false, false);
+
+	    try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); }
+	    catch (MalformedURLException ex)	{ ui.log("Error: Version.checkLatestOnlineVersion MalformedURLException: new URL(" + REMOTEVERSIONFILEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
+	    
+	    try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); }
+	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.newChannel(\"" + REMOTEVERSIONFILEURLSTRING +"\".openStream()) (file exist?)\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+	    
+	    try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } }
+	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); failed = true; continue; }
+	    
+	    try { latestVersionByteChannel.close(); }
+	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
+
+//          remoteContent.replaceAll("\\p{C}", "?");
+//	    String[] lines = remoteContent.split(System.getProperty("line.separator"));
+
+	    if (! failed)
+	    {
+		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
+
+		remoteFields = new String[lines.length];
+		remoteValues = new String[lines.length];
+
+    //	    Convert lines to fields array
+		int c = 0; for (String line:lines) { remoteFields[c] = line.substring(line.indexOf("[") + 1, line.indexOf("]")); remoteValues[c] = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")); c++; }	
+		for (int x = 0; x < (remoteFields.length); x++)
+		{
+    //		ui.log("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
+		    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
+		    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
+		    if (remoteFields[x].toLowerCase().equals("Release Message".toLowerCase()))	{ latestReleaseMessageString =	remoteValues[x]; }
+		    if (remoteFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ latestAlertSubjectString =	remoteValues[x]; }
+		    if (remoteFields[x].toLowerCase().equals("Alert Message".toLowerCase()))	{ latestAlertMessageString =	remoteValues[x]; }
+		}
+
+		String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
+		String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
+		String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
+		latestRemoteVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
+		latestVersionTotal = (latestRemoteVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
+		latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
+		latestVersionIsKnown = true;
+
+		return latestOverallVersionString;
+	    }
+	    break;
+
+	}
+	return "Could not check for new updates (Internet?)";
     }
 
     public String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
@@ -211,6 +235,7 @@ public class Version
     public boolean versionIsDevelopment()   { if      ( currentVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
 
     public static String getCopyright()     { return COPYRIGHT; }
+    public static String getLicence()	    { return LICENCE; }
     public static String getAuthor()        { return AUTHOR; }
     public static String getAuthorEmail()   { return AUTHOREMAIL; }
     public static String getProduct()       { return PRODUCTNAME; }

@@ -66,7 +66,7 @@ public class GPT_Entries
     
     public GPT_Entry	getEntry(int entry)							    { return  gpt_entry[entry]; }
     
-    public void		print()									    { ui.log(toString()); }
+    public void		print()									    { ui.log(toString(), true, true, true, false, false); }
     
     private void	setTotalSize()								    { totalSize = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { totalSize += gpt_entry[entry].partSize; } }
     

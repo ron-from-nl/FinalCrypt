@@ -29,7 +29,7 @@ public class DeviceManager extends Thread
 //		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	if ( Validate.isValidFile(   ui,            "", targetFCPath.path, targetFCPath.isKey,	    true,  	    1L,           false,             true,           true) )
 	{
-	    ui.status("Creating Key Device: " + targetFCPath.path.toString() + "\r\n", true);
+	    ui.log("Creating Key Device: " + targetFCPath.path.toString() + "\r\n", true, true, false, false, false);
 	    GPT gpt = new GPT(ui);
 //	    gpt.create(GPT.getKeyFileSize(ui, keyFilePath), targetDevice);
 	    gpt.create(keyFCPath.size, targetFCPath);
@@ -48,7 +48,7 @@ public class DeviceManager extends Thread
 		( Validate.isValidFile(   ui,            "",	  targetFCPath.path, targetFCPath.isKey,          true,	     1L,	   false,	      true,	     true) )
 	    )
 	{
-	    ui.status("Cloning Key Device: " + keyFCPath.path.toString() + " to " + targetFCPath.path.toString() + "\r\n", true);
+	    ui.log("Cloning Key Device: " + keyFCPath.path.toString() + " to " + targetFCPath.path.toString() + "\r\n", true, true, false, false, false);
 	    GPT gpt = new GPT(ui);
 	    
 //	    Either read (clone diskGUIDs & partitionGUIDs) or create (new diskGUIDs & partitionGUIDs)

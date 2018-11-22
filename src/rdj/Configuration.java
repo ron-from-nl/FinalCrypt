@@ -79,8 +79,8 @@ public class Configuration
 
         boolean missingDirsDetected = false;
         boolean missingCriticalDirsDetected = false;
-        if (Files.notExists(dataDirPath)) { try { Files.createDirectory(dataDirPath); println("Action:  Config: Creating missing directory: " + dataDirPath); } catch (IOException ex) { ui.status("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true); } }
-        if (Files.notExists(logDirPath)) { try { Files.createDirectory(logDirPath); println("Action:  Config: Creating missing directory: " + logDirPath); } catch (IOException ex) { ui.status("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true); } }
+        if (Files.notExists(dataDirPath)) { try { Files.createDirectory(dataDirPath); println("Action:  Config: Creating missing directory: " + dataDirPath); } catch (IOException ex) { ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
+        if (Files.notExists(logDirPath)) { try { Files.createDirectory(logDirPath); println("Action:  Config: Creating missing directory: " + logDirPath); } catch (IOException ex) { ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
     }
 
     // Just the getters and setters
@@ -88,7 +88,7 @@ public class Configuration
     public Path  getDataDirPath()   {return dataDirPath;}
     public Path  getLogDirPath()    {return logDirPath;}
     public Path  getLogFilePath()   {return logFilePath;}
-    public Path  getErrorFilePath() {return errorFilePath;}
+    public Path  getErrFilePath() {return errorFilePath;}
     
     private void println(String string)
     {

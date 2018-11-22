@@ -347,6 +347,8 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean keySourceChecksumReadCanceled;
     private Stage createOTPKeyStage;
     private CreateOTPKey createOTPKey;
+    private Preferences prefs;
+    private long now;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -449,7 +451,7 @@ public class GUIFX extends Application implements UI, Initializable
     public double getProcessCpuLoad()
     {
         try { attribList = mbs.getAttributes(name, new String[]{ procCPULoadAttribute });}
-        catch (InstanceNotFoundException | ReflectionException ex) { status(ex.getMessage(), true); }
+        catch (InstanceNotFoundException | ReflectionException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
         if (attribList.isEmpty()) { return Double.NaN; }
         att = (Attribute)attribList.get(0);
@@ -463,28 +465,29 @@ public class GUIFX extends Application implements UI, Initializable
         configuration = new Configuration(ui);
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion(this);
-        status("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false);        
-        log(   "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n");
-        log("\r\n");
-        log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n");
-        log(   "Email:           " + Version.getAuthorEmail() + "\r\n");
-        log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n");//System.getProperty("java.version")
-        log("\r\n");
-        log(   "OS Name:         " + System.getProperty("os.name") + "\r\n");
-        log(   "OS Architecture: " + System.getProperty("os.arch") + "\r\n");
-        log(   "OS Version:      " + System.getProperty("os.version") + "\r\n");
-        log("\r\n");
-        log(   "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n");
-        log(   "Java Version:    " + System.getProperty("java.version") + "\r\n");
-        log(   "Class Version:   " + System.getProperty("java.class.version") + "\r\n");
-        log("\r\n");
-        log(   "User Name:       " + System.getProperty("user.name") + "\r\n");
-        log(   "User Home:       " + System.getProperty("user.home") + "\r\n");
-        log(   "User Dir:        " + System.getProperty("user.dir") + "\r\n");
-        log("\r\n");
-        log("Tip: FinalCrypt command line (DOS) usage:\r\n");
-        log("java -cp FinalCrypt.jar rdj/CLUI --help\r\n");
-        log("\r\n");
+        log("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", true, false, false, false ,false);        
+        log(   "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
+        log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n", false, true, true, false ,false);
+        log(   "Email:           " + Version.getAuthorEmail() + "\r\n", false, true, true, false ,false);
+        log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n", false, true, true, false ,false); // System.getProperty("java.version")
+        log(   "Licence:	 " + Version.getLicence() + "\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
+        log(   "OS Name:         " + System.getProperty("os.name") + "\r\n", false, true, true, false ,false);
+        log(   "OS Architecture: " + System.getProperty("os.arch") + "\r\n", false, true, true, false ,false);
+        log(   "OS Version:      " + System.getProperty("os.version") + "\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
+        log(   "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n", false, true, true, false ,false);
+        log(   "Java Version:    " + System.getProperty("java.version") + "\r\n", false, true, true, false ,false);
+        log(   "Class Version:   " + System.getProperty("java.class.version") + "\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
+        log(   "User Name:       " + System.getProperty("user.name") + "\r\n", false, true, true, false ,false);
+        log(   "User Home:       " + System.getProperty("user.home") + "\r\n", false, true, true, false ,false);
+        log(   "User Dir:        " + System.getProperty("user.dir") + "\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
+        log("Tip: FinalCrypt command line (DOS) usage:\r\n", false, true, true, false ,false);
+        log("java -cp FinalCrypt.jar rdj/CLUI --help\r\n", false, true, true, false ,false);
+        log("\r\n", false, true, true, false ,false);
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
 
 //      cpuIndicator
@@ -495,14 +498,14 @@ public class GUIFX extends Application implements UI, Initializable
 //        procCPULoadAttribute = "ProcessCpuLoad";
         mbs = ManagementFactory.getPlatformMBeanServer();
         try {name    = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
-        catch (MalformedObjectNameException | NullPointerException ex) { status(ex.getMessage(), true); }
+        catch (MalformedObjectNameException | NullPointerException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
                 cpuIndicator.setProgress(getProcessCpuLoad())
         )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
 	
 	checksumTooltip = new Tooltip(""); checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
-        
+
         Platform.runLater(new Runnable()
         {
             @Override
@@ -511,9 +514,10 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProduct();
                 String header = "Brief Introduction:";
                 String infotext = 
-                            "Step 1 Select items to en/decrypt on the left side.\r\n";
-                infotext += "Step 2 Select personal key file on the right side.\r\n";
-                infotext += "Step 3 Click [Encrypt] or [Decrypt] at the bottom left.\r\n";
+                            "Step 1 Select items to en/decrypt on the left.\r\n";
+                infotext += "Step 2 Optional create an OTP key on the right.\r\n";
+                infotext += "Step 2 Select your (OTP) key file on the right.\r\n";
+                infotext += "Step 3 Click [Encrypt] / [Decrypt] button below.\r\n";
                 infotext += "\r\n";
                 infotext += "That's it! Not hard right?\r\n";
                 infotext += "\r\n";
@@ -524,6 +528,7 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "Click [Check Update] sometimes.\r\n";
                 infotext += "Tip:  Watch statusbar at bottom.\r\n";
                 infotext += "Tip:  Make backups of your data.\r\n";
+                infotext += "Tip:  Keep your keys secret on external Storage.\r\n";
                 infotext += "\r\n";
                 infotext += "Live to love - Enjoy your privacy.\r\n\r\n";
 /*
@@ -539,14 +544,26 @@ public class GUIFX extends Application implements UI, Initializable
                 JDK 8 all the items in java.util.prefs:                 
 */                
                 
-                Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-                String val = prefs.get("Hide Intro", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+                prefs = Preferences.userRoot().node(this.getClass().getName());
+
+//		Hide Intro
+		String val = prefs.get("Hide Intro", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 
                 if (! val.equals("Yes"))
                 {
                     Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
                     if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
                 }
+
+//		Last Update Checked
+		long updateChecked = 0; // Epoch date
+//		long updateCheckPeriod = 1000L*20L; // Just to test auto update function
+		long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
+		now = Calendar.getInstance().getTimeInMillis(); // Epoch date
+		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		boolean invalidUpdateCheckedValue = false;
+		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
+		if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
             }
         });
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -616,9 +633,10 @@ public class GUIFX extends Application implements UI, Initializable
 		String alertString = "";
 		version = new Version(ui);
 		version.checkCurrentlyInstalledVersion(GUIFX.this);
-		version.checkLatestOnlineVersion(GUIFX.this);
+		version.checkLatestOnlineVersion(GUIFX.this); prefs.putLong("Update Checked", now);
 		String[] lines = version.getUpdateStatus().split("\r\n");
-		for (String line: lines) {status(line + "\r\n", true);}
+		for (String line: lines) { log(line + "\r\n", true, true, true, false, false);}
+		
 		alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
 		if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
 		if (! version.getLatestVersionMessageString().isEmpty())    { alertString += version.getLatestVersionMessageString() + "\r\n"; }
@@ -649,8 +667,8 @@ public class GUIFX extends Application implements UI, Initializable
 			updateThread = new Thread(() ->
 			{
 			    try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
-			    catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
-			    catch (IOException ex) { ui.error(ex.getMessage()); }
+			    catch (URISyntaxException ex)   { log(ex.getMessage(), true, true, true, true, false); }}
+			    catch (IOException ex)	    { log(ex.getMessage(), true, true, true, true, false); }
 			});
 			updateThread.setName("updateThread");
 			updateThread.setDaemon(true);
@@ -772,7 +790,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      0L, true,    false,  true))
 	    {
 		try { Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); }
-		catch (IOException ex) { error("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n"); }
+		catch (IOException ex) { log("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
@@ -837,7 +855,7 @@ public class GUIFX extends Application implements UI, Initializable
 				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath); Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
 				try { Thread.sleep(300); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
 				
-				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 //				while (true)
 //				{
 //				    log("" + desktop.toString() + "\r\n");
@@ -856,7 +874,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    }
 		    else
 		    { 
-			try { Desktop.getDesktop().open(targetFCPath.path.toFile()); } catch (IOException ex) { error("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n"); }
+			try { Desktop.getDesktop().open(targetFCPath.path.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		    }
 		    
 		    
@@ -916,6 +934,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    // Validate KeyFile
 	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null))
 	    {
+//		log("Checkme: " + keyFileChooser.getSelectedFile().getAbsolutePath().toString(), true, true, false, false, false);
 		Path keyPath = keyFileChooser.getSelectedFile().toPath();
 //				        getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
 		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
@@ -1040,7 +1059,7 @@ public class GUIFX extends Application implements UI, Initializable
 			long    readKeySourceChannelTransfered =  0; 
 			int readKeySourceBufferSize = (1 * 1024 * 1024);
 			ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) {ui.error("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n");}
+			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
 			int x = 0;
 			while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
 			{
@@ -1661,97 +1680,127 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.setDaemon(true);
         encryptThread.start();
     }
+    
+    
+    
+    
+    
+    
+    
+    @Override
+    public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
+    {
+	if (status)	{ newstatus(message); }
+	if (log)	{ newlog(message); }
+	if (logfile)	{ newlogfile(message); }
+	if (errfile)	{ newerrfile(message); }
+	if (print)	{ newerrfile(message); }
+    }
+
+    synchronized public void newstatus(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}});    }
+    synchronized public void newlog(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
+    synchronized public void newlogfile(String message)     { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
+    synchronized public void newerrfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
+    synchronized public void newprint(String message)	    { System.out.print(message); }
+
+    
+    
+    
+    
+    
+    
     synchronized public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
 
-    @Override synchronized public void status(String status, boolean log)
-    {
-        Platform.runLater(new Runnable() { @Override public void run()
-        {
-            statusLabel.setText(status.replace("\r\n", ""));
-            if (log) { log(status); }
-        }});
-    }
-
-    @Override synchronized public void log(String message)
-    {
-        Platform.runLater(new Runnable() { @Override public void run()
-        {
-            lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; }
-
-            Thread logThread = new Thread(new Runnable()
-            {
-//                private DeviceManager rawKey;
-                @Override
-                @SuppressWarnings({"static-access"})
-                public void run()
-                {
-                    try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
-
-//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//                    {
-//                        // Encrypt targetBuffer and fill up outputBuffer
-//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//                        writeOutputFileChannel.write(outputFileBuffer);
-//                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
-                }
-            });
-            logThread.setName("logThread");
-            logThread.setDaemon(true);
-            logThread.start();
-        }});
-    }
-    @Override synchronized public void error(String message)
-    {
-        Platform.runLater(new Runnable() { @Override public void run()
-        {
-            status(message, true);
-            try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
-
-            Thread errorLogThread = new Thread(new Runnable()
-            {
-//                private DeviceManager rawKey;
-                @Override
-                @SuppressWarnings({"static-access"})
-                public void run()
-                {
-                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
-
-//                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//                    {
-//                        // Encrypt targetBuffer and fill up outputBuffer
-//                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//                        writeOutputFileChannel.write(outputFileBuffer);
-//                        writeOutputFileChannel.close();
-//                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
-                }
-            });
-            errorLogThread.setName("errorThread");
-            errorLogThread.setDaemon(true);
-            errorLogThread.start();
-
-        }});
-    }
-
-    @Override public void statusNow(String status, boolean log)
-    {
-        Platform.runLater(new Runnable() { @Override public void run()
-        {
-	    statusLabel.setText(status);
-        }});
-	if (log) { log(status); } 
-    }
+//    @Override synchronized public void status(String status, boolean log)
+//    {
+//        Platform.runLater(new Runnable() { @Override public void run()
+//        {
+//            statusLabel.setText(status.replace("\r\n", ""));
+//            if (log) { log(status); }
+//        }});
+//    }
+//
+//    @Override synchronized public void log(String message)
+//    {
+//        Platform.runLater(new Runnable() { @Override public void run()
+//        {
+//            lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; }
+//
+//            Thread logThread = new Thread(new Runnable()
+//            {
+////                private DeviceManager rawKey;
+//                @Override
+//                @SuppressWarnings({"static-access"})
+//                public void run()
+//                {
+//                    try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
+//
+////                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+////                    {
+////                        // Encrypt targetBuffer and fill up outputBuffer
+////                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+////                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+////                        writeOutputFileChannel.write(outputFileBuffer);
+////                        writeOutputFileChannel.close();
+////                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
+//                }
+//            });
+//            logThread.setName("logThread");
+//            logThread.setDaemon(true);
+//            logThread.start();
+//        }});
+//    }
+//    @Override synchronized public void error(String message)
+//    {
+//        Platform.runLater(new Runnable() { @Override public void run()
+//        {
+//            status(message, true);
+//            try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
+//
+////            Thread errorLogThread = new Thread(new Runnable()
+////            {
+//////                private DeviceManager rawKey;
+////                @Override
+////                @SuppressWarnings({"static-access"})
+////                public void run()
+////                {
+////                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
+////
+//////                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+//////                    {
+//////                        // Encrypt targetBuffer and fill up outputBuffer
+//////                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
+//////                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
+//////                        writeOutputFileChannel.write(outputFileBuffer);
+//////                        writeOutputFileChannel.close();
+//////                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
+////                }
+////            });
+////            errorLogThread.setName("errorThread");
+////            errorLogThread.setDaemon(true);
+////            errorLogThread.start();
+//
+//        }});
+//    }
+//
+//    @Override public void statusNow(String status, boolean log)
+//    {
+//        Platform.runLater(new Runnable() { @Override public void run()
+//        {
+//	    statusLabel.setText(status);
+//        }});
+//	if (log) { log(status); } 
+//    }
+//
+//
+//    @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
+    
+//  ================================================= BEGIN UPDATE PROGRESS ===========================================================
+//    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
 
 //    public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
     public void setStageTitle(String title) { Platform.runLater(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
     public void statusDirect(String status) { statusLabel.setText(status); }
-
-    @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
-    
-//  ================================================= BEGIN UPDATE PROGRESS ===========================================================
-//    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
 
     @Override public void processStarted()
     {
@@ -1850,8 +1899,8 @@ public class GUIFX extends Application implements UI, Initializable
 		bytesPerMilliSecond = bytesPerMiliSecondParam;
 		
 		// update ProgressBars
-                if (finalCrypt.getVerbose()) { println("Progress File : " + filesProgressPercent / 100.0  + " factor"); }
-                if (finalCrypt.getVerbose()) { println("Progress Files: " + fileProgressPercent / 100.0 + " factor"); }
+                if (finalCrypt.getVerbose()) { log("Progress File : " + filesProgressPercent / 100.0  + " factor", false, false, false, false, true); }
+                if (finalCrypt.getVerbose()) { log("Progress Files: " + fileProgressPercent / 100.0 + " factor", false, false, false, false, true); }
                 fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
                 filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui                
 		updateDashboard(targetFCPathList);
@@ -2077,14 +2126,14 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void emptyFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n");
-	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     private void symlinkFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n");
-	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
@@ -2092,8 +2141,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ( (unreadableList != null) && (unreadableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n");
-	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
+	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n", false, true, false, false, false);
+	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
@@ -2105,8 +2154,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ( (unwritableList != null) && (unwritableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n");
-	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n"); } log("\r\n");
+	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n", false, true, false, false, false);
+	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
@@ -2115,43 +2164,43 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void hiddenFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n");
-	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void emptyFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n");
-	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void symlinkFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n");
-	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void unreadableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n");
-	for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void unwritableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1);
-	log("Unwritable Files:\r\n\r\n"); for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void hiddenFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1);
-	log("Hidden Files:\r\n\r\n"); for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
     
     private void setAttribute(FCPath fcPath, boolean read, boolean write)
@@ -2169,7 +2218,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    if (read) { Files.setAttribute(fcPath.path, "dos:readonly", true); }
 		    if (write) { Files.setAttribute(fcPath.path, "dos:readonly", false); }
 		}
-		catch (IOException ex) { error("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n"); }
+		catch (IOException ex) { log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    }
 	    else if ( view.toLowerCase().equals("posix") )
 	    {
@@ -2180,7 +2229,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    if (write) { permissions.add(PosixFilePermission.OWNER_READ); permissions.add(PosixFilePermission.OWNER_WRITE); }
 		    Files.setPosixFilePermissions(fcPath.path, permissions);
 		}
-		catch (IOException ex) { error("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n"); }
+		catch (IOException ex) { log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    }
 	} // End attributeViewloop // End attributeViewloop
     }
@@ -2188,66 +2237,66 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n");
-	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void decryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n");
-	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void decryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n");
-	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void encryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n");
-	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void newEncryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n");
-	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
 
     @FXML
     private void unencryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n");
-	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void newDecryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n");
-	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
 
     @FXML
     private void undecryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n");
-	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
     private void invalidFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n");
-	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n"); } log("\r\n"); }
+	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n", false, true, false, false, false);
+	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
@@ -2257,8 +2306,8 @@ public class GUIFX extends Application implements UI, Initializable
 	updateThread = new Thread(() ->
 	{
 	    try { try {  Desktop.getDesktop().browse(new URI(Version.WEBSITEURISTRING)); }
-	    catch (URISyntaxException ex) { ui.error(ex.getMessage()); }}
-	    catch (IOException ex) { ui.error(ex.getMessage()); }
+	    catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
+	    catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
 	});
 	updateThread.setName("updateThread");
 	updateThread.setDaemon(true);

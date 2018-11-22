@@ -21,11 +21,8 @@ package rdj;
 
 public interface UI
 {
-    public void log(String message);
-    public void error(String message);
-    public void status(String status, boolean log);
-    public void statusNow(String status, boolean log);
-    public void println(String message);
+    public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print);
+//    
     public void processGraph(int value);
     public void processProgress(int filesProgressPercent, int fileProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam);
     public void fileProgress();
