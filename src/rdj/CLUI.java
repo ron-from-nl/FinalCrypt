@@ -142,7 +142,7 @@ public class CLUI implements UI
 //            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
 //            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
             else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--licence"))                                                          { log(version.getProduct() + " " + Version.getLicence() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usage(true); }}
             else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usage(true); }}
@@ -563,6 +563,7 @@ public class CLUI implements UI
         log("            [--print]		  Print all encrypted bytes.\r\n", false, true, true, false, false);
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, true, false, false);
         log("                 [--version]      Print " + version.getProduct() + " version.\r\n", false, true, true, false, false);
+        log("                 [--license]      Print " + version.getProduct() + " license.\r\n", false, true, true, false, false);
         log("                 [--check-update] Check for online updates.\r\n", false, true, true, false, false);
 //        log("            [--txt]               Print text calculations.\r\n", false, true, true, false, false);
 //        log("            [--bin]               Print binary calculations.\r\n", false, true, true, false, false);

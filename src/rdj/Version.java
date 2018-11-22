@@ -35,7 +35,7 @@ public class Version
     private static final String PRODUCTNAME = "FinalCrypt";
     private static final String AUTHOR = "Ron de Jong";
     private static final String AUTHOREMAIL = "ronuitzaandam@gmail.com";
-    private static final String LICENCE = "Creative Commons License: (CC BY-NC-ND 4.0)";
+    private static final String LICENSE = "Creative Commons License: (CC BY-NC-ND 4.0)";
     private static final String COPYRIGHT = "© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     private static String currentOverallVersionString = "";
     private String latestOverallVersionString = "";
@@ -235,7 +235,7 @@ public class Version
     public boolean versionIsDevelopment()   { if      ( currentVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
 
     public static String getCopyright()     { return COPYRIGHT; }
-    public static String getLicence()	    { return LICENCE; }
+    public static String getLicense()	    { return LICENSE; }
     public static String getAuthor()        { return AUTHOR; }
     public static String getAuthorEmail()   { return AUTHOREMAIL; }
     public static String getProduct()       { return PRODUCTNAME; }

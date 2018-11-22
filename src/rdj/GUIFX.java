@@ -471,7 +471,7 @@ public class GUIFX extends Application implements UI, Initializable
         log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n", false, true, true, false ,false);
         log(   "Email:           " + Version.getAuthorEmail() + "\r\n", false, true, true, false ,false);
         log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n", false, true, true, false ,false); // System.getProperty("java.version")
-        log(   "Licence:	 " + Version.getLicence() + "\r\n", false, true, true, false ,false);
+        log(   "License:	 " + Version.getLicense() + "\r\n", false, true, true, false ,false);
         log("\r\n", false, true, true, false ,false);
         log(   "OS Name:         " + System.getProperty("os.name") + "\r\n", false, true, true, false ,false);
         log(   "OS Architecture: " + System.getProperty("os.arch") + "\r\n", false, true, true, false ,false);
