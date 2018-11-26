@@ -21,6 +21,7 @@ Set version in FinalCrypt_pad.xml file
 =================================== Done ====================================
 
 
+
 ============================= Source Committed ==============================
 
 
@@ -29,9 +30,11 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Fixed unselect key
+Fix path.isHidden array out of bound error
+
 Automat Update Check
 Improved Log System 
-
 Fix OTP Key Size Bug
 Added Create OTP Key
 Renamed Cipher to Key

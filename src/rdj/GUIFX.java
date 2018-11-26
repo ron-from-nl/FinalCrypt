@@ -425,7 +425,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser = new JFileChooser();
         keyFileChooser.setControlButtonsAreShown(false);
         keyFileChooser.setToolTipText("Right mousclick for Refresh");
-        keyFileChooser.setMultiSelectionEnabled(false);
+        keyFileChooser.setMultiSelectionEnabled(true);
         keyFileChooser.setFocusable(true);
 //        keyFileChooser.setFocusCycleRoot(true);
 //        keyFileChooser.setFocusTraversalKeysEnabled(true);
@@ -433,6 +433,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
         keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         keyFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { keyFileChooserPropertyChange(evt); });
+//	keyFileChooser.add
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
         
         keyFileChooserComponentAlteration(keyFileChooser);
@@ -513,13 +514,11 @@ public class GUIFX extends Application implements UI, Initializable
             {
                 String title =  "Welcome to " + Version.getProduct();
                 String header = "Brief Introduction:";
-                String infotext = 
-                            "Step 1 Select items to en/decrypt on the left.\r\n";
-                infotext += "Step 2 Optional create an OTP key on the right.\r\n";
+                String infotext = "";
+                infotext += "Step 0 Optionally create an OTP key file below.\r\n";
+                infotext += "Step 1 Select items to en/decrypt on the left.\r\n";
                 infotext += "Step 2 Select your (OTP) key file on the right.\r\n";
                 infotext += "Step 3 Click [Encrypt] / [Decrypt] button below.\r\n";
-                infotext += "\r\n";
-                infotext += "That's it! Not hard right?\r\n";
                 infotext += "\r\n";
                 infotext += "Optional:\r\n";
                 infotext += "\r\n";
@@ -686,7 +685,8 @@ public class GUIFX extends Application implements UI, Initializable
         Platform.runLater(new Runnable()
         {
             @Override
-            public void run() {
+            public void run()
+	    {
                 String itemword = "";
                 if ( targetFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
                 else if ( targetFileChooser.getSelectedFiles().length > 1 )  { itemword = "items"; }
@@ -719,21 +719,42 @@ public class GUIFX extends Application implements UI, Initializable
             @Override
             public void run()
             {
-                String selection = "Delete 1 selected item?";
+                String itemword = "";
+                if ( keyFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
+                else if ( keyFileChooser.getSelectedFiles().length > 1 )  { itemword = "items"; }
+                String selection = "Delete " + keyFileChooser.getSelectedFiles().length + " selected " + itemword + "?";
                 Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
                 if (alert.getResult() == ButtonType.YES)
                 {
                     if ((keyFileChooser != null)  && (keyFileChooser.getSelectedFiles() != null))
                     {
-                        ArrayList<Path> pathList = new ArrayList<>();
-                        pathList.add(keyFileChooser.getSelectedFile().toPath());
-                        boolean delete = true;
-                        boolean returnpathlist = false;
-                        String pattern = "glob:*";
-                        finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
-			updateFileChoosers();
+                        if ( keyFileChooser.getSelectedFiles().length > 0 )
+                        {
+                            ArrayList<Path> pathList = finalCrypt.getPathList(keyFileChooser.getSelectedFiles());
+                            boolean delete = true;
+                            boolean returnpathlist = false;
+                            String pattern = "glob:*";
+                            finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
+			    updateFileChoosers();
+                        }
                     }
                 }
+		
+//                String selection = "Delete 1 selected item?";
+//                Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);alert.setHeaderText("Confirm Deletion?"); alert.showAndWait();
+//                if (alert.getResult() == ButtonType.YES)
+//                {
+//                    if ((keyFileChooser != null)  && (keyFileChooser.getSelectedFiles() != null))
+//                    {
+//                        ArrayList<Path> pathList = new ArrayList<>();
+//                        pathList.add(keyFileChooser.getSelectedFile().toPath());
+//                        boolean delete = true;
+//                        boolean returnpathlist = false;
+//                        String pattern = "glob:*";
+//                        finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
+//			updateFileChoosers();
+//                    }
+//                }
             }
         });
     }                                               
@@ -770,8 +791,10 @@ public class GUIFX extends Application implements UI, Initializable
         return pattern;
     }
     
+//  Doubleclicked item
     private void keyFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      
+//	log("ACT: " + evt + " " + Calendar.getInstance().getTimeInMillis() + "\r\n", true, true, false, false, false);
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
         if ((keyFileChooser != null)  && (keyFileChooser.getSelectedFile() != null))
@@ -809,7 +832,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
     }
 
-//  Doubleclick open file
+//  Doubleclicked item
     private void targetFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
     {
         this.fileProgressBar.setProgress(0);
@@ -888,13 +911,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 /////////////////////////////////////////////////////////////////////////////////////////////
     
-    private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                 
-    {
-	if (!processRunning)
-	{
-            keyFileChooserPropertyCheck();
-	}
-    }
+    private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if (!processRunning) { keyFileChooserPropertyCheck(); } }
     
     private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
@@ -932,11 +949,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
 
 	    // Validate KeyFile
-	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null))
+	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
 	    {
-//		log("Checkme: " + keyFileChooser.getSelectedFile().getAbsolutePath().toString(), true, true, false, false, false);
 		Path keyPath = keyFileChooser.getSelectedFile().toPath();
-//				        getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
+//					      getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
 		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
 
 		Platform.runLater(new Runnable(){ @Override public void run() 
@@ -1121,12 +1137,9 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
 
 //  FileChooser Listener methods
-    private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)                                                
+    private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)
     {
-	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
-	{
-	    targetFileChooserPropertyCheck(true);
-	}
+	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { targetFileChooserPropertyCheck(true); }
     }
     
     private void targetFileChooserPropertyCheck(boolean status)
@@ -1189,6 +1202,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		// BuildSelection
 //		cursorWait();
+
 		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
 		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
@@ -1197,10 +1211,8 @@ public class GUIFX extends Application implements UI, Initializable
 		    }});scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
 		}});
 	    }
-	    else
-	    {
-//		log("TC Not All Valid\r\n");
-		
+	    else // Not all valid
+	    {		
 		MySimpleFCFileVisitor.running = false;
 		try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 		targetFCPathList = new FCPathList();
@@ -1424,11 +1436,6 @@ public class GUIFX extends Application implements UI, Initializable
 	return list.stream().filter(criteria).collect(Collectors.<FCPath>toList());
     }
         
-    public static void main(String[] args)
-    {
-        launch(args);
-    }
-
     public boolean targetFileChooserComponentAlteration(Container container)
     {
         Component[] components = container.getComponents();
@@ -1681,119 +1688,6 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
     
-    
-    
-    
-    
-    
-    
-    @Override
-    public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
-    {
-	if (status)	{ newstatus(message); }
-	if (log)	{ newlog(message); }
-	if (logfile)	{ newlogfile(message); }
-	if (errfile)	{ newerrfile(message); }
-	if (print)	{ newerrfile(message); }
-    }
-
-    synchronized public void newstatus(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}});    }
-    synchronized public void newlog(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
-    synchronized public void newlogfile(String message)     { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
-    synchronized public void newerrfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
-    synchronized public void newprint(String message)	    { System.out.print(message); }
-
-    
-    
-    
-    
-    
-    
-    synchronized public void logNow(String message)    { lineCounter++;                            logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }
-
-//    @Override synchronized public void status(String status, boolean log)
-//    {
-//        Platform.runLater(new Runnable() { @Override public void run()
-//        {
-//            statusLabel.setText(status.replace("\r\n", ""));
-//            if (log) { log(status); }
-//        }});
-//    }
-//
-//    @Override synchronized public void log(String message)
-//    {
-//        Platform.runLater(new Runnable() { @Override public void run()
-//        {
-//            lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; }
-//
-//            Thread logThread = new Thread(new Runnable()
-//            {
-////                private DeviceManager rawKey;
-//                @Override
-//                @SuppressWarnings({"static-access"})
-//                public void run()
-//                {
-//                    try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
-//
-////                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getLogFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-////                    {
-////                        // Encrypt targetBuffer and fill up outputBuffer
-////                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-////                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-////                        writeOutputFileChannel.write(outputFileBuffer);
-////                        writeOutputFileChannel.close();
-////                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getLogFilePath(): " + ex.getMessage() + "\r\n"); }
-//                }
-//            });
-//            logThread.setName("logThread");
-//            logThread.setDaemon(true);
-//            logThread.start();
-//        }});
-//    }
-//    @Override synchronized public void error(String message)
-//    {
-//        Platform.runLater(new Runnable() { @Override public void run()
-//        {
-//            status(message, true);
-//            try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getLogFilePath() + ")..));"); }
-//
-////            Thread errorLogThread = new Thread(new Runnable()
-////            {
-//////                private DeviceManager rawKey;
-////                @Override
-////                @SuppressWarnings({"static-access"})
-////                public void run()
-////                {
-////                    try { Files.write(configuration.getErrorFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { println("Files.write(" + configuration.getErrorFilePath() + ")..));"); }
-////
-//////                    try (final SeekableByteChannel writeOutputFileChannel = Files.newByteChannel(configuration.getErrorFilePath(), EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
-//////                    {
-//////                        // Encrypt targetBuffer and fill up outputBuffer
-//////                        ByteBuffer outputFileBuffer =  ByteBuffer.allocate(message.getBytes().length); outputFileBuffer.clear();
-//////                        outputFileBuffer.put(message.getBytes()); outputFileBuffer.flip();
-//////                        writeOutputFileChannel.write(outputFileBuffer);
-//////                        writeOutputFileChannel.close();
-//////                    } catch (IOException ex) { ui.error("\r\nError: Files.newByteChannel(configuration.getErrorFilePath(): " + ex.getMessage() + "\r\n"); }
-////                }
-////            });
-////            errorLogThread.setName("errorThread");
-////            errorLogThread.setDaemon(true);
-////            errorLogThread.start();
-//
-//        }});
-//    }
-//
-//    @Override public void statusNow(String status, boolean log)
-//    {
-//        Platform.runLater(new Runnable() { @Override public void run()
-//        {
-//	    statusLabel.setText(status);
-//        }});
-//	if (log) { log(status); } 
-//    }
-//
-//
-//    @Override public void println(String message) { Platform.runLater(new Runnable() { @Override public void run() { System.out.println(message); } });}
     
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
 //    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
@@ -2323,5 +2217,26 @@ public class GUIFX extends Application implements UI, Initializable
             {
             }
         });
+    }
+    
+    @Override
+    synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
+    {
+	if (status)	{ status(message); }
+	if (log)	{ log(message); }
+	if (logfile)	{ logfile(message); }
+	if (errfile)	{ errfile(message); }
+	if (print)	{ errfile(message); }
+    }
+
+    public void status(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}});    }
+    public void log(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
+    public void logfile(String message)     { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
+    public void errfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
+    public void print(String message)	    { System.out.print(message); }
+    
+    public static void main(String[] args)
+    {
+        launch(args);
     }
 }

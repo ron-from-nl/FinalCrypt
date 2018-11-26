@@ -306,7 +306,11 @@ public class Validate
 	    
 	    readable = Files.isReadable(path);
 	    writable = Files.isWritable(path);
-	    try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.log("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // SoftDown.eu error
+//	    ui.log("Hidden: " + path.toAbsolutePath().toString() + "\r\n", true, true, false, false, false);
+	    if (Files.isRegularFile(path))
+	    {
+		try { isHidden = Files.isHidden(path); } catch (IOException ex)					    { ui.log("Error: IOException: Validate.getFCPath: Files.isHidden(path) "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // SoftDown.eu error
+	    }
 	    
 	    // Target =============================================================================================================================================================================================
 	    

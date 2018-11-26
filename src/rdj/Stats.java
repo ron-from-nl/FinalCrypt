@@ -131,7 +131,7 @@ public class Stats
 	if (percentage > 100.0) { percentage = 100.0; }
 //        String throughputString = String.format("%.1f", Math.floor(percentage));
         String throughputString = String.format("%.1f", percentage);
-        returnString = throughputString + "%\r\n";
+        returnString = throughputString + "%";
         
         return returnString;
     }

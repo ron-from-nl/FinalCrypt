@@ -556,7 +556,7 @@ public class FinalCrypt extends Thread
 		    }
 		} // End ! dry
 
-		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage(); ui.log(fileStatusLine, true, true, true, false, false);
+		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage(); ui.log(fileStatusLine + "\r\n", true, true, true, false, false);
 
 		allDataStats.addFilesProcessed(1);
 
@@ -626,12 +626,12 @@ public class FinalCrypt extends Thread
         if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } // Inverting / negate key 0 bytes (none encryption not allowed)
 //
 //	The following 4 line are the encrypting heart of FinalCrypt.
-//													_______________________  _______________________   ________  ___________________________________________
-//												       /------- LINE 1 --------\/------ LINE 2 ---------\ / LINE 3 \/            Encrypt            Decrypt     \
-        targetDestinIgnoreBits =	targetSourceByte & ~keySourceByte;		    // LINE 1 |             00000011   | ~00000011 = 11111100   | 00000010 | Data byte: 00000011 = 3   ╭─> 00000110 = 6 |
-        targetDestinKeyBits =	~targetSourceByte & keySourceByte;		    // LINE 2 | ~00000101 = 11111010 & |             00000101 & | 00000100 | Ciph byte: 00000101 = 5   │   00000101 = 5 |
-        targetDestinMergedBits =	targetDestinIgnoreBits + targetDestinKeyBits;    // LINE 3 |	            00000010   |             00000100   | 00000110 | Encr byte: 00000110 = 6 ─╯    00000011 = 3 |
-        targetDestinEncryptedByte =	(byte)(targetDestinMergedBits & 0xFF);		    // Make sure only 8 bits of the 16 bit integer gets set in the byte casted encrypted byte
+//												    _______________________  _______________________   ________  ___________________________________________
+//												   /------- LINE 1 --------\/------ LINE 2 ---------\ / LINE 3 \/            Encrypt            Decrypt     \
+        targetDestinIgnoreBits =	targetSourceByte & ~keySourceByte;		// LINE 1 |             00000011   | ~00000011 = 11111100   | 00000010 | Data byte: 00000011 = 3   ╭─> 00000110 = 6 |
+        targetDestinKeyBits =	~targetSourceByte & keySourceByte;			// LINE 2 | ~00000101 = 11111010 & |             00000101 & | 00000100 | Ciph byte: 00000101 = 5   │   00000101 = 5 |
+        targetDestinMergedBits =	targetDestinIgnoreBits + targetDestinKeyBits;	// LINE 3 |	        00000010   |             00000100   | 00000110 | Encr byte: 00000110 = 6 ─╯    00000011 = 3 |
+        targetDestinEncryptedByte =	(byte)(targetDestinMergedBits & 0xFF);		// Make sure only 8 bits of the 16 bit integer gets set in the byte casted encrypted byte
 
         if ( bin )      { logByteBinary(targetSourceByte, keySourceByte, targetDestinEncryptedByte, targetDestinIgnoreBits, targetDestinKeyBits, targetDestinMergedBits); }
         if ( dec )      { logByteDecimal(targetSourceByte, keySourceByte, targetDestinEncryptedByte, targetDestinIgnoreBits, targetDestinKeyBits, targetDestinMergedBits); }

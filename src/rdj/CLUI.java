@@ -141,11 +141,11 @@ public class CLUI implements UI
 //            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
 //            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
 //            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
-            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
-            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usage(true); }}
-            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usage(true); }}
+            else if (  args[paramCnt].equals("--version"))                                                          { CLUI.this.log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--license"))                                                          { CLUI.this.log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { CLUI.this.log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
+            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { CLUI.this.log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usage(true); }}
+            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { CLUI.this.log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usage(true); }}
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
@@ -162,8 +162,8 @@ public class CLUI implements UI
             else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(true); }
         }
         
-        if ((kfsetneeded) && ( ! kfset ))									    { log("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n", false, true, true, true, false); usage(true); }
-        if ((tfsetneeded) && ( ! tfset ))									    { log("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n", false, true, true, true, false); usage(true); }
+        if ((kfsetneeded) && ( ! kfset ))									    { CLUI.this.log("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n", false, true, true, true, false); usage(true); }
+        if ((tfsetneeded) && ( ! tfset ))									    { CLUI.this.log("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n", false, true, true, true, false); usage(true); }
 
                 
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
@@ -176,8 +176,8 @@ public class CLUI implements UI
 	    String sym = ""; if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
 	    String all = size + dir + sym;
 	    
-            log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, true, false);
-	    log(Validate.getFCPathStatus(keyFCPath), false, true, true, false, false); usage(true);
+            CLUI.this.log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, true, false);
+	    CLUI.this.log(Validate.getFCPathStatus(keyFCPath), false, true, true, false, false); usage(true);
 	}
 	
 	// Target Validation
@@ -191,17 +191,17 @@ public class CLUI implements UI
     //			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
 		    if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
 		    {
-			if (verbose) { log("Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
+			if (verbose) { CLUI.this.log("Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
 		    }
     //				   isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
 		    {
-			if (verbose) { log("Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
+			if (verbose) { CLUI.this.log("Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
 		    }
 		}
 		else
 		{ 
-			log("Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, true, false); usage(true);
+			CLUI.this.log("Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, true, false); usage(true);
 		}            
 	    }
 	}
@@ -229,10 +229,10 @@ public class CLUI implements UI
 //		public void run()
 //		{
 		    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) )
-		    { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); System.exit(1); }
+		    { CLUI.this.log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); System.exit(1); }
 		    else
 		    {
-			log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false);
+			CLUI.this.log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false);
 		    }
 		    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }
 
@@ -293,7 +293,7 @@ public class CLUI implements UI
 			    writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
 
 			    writeKeyFileChannel.close();
-			} catch (IOException ex) { log("\r\nError: " + ex.getMessage() + "\r\n", false, true, true, true, false); inputEnded = true; break; }
+			} catch (IOException ex) { CLUI.this.log("\r\nError: " + ex.getMessage() + "\r\n", false, true, true, true, false); inputEnded = true; break; }
 			randomBuffer1.clear(); randomBuffer2.clear(); randomBuffer3.clear();
 		    }
 		    writeKeyFileChannelPosition = 0;                
@@ -301,7 +301,7 @@ public class CLUI implements UI
 		    inputEnded = false;
 
 
-		    log("finished\r\n", false, true, false, false, false);
+		    CLUI.this.log("finished\r\n", false, true, false, false, false);
 		    System.exit(0);
 //		}
 //	    });
@@ -327,7 +327,7 @@ public class CLUI implements UI
 	    long    readKeySourceChannelTransfered =  0; 
 	    int readKeySourceBufferSize = (1 * 1024 * 1024);
 	    ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { CLUI.this.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
 	    int x = 0;
 	    while ( ! keySourceChecksumReadEnded )
 	    {
@@ -345,7 +345,7 @@ public class CLUI implements UI
 		    Platform.runLater(new Runnable(){ @Override public void run()
 		    {
 			keySourceChecksumReadEnded = true;
-			log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, true, true, false); 
+			CLUI.this.log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, true, true, false); 
 		    }});
 		}
 		x++;
@@ -523,11 +523,6 @@ public class CLUI implements UI
 	return list.stream().filter(criteria).collect(Collectors.<FCPath>toList());
     }
     
-    public static void main(String[] args)
-    {
-        new CLUI(args);
-    }
-    
     private boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
     private void usage(boolean error)
@@ -654,28 +649,6 @@ public class CLUI implements UI
         System.exit(0);
     }
 
-    
-    
-    
-    @Override
-    public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
-    {
-	if (status)	{ newstatus(message); }
-	if (log)	{ newlog(message); }
-	if (logfile)	{ newlogfile(message); }
-	if (errfile)	{ newerrfile(message); }
-	if (print)	{ newerrfile(message); }
-    }
-
-    synchronized public void newstatus(String message)	    {  }
-    synchronized public void newlog(String message)	    { System.out.print(message); }
-    synchronized public void newlogfile(String message)	    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
-    synchronized public void newerrfile(String message)	    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
-    synchronized public void newprint(String message)	    { System.out.print(message); }
-    
-    
-    
-    
     @Override public void processGraph(int value) {  }
 
     @Override
@@ -704,4 +677,25 @@ public class CLUI implements UI
     {
 	targetFCPathList = fcPathListParam;
     }
+    
+    @Override
+    synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
+    {
+	if (status)	{ status(message); }
+	if (log)	{ log(message); }
+	if (logfile)	{ logfile(message); }
+	if (errfile)	{ errfile(message); }
+	if (print)	{ errfile(message); }
+    }
+
+    public void status(String message)	    {  }
+    public void log(String message)	    { System.out.print(message); }
+    public void logfile(String message)	    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
+    public void errfile(String message)	    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
+    public void print(String message)	    { System.out.print(message); }
+    
+    public static void main(String[] args)
+    {
+        new CLUI(args);
+    }    
 }

@@ -263,7 +263,7 @@ public class DeviceController
         ui.log("wr(" +           writeKeyFileStat1.getFileBytesThroughPut() + ") ", true, true, true, false, false);
         ui.log(" - Write: rd(" +  readKeyFileStat2.getFileBytesThroughPut() + ") -> ", true, true, true, false, false);
         ui.log("wr(" +           writeKeyFileStat2.getFileBytesThroughPut() + ") ", true, true, true, false, false);
-        ui.log(allDataStats.getAllDataBytesProgressPercentage(), true, true, true, false, false);
+        ui.log(allDataStats.getAllDataBytesProgressPercentage() + "\r\n", true, true, true, false, false);
 
 
         allDataStats.addFilesProcessed(1);
