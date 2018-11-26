@@ -349,6 +349,7 @@ public class GUIFX extends Application implements UI, Initializable
     private CreateOTPKey createOTPKey;
     private Preferences prefs;
     private long now;
+    private boolean isCalculatingCheckSum;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -792,7 +793,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
     
 //  Doubleclicked item
-    private void keyFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
+    synchronized private void keyFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                  
     {                                                      
 //	log("ACT: " + evt + " " + Calendar.getInstance().getTimeInMillis() + "\r\n", true, true, false, false, false);
         this.fileProgressBar.setProgress(0);
@@ -833,7 +834,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
 //  Doubleclicked item
-    private void targetFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
+    synchronized private void targetFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
     {
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
@@ -911,10 +912,11 @@ public class GUIFX extends Application implements UI, Initializable
 
 /////////////////////////////////////////////////////////////////////////////////////////////
     
-    private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if (!processRunning) { keyFileChooserPropertyCheck(); } }
+    synchronized private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { keyFileChooserPropertyCheck(); } }
     
-    private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
+    synchronized private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
+//	log("keyFileChooserPropertyCheck: " + Calendar.getInstance().getTimeInMillis() + "\r\n", true, true, false, false, false);
         Platform.runLater(new Runnable(){ @Override public void run() 
         {
             keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
@@ -926,6 +928,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 	keySourceChecksumReadEnded = true;
 	keySourceChecksumReadCanceled = true;
+	
+//	if ((!processRunning ) && (!MySimpleFCFileVisitor.running))
 	if (!processRunning)
 	{
 	    Platform.runLater(new Runnable(){ @Override public void run() 
@@ -951,7 +955,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    // Validate KeyFile
 	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
 	    {
-		Path keyPath = keyFileChooser.getSelectedFile().toPath();
+		Path keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
 //					      getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
 		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
 
@@ -967,7 +971,7 @@ public class GUIFX extends Application implements UI, Initializable
 			Tooltip.uninstall(checksumLabel, checksumTooltip);
 //			Tooltip.install(checksumLabel, checksumTooltip); 
 			
-			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+//			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 
 			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
@@ -1000,8 +1004,8 @@ public class GUIFX extends Application implements UI, Initializable
 			    keyValidLabel.setTextFill(Color.ORANGE); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));			    
 			}
 			
-			MySimpleFCFileVisitor.running = false;
-		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+//			MySimpleFCFileVisitor.running = false;
+//		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 			targetFCPathList = new FCPathList();
 			buildReady(targetFCPathList);
@@ -1019,7 +1023,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    checksumLabel.setText("Calculating...");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 //			    Tooltip.install(checksumLabel, checksumTooltip); 
-			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+//			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			    calculateChecksum();
 			}});
 		    }
@@ -1031,7 +1035,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    checksumLabel.setText("Click for checksum");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 //			    Tooltip.install(checksumLabel, checksumTooltip); 
-			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+//			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			}});
 		    }
 		}
@@ -1040,7 +1044,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 //		log("CC Sel Not Valid\r\n");
 		MySimpleFCFileVisitor.running = false;
-	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+//	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 		if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 		targetFCPathList = new FCPathList();
                 
@@ -1060,76 +1064,84 @@ public class GUIFX extends Application implements UI, Initializable
 
     synchronized private void calculateChecksum()
     {
-	Platform.runLater(new Runnable(){ @Override public void run() 
+	if (!isCalculatingCheckSum)
 	{
-	    if ((keyFCPath.isValidKey)) // Valid Key
+	    isCalculatingCheckSum = true;
+//	    log("calculateChecksum: " + Calendar.getInstance().getTimeInMillis() + "\r\n", true, true, false, false, false);
+	    Platform.runLater(new Runnable(){ @Override public void run() 
 	    {
-		// Calculate Key SHA-1 Checksum 
-		checksumBlock:
+		if ((keyFCPath.isValidKey)) // Valid Key
 		{
-		    keySourceChecksumReadEnded = false;
-		    keySourceChecksumReadCanceled = false;
-		    Thread calcKeyThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
+		    // Calculate Key SHA-1 Checksum 
+		    checksumBlock:
 		    {
-			long    readKeySourceChannelPosition =  0; 
-			long    readKeySourceChannelTransfered =  0; 
-			int readKeySourceBufferSize = (1 * 1024 * 1024);
-			ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
-			int x = 0;
-			while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
+			keySourceChecksumReadEnded = false;
+			keySourceChecksumReadCanceled = false;
+			Thread calcKeyThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 			{
-			    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+			    long    readKeySourceChannelPosition =  0; 
+			    long    readKeySourceChannelTransfered =  0; 
+			    int readKeySourceBufferSize = (1 * 1024 * 1024);
+			    ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
+			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+			    int x = 0;
+			    while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
 			    {
-				readKeySourceChannel.position(readKeySourceChannelPosition);
-				readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
-				readKeySourceChannel.close();
-
-    //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
-				messageDigest.update(keySourceBuffer);
-				if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
-			    } catch (IOException ex)
-			    {
-				Platform.runLater(new Runnable(){ @Override public void run()
+				try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
 				{
-				    keySourceChecksumReadEnded = true;
-//				    ui.error("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
+				    readKeySourceChannel.position(readKeySourceChannelPosition);
+				    readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
+				    readKeySourceChannel.close();
+
+	//				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
+				    messageDigest.update(keySourceBuffer);
+				    if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
+				} catch (IOException ex)
+				{
+				    Platform.runLater(new Runnable(){ @Override public void run()
+				    {
+					keySourceChecksumReadEnded = true;
+    //				    ui.error("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
+				    }});
+				}
+				x++;
+				keySourceBuffer.clear();
+			    }
+			    
+			    if ( ! keySourceChecksumReadCanceled )
+			    {
+				byte[] hashBytes = messageDigest.digest();
+				String hashString = getHexString(hashBytes,2);
+				Platform.runLater(new Runnable(){ @Override public void run() {
+				    checksumLabel.setTextFill(Color.GREENYELLOW);
+				    checksumLabel.setText(hashString);
+				    checksumTooltip.setText(hashString);
+//				    Tooltip.uninstall(checksumLabel, checksumTooltip);
+				    Tooltip.install(checksumLabel, checksumTooltip); 
+				    isCalculatingCheckSum = false;
 				}});
 			    }
-			    x++;
-			    keySourceBuffer.clear();
-			}
-			if ( ! keySourceChecksumReadCanceled )
-			{
-			    byte[] hashBytes = messageDigest.digest();
-			    String hashString = getHexString(hashBytes,2);
-			    Platform.runLater(new Runnable(){ @Override public void run() {
-				checksumLabel.setTextFill(Color.GREENYELLOW);
-				checksumLabel.setText(hashString);
-				checksumTooltip.setText(hashString);
-//				Tooltip.uninstall(checksumLabel, checksumTooltip);
-				Tooltip.install(checksumLabel, checksumTooltip); 
-			    }});
-			}
-			else
-			{
-			    messageDigest.reset();
-			    Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			    Tooltip.install(checksumLabel, checksumTooltip); 
-			}
-		    }});calcKeyThread.setName("calcKeyThread"); calcKeyThread.setDaemon(true); calcKeyThread.start();
-
+			    else
+			    {
+				messageDigest.reset();
+				Tooltip.uninstall(checksumLabel, checksumTooltip);
+//				Tooltip.install(checksumLabel, checksumTooltip);
+				isCalculatingCheckSum = false;
+			    }
+			}});
+			calcKeyThread.setName("calcKeyThread"); calcKeyThread.setDaemon(true); calcKeyThread.start();
+		    }
+    //		targetFileChooserPropertyCheck(true);
 		}
-//		targetFileChooserPropertyCheck(true);
-	    }
-	}});
+	    }});
+	}
     }
     
     @FXML private void checksumLabelOnMouseClicked(MouseEvent event)
     {
 	checksumLabel.setTextFill(Color.WHITESMOKE);
 	checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
-	try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+//	try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 	Platform.runLater(new Runnable(){ @Override public void run() { calculateChecksum(); }});
     }
     
@@ -1137,14 +1149,12 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
 
 //  FileChooser Listener methods
-    private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)
-    {
-	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { targetFileChooserPropertyCheck(true); }
-    }
+    synchronized private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { targetFileChooserPropertyCheck(true); } }
     
-    private void targetFileChooserPropertyCheck(boolean status)
+    synchronized private void targetFileChooserPropertyCheck(boolean status)
     {
-	if (!processRunning )
+//	if ((!processRunning ) && (!MySimpleFCFileVisitor.running))
+	if ((!processRunning ))
 	{
 //	    processRunning = true;
 	    Platform.runLater(new Runnable(){ @Override public void run() 
@@ -1182,13 +1192,15 @@ public class GUIFX extends Application implements UI, Initializable
 	    // All Valid
 	    if ((targetFileChooser != null) && (targetFileChooser.getSelectedFiles() != null) && (targetFileChooser.getSelectedFiles().length > 0) && (keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
 	    {
-		MySimpleFCFileVisitor.running = false;
-	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+//		MySimpleFCFileVisitor.running = false;
+//	        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 //		log("TC All Valid\r\n");
 		Validate.bytesCount = 0;
 
 		// Gather User Selection in list
 		for (File file:targetFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
+//		log("list: " + targetPathList.size() + "\r\n", true, false, false, false, false);
+		
 
     //		Get Globbing Pattern String
 		pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
@@ -1208,13 +1220,14 @@ public class GUIFX extends Application implements UI, Initializable
 		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
 			Validate.buildSelection( ui, targetPathList, keyFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
-		    }});scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
+		    }}); scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
 		}});
 	    }
 	    else // Not all valid
 	    {		
-		MySimpleFCFileVisitor.running = false;
-		try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+//		log("Not all valid: " + targetPathList.size() + "\r\n", true, false, false, false, false);
+//		MySimpleFCFileVisitor.running = false;
+//		try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 		targetFCPathList = new FCPathList();
 		buildReady(targetFCPathList);
 	    }
@@ -1225,6 +1238,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run() { filesProgressBar.setProgress(0); }});
 	if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
+	MySimpleFCFileVisitor.running = false;
+	isCalculatingCheckSum = false;
 	
 	if (fcPathListParam.size() > 0)
 	{
@@ -1329,7 +1344,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    stopButton.setDisable(true);
 	}});
     }
-    private void checkModeReady(FCPathList targetFCPathList)
+    synchronized private void checkModeReady(FCPathList targetFCPathList)
     {
 	Platform.runLater(new Runnable()
 	{
@@ -1835,25 +1850,30 @@ public class GUIFX extends Application implements UI, Initializable
                 fileProgressBar.setProgress(0);
                 filesProgressBar.setProgress(0);
 
-                targetFileChooser.setSelectedFile(new File(""));
-                File[] files = { new File("") };
-                targetFileChooser.setSelectedFiles(files);
-                targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
-                targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
-                targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
 
-                keyFileChooser.setSelectedFile(new File(""));
-                keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
-                keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
-                keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-
-                targetFileChooserPropertyCheck(false);
-                keyFileChooserPropertyCheck();
-                
+		updateFileChoosers();
+		
+		
                 processRunningType = NONE;
                 processRunning = false;
 
-		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+//                targetFileChooser.setSelectedFile(new File(""));
+//                File[] files = { new File("") };
+//                targetFileChooser.setSelectedFiles(files);
+//                targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
+//                targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+//                targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
+//
+//                keyFileChooser.setSelectedFile(new File(""));
+//                keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
+//                keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+//                keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+//
+//                targetFileChooserPropertyCheck(false);
+//                keyFileChooserPropertyCheck();
+//                
+//
+//		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
             }
         });
     }    
@@ -1864,8 +1884,9 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
-	    targetFileChooser.setSelectedFile(new File(""));
 	    File[] files = { new File("") };
+
+	    targetFileChooser.setSelectedFile(new File(""));
 	    targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
 	    targetFileChooser.setSelectedFiles(files);
 	    targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
@@ -1875,10 +1896,11 @@ public class GUIFX extends Application implements UI, Initializable
 //	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 //	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
+	    keyFileChooser.setSelectedFile(new File(""));
 	    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
+	    keyFileChooser.setSelectedFiles(files);
 	    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 	    keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-	    keyFileChooser.setSelectedFile(new File(""));
 
 //	    keyFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 //	    keyFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -2229,14 +2251,11 @@ public class GUIFX extends Application implements UI, Initializable
 	if (print)	{ errfile(message); }
     }
 
-    public void status(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}});    }
+    public void status(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}}); }
     public void log(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
-    public void logfile(String message)     { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
+    public void logfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
     public void errfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
     public void print(String message)	    { System.out.print(message); }
     
-    public static void main(String[] args)
-    {
-        launch(args);
-    }
+    public static void main(String[] args)  { launch(args); }
 }

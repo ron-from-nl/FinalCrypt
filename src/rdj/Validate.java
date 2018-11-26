@@ -181,17 +181,28 @@ public class Validate
     }
 
 
-    
+    // Synchronized removes multifile target inconsistency, but also smooth busy animation
     public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
     {
-	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;}
+//	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;} // Being set within MySimpleFCFileVisitor instantiation
 //				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
 	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    keyFCPath,                   targetFCPathList,	pattern,         negatePattern);
 	for (Path path:pathList)
 	{
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n", true, true, true, true, false); }
 	}
-	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) ) { ui.buildReady(targetFCPathList); } else { targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList); }
+	mySimpleFCFileVisitor.running = false;
+	ui.buildReady(targetFCPathList);
+	
+//	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) )
+//	if ( (targetFCPathList.size() > 0) )
+//	{ 
+//	    ui.buildReady(targetFCPathList);
+//	}
+//	else
+//	{
+//	    targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList);
+//	}	
     }
 
     synchronized public static String getHumanSize(double value,int decimals)
