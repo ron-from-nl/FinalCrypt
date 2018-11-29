@@ -30,9 +30,10 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Added Disable Message Authentication Code Mode
+
 Fixed unselect key
 Fix path.isHidden array out of bound error
-
 Automat Update Check
 Improved Log System 
 Fix OTP Key Size Bug

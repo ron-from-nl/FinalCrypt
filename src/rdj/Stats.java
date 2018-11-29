@@ -117,7 +117,7 @@ public class Stats
     public String getStartSummary(String mode)
     {
         String fileString = "files"; if (filesTotal == 1)			{ fileString = "file"; } else { fileString = "files"; }
-        String returnString = "\r\nStarting: " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\r\n\r\n";
+        String returnString = "\r\nStarted " + mode + " " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\r\n\r\n";
         
         return returnString;
     }
@@ -141,7 +141,7 @@ public class Stats
     public String getEndSummary(String mode)                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "\r\nFinished: [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] finished in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut() + "\r\n\r\n";
+        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut() + "\r\n\r\n";
         return returnString;
     }
     

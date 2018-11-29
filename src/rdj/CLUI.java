@@ -33,6 +33,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
@@ -84,9 +85,20 @@ public class CLUI implements UI
 //    private Long filesizeInBytes;
     private Long filesizeInBytes = 100L * (1024L * 1024L);  // Create OTP Key File Size
     private Path keyPath;
+//    private boolean disableMAC = false;
+    private boolean encryptModeNeeded;
+//    private TimerTask autoExitTask;
+//    private Timer autoExitTaskTimer;
+//    private String readInputString;
+//    private BufferedReader inputBufferedReader;
+//    private Thread readInputThread;
+//    private Thread autoExitThread;
+//    private Scanner inputScanner;
+    private TimeoutThread timeoutThread;
+    private ReaderThread readerThread;
 
     public CLUI(String[] args)
-    {
+    {	
         this.ui = this;
         boolean tfset = false;
 	boolean tfsetneeded = false;
@@ -119,11 +131,14 @@ public class CLUI implements UI
 //        finalCrypt.execute();
 
         // Validate Parameters
+	if (args.length == 0 ) { log("\r\nError: No parameters entered!\r\n", false, true, true, true, false); usagePrompt(true); } 
+	
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
         {
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
+            else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disableMAC = true; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeydev = true; kfsetneeded = true; tfsetneeded = true; } }
@@ -141,11 +156,11 @@ public class CLUI implements UI
 //            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
 //            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
 //            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
-            else if (  args[paramCnt].equals("--version"))                                                          { CLUI.this.log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--license"))                                                          { CLUI.this.log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { CLUI.this.log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
-            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { CLUI.this.log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usage(true); }}
-            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { CLUI.this.log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usage(true); }}
+            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
+            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usagePrompt(true); }}
+            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usagePrompt(true); }}
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
@@ -159,11 +174,13 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
 	    
-            else { System.err.println("\r\nError: Invalid Parameter: " + args[paramCnt]); usage(true); }
+            else { log("\r\nError: Invalid Parameter: " + args[paramCnt] + "\r\n", false, true, true, true, false); usagePrompt(true); }
         }
-        
-        if ((kfsetneeded) && ( ! kfset ))									    { CLUI.this.log("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n", false, true, true, true, false); usage(true); }
-        if ((tfsetneeded) && ( ! tfset ))									    { CLUI.this.log("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n", false, true, true, true, false); usage(true); }
+
+        if (( encryptModeNeeded )   && ( decrypt ))								    { log("\r\nError: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n",  false, true, true, true, false); usagePrompt(true); }
+        if (( encryptModeNeeded )   && ( ! encrypt ))								    { log("\r\nError: Missing valid parameter <--encrypt>" + "\r\n",			    false, true, true, true, false); usagePrompt(true); }
+        if (( kfsetneeded )	    && ( ! kfset ))								    { log("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n",			    false, true, true, true, false); usagePrompt(true); }
+        if (( tfsetneeded )	    && ( ! tfset ))								    { log("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n",false, true, true, true, false); usagePrompt(true); }
 
                 
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
@@ -176,8 +193,8 @@ public class CLUI implements UI
 	    String sym = ""; if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
 	    String all = size + dir + sym;
 	    
-            CLUI.this.log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, true, false);
-	    CLUI.this.log(Validate.getFCPathStatus(keyFCPath), false, true, true, false, false); usage(true);
+            log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, true, false);
+	    log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	}
 	
 	// Target Validation
@@ -191,17 +208,17 @@ public class CLUI implements UI
     //			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
 		    if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
 		    {
-			if (verbose) { CLUI.this.log("Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
+			if (verbose) { log("Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
 		    }
     //				   isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
 		    {
-			if (verbose) { CLUI.this.log("Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
+			if (verbose) { log("Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
 		    }
 		}
 		else
 		{ 
-			CLUI.this.log("Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, true, false); usage(true);
+			log("Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, true, false); usagePrompt(true);
 		}            
 	    }
 	}
@@ -209,7 +226,11 @@ public class CLUI implements UI
 //	Command line input for an optional Password keyboard.nextInt();
 
 
-///////////////////////////////////////////////// CREATE OTP KEY FILE =================================================
+//	====================================================================================================================
+//	 Start writing OTP key file
+//	====================================================================================================================
+
+
 
 	if (createkeyfile)
 	{
@@ -217,106 +238,89 @@ public class CLUI implements UI
 	    bufferSize = 1048576;
 	    totalTranfered = 0L;
 
-//	    ====================================================================================================================
-//	    Start writing key file
-//	    ====================================================================================================================
 	    
-//	    Thread createKeyThread = new Thread(new Runnable()
-//	    {
-////			    private DeviceManager deviceManager;
-//		@Override
-//		@SuppressWarnings({"static-access"})
-//		public void run()
-//		{
-		    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) )
-		    { CLUI.this.log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); System.exit(1); }
-		    else
-		    {
-			CLUI.this.log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false);
-		    }
-		    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }
+	    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) ) { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); System.exit(1); }
+	    else						    { log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false); }
 
-		    boolean inputEnded = false;
-		    long writeKeyFileChannelPosition = 0L;
-		    long writeKeyFileChannelTransfered = 0L;
-		    totalTranfered = 0L;
-		    Long remainder = 0L;
+	    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }
 
-	    //      Write the keyfile to 1st partition
-		    byte[]      randomBytes1 =	    new byte[bufferSize];
-		    byte[]      randomBytes2 =	    new byte[bufferSize];
-		    byte[]      randomBytes3 =	    new byte[bufferSize];
-		    ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-		    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-		    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+	    boolean inputEnded = false;
+	    long writeKeyFileChannelPosition = 0L;
+	    long writeKeyFileChannelTransfered = 0L;
+	    totalTranfered = 0L;
+	    Long remainder = 0L;
+
+//		    Write the keyfile to 1st partition
+
+	    byte[]      randomBytes1 =	    new byte[bufferSize];
+	    byte[]      randomBytes2 =	    new byte[bufferSize];
+	    byte[]      randomBytes3 =	    new byte[bufferSize];
+	    ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+	    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+	    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
 
 
-		    SecureRandom random = new SecureRandom();
+	    SecureRandom random = new SecureRandom();
 
-		    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
-		    {
-			remainder = (filesizeInBytes - totalTranfered);
+	    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
+	    {
+		remainder = (filesizeInBytes - totalTranfered);
 
-			if	    ( remainder >= bufferSize )				
-			{
-			    randomBytes1 =	    new byte[bufferSize];
-			    randomBytes2 =	    new byte[bufferSize];
-			    randomBytes3 =	    new byte[bufferSize];
-			    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-			    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-			    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
-			}
-			else if (( remainder > 0 ) && ( remainder < bufferSize ))
-			{
-			    randomBytes1 =	    new byte[remainder.intValue()];
-			    randomBytes2 =	    new byte[remainder.intValue()];
-			    randomBytes3 =	    new byte[remainder.intValue()];
-			    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
-			    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
-			    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
-			}
-			else							{ inputEnded = true; }
-	    //          Randomize raw key or write raw key straight to partition
-			random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
-			random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
+		if	    ( remainder >= bufferSize )				
+		{
+		    randomBytes1 =	    new byte[bufferSize];
+		    randomBytes2 =	    new byte[bufferSize];
+		    randomBytes3 =	    new byte[bufferSize];
+		    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+		}
+		else if (( remainder > 0 ) && ( remainder < bufferSize ))
+		{
+		    randomBytes1 =	    new byte[remainder.intValue()];
+		    randomBytes2 =	    new byte[remainder.intValue()];
+		    randomBytes3 =	    new byte[remainder.intValue()];
+		    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
+		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
+		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
+		}
+		else							{ inputEnded = true; }
+//              Randomize raw key or write raw key straight to partition
+		random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
+		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
 
-			randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, false); // Encrypt
+		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, false); // Encrypt
 
-	    //          Write Device
-			try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
-			{
-			    writeKeyFileChannel.position(writeKeyFileChannelPosition);
-			    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
-			    totalTranfered += writeKeyFileChannelTransfered; 
-	//		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
+//              Write Device
+		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+		{
+		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
+		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
+		    totalTranfered += writeKeyFileChannelTransfered; 
+//		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
 
-			    writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
+		    writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
 
-			    writeKeyFileChannel.close();
-			} catch (IOException ex) { CLUI.this.log("\r\nError: " + ex.getMessage() + "\r\n", false, true, true, true, false); inputEnded = true; break; }
-			randomBuffer1.clear(); randomBuffer2.clear(); randomBuffer3.clear();
-		    }
-		    writeKeyFileChannelPosition = 0;                
-		    writeKeyFileChannelTransfered = 0;                
-		    inputEnded = false;
+		    writeKeyFileChannel.close();
+		} catch (IOException ex) { log("\r\nError: " + ex.getMessage() + "\r\n", false, true, true, true, false); inputEnded = true; break; }
+		randomBuffer1.clear(); randomBuffer2.clear(); randomBuffer3.clear();
+	    }
+	    writeKeyFileChannelPosition = 0;                
+	    writeKeyFileChannelTransfered = 0;                
+	    inputEnded = false;
 
 
-		    CLUI.this.log("finished\r\n", false, true, false, false, false);
-		    System.exit(0);
-//		}
-//	    });
-//	    createKeyThread.setName("createKeyThread");
-//	    createKeyThread.setDaemon(true);
-//	    createKeyThread.start();
-
-	    
+	    log("finished\r\n", false, true, false, false, false);
+	    System.exit(0);
+	}
 
 //	====================================================================================================================
 //	Finieshed writing key file
 //	====================================================================================================================
-	    
-	}
 	
+
+
+
 
 //////////////////////////////////////////////////// KEY CHECKSUM =====================================================
 
@@ -327,7 +331,7 @@ public class CLUI implements UI
 	    long    readKeySourceChannelTransfered =  0; 
 	    int readKeySourceBufferSize = (1 * 1024 * 1024);
 	    ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { CLUI.this.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
 	    int x = 0;
 	    while ( ! keySourceChecksumReadEnded )
 	    {
@@ -345,7 +349,7 @@ public class CLUI implements UI
 		    Platform.runLater(new Runnable(){ @Override public void run()
 		    {
 			keySourceChecksumReadEnded = true;
-			CLUI.this.log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, true, true, false); 
+			log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, true, true, false); 
 		    }});
 		}
 		x++;
@@ -431,21 +435,32 @@ public class CLUI implements UI
 	
 /////////////////////////////////////////////// FINAL VALIDATION & EXECUTE MODES ////////////////////////////////////////////////////
 
+//	log("Warning: Default Message Authentication Code Mode Disabled! NOT compattible to MAC Mode Encrypted files!!!\r\n", true, true, true, false, false);
+//	log("Info:    Default Message Authentication Code Mode Enabled\r\n", true, true, true, false, false);
 
 	DeviceManager deviceManager;
 	if ((encrypt))
 	{
-	    if ((encryptablesFound))	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true); }
+	    if (finalCrypt.disableMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
+	    
+	    if ((encryptablesFound))    { processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true); }
 	    else			{ log("No encryptable targets found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((decrypt))
 	{
-	    if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false); }
-	    else			
+	    if (finalCrypt.disableMAC)
 	    {
-		log("No decryptable targets found\r\n\r\n", false, true, true, true, false);
-		if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key? \"" + keyFCPath.path.toString() + "\"\r\n\r\n", false, true, false, false, false); }
-		log(targetFCPathList.getStats(), false, true, true, false, false);
+		log("Warning: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n", true, true, true, false, false);
+	    }
+	    else
+	    {
+		if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false); }
+		else			
+		{
+		    log("No decryptable targets found\r\n\r\n", false, true, true, true, false);
+		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key? \"" + keyFCPath.path.toString() + "\"\r\n\r\n", false, true, false, false, false); }
+		    log(targetFCPathList.getStats(), false, true, true, false, false);
+		}
 	    }
 	}
 	else if (createkeydev)
@@ -525,127 +540,139 @@ public class CLUI implements UI
     
     private boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
 
-    private void usage(boolean error)
+    private void usagePrompt(boolean error)
     {
+        timeoutThread = new TimeoutThread(this); timeoutThread.start();
+        readerThread = new ReaderThread(this); readerThread.start();
+	while (timeoutThread.isAlive()) { try { Thread.sleep(100); } catch (InterruptedException ex) { } }
+	log("\r\n\r\n", false, true, false, false, false);
+	System.exit(1);
+    }
+    
+    protected void usage(boolean error)
+    {
+//	if ( autoExitTaskTimer != null ) { autoExitTaskTimer.cancel(); autoExitTaskTimer.purge(); }
+	
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
-        log("\r\n", false, true, true, false, false);
-        log("Examples:\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_dir\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file -t target_dir\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("Mode:\r\n", false, true, true, false, false);
-        log("            <--encrypt>           -k \"key_file\"   -t \"target\"	    Encrypt Targets.\r\n", false, true, true, false, false);
-        log("            <--decrypt>           -k \"key_file\"   -t \"target\"	    Decrypt Targets.\r\n", false, true, true, false, false);
-        log("            <--create-keydev>     -k \"key_file\"   -t \"target\"	    Create Key Device (only unix).\r\n", false, true, true, false, false);
-        log("            <--create-keyfile>    -K \"key_file\"   -S \"Size (bytes)\"	    Create OTP Key File.\r\n", false, true, true, false, false);
-        log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\"     Clone Key Device (only unix).\r\n", false, true, true, false, false);
-        log("            [--print-gpt]         -t \"target_device\"			    Print GUID Partition Table.\r\n", false, true, true, false, false);
-        log("            [--delete-gpt]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-	log("Options:\r\n", false, true, true, false, false);
-        log("            [-h] [--help]	  Shows this help page.\r\n", false, true, true, false, false);
-        log("            [--key-chksum]        -k \"key_file\"			    Calculate key checksum.\r\n", false, true, true, false, false);
-        log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, true, false, false);
-        log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, true, false, false);
-        log("            [--print]		  Print all encrypted bytes.\r\n", false, true, true, false, false);
-        log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, true, false, false);
-        log("                 [--version]      Print " + version.getProduct() + " version.\r\n", false, true, true, false, false);
-        log("                 [--license]      Print " + version.getProduct() + " license.\r\n", false, true, true, false, false);
-        log("                 [--check-update] Check for online updates.\r\n", false, true, true, false, false);
-//        log("            [--txt]               Print text calculations.\r\n", false, true, true, false, false);
-//        log("            [--bin]               Print binary calculations.\r\n", false, true, true, false, false);
-//        log("            [--dec]               Print decimal calculations.\r\n", false, true, true, false, false);
-//        log("            [--hex]               Print hexadecimal calculations.\r\n", false, true, true, false, false);
-//        log("            [--chr]               Print character calculations.\r\n", false, true, true, false, false);
-        log("                                  Warning: The above Print options slows encryption severely.\r\n", false, true, true, false, false);
-        log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n", false, true, true, false, false);
-        log("            [-S size]             OTP Key File Size (size = bytes). See --create-keyfile \r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("Filtering Options:\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\r\n", false, true, true, false, false);
-        log("            [-w \'wildcard\']       File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, true, false, false);
-        log("            [-W \'wildcard\']       File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, true, false, false);
-        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("Parameters:\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            <-k \"keyfile\">     The file that encrypts your file(s). Keep keyfile SECRET!\r\n", false, true, true, false, false);
-        log("                                  A key-file is a unique file like a personal photo or video!\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, true, false, false);
-        log("            <[-t \"file/dir\"]>     Target file or dir you want to encrypt (encrypts dirs recursively).\r\n", false, true, true, false, false);
-        log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files accepted).\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, true, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Examples:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_dir\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file -t target_dir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Mode:\r\n", false, true, false, false, false);
+        log("            <--encrypt>           -k \"key_file\"   -t \"target\"	    Encrypt Targets.\r\n", false, true, false, false, false);
+        log("            <--decrypt>           -k \"key_file\"   -t \"target\"	    Decrypt Targets.\r\n", false, true, false, false, false);
+        log("            <--create-keydev>     -k \"key_file\"   -t \"target\"	    Create Key Device (only unix).\r\n", false, true, false, false, false);
+        log("            <--create-keyfile>    -K \"key_file\"   -S \"Size (bytes)\"	    Create OTP Key File.\r\n", false, true, false, false, false);
+        log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\"     Clone Key Device (only unix).\r\n", false, true, false, false, false);
+        log("            [--print-gpt]         -t \"target_device\"			    Print GUID Partition Table.\r\n", false, true, false, false, false);
+        log("            [--delete-gpt]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+	log("Options:\r\n", false, true, false, false, false);
+        log("            [-h] [--help]	  Shows this help page.\r\n", false, true, false, false, false);
+        log("            [--key-chksum]        -k \"key_file\"			    Calculate key checksum.\r\n", false, true, false, false, false);
+        log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, false, false, false);
+        log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, false, false, false);
+        log("            [--print]		  Print all encrypted bytes.\r\n", false, true, false, false, false);
+        log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
+        log("            [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).\r\n", false, true, false, false, false);
+        log("            [--version]           Print " + version.getProduct() + " version.\r\n", false, true, false, false, false);
+        log("            [--license]           Print " + version.getProduct() + " license.\r\n", false, true, false, false, false);
+        log("            [--check-update]      Check for online updates.\r\n", false, true, false, false, false);
+//        log("            [--txt]               Print text calculations.\r\n", false, true, false, false, false);
+//        log("            [--bin]               Print binary calculations.\r\n", false, true, false, false, false);
+//        log("            [--dec]               Print decimal calculations.\r\n", false, true, false, false, false);
+//        log("            [--hex]               Print hexadecimal calculations.\r\n", false, true, false, false, false);
+//        log("            [--chr]               Print character calculations.\r\n", false, true, false, false, false);
+        log("                                  Warning: The above Print options slows encryption severely.\r\n", false, true, false, false, false);
+        log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n", false, true, false, false, false);
+        log("            [-S size]             OTP Key File Size (size = bytes). See --create-keyfile \r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Filtering Options:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            [--dry]               Dry run without encrypting files for safe testing purposes.\r\n", false, true, false, false, false);
+        log("            [-w \'wildcard\']       File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
+        log("            [-W \'wildcard\']       File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
+        log("            [-r \'regex\']          File regular expression filter. Advanced filename filter!\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Parameters:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            <-k \"keyfile\">        The file that encrypts your file(s). Keep keyfile SECRET!\r\n", false, true, false, false, false);
+        log("                                  A key-file is a unique file like a personal photo or video!\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, false, false, false);
+        log("            <[-t \"file/dir\"]>     Target file or dir you want to encrypt (encrypts dirs recursively).\r\n", false, true, false, false, false);
+        log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files accepted).\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);
     }
 
     private void examples()
     {
-        log("\r\n", false, true, true, false, false);
-        log("Examples:   java -cp FinalCrypt.jar rdj/CLUI <Mode> [options] <Parameters>\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt myfile with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -t myfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -t myfile\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt myfile and all content in mydir with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -t myfile -t mydir\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -t myfile -t mydir\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt files in batchfile with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -b mybatchfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -b mybatchfile\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt all files with *.bit extension in mydir with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -w '*.bit'-k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -w '*.bit'-k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt all files without *.bit extension in mydir with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -W '*.bit' -k mykeyfile -t mydir \r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -W '*.bit' -k mykeyfile -t mydir \r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt all files with *.bit extension in mydir with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -r '^.*\\.bit$' -k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -r '^.*\\.bit$' -k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt all files excluding .bit extension in mydir with mykeyfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -r '(?!.*\\.bit$)^.*$' -k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -r '(?!.*\\.bit$)^.*$' -k mykeyfile -t mydir\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-	log("Create OTP Key file:\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-	log("Key Device Examples (Linux):\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Create Key Device with 2 key partitions (e.g. on USB Mem Stick)\r\n", false, true, true, false, false);
-        log("            # Beware: keyfile gets randomized before writing to Device\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --create-keydev -k mykeyfile -t /dev/sdb\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Print GUID Partition Table\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --print-gpt -t /dev/sdb\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Delete GUID Partition Table\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --delete-gpt -t /dev/sdb\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Clone Key Device (-k sourcekeydevice -t destinationkeydevice)\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --clone-keydev -k /dev/sdb -t /dev/sdc\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log("            # Encrypt / Decrypt myfile with raw key partition\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k /dev/sdb1 -t myfile\r\n", false, true, true, false, false);
-        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k /dev/sdb1 -t myfile\r\n", false, true, true, false, false);
-        log("\r\n", false, true, true, false, false);
-        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, true, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Examples:   java -cp FinalCrypt.jar rdj/CLUI <Mode> [options] <Parameters>\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt myfile with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -t myfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -t myfile\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt myfile and all content in mydir with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -t myfile -t mydir\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -t myfile -t mydir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt files in batchfile with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k mykeyfile -b mybatchfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k mykeyfile -b mybatchfile\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt all files with *.bit extension in mydir with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -w '*.bit'-k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -w '*.bit'-k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt all files without *.bit extension in mydir with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -W '*.bit' -k mykeyfile -t mydir \r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -W '*.bit' -k mykeyfile -t mydir \r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt all files with *.bit extension in mydir with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -r '^.*\\.bit$' -k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -r '^.*\\.bit$' -k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt all files excluding .bit extension in mydir with mykeyfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -r '(?!.*\\.bit$)^.*$' -k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -r '(?!.*\\.bit$)^.*$' -k mykeyfile -t mydir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+	log("Create OTP Key file:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+	log("Key Device Examples (Linux):\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Create Key Device with 2 key partitions (e.g. on USB Mem Stick)\r\n", false, true, false, false, false);
+        log("            # Beware: keyfile gets randomized before writing to Device\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --create-keydev -k mykeyfile -t /dev/sdb\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Print GUID Partition Table\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --print-gpt -t /dev/sdb\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Delete GUID Partition Table\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --delete-gpt -t /dev/sdb\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Clone Key Device (-k sourcekeydevice -t destinationkeydevice)\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --clone-keydev -k /dev/sdb -t /dev/sdc\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Encrypt / Decrypt myfile with raw key partition\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k /dev/sdb1 -t myfile\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k /dev/sdb1 -t myfile\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
         System.exit(0);
     }
 
@@ -681,11 +708,13 @@ public class CLUI implements UI
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
     {
-	if (status)	{ status(message); }
-	if (log)	{ log(message); }
-	if (logfile)	{ logfile(message); }
-	if (errfile)	{ errfile(message); }
-	if (print)	{ errfile(message); }
+	if	((!status) && (!log))   {  }
+	else if ((!status) && ( log))   { log(message); }
+	else if (( status) && (!log))   {  }
+	else if (( status) && ( log))	{ log(message); }
+	if	(logfile)		{ logfile(message); }
+	if	(errfile)		{ errfile(message); }
+	if	(print)			{ errfile(message); }
     }
 
     public void status(String message)	    {  }
@@ -694,8 +723,41 @@ public class CLUI implements UI
     public void errfile(String message)	    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
     public void print(String message)	    { System.out.print(message); }
     
-    public static void main(String[] args)
+    public static void main(String[] args) { new CLUI(args); }
+}
+
+class ReaderThread extends Thread
+{
+    private CLUI clui;
+    
+    public ReaderThread(CLUI ui) { this.clui = ui; }
+    
+    @Override public void run()
     {
-        new CLUI(args);
-    }    
+	clui.log("\r\nWould you like to see the User Manual (y/N)? ", false, true, false, false, false);
+        try(Scanner in = new Scanner(System.in))
+	{
+            String input = in.nextLine();
+	    if ( input.trim().toLowerCase().equals("y") ) { clui.usage(true); } else { clui.log("\r\n", false, true, false, false, false); System.exit(1); }
+        }
+    }
+
+}
+
+class TimeoutThread extends Thread
+{
+    private CLUI clui;
+    
+    public TimeoutThread(CLUI ui) { this.clui = ui; }
+
+    @Override public void run()
+    {
+        try {
+            Thread.sleep(2000);
+//            Robot robot = new Robot();
+//            robot.keyPress(KeyEvent.VK_ENTER);
+//            robot.keyRelease(KeyEvent.VK_ENTER);
+        } catch(Exception e) { }
+    }
+
 }

@@ -95,8 +95,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.WindowEvent;
@@ -350,6 +353,17 @@ public class GUIFX extends Application implements UI, Initializable
     private Preferences prefs;
     private long now;
     private boolean isCalculatingCheckSum;
+    @FXML
+    private GridPane dashboardGridPane;
+    @FXML
+    private ToggleButton encryptionModeToggleButton;
+    @FXML
+    private Tooltip encryptionModeToolTip;
+    @FXML
+    private AnchorPane encryptionModeAnchorPane;
+    private long lastRawModeClicked;
+    private Timeline flashMACTimeline;
+    private Timeline autoDisableTimeline;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -637,7 +651,7 @@ public class GUIFX extends Application implements UI, Initializable
 		String[] lines = version.getUpdateStatus().split("\r\n");
 		for (String line: lines) { log(line + "\r\n", true, true, true, false, false);}
 		
-		alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n";
+		alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n\r\n";
 		if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
 		if (! version.getLatestVersionMessageString().isEmpty())    { alertString += version.getLatestVersionMessageString() + "\r\n"; }
 		if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() ))
@@ -840,12 +854,15 @@ public class GUIFX extends Application implements UI, Initializable
         this.filesProgressBar.setProgress(0);
         if ((targetFileChooser != null)  && (targetFileChooser.getSelectedFiles() != null) && ( targetFileChooser.getSelectedFiles().length == 1 ))
         {
+	    if (keyFCPath == null)
+	    {
+//							Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
+		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,          false,         path,          true);
+	    }
+	    
 	    Path targetPath = targetFileChooser.getSelectedFile().toPath();
-//	    GUIFX ui = this;
-//	    if (ui == null) { log("Fuck me dearly\r\n"); }
-	    if (keyFCPath == null)	{ Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,		"",        path,             true,      path,           true); }
-//					   getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
-	    FCPath targetFCPath = Validate.getFCPath( this, "", targetPath, false, keyFCPath.path, true);
+//					   getFCPath(UI ui,  String caller,  Path path,  boolean isKey,   Path keyPath, boolean report)
+	    FCPath targetFCPath = Validate.getFCPath( this,		"", targetPath,		 false, keyFCPath.path,		  true);
 	    
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
@@ -857,17 +874,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
 		}});
 	    }
-	    else
+	    else // Not a Device
 	    {
 //							device  minsize	 symlink  writable  status
-//		if (Validate.isValidFile(this, "", targetPath, false,      0L, true,    false, true))
-//		log("Item not Dev\r\n" + targetFCPath.getString());
 		if ((targetFCPath.isValidFile) || (targetFCPath.type == FCPath.SYMLINK))
 		{
-//		    log("Item validfile or symlink: \r\n" + targetFCPath.getString());
-		    if ((targetFCPath.isEncrypted) && ( targetFCPath.isDecryptable ))
+		    if ((targetFCPath.isEncrypted) && ( targetFCPath.isDecryptable ) && ( keyFCPath != null ) && ( keyFCPath.isValidKey ))
 		    {
-//			log("Item Encrypted && Decryptable\r\n" + targetFCPath.getString());
 			Thread encryptThread = new Thread(new Runnable()
 			{
 //			    private DeviceManager deviceManager;
@@ -875,28 +888,23 @@ public class GUIFX extends Application implements UI, Initializable
 			    @SuppressWarnings({"static-access"})
 			    public void run()
 			    {
-				FCPathList targetFCPathList = new FCPathList(); FCPathList fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
-				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath); Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
+				FCPathList targetFCPathList = new FCPathList();
+				FCPathList fileteredTargetFCPathList = new FCPathList();
+				targetFCPathList.add(targetFCPath);
+				fileteredTargetFCPathList.add(targetFCPath);
+				
+				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath);
+				Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
 				try { Thread.sleep(300); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
 				
 				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-//				while (true)
-//				{
-//				    log("" + desktop.toString() + "\r\n");
-//				    try { Thread.sleep(300); } catch (InterruptedException ex) {  }
-//				}
-//				log("closeFile: " + newPath.toString() + "\r\n");
-//				try { Thread.sleep(300); } catch (InterruptedException ex) {  }
-//				FCPath targetFCPath = Validate.getFCPath(   ui,		 "", newPath,	    false,	keyFCPath.path,	     true);
-//				targetFCPathList = new FCPathList(); fileteredTargetFCPathList = new FCPathList(); targetFCPathList.add(targetFCPath); fileteredTargetFCPathList.add(targetFCPath);
-//				encrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath);
 			    }
 			});
 			encryptThread.setName("encryptThread");
 			encryptThread.setDaemon(true);
 			encryptThread.start();
 		    }
-		    else
+		    else // Not decryptable
 		    { 
 			try { Desktop.getDesktop().open(targetFCPath.path.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		    }
@@ -1378,7 +1386,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		    // Decryptables
 		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
-		    if (targetFCPathList.decryptableFiles > 0)
+		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalCrypt.disableMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
 		    {
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
@@ -1717,6 +1725,9 @@ public class GUIFX extends Application implements UI, Initializable
         {
             @Override public void run()
             {
+		encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
+		encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
+		
 		// Clocks
 		elapsedTimeLabel.setText("00:00:00");
 		remainingTimeLabel.setText("00:00:00");
@@ -1839,9 +1850,9 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		
 		targetFCPathList = new FCPathList();
-                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected key
+//                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected key
 //                             Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
-                keyFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
+//                keyFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
                 updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
@@ -1850,6 +1861,8 @@ public class GUIFX extends Application implements UI, Initializable
                 fileProgressBar.setProgress(0);
                 filesProgressBar.setProgress(0);
 
+		encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
+		encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 
 		updateFileChoosers();
 		
@@ -2230,17 +2243,135 @@ public class GUIFX extends Application implements UI, Initializable
 	updateThread.start();
     }    
 
-    @FXML
-    private void copyrightLabelOnMouseClicked(MouseEvent event)
+
+
+
+//  ==============================================================================================================
+//  Begin Message Authentication Mode
+//  ==============================================================================================================
+
+
+
+    private void enableMACMode()
     {
-        Platform.runLater(new Runnable()
-        {
-            @Override public void run()
-            {
-            }
-        });
+		    if ( flashMACTimeline != null ) { flashMACTimeline.stop(); }
+		    encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
+		    encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
+
+		    updateFileChoosers();
+		    finalCrypt.disableMAC = false;
+		    dashboardGridPane.setDisable(false);
+		    encryptionModeToggleButton.setDisable(true);
+		    encryptionModeToggleButton.setMouseTransparent(true);
+		    long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
+		    log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
     }
     
+    private void armDisableMACMode()
+    {
+	encryptionModeToggleButton.setDisable(false);
+	encryptionModeToggleButton.setSelected(false);
+	encryptionModeToggleButton.setWrapText(false);
+	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+	encryptionModeToggleButton.setMouseTransparent(false);
+	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
+
+//	Auto disable arming disable MAC Mode
+	autoDisableTimeline = new Timeline();
+	autoDisableTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 10.0), evt -> { disarmDisableMACMode(); } ));
+	autoDisableTimeline.setCycleCount(1);
+	autoDisableTimeline.play();
+    }
+    
+    private void disarmDisableMACMode()
+    {
+	encryptionModeToggleButton.setDisable(true);
+	encryptionModeToggleButton.setSelected(false);
+//	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+	encryptionModeToggleButton.setMouseTransparent(false);
+//	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
+
+////	Auto disable arming disable MAC Mode
+//	autoDisableTimeline = new Timeline();
+//	autoDisableTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 10.0), evt -> { enableMACMode(); } ));
+//	autoDisableTimeline.setCycleCount(1);
+//	autoDisableTimeline.play();
+    }
+    
+    private void disableMACMode()
+    {
+	if ( autoDisableTimeline != null ) { autoDisableTimeline.stop(); }
+
+	encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
+	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
+
+	updateFileChoosers();
+	finalCrypt.disableMAC = true;
+	dashboardGridPane.setDisable(true);
+	log("Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false);
+
+	flashMACTimeline = new Timeline();
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
+//	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black")); encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));   encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.setCycleCount(Animation.INDEFINITE);
+	flashMACTimeline.play();
+    }
+        
+    @FXML
+    private void encryptionModeToggleButtonOnMouseClicked(MouseEvent event)
+    {
+	if ( ! processRunning )
+	{
+	    Platform.runLater(new Runnable() { @Override public void run() {
+		if (! encryptionModeToggleButton.isSelected())	{ enableMACMode(); }
+		else						{ disableMACMode(); }
+	    }});
+	}
+    }
+
+    @FXML
+    private void encryptionModeAnchorPaneOnMouseClicked(MouseEvent event)
+    {
+	long now = Calendar.getInstance().getTimeInMillis();
+	if ( ! processRunning)
+	{
+	    if ( now - lastRawModeClicked > 1000) // Anti DoubleClick missery
+	    {
+		Platform.runLater(new Runnable() { @Override public void run()
+		{
+		    if (encryptionModeToggleButton.isDisabled())
+		    {
+			if(event.getButton().equals(MouseButton.PRIMARY))
+			{
+			    if(event.getClickCount() == 2)
+			    {
+				armDisableMACMode();
+			    }
+			}	
+		    }
+		}});
+	    }	
+	}
+    }
+
+
+
+//  ==============================================================================================================
+//  End Message Authentication Mode
+//  ==============================================================================================================
+
+
+
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
     {
@@ -2258,4 +2389,5 @@ public class GUIFX extends Application implements UI, Initializable
     public void print(String message)	    { System.out.print(message); }
     
     public static void main(String[] args)  { launch(args); }
+
 }

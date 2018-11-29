@@ -144,7 +144,7 @@ public class DeviceController
         allDataStats.setFilesTotal(1);
         allDataStats.setFileBytesTotal      (keyFCPath.size * 2);
         allDataStats.setAllDataBytesTotal   (keyFCPath.size * 2);
-        ui.log(allDataStats.getStartSummary("Create Key Device"), true, true, false, false, false);
+        ui.log(allDataStats.getStartSummary("Creating Key Device"), true, true, false, false, false);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
         boolean inputEnded = false;
@@ -270,7 +270,7 @@ public class DeviceController
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
 
 //        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-        ui.log(allDataStats.getEndSummary("Create Key Device"), true, true, false, false, false);
+        ui.log(allDataStats.getEndSummary("creating key device"), true, true, false, false, false);
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
 //        updateProgressTimeline.stop();
@@ -307,7 +307,7 @@ public class DeviceController
 	    allDataStats.setFileBytesTotal      (keyPartitionSize * 2);
 	    allDataStats.setAllDataBytesTotal   (keyPartitionSize * 2);
 
-	    ui.log(allDataStats.getStartSummary("Clone Key Device"), true, true, false, false, false);
+	    ui.log(allDataStats.getStartSummary("Cloning Key Device"), true, true, false, false, false);
 	    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 
 	    boolean inputEnded = false;
@@ -405,7 +405,7 @@ public class DeviceController
 	    allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
 
     //        if ( stopPending ) { ui.status("\r\n", false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
-	    ui.log(allDataStats.getEndSummary("Clone Key Device"), true, true, false, false, false);
+	    ui.log(allDataStats.getEndSummary("cloning key device"), true, true, false, false, false);
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
     //        updateProgressTimeline.stop();

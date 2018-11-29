@@ -156,7 +156,7 @@ public class Validate
 	// Encrypted Token Buffer
 	targetEncryptedTokenBuffer.put(targetSrcTokenBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.flip();
 	
-	if ( ! readTargetSourceChannelError )
+	if (( ! readTargetSourceChannelError ) && ( ! Files.isDirectory(keySourcePath)) )
 	{
 	    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
 	    {
@@ -347,7 +347,11 @@ public class Validate
 	    
 	    // Encrypted File State
 	    
-	    if (( isValidFile ))			    { isEncrypted = targetSourceHasFCToken(ui, path); if ((isEncrypted) && (keyPath != null) && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, keyPath); } }
+	    if (( isValidFile ))
+	    {
+		isEncrypted = targetSourceHasFCToken(ui, path);
+		if ((isEncrypted) && (keyPath != null)  && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, keyPath); }
+	    }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
 	    
