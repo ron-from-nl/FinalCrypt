@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-//import javafx.application.Platform;
 import static rdj.GUIFX.getHexString;
 
 /* commandline test routine

@@ -1907,7 +1907,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 	    targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
 	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
-
+	    
 //	    Key FileChooser
 	    keyFileChooser.setSelectedFile(noKeyFile);
 	    File curKeyDir = keyFileChooser.getCurrentDirectory();
@@ -1920,6 +1920,16 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    targetFileChooserPropertyCheck(false);
 	    keyFileChooserPropertyCheck();
+
+	    String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
+	    if ( platform.indexOf("mac") != -1 ) 
+	    {
+		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
+		{
+		    targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		}
+		)); timeline.play();
+	    }
         }});
     }
     
