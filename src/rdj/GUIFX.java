@@ -364,6 +364,8 @@ public class GUIFX extends Application implements UI, Initializable
     private long lastRawModeClicked;
     private Timeline flashMACTimeline;
     private Timeline autoDisableTimeline;
+    private File noKeyFile;
+    private File noTargetFile;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -452,15 +454,13 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
         
         keyFileChooserComponentAlteration(keyFileChooser);
-        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
-        {
-            keyFileSwingNode.setContent(keyFileChooser);
-        }
-        )); timeline.play();
+        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
 //        device = new Device(this); device.start();
 
+	noTargetFile = targetFileChooser.getSelectedFile();
+	noKeyFile = keyFileChooser.getSelectedFile();
         welcome();
     }
     
@@ -1897,29 +1897,26 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
-	    File[] files = { new File("") };
-
-	    targetFileChooser.setSelectedFile(new File(""));
-	    targetFileChooser.setCurrentDirectory(targetFileChooser.getCurrentDirectory());
-	    targetFileChooser.setSelectedFiles(files);
+//	    Target FileChooser
+	    
+	    targetFileChooser.setSelectedFile(noTargetFile);
+	    File curTargetDir = targetFileChooser.getCurrentDirectory();
+	    File upTargetDir = new File("..");
+	    targetFileChooser.setCurrentDirectory(upTargetDir);
+	    targetFileChooser.setCurrentDirectory(curTargetDir);
 	    targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 	    targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
-	    
-//	    targetFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//	    targetFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
 
-	    keyFileChooser.setSelectedFile(new File(""));
-	    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory());
-	    keyFileChooser.setSelectedFiles(files);
+//	    Key FileChooser
+	    keyFileChooser.setSelectedFile(noKeyFile);
+	    File curKeyDir = keyFileChooser.getCurrentDirectory();
+	    File upKeyDir = new File("..");
+	    keyFileChooser.setCurrentDirectory(upKeyDir);
+	    keyFileChooser.setCurrentDirectory(curKeyDir);
 	    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 	    keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-
-//	    keyFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//	    keyFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//	    keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-	    
-	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+	    keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
 
 	    targetFileChooserPropertyCheck(false);
 	    keyFileChooserPropertyCheck();
@@ -2251,7 +2248,33 @@ public class GUIFX extends Application implements UI, Initializable
 //  ==============================================================================================================
 
 
+    private void disarmDisableMACMode()
+    {
+	encryptionModeToggleButton.setDisable(true);
+	encryptionModeToggleButton.setSelected(false);
+	encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+	encryptionModeToggleButton.setMouseTransparent(false);
+    }
+    
+//  Enable / Arm Disable-MAC-Mode-Button
+    private void armDisableMACMode()
+    {
+	encryptionModeToggleButton.setDisable(false);
+	encryptionModeToggleButton.setSelected(false);
+	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+	encryptionModeToggleButton.setMouseTransparent(false);
+	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
 
+//	Auto disable arming disable MAC Mode
+	autoDisableTimeline = new Timeline();
+	autoDisableTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 8.0), evt -> { disarmDisableMACMode(); } ));
+	autoDisableTimeline.setCycleCount(1);
+	autoDisableTimeline.play();
+    }
+    
+//  Default MAC Mode
     private void enableMACMode()
     {
 		    if ( flashMACTimeline != null ) { flashMACTimeline.stop(); }
@@ -2266,40 +2289,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
 		    log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
     }
-    
-    private void armDisableMACMode()
-    {
-	encryptionModeToggleButton.setDisable(false);
-	encryptionModeToggleButton.setSelected(false);
-	encryptionModeToggleButton.setWrapText(false);
-	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
-	encryptionModeToggleButton.setMouseTransparent(false);
-	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
 
-//	Auto disable arming disable MAC Mode
-	autoDisableTimeline = new Timeline();
-	autoDisableTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 10.0), evt -> { disarmDisableMACMode(); } ));
-	autoDisableTimeline.setCycleCount(1);
-	autoDisableTimeline.play();
-    }
-    
-    private void disarmDisableMACMode()
-    {
-	encryptionModeToggleButton.setDisable(true);
-	encryptionModeToggleButton.setSelected(false);
-//	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
-	encryptionModeToggleButton.setMouseTransparent(false);
-//	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
-
-////	Auto disable arming disable MAC Mode
-//	autoDisableTimeline = new Timeline();
-//	autoDisableTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 10.0), evt -> { enableMACMode(); } ));
-//	autoDisableTimeline.setCycleCount(1);
-//	autoDisableTimeline.play();
-    }
-    
     private void disableMACMode()
     {
 	if ( autoDisableTimeline != null ) { autoDisableTimeline.stop(); }
@@ -2319,10 +2309,10 @@ public class GUIFX extends Application implements UI, Initializable
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
-//	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
-	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black")); encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");} ));
-	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));   encryptionModeToggleButton.setText("");} ));
-	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black")); encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));   encryptionModeToggleButton.setText("");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
 	flashMACTimeline.setCycleCount(Animation.INDEFINITE);
 	flashMACTimeline.play();
     }

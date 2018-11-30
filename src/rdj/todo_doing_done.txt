@@ -30,9 +30,11 @@ Set version in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Bugfix! fasly armed delete button
+Please update as soon as possible
+
 Removed GUI(FX) component from rdj.CLUI
 Removed deprecated javax.xml dependency
-
 Added Disable Message Authentication Code Mode
 Fixed unselect key
 Fix path.isHidden array out of bound error

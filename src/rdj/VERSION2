@@ -1,5 +1,5 @@
-[Version] =		{2.7.1}
-[Release Notes] =	{Removed GUI(FX) component from rdj.CLUI}
-[Release Message] =	{Removed deprecated javax.xml dependency}
+[Version] =		{2.7.2}
+[Release Notes] =	{Bugfix: Fasly armed delete button}
+[Release Message] =	{Please update as soon as possible}
 [Alert Subject] =	{}
 [Alert Message] =	{}

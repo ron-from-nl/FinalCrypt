@@ -32,7 +32,7 @@
                                  <children>
                                     <VBox prefHeight="396.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="40.0" minHeight="30.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" styleClass="background">
+                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background">
                                              <children>
                                                 <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
@@ -110,7 +110,7 @@
                                  <children>
                                     <VBox prefHeight="396.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="40.0" minHeight="40.0" minWidth="500.0" prefHeight="40.0" prefWidth="500.0" styleClass="background">
+                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background">
                                              <children>
                                                 <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -125,7 +125,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select a key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select a (OTP) key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -134,7 +134,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Photo / Video / OTP-Key" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="or use personal photo / video file" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -157,7 +157,7 @@
                                                    <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
                                                       <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="130.0" prefWidth="130.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="230.0" minWidth="230.0" prefWidth="230.0" />
                                                       <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                                                       <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
                                                    </columnConstraints>
@@ -974,7 +974,7 @@
                                        <tooltip>
                                           <Tooltip fx:id="encryptionModeToolTip">
                                              <font>
-                                                <Font size="18.0" />
+                                                <Font size="12.0" />
                                              </font></Tooltip>
                                        </tooltip>
                                     </ToggleButton>
