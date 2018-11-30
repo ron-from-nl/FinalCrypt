@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import javax.xml.bind.DatatypeConverter;
+//import javax.xml.bind.DatatypeConverter; // Removed because deprecated from java9 up
 
 public class GPT
 {
@@ -137,7 +137,15 @@ public class GPT
         return byteArray;
     }
     
-    synchronized public static byte[] hex2Bytes(String string) { byte[] bytes = DatatypeConverter.parseHexBinary(string.replaceAll("[^A-Za-z0-9]","")); return bytes; }
+//    Replaced hex2Bytes(String string) because deprecated from java9 up
+//    synchronized public static byte[] hex2Bytes(String string) { byte[] bytes = DatatypeConverter.parseHexBinary(string.replaceAll("[^A-Za-z0-9]","")); return bytes; }
+    
+    public static byte[] hex2Bytes(String string)
+    {
+	string = string.replaceAll("[^A-Za-z0-9]",""); byte[] data = new byte[string.length() / 2];
+	for (int stringpos = 0; stringpos < string.length(); stringpos += 2) { data[stringpos / 2] = (byte) ((Character.digit(string.charAt(stringpos), 16) << 4) + Character.digit(string.charAt(stringpos+1), 16)); }
+	return data;
+    }
     
     synchronized public static void logBytes(byte[] bytes) { for (byte mybyte: bytes) { logByte(mybyte); } }
     

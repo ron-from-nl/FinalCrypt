@@ -1,5 +1,5 @@
-[Version] =		{2.7.0}
-[Release Notes] =	{Added Legacy / Non-MAC Mode}
-[Release Message] =	{Disables Message Auth. Code}
+[Version] =		{2.7.1}
+[Release Notes] =	{Removed GUI(FX) component from rdj.CLUI}
+[Release Message] =	{Removed deprecated javax.xml dependency}
 [Alert Subject] =	{}
 [Alert Message] =	{}

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javafx.application.Platform;
+//import javafx.application.Platform;
 import static rdj.GUIFX.getHexString;
 
 /* commandline test routine
@@ -250,7 +250,7 @@ public class CLUI implements UI
 	    totalTranfered = 0L;
 	    Long remainder = 0L;
 
-//		    Write the keyfile to 1st partition
+//	    Write the keyfile to 1st partition
 
 	    byte[]      randomBytes1 =	    new byte[bufferSize];
 	    byte[]      randomBytes2 =	    new byte[bufferSize];
@@ -297,8 +297,8 @@ public class CLUI implements UI
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
 		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
 		    totalTranfered += writeKeyFileChannelTransfered; 
-//		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
-
+//		    log("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n", false, true, false, false, false);
+		    
 		    writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
 
 		    writeKeyFileChannel.close();
@@ -326,7 +326,7 @@ public class CLUI implements UI
 
 	if (key_checksum)
 	{
-	    System.out.println("\r\nKey CheckSum: (SHA-1): \"" + keyFCPath.path.toAbsolutePath().toString() + "\"...");
+	    log("\r\nKey CheckSum: (SHA-1): \"" + keyFCPath.path.toAbsolutePath().toString() + "\"...\r\n", false, true, false, false, false); 
 	    long    readKeySourceChannelPosition =  0; 
 	    long    readKeySourceChannelTransfered =  0; 
 	    int readKeySourceBufferSize = (1 * 1024 * 1024);
@@ -341,23 +341,19 @@ public class CLUI implements UI
 		    readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
 		    readKeySourceChannel.close();
 
-    //				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
 		    messageDigest.update(keySourceBuffer);
 		    if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
 		} catch (IOException ex)
 		{
-		    Platform.runLater(new Runnable(){ @Override public void run()
-		    {
-			keySourceChecksumReadEnded = true;
-			log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, true, true, false); 
-		    }});
+		    keySourceChecksumReadEnded = true;
+		    log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, false, false, false);
 		}
 		x++;
 		keySourceBuffer.clear();
 	    }
 	    byte[] hashBytes = messageDigest.digest();
 	    String hashString = getHexString(hashBytes,2);
-	    System.out.println("Message Digest: " + hashString + "\r\n");
+	    log("Message Digest:         " + hashString + "\r\n\r\n", false, true, false, false, false); 
 	}
 	
 	
