@@ -2,7 +2,7 @@
 <XML_DIZ_INFO>
   <MASTER_PAD_VERSION_INFO>
     <MASTER_PAD_VERSION>4.0</MASTER_PAD_VERSION>
-    <MASTER_PAD_EDITOR>FinalCrypt 2.6.2</MASTER_PAD_EDITOR>
+    <MASTER_PAD_EDITOR>FinalCrypt 2.7.2</MASTER_PAD_EDITOR>
     <MASTER_PAD_EDITOR_URL>http://publisher.appvisor.com</MASTER_PAD_EDITOR_URL>
     <MASTER_PAD_INFO>Portable Application Description, or PAD(TM) 2004 Association of Software Professionals (ASP)http://www.asp-shareware.org/pad is a data set standard and specification that is commercialsoftware publishers to disseminate certified information about their software application. The PAD format is copyright of the ASP and cannot be used without the formal licensing and permission of both the Association of Software Professionals and its agent AppVisor.com.</MASTER_PAD_INFO>
     <CERTIFIED>N</CERTIFIED>
@@ -120,8 +120,8 @@
     <English>
       <Keywords>Encrypt, Decrypt, file encryption, one-time pad, folder encryption</Keywords>
       <Char_Desc_45>FinalCrypt - Free File Encryption</Char_Desc_45>
-      <Char_Desc_80>Encrypt your personal files with a personal photo or video file</Char_Desc_80>
-      <Char_Desc_250>FinalCrypt is an easy, multi-platform and powerful tool to encrypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_250>
+      <Char_Desc_80>Encrypt files with an OTP key or  personal photo or video file</Char_Desc_80>
+      <Char_Desc_250>FinalCrypt is an easy, multi-platform and powerful tool to enc/////rypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_250>
       <Char_Desc_450>FinalCrypt is an easy, multi-platform and powerful tool to encrypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_450>
       <Char_Desc_2000>FinalCrypt is an easy, multi-platform and powerful tool to encrypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_2000>
     </English>
@@ -215,7 +215,7 @@ Cons:
 There are no obvious drawbacks to complain about.
 </Press_Release>
     <Headline>Encrypt files with a personal photo or video</Headline>
-    <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.4.2 can encrypt your files with a personal photo or video</Summary>
+    <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.7.2 can encrypt your files with a personal photo or video</Summary>
     <Press_Release_Plain>FinalCrypt - Free File Encryption
  There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
 
@@ -242,9 +242,9 @@ There are no obvious drawbacks to complain about.</Press_Release_Plain>
     <Site_Site_Title>FinalCrypt - File Encryption Program</Site_Site_Title>
     <Site_Site_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/</Site_Site_URL>
     <Site_Keywords>encrypt, decrypt, one-time pad, file encryption</Site_Keywords>
-    <Site_Description_100>FinalCrypt - Free File Encryption - Encrypt with a personal photo or video file</Site_Description_100>
-    <Site_Description_250>FinalCrypt - Free File Encryption - Encrypt with a personal photo or video file</Site_Description_250>
-    <Site_Description_450>FinalCrypt - Free File Encryption - Encrypt with a personal photo or video file</Site_Description_450>
+    <Site_Description_100>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_100>
+    <Site_Description_250>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_250>
+    <Site_Description_450>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_450>
     <Site_Contact_First_Name>Ron</Site_Contact_First_Name>
     <Site_Contact_Last_Name>de Jong</Site_Contact_Last_Name>
     <Site_Contact_Email>ronuitzaandam@gmail.com</Site_Contact_Email>
