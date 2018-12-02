@@ -16,7 +16,7 @@ Reproduce pause / stop buildSelection bug maybe?
 Change FinalCrypt -> properties -> splash screen -> icon on Windows
 Set version nbproject/project.properties application.implementation.version=1.2.3
 Set version on file: Version & Version2
-Set version in FinalCrypt_pad.xml file
+Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
 
 =================================== Done ====================================
 
