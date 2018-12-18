@@ -1,5 +1,5 @@
 [Version] =		{2.8.0}
-[Release Notes] =	{Bugfix: Falsely armed delete buttons}
-[Release Message] =	{Please update as soon as possible}
+[Release Notes] =	{Improved filemanager usage}
+[Release Message] =	{Minor logging improvements}
 [Alert Subject] =	{}
 [Alert Message] =	{}
