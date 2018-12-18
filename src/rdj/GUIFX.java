@@ -1938,7 +1938,7 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 	    }
 	    
-	    if (curTargetDir.compareTo(curKeyDir) == 0) // if filechoosers are in the same dir
+	    if ( (curTargetDir.compareTo(curKeyDir) == 0) & (updateTargetFC) & ( ! updateKeyFC))// if filechoosers are in the same dir
 	    {
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 		targetFileChooserPropertyCheck(false);
