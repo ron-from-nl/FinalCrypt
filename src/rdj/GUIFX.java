@@ -530,7 +530,7 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProduct();
                 String header = "Brief Introduction:";
                 String infotext = "";
-                infotext += "Step   Optionally create an OTP key file below.\r\n";
+                infotext += "Step   Optional create an OTP key file (below).\r\n";
                 infotext += "Step 1 Select items to en/decrypt on the left.\r\n";
                 infotext += "Step 2 Select your (OTP) key file on the right.\r\n";
                 infotext += "Step 3 Click [Encrypt] / [Decrypt] button below.\r\n";
@@ -1414,7 +1414,7 @@ public class GUIFX extends Application implements UI, Initializable
 //    private FCPathList undecryptableList;
 //    private FCPathList invalidFilesList;
 		    
-		    // Create Key Device
+		    // Key Device Selected
 		    if ((keyFCPath.type == FCPath.FILE) && (keyFCPath.isValidKey))
 		    {
 			if (targetFCPathList.validDevices > 0)
@@ -1896,13 +1896,15 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
+	    File curTargetDir = targetFileChooser.getCurrentDirectory();
+	    File curKeyDir = keyFileChooser.getCurrentDirectory();
+	    File upDir = new File("..");
+
 //	    Target FileChooser
 	    if (updateTargetFC)
 	    {
 		targetFileChooser.setSelectedFile(noTargetFile);
-		File curTargetDir = targetFileChooser.getCurrentDirectory();
-		File upTargetDir = new File("..");
-		targetFileChooser.setCurrentDirectory(upTargetDir);
+		targetFileChooser.setCurrentDirectory(upDir);
 		targetFileChooser.setCurrentDirectory(curTargetDir);
 		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
@@ -1914,9 +1916,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    if (updateKeyFC)
 	    {
 		keyFileChooser.setSelectedFile(noKeyFile);
-		File curKeyDir = keyFileChooser.getCurrentDirectory();
-		File upKeyDir = new File("..");
-		keyFileChooser.setCurrentDirectory(upKeyDir);
+		keyFileChooser.setCurrentDirectory(upDir);
 		keyFileChooser.setCurrentDirectory(curKeyDir);
 		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
@@ -1936,6 +1936,14 @@ public class GUIFX extends Application implements UI, Initializable
 		    }
 		    )); timeline.play();
 		}
+	    }
+	    
+	    if (curTargetDir.compareTo(curKeyDir) == 0) // if filechoosers are in the same dir
+	    {
+		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+		targetFileChooserPropertyCheck(false);
+		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+		keyFileChooserPropertyCheck();
 	    }
         }});
     }
