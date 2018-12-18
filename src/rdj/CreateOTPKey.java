@@ -441,7 +441,7 @@ public class CreateOTPKey extends Application implements Initializable
     
     private void closeWindow()
     {
-	guifx.updateFileChoosers();
+	guifx.updateFileChoosers(true, true);
 	Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();
     }
 

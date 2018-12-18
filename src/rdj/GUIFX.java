@@ -530,7 +530,7 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProduct();
                 String header = "Brief Introduction:";
                 String infotext = "";
-                infotext += "Step 0 Optionally create an OTP key file below.\r\n";
+                infotext += "Step   Optionally create an OTP key file below.\r\n";
                 infotext += "Step 1 Select items to en/decrypt on the left.\r\n";
                 infotext += "Step 2 Select your (OTP) key file on the right.\r\n";
                 infotext += "Step 3 Click [Encrypt] / [Decrypt] button below.\r\n";
@@ -539,10 +539,9 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "\r\n";
                 infotext += "Double click to open files.\r\n";
                 infotext += "Click [LOG] to see details.\r\n";
-                infotext += "Click [Check Update] sometimes.\r\n";
                 infotext += "Tip:  Watch statusbar at bottom.\r\n";
-                infotext += "Tip:  Make backups of your data.\r\n";
-                infotext += "Tip:  Keep your keys secret on external Storage.\r\n";
+                infotext += "Tip:  Make backups of your keys and data.\r\n";
+                infotext += "Tip:  Keep your keys secret (store external).\r\n";
                 infotext += "\r\n";
                 infotext += "Live to love - Enjoy your privacy.\r\n\r\n";
 /*
@@ -718,7 +717,7 @@ public class GUIFX extends Application implements UI, Initializable
                             boolean returnpathlist = false;
                             String pattern = "glob:*";
                             finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
-			    updateFileChoosers();
+			    updateFileChoosers(true, true);
                         }
                     }
                 }
@@ -750,7 +749,7 @@ public class GUIFX extends Application implements UI, Initializable
                             boolean returnpathlist = false;
                             String pattern = "glob:*";
                             finalCrypt.deleteSelection(pathList, delete, returnpathlist, pattern, false);
-			    updateFileChoosers();
+			    updateFileChoosers(true, true);
                         }
                     }
                 }
@@ -1864,7 +1863,7 @@ public class GUIFX extends Application implements UI, Initializable
 		encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
 		encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 
-		updateFileChoosers();
+		updateFileChoosers(true, false);
 		
 		
                 processRunningType = NONE;
@@ -1893,42 +1892,50 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  ================================================= END UPDATE PROGRESS ===========================================================
 
-    public void updateFileChoosers()
+    public void updateFileChoosers(boolean updateTargetFC, boolean updateKeyFC)
     {
         Platform.runLater(new Runnable() { @Override public void run()
         {
 //	    Target FileChooser
-	    
-	    targetFileChooser.setSelectedFile(noTargetFile);
-	    File curTargetDir = targetFileChooser.getCurrentDirectory();
-	    File upTargetDir = new File("..");
-	    targetFileChooser.setCurrentDirectory(upTargetDir);
-	    targetFileChooser.setCurrentDirectory(curTargetDir);
-	    targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
-	    targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
-	    targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
+	    if (updateTargetFC)
+	    {
+		targetFileChooser.setSelectedFile(noTargetFile);
+		File curTargetDir = targetFileChooser.getCurrentDirectory();
+		File upTargetDir = new File("..");
+		targetFileChooser.setCurrentDirectory(upTargetDir);
+		targetFileChooser.setCurrentDirectory(curTargetDir);
+		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+		targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
+		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
+		targetFileChooserPropertyCheck(false);
+	    }
 	    
 //	    Key FileChooser
-	    keyFileChooser.setSelectedFile(noKeyFile);
-	    File curKeyDir = keyFileChooser.getCurrentDirectory();
-	    File upKeyDir = new File("..");
-	    keyFileChooser.setCurrentDirectory(upKeyDir);
-	    keyFileChooser.setCurrentDirectory(curKeyDir);
-	    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
-	    keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
-	    keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
-
-	    targetFileChooserPropertyCheck(false);
-	    keyFileChooserPropertyCheck();
-
-	    String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
-	    if ( platform.indexOf("mac") != -1 ) 
+	    if (updateKeyFC)
 	    {
-		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
+		keyFileChooser.setSelectedFile(noKeyFile);
+		File curKeyDir = keyFileChooser.getCurrentDirectory();
+		File upKeyDir = new File("..");
+		keyFileChooser.setCurrentDirectory(upKeyDir);
+		keyFileChooser.setCurrentDirectory(curKeyDir);
+		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+		keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+		keyFileChooserPropertyCheck();
+	    }
+
+//	    Target FileChooser
+	    if (updateTargetFC)
+	    {
+		String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
+		if ( platform.indexOf("mac") != -1 ) 
 		{
-		    targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
+		    {
+			targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		    }
+		    )); timeline.play();
 		}
-		)); timeline.play();
 	    }
         }});
     }
@@ -2291,7 +2298,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
 		    encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
 
-		    updateFileChoosers();
+		    updateFileChoosers(true, true);
 		    finalCrypt.disableMAC = false;
 		    dashboardGridPane.setDisable(false);
 		    encryptionModeToggleButton.setDisable(true);
@@ -2308,7 +2315,7 @@ public class GUIFX extends Application implements UI, Initializable
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
 	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
 
-	updateFileChoosers();
+	updateFileChoosers(true, true);
 	finalCrypt.disableMAC = true;
 	dashboardGridPane.setDisable(true);
 	log("Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false);

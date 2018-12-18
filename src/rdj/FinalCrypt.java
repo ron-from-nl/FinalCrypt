@@ -474,8 +474,8 @@ public class FinalCrypt extends Thread
 				    Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
 				    Files.setAttribute(targetDestinPath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
 				}
-				catch (IOException ex) { ui.log("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
+				catch (IOException ex) { ui.log("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
 			}
 			else if ( view.toLowerCase().equals("dos") )
 			{
@@ -490,8 +490,8 @@ public class FinalCrypt extends Thread
 				    Files.setAttribute(targetDestinPath, "dos:readonly",              msdosAttributes.isReadOnly());
 				    Files.setAttribute(targetDestinPath, "dos:archive",               msdosAttributes.isArchive());
 				}
-				catch (IOException ex) { ui.log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
+				catch (IOException ex) { ui.log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
 			}
 			else if ( view.toLowerCase().equals("posix") )
 			{
@@ -506,8 +506,8 @@ public class FinalCrypt extends Thread
 				    Files.setPosixFilePermissions(targetDestinPath,                   posixAttributes.permissions());
 				    Files.setLastModifiedTime(targetDestinPath,                       posixAttributes.lastModifiedTime());
 				}
-				catch (IOException ex) { ui.log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage(), true, true, true, true, false); }
+				catch (IOException ex) { ui.log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
+			    }   catch (IOException ex) { ui.log("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
 			}
 		    } // End attributeViewloop // End attributeViewloop
 		} // End ! dry
