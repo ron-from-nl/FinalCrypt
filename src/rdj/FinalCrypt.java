@@ -258,7 +258,7 @@ public class FinalCrypt extends Thread
 			{
 			    if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			    {				
-				ui.log(UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, true, true, false, false);
+				ui.log(UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_ENCRYPT_SYMBOL, false, true, true, false, false);
 
 				if ( ! dry )
@@ -520,8 +520,8 @@ public class FinalCrypt extends Thread
 
 //                      Shredding process
 
-		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_SHRED_SYMBOL, false, true, true, false, false);
 		ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
+		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_SHRED_SYMBOL, false, true, true, false, false);
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 
@@ -583,8 +583,8 @@ public class FinalCrypt extends Thread
 			targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
 		    }
 
-		    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 		    ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
+		    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 
 //                  FILE STATUS 
 		    if (verbose)
