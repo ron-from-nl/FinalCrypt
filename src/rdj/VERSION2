@@ -1,5 +1,5 @@
-[Version] =		{2.8.0}
-[Release Notes] =	{Improved filemanager usage}
-[Release Message] =	{Minor logging improvements}
+[Version] =		{2.8.1}
+[Release Notes] =	{Refined progress logging}
+[Release Message] =	{Encrypt & Shred Progress}
 [Alert Subject] =	{}
 [Alert Message] =	{}

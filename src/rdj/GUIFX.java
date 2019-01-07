@@ -2394,7 +2394,7 @@ public class GUIFX extends Application implements UI, Initializable
 	if (log)	{ log(message); }
 	if (logfile)	{ logfile(message); }
 	if (errfile)	{ errfile(message); }
-	if (print)	{ errfile(message); }
+	if (print)	{ print(message); }
     }
 
     public void status(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}}); }

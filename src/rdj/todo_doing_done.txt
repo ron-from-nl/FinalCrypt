@@ -30,6 +30,8 @@ Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Refined progress logging
+Encrypt & Shred Progress
 Improved filemanager usage
 Minor logging improvements
 Bugfix! fasly armed delete button

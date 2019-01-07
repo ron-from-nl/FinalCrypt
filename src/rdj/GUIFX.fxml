@@ -34,10 +34,10 @@
                                        <children>
                                           <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background">
                                              <children>
-                                                <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="111.0" prefWidth="111.0" />
+                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="22.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="89.0" prefWidth="89.0" />
                                                     <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="339.0" minWidth="300.0" prefWidth="339.0" />
                                                       <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
                                                       <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
@@ -93,7 +93,7 @@
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane minHeight="300.0" prefHeight="396.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                          <AnchorPane minHeight="300.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -112,7 +112,7 @@
                                        <children>
                                           <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background">
                                              <children>
-                                                <GridPane alignment="CENTER" prefHeight="40.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" prefWidth="663.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
                                                          <children>
@@ -125,7 +125,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select a (OTP) key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select (One-Time Pad) key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -134,7 +134,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="or use personal photo / video file" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="or other keyfiles (like personal photo / video)" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -155,11 +155,11 @@
                                                       </AnchorPane>
                                                    </children>
                                                    <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="130.0" prefWidth="130.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="230.0" minWidth="230.0" prefWidth="230.0" />
-                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
-                                                      <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="150.0" minWidth="38.0" prefWidth="73.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="303.0" minWidth="230.0" prefWidth="303.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="59.0" minWidth="34.0" prefWidth="59.0" />
+                                                      <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
                                                    </columnConstraints>
                                                    <rowConstraints>
                                                       <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -171,7 +171,7 @@
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane minHeight="300.0" prefHeight="396.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                          <AnchorPane minHeight="300.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <StackPane minHeight="450.0" prefHeight="571.0" prefWidth="663.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
