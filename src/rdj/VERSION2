@@ -1,5 +1,5 @@
 [Version] =		{2.8.2}
 [Release Notes] =	{JDK 8u192 Bug Fixes Build}
-[Release Message] =	{Refined progress logging}
+[Release Message] =	{Remove FinalCrypt first !}
 [Alert Subject] =	{}
 [Alert Message] =	{}
