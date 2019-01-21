@@ -370,6 +370,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML
     private PasswordField pwdField;
+    @FXML
+    private Button checkUpdateButton;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -2046,7 +2048,10 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML
-    private void copyrightLabelOnMouseClicked(MouseEvent event)	{ checkUpdate(); }
+    private void copyrightLabelOnMouseClicked(MouseEvent event)	{ /*checkUpdate();*/ }
+
+    @FXML
+    private void checkUpdateButtonOnAction(ActionEvent event) { checkUpdate(); }
 
     private void updateButtonAction(ActionEvent event) { checkUpdate(); }
 
@@ -2307,17 +2312,17 @@ public class GUIFX extends Application implements UI, Initializable
 //  Default MAC Mode
     private void enableMACMode()
     {
-		    if ( flashMACTimeline != null ) { flashMACTimeline.stop(); }
-		    encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
-		    encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
+	if ( flashMACTimeline != null ) { flashMACTimeline.stop(); }
+	encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
+	encryptionModeToggleButton.setTextFill(Paint.valueOf("black"));
 
-		    updateFileChoosers(true, true);
-		    finalCrypt.disableMAC = false;
-		    dashboardGridPane.setDisable(false);
-		    encryptionModeToggleButton.setDisable(true);
-		    encryptionModeToggleButton.setMouseTransparent(true);
-		    long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
-		    log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
+	updateFileChoosers(true, true);
+	finalCrypt.disableMAC = false;
+	dashboardGridPane.setDisable(false);
+	encryptionModeToggleButton.setDisable(true);
+	encryptionModeToggleButton.setMouseTransparent(true);
+	long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
+	log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
     }
 
     private void disableMACMode()

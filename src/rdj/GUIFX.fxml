@@ -878,112 +878,134 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
-                        <GridPane maxHeight="35.0" minHeight="35.0" prefHeight="35.0" prefWidth="1100.0" VBox.vgrow="ALWAYS">
-                          <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="16.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="16.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
-                              <ColumnConstraints hgrow="NEVER" minWidth="6.0" prefWidth="60.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="18.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="18.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="8.0" prefWidth="10.0" />
-                              <ColumnConstraints hgrow="NEVER" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <AnchorPane prefHeight="39.0" prefWidth="1327.0">
                            <children>
-                              <AnchorPane>
+                              <GridPane maxHeight="57.0" maxWidth="1.7976931348623157E308" minHeight="35.0" prefHeight="57.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="15.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="14.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="14.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
                                  <children>
-                                    <Button fx:id="encryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="35.0" prefWidth="213.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font name="Open Sans" size="18.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="1">
-                                 <children>
-                                    <Button fx:id="decryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="35.0" prefWidth="213.0" text="Decrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font name="Open Sans" size="18.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="5">
-                                 <children>
-                                    <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" disable="true" focusTraversable="false" layoutX="88.0" layoutY="5.0" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="35.0" prefWidth="239.0" promptText="Key Password (Optional)" style="-fx-text-fill: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip text="Adds extra protection against unauthorised key use" textAlignment="JUSTIFY" wrapText="true" />
-                                       </tooltip></PasswordField>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="3">
-                                 <opaqueInsets>
-                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                 </opaqueInsets>
-                                 <children>
-                                    <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="99.0" text="Stop" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font name="Open Sans" size="18.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="6">
-                                 <children>
-                                    <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="14.0" layoutY="-1.0" mnemonicParsing="false" onAction="#keyDeviceButtonAction" prefHeight="35.0" prefWidth="239.0" text="Create OTP Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="4">
-                                 <children>
-                                    <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" prefHeight="35.0" prefWidth="60.0" progress="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane GridPane.columnIndex="2">
-                                 <children>
-                                    <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" prefWidth="99.0" text="Pause" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font name="Open Sans" size="18.0" />
-                                       </font>
-                                    </ToggleButton>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">
-                                 <children>
-                                    <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="35.0" prefWidth="107.0" text="Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
-                                 <children>
-                                    <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="35.0" prefWidth="80.0" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="10.0" />
-                                       </font>
-                                       <tooltip>
-                                          <Tooltip fx:id="encryptionModeToolTip">
+                                    <AnchorPane>
+                                       <children>
+                                          <Button fx:id="encryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="35.0" prefWidth="213.0" text="Encrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="18.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="2">
+                                       <children>
+                                          <Button fx:id="decryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="35.0" prefWidth="213.0" text="Decrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="18.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="6">
+                                       <children>
+                                          <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="25.0" mnemonicParsing="false" onAction="#keyDeviceButtonAction" prefHeight="35.0" prefWidth="239.0" text="Create OTP Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="4">
+                                       <opaqueInsets>
+                                          <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                       </opaqueInsets>
+                                       <children>
+                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="99.0" text="▣" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="18.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Stop" />
+                                             </tooltip>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="7">
+                                       <children>
+                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="35.0" prefWidth="298.0" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="5">
+                                       <children>
+                                          <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" prefHeight="35.0" prefWidth="60.0" progress="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="3">
+                                       <children>
+                                          <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" prefWidth="99.0" text="Ⅱ" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="18.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Pause" />
+                                             </tooltip>
+                                          </ToggleButton>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="8">
+                                       <children>
+                                          <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="35.0" prefWidth="107.0" text="Open Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="9">
+                                       <children>
+                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="57.0" prefWidth="80.0" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip fx:id="encryptionModeToolTip">
+                                                   <font>
+                                                      <Font size="12.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip>
+                                          </ToggleButton>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                       <children>
+                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" disable="true" focusTraversable="false" layoutX="-2.0" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="35.0" prefWidth="133.0" promptText="Key Password (Opt)" style="-fx-text-fill: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Adds extra password encryption. Protects against exposed keys" textAlignment="JUSTIFY" wrapText="true" />
+                                             </tooltip>
                                              <font>
                                                 <Font size="12.0" />
-                                             </font></Tooltip>
-                                       </tooltip>
-                                    </ToggleButton>
+                                             </font>
+                                          </PasswordField>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
-                              </AnchorPane>
+                              </GridPane>
                            </children>
-                        </GridPane>
+                        </AnchorPane>
                         <AnchorPane maxHeight="34.0" minHeight="10.0" prefHeight="10.0" prefWidth="1100.0">
                            <children>
                               <ProgressBar fx:id="fileProgressBar" focusTraversable="false" layoutY="25.0" maxHeight="10.0" minHeight="10.0" opacity="0.25" prefHeight="10.0" prefWidth="1100.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
