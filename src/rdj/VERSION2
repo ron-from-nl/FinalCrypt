@@ -1,5 +1,5 @@
 [Version] =		{2.9.0}
-[Release Notes] =	{Key Password Protection}
-[Release Message] =	{Protection for key loss}
+[Release Notes] =	{Extra Key Password Protection}
+[Release Message] =	{Protect possible key exposure}
 [Alert Subject] =	{}
 [Alert Message] =	{}
