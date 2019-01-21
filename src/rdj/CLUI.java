@@ -19,7 +19,9 @@
 
 package rdj;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
@@ -81,20 +83,16 @@ public class CLUI implements UI
     private boolean keySourceChecksumReadEnded = false;
     private int bufferSize;
     private Long totalTranfered;
-//    private Long filesizeInBytes;
     private Long filesizeInBytes = 100L * (1024L * 1024L);  // Create OTP Key File Size
     private Path keyPath;
 //    private boolean disableMAC = false;
     private boolean encryptModeNeeded;
-//    private TimerTask autoExitTask;
-//    private Timer autoExitTaskTimer;
-//    private String readInputString;
-//    private BufferedReader inputBufferedReader;
-//    private Thread readInputThread;
-//    private Thread autoExitThread;
-//    private Scanner inputScanner;
     private TimeoutThread timeoutThread;
     private ReaderThread readerThread;
+    
+    private String pwd =		"";
+    private boolean pwdPromptNeeded =	false;
+    private boolean pwdIsSet =		false;
 
     public CLUI(String[] args)
     {	
@@ -140,15 +138,17 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disableMAC = true; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
-            else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeydev = true; kfsetneeded = true; tfsetneeded = true; } }
+            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--password") ))                     { pwd = args[paramCnt+1]; pwdIsSet = true; paramCnt++; }
+            else if (( args[paramCnt].equals("-pp")) || ( args[paramCnt].equals("--password-prompt") ))             { pwdPromptNeeded = true; }
+
+	    else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeydev = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--create-keyfile"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeyfile = true; kfsetneeded = false; tfsetneeded = false; } }
             else if (  args[paramCnt].equals("--clone-keydev"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { clonekeydev = true; kfsetneeded = true; tfsetneeded = true; } }
-            else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("--key-chksum") ))							    { key_checksum = true; kfsetneeded = true; }
             else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { printgpt = true; kfsetneeded = false; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; kfsetneeded = false; tfsetneeded = true; } }
+            else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
-            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--print") ))                        { finalCrypt.setPrint(true); }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
 //            else if (  args[paramCnt].equals("--txt"))                                                              { finalCrypt.setTXT(true); }
 //            else if (  args[paramCnt].equals("--bin"))                                                              { finalCrypt.setBin(true); }
@@ -224,6 +224,19 @@ public class CLUI implements UI
 
 //	Command line input for an optional Password keyboard.nextInt();
 
+	if ( pwdPromptNeeded )
+	{
+	    ConsoleEraser consoleEraser = new ConsoleEraser();
+	    System.out.print("Password: ");
+	    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	    consoleEraser.start();
+	    try { pwd = in.readLine(); pwdIsSet = true; }
+	    catch (IOException err) { log("Error: Can't read password! " + err.getMessage() + "\r\n", false, true, true, true, false); usagePrompt(true); System.exit(1); }
+ 
+	    consoleEraser.halt();
+	}
+
+	if ( pwdIsSet ) { FinalCrypt.setPwd(pwd); }
 
 //	====================================================================================================================
 //	 Start writing OTP key file
@@ -438,7 +451,7 @@ public class CLUI implements UI
 	{
 	    if (finalCrypt.disableMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
 	    
-	    if ((encryptablesFound))    { processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true); }
+	    if ((encryptablesFound))    { processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd); }
 	    else			{ log("No encryptable targets found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((decrypt))
@@ -449,11 +462,11 @@ public class CLUI implements UI
 	    }
 	    else
 	    {
-		if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false); }
+		if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd); }
 		else			
 		{
 		    log("No decryptable targets found\r\n\r\n", false, true, true, true, false);
-		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key? \"" + keyFCPath.path.toString() + "\"\r\n\r\n", false, true, false, false, false); }
+		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key / password?\r\n\r\n", false, true, false, false, false); }
 		    log(targetFCPathList.getStats(), false, true, true, false, false);
 		}
 	    }
@@ -573,6 +586,8 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
 	log("Options:\r\n", false, true, false, false, false);
         log("            [-h] [--help]	  Shows this help page.\r\n", false, true, false, false, false);
+        log("            [--password]          -p \'password\'			    Additional password (non-interactive).\r\n", false, true, false, false, false);
+        log("            [--password-prompt]   -pp				    Additional password (interactive prompt).\r\n", false, true, false, false, false);
         log("            [--key-chksum]        -k \"key_file\"			    Calculate key checksum.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, false, false, false);
@@ -755,4 +770,11 @@ class TimeoutThread extends Thread
         } catch(Exception e) { }
     }
 
+}
+
+class ConsoleEraser extends Thread
+{
+    private boolean running = true;
+    public void run()		    { while (running) { System.out.print("\b "); try { Thread.currentThread().sleep(1); } catch(InterruptedException err) { break; } } }
+    public synchronized void halt() { running = false; }
 }

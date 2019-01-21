@@ -95,6 +95,9 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.PasswordField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -148,8 +151,6 @@ public class GUIFX extends Application implements UI, Initializable
     private ToggleButton pauseToggleButton;
     @FXML
     private Button stopButton;
-    @FXML
-    private Button updateButton;
     private boolean processRunning;
     private final int NONE = 0;
     private final int ENCRYPT = 1;
@@ -366,6 +367,9 @@ public class GUIFX extends Application implements UI, Initializable
     private Timeline autoDisableTimeline;
     private File noKeyFile;
     private File noTargetFile;
+
+    @FXML
+    private PasswordField pwdField;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -461,6 +465,9 @@ public class GUIFX extends Application implements UI, Initializable
 
 	noTargetFile = targetFileChooser.getSelectedFile();
 	noKeyFile = keyFileChooser.getSelectedFile();
+	
+	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
+	
         welcome();
     }
     
@@ -931,6 +938,7 @@ public class GUIFX extends Application implements UI, Initializable
             keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
             keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
             checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+	    pwdField.setDisable(true);
         }});
 
 	keySourceChecksumReadEnded = true;
@@ -983,6 +991,8 @@ public class GUIFX extends Application implements UI, Initializable
 			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
+			
+			pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
 						
 			targetFileChooserPropertyCheck(true);
 		    }
@@ -1015,6 +1025,9 @@ public class GUIFX extends Application implements UI, Initializable
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 			targetFCPathList = new FCPathList();
+			
+			pwdField.setDisable(true);
+
 			buildReady(targetFCPathList);
 		    }
 		}});		
@@ -1221,6 +1234,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 		// BuildSelection
 //		cursorWait();
+
+		pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
 
 		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
@@ -1610,7 +1625,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void encrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
 	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText());
     }
 
     @FXML
@@ -1629,30 +1644,12 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.setName("decryptThread");
         encryptThread.setDaemon(true);
         encryptThread.start();
-//        // Needs Threading to early split off from the UI Event Dispatch Thread
-////        final GUIFX guifx = this;
-////        final UI this_ui = this;
-//        Thread encryptThread = new Thread(new Runnable()
-//        {
-//            private DeviceManager deviceManager;
-//            @Override
-//            @SuppressWarnings({"static-access"})
-//            public void run()
-//            {
-//		processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-////		String pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) { this_ui.error("Error: GUIFX: ClassCastException: " + exc.getMessage() + "\r\n"); }
-//		processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false);
-//            }
-//        });
-//        encryptThread.setName("decryptThread");
-//        encryptThread.setDaemon(true);
-//        encryptThread.start();
     }
 
     private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
 	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false);
+	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText());
     }
 
     @FXML
@@ -1662,9 +1659,13 @@ public class GUIFX extends Application implements UI, Initializable
         final GUIFX guifx = this;
         final UI ui = this;
 
-//	Platform.runLater(new Runnable() { @Override public void run()
-//	{
-//	}});
+	Platform.runLater(new Runnable() { @Override public void run()
+	{
+	    pwdField.setText("");
+	    pwdField.setDisable(true);
+	    FinalCrypt.setPwd("");
+	    FinalCrypt.resetPwdPos();
+	}});
 
 	Thread encryptThread = new Thread(new Runnable()
         {
@@ -1751,6 +1752,7 @@ public class GUIFX extends Application implements UI, Initializable
                 processRunning = true;
                 encryptButton.setDisable(true);
                 decryptButton.setDisable(true);
+		pwdField.setDisable(true);
                 pauseToggleButton.setDisable(false);
                 stopButton.setDisable(false);
 
@@ -1855,6 +1857,7 @@ public class GUIFX extends Application implements UI, Initializable
                 updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
+		if ( keyFCPath.isValidKey ) { pwdField.setDisable(false); }
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
                 fileProgressBar.setProgress(0);
@@ -2043,6 +2046,8 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML
+    private void copyrightLabelOnMouseClicked(MouseEvent event)	{ checkUpdate(); }
+
     private void updateButtonAction(ActionEvent event) { checkUpdate(); }
 
     @FXML
@@ -2405,4 +2410,13 @@ public class GUIFX extends Application implements UI, Initializable
     
     public static void main(String[] args)  { launch(args); }
 
+    @FXML
+    private void pwdFieldOnKeyReleased(KeyEvent event)
+    {
+//	log("Pass: " + pwdField.getText() + " leng  th: " + pwdField.getText().length(), true, true, true, false, false);
+	finalCrypt.setPwd(pwdField.getText());
+	finalCrypt.resetPwdPos();
+	
+	targetFileChooserPropertyCheck(true);
+    }
 }

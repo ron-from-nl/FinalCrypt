@@ -61,7 +61,7 @@ public class FinalCrypt extends Thread
     private static boolean pausing = false;
     private boolean targetSourceEnded;
 //							1234567890123456789012345678901234567890123456789012345678901234567890
-    public static final String FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
+    public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private long	bytesPerMilliSecond = 0;
@@ -79,6 +79,9 @@ public class FinalCrypt extends Thread
     private final String UTF8_FINISHED_SYMBOL =          "✔";
 
     public boolean disableMAC = false; // Disable Message Authentication Mode DANGEROUS
+    
+    private static String pwd = ""; // abc = 012
+    private static int pwdPos = 0;
 
     public FinalCrypt(UI ui)
     {   
@@ -125,8 +128,17 @@ public class FinalCrypt extends Thread
         wrteTargetDestinBufferSize = this.bufferSize;
     }
         
-    public void encryptSelection(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath, boolean encryptmode)
+    public void encryptSelection(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath, boolean encryptmode, String pwdParam)
     {
+	if (pwdParam.length() > 0)
+	{
+	    pwd = pwdParam;
+	}
+	else
+	{
+	    pwd = "";
+	}
+
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 
 	if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
@@ -186,6 +198,8 @@ public class FinalCrypt extends Thread
 	
 	encryptTargetloop: for (Iterator it = filteredTargetSourceFCPathList.iterator(); it.hasNext();)
 	{
+	    pwdPos = 0;
+	    
 	    FCPath newTargetSourceFCPath = (FCPath) it.next();
 	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
 	    Path targetDestinPath = null;
@@ -264,10 +278,10 @@ public class FinalCrypt extends Thread
 				if ( ! dry )
 				{
 				    // Add Token to targetDestinPath
-				    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)); targetDestinTokenBuffer.clear();			
+				    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2)); targetDestinTokenBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 				    {
-					targetDestinTokenBuffer = createTargetDestinToken(keySourceFCPath.path);
+					targetDestinTokenBuffer = createTargetDestinMessageAuthenticationCode(keySourceFCPath.path);
 					writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
 					writeTargetDestinChannel.close();
 					// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
@@ -290,7 +304,7 @@ public class FinalCrypt extends Thread
 				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" " + UTF8_DECRYPT_SYMBOL, false, true, true, false, false);
 				
-				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); // Decrypt skipping Token bytes at beginning
+				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); // Decrypt skipping Token bytes at beginning
 			    }
 			    else
 			    {
@@ -354,6 +368,8 @@ public class FinalCrypt extends Thread
 //___________________________________________________________________________________________________________________________________________________________
 //
 //			Encryptor I/O Block
+
+		pwdPos = 0;
 
 		ByteBuffer targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
 		ByteBuffer keySourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); keySourceBuffer.clear();
@@ -616,7 +632,7 @@ public class FinalCrypt extends Thread
 		    if
 		    (
 			( newTargetSourceFCPath.size != 0 ) && ( targetDestinSize != 0 ) &&
-			( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()) * 2 ) ||
+			( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()) * 2 ) ||
 			( newTargetSourceFCPath.size == targetDestinSize)
 		    )
 		    { try { Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; } }
@@ -627,7 +643,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(   ui,            "", targetDestinPath,		  false, keySourceFCPath.path,	 verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop
+        } // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.log("\r\n", true, false, false, false, false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 
@@ -657,9 +673,24 @@ public class FinalCrypt extends Thread
     }
     
     public static byte encryptByte(final byte targetSourceByte, byte keySourceByte)
-    {	        
+    {
+	byte returnByte; // Final result to return
+	byte keyXORByte;
+	
         if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } // Inverting / negate key 0 bytes (none encryption not allowed)
-        return	(byte)(targetSourceByte ^ keySourceByte); // Java built-in XOR operator "^" slower than personal XOR algorithm in below encryptByteFastXOR(..) method
+	
+	if ( pwd.length() == 0 ) // No extra password encryption
+	{
+	    returnByte = (byte)(targetSourceByte ^ keySourceByte);
+	}
+	else
+	{
+	    keyXORByte = (byte)(targetSourceByte ^ keySourceByte);
+	    returnByte = (byte)(keyXORByte ^ (byte)pwd.charAt(pwdPos)); pwdPos++;
+	    if ( pwdPos == pwd.length() ) { pwdPos = 0; }
+	}
+	
+	return	returnByte;
     }
 
     public static byte encryptByteFastXOR(final byte targetSourceByte, byte keySourceByte)
@@ -688,38 +719,38 @@ public class FinalCrypt extends Thread
         return targetDestinEncryptedByte;
     }
 
-    private ByteBuffer createTargetDestinToken(Path keySourcePath) // Tested
+    private ByteBuffer createTargetDestinMessageAuthenticationCode(Path keySourcePath) // Tested
     {
-        ByteBuffer plainTextTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); plainTextTokenBuffer.clear();
-        ByteBuffer keyBitTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); keyBitTokenBuffer.clear();
-        ByteBuffer encryptedTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); encryptedTokenBuffer.clear();
+        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); plainTextMACBuffer.clear();
+        ByteBuffer keyBitMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keyBitMACBuffer.clear();
+        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); encryptedMACBuffer.clear();
 
-	ByteBuffer targetDstTokenBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetDstTokenBuffer.clear();
+	ByteBuffer targetDstMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); targetDstMACBuffer.clear();
 	long readKeySourceChannelTransfered = 0;                
 
 	// Create plaint text Buffer
-	plainTextTokenBuffer.put(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.getBytes());
+	plainTextMACBuffer.put(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.getBytes());
 	
 	// Create Key Buffer
 	try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
 	{
 //	    readKeySourceChannel.position(readKeySourceChannelPosition);
-	    readKeySourceChannelTransfered = readKeySourceChannel.read(keyBitTokenBuffer);
-	    keyBitTokenBuffer.flip(); readKeySourceChannel.close();
-	} catch (IOException ex) { ui.log("Error: getTargetDestinToken: readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    readKeySourceChannelTransfered = readKeySourceChannel.read(keyBitMACBuffer);
+	    keyBitMACBuffer.flip(); readKeySourceChannel.close();
+	} catch (IOException ex) { ui.log("Error: getTargetDestinMAC: readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Create Encrypted Token Buffer
-	encryptedTokenBuffer = encryptBuffer(plainTextTokenBuffer, keyBitTokenBuffer, false);
+	encryptedMACBuffer = encryptBuffer(plainTextMACBuffer, keyBitMACBuffer, false);
 	
 	// Create Target Destin Token Buffer
-	byte[] tokenArray = new byte[(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2)];
-	for (int x = 0; x < plainTextTokenBuffer.capacity(); x++) { tokenArray[x] = plainTextTokenBuffer.array()[x]; }
-	for (int x = 0; x < encryptedTokenBuffer.capacity(); x++) { tokenArray[(FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() + x)] = encryptedTokenBuffer.array()[x]; }
-	targetDstTokenBuffer.put(tokenArray); targetDstTokenBuffer.flip();
-//	for (byte myByte:plainTextTokenBuffer.array()) {targetDstTokenBuffer.put(myByte);}
-//	for (byte myByte:encryptedTokenBuffer.array()) {targetDstTokenBuffer.put(myByte);}
+	byte[] messageAuthenticationCodeArray = new byte[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2)];
+	for (int x = 0; x < plainTextMACBuffer.capacity(); x++) { messageAuthenticationCodeArray[x] = plainTextMACBuffer.array()[x]; }
+	for (int x = 0; x < encryptedMACBuffer.capacity(); x++) { messageAuthenticationCodeArray[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() + x)] = encryptedMACBuffer.array()[x]; }
+	targetDstMACBuffer.put(messageAuthenticationCodeArray); targetDstMACBuffer.flip();
 	
-	return targetDstTokenBuffer;
+	pwdPos = 0;
+	
+	return targetDstMACBuffer;
     }
     
 //  Recursive Deletion of PathList
@@ -745,6 +776,9 @@ public class FinalCrypt extends Thread
     public boolean getStopPending()         { return stopPending; }
     public void setPausing(boolean val)     { pausing = val; }
     public void setStopPending(boolean val) { stopPending = val; }
+    
+    public static void setPwd(String pwdParam)	    { pwd = pwdParam; }
+    public static void resetPwdPos()		    { pwdPos = 0; }
 
     private static void logByteBuffer(String preFix, ByteBuffer byteBuffer)
     {

@@ -103,58 +103,60 @@ public class Validate
 //			🔓!  Decrypt Legacy  (Key can't be checked! No Token present in old format)
 //			⛔   Decrypt Abort   (Key Failed)
 
-    synchronized public static boolean targetSourceHasFCToken(UI ui, Path targetSourcePath) // Tested
+    synchronized public static boolean targetSourceHasMAC(UI ui, Path targetSourcePath) // Tested
     {
 	
-	boolean targetSourceHasToken = false;
+	boolean targetSourceHasMAC = false;
 	
-        ByteBuffer plainTextTokenBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); plainTextTokenBuffer.clear();
-        ByteBuffer encryptedTokenBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); encryptedTokenBuffer.clear();
+        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); plainTextMACBuffer.clear();
+        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); encryptedMACBuffer.clear();
 	
 	long readTargetSourceChannelTransfered = 0;
 	
-	// Create Target Source Token Buffer
+	// Create Target Source MAC Buffer
 	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
 	{
 	    // Fill up inputFileBuffer
-	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextTokenBuffer); plainTextTokenBuffer.flip();
-	    if ( readTargetSourceChannelTransfered != plainTextTokenBuffer.capacity() ) { return false; }
+	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextMACBuffer); plainTextMACBuffer.flip();
+	    if ( readTargetSourceChannelTransfered != plainTextMACBuffer.capacity() ) { return false; }
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { ui.log("Error: targetSourceHasToken: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	} catch (IOException ex) { ui.log("Error: targetSourceHasMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
-	// Compare plainTextTokenBuffer to FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN
-	String plainTextTokenString = new String(plainTextTokenBuffer.array(), StandardCharsets.UTF_8);
-//	ui.status("targetSourceHasToken plainTextTokenString: " +plainTextTokenString + "\r\n", true);
+	// Compare plainTextMACBuffer to FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_MAC
+	String plainTextMACString = new String(plainTextMACBuffer.array(), StandardCharsets.UTF_8);
+//	ui.status("targetSourceHasMAC plainTextMACString: " +plainTextMACString + "\r\n", true);
 
-	if ( plainTextTokenString.equals(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN) ) { targetSourceHasToken = true; }
+	if ( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE) ) { targetSourceHasMAC = true; }
 
-	return targetSourceHasToken;
+	return targetSourceHasMAC;
     }
     
-    synchronized public static boolean targetHasAuthenticatedFCToken(UI ui, Path targetSourcePath, Path keySourcePath) // Tested
+    synchronized public static boolean targetHasAuthenticatedMACToken(UI ui, Path targetSourcePath, Path keySourcePath) // Tested
     {
+	FinalCrypt.resetPwdPos();
+	
 	boolean readTargetSourceChannelError = false;
 	boolean keyAuthenticatedTargetSource =   false;
-        ByteBuffer targetSrcTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2); targetSrcTokenBuffer.clear();
-        ByteBuffer targetEncryptedTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.clear();
-        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); keySourceBuffer.clear();
-        ByteBuffer keyDecryptedTokenBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); keyDecryptedTokenBuffer.clear();
+        ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); targetSrcMACBuffer.clear();
+        ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.clear();
+        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keySourceBuffer.clear();
+        ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keyDecryptedMACBuffer.clear();
 	
 	long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
 	long readKeySourceChannelPosition = 0;	long readKeySourceChannelTransfered = 0;                
 	
-	// Create Target Source Token Buffer
+	// Create Target Source MAC Buffer
 	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
 	{
 	    // Fill up inputFileBuffer
 //	    readTargetSourceChannel.position(readTargetSourceChannelPosition);
-//	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
-	    readTargetSourceChannel.read(targetSrcTokenBuffer); targetSrcTokenBuffer.flip();
+//	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcMACBuffer); targetSrcMACBuffer.flip();
+	    readTargetSourceChannel.read(targetSrcMACBuffer); targetSrcMACBuffer.flip();
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasAuthenticatedToken: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
-	// Encrypted Token Buffer
-	targetEncryptedTokenBuffer.put(targetSrcTokenBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length(), FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length()); targetEncryptedTokenBuffer.flip();
+	// Encrypted MAC Buffer
+	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.flip();
 	
 	if (( ! readTargetSourceChannelError ) && ( ! Files.isDirectory(keySourcePath)) )
 	{
@@ -168,15 +170,16 @@ public class Validate
 	    } catch (IOException ex) { ui.log("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    
 	    // Create Encrypted Token Buffer
-	    keyDecryptedTokenBuffer = FinalCrypt.encryptBuffer(targetEncryptedTokenBuffer, keySourceBuffer, false);
-	    String keyDecryptedTokenBufferString = new String(keyDecryptedTokenBuffer.array(), StandardCharsets.UTF_8);
-//	    ui.status("targetHasAuthenticatedToken.keyDecryptedTokenBufferString: " + keyDecryptedTokenBufferString + "\r\n", true);
+	    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, false);
+	    String keyDecryptedMACBufferString = new String(keyDecryptedMACBuffer.array(), StandardCharsets.UTF_8);
+//	    ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
 	    
-	    // Authenticate Key Token against Target Token
-	    if ( keyDecryptedTokenBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
+	    // Authenticate Key MAC against Target MAC
+	    if ( keyDecryptedMACBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
 	    
 	} else { keyAuthenticatedTargetSource = false; }
 	
+	FinalCrypt.resetPwdPos();
 	return keyAuthenticatedTargetSource;
     }
 
@@ -349,8 +352,8 @@ public class Validate
 	    
 	    if (( isValidFile ))
 	    {
-		isEncrypted = targetSourceHasFCToken(ui, path);
-		if ((isEncrypted) && (keyPath != null)  && (size > (FinalCrypt.FINALCRYPT_PLAIN_IEXT_AUTHENTICATION_TOKEN.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedFCToken(ui, path, keyPath); }
+		isEncrypted = targetSourceHasMAC(ui, path);
+		if ((isEncrypted) && (keyPath != null)  && (size > (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath); }
 	    }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
