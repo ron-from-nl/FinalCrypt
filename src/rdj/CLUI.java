@@ -222,7 +222,7 @@ public class CLUI implements UI
 	    }
 	}
 
-//	Command line input for an optional Password keyboard.nextInt();
+//	Command line input for an optional Password
 
 	if ( pwdPromptNeeded )
 	{

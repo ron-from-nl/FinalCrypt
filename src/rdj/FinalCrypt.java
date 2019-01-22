@@ -31,6 +31,8 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
@@ -200,6 +202,9 @@ public class FinalCrypt extends Thread
 	{
 	    pwdPos = 0;
 	    
+	    MessageDigest srcMessageDigest = null; try { srcMessageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
+	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
+	    
 	    FCPath newTargetSourceFCPath = (FCPath) it.next();
 	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
 	    Path targetDestinPath = null;
@@ -277,13 +282,15 @@ public class FinalCrypt extends Thread
 
 				if ( ! dry )
 				{
-				    // Add Token to targetDestinPath
-				    ByteBuffer targetDestinTokenBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2)); targetDestinTokenBuffer.clear();			
+				    // Add MAC to targetDestinPath
+				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 				    {
-					targetDestinTokenBuffer = createTargetDestinMessageAuthenticationCode(keySourceFCPath.path);
-					writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinTokenBuffer); targetDestinTokenBuffer.flip();
+					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(keySourceFCPath.path);
+					writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinMACBuffer); targetDestinMACBuffer.flip();
 					writeTargetDestinChannel.close();
+					dstMessageDigest.update(targetDestinMACBuffer); // Build up sha-1 checksum
+
 					// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
 				    } catch (IOException ex) { ui.log("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 				}
@@ -297,14 +304,23 @@ public class FinalCrypt extends Thread
 		    }
 		    else
 		    {
-			if (newTargetSourceFCPath.isEncrypted) // Target has Token, Decrypt New Format
+			if (newTargetSourceFCPath.isEncrypted) // Target has MAC, Decrypt New Format
 			{
-			    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated Token (Decryptable)
+			    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated MAC (Decryptable)
 			    {
 				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" " + UTF8_DECRYPT_SYMBOL, false, true, true, false, false);
 				
-				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); // Decrypt skipping Token bytes at beginning
+				ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2))); targetSourceBuffer.clear();
+				try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+				{
+				    // Fill up inputFileBuffer
+				    readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip();
+				    readTargetSourceChannel.close();
+				    srcMessageDigest.update(targetSourceBuffer); // Build up sha-1 checksum
+				} catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+
+				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); // Decrypt skipping MAC bytes at beginning
 			    }
 			    else
 			    {
@@ -411,6 +427,8 @@ public class FinalCrypt extends Thread
 			readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip(); readTargetSourceChannelPosition += readTargetSourceChannelTransfered;
 			if (( readTargetSourceChannelTransfered == -1 ) || ( targetSourceBuffer.limit() < readTargetSourceBufferSize )) { targetSourceEnded = true; } // Buffer.limit = remainder from current position to end
 			readTargetSourceChannel.close();
+			srcMessageDigest.update(targetSourceBuffer); // Build up sha-1 checksum
+			    
 			readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
 			readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered / 2);
 			allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
@@ -442,6 +460,7 @@ public class FinalCrypt extends Thread
 			    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinBuffer); targetDestinBuffer.flip(); writeTargetDestChannelPosition += writeTargetDestChannelTransfered;
 			    if (txt) { logByteBuffer("DB", targetSourceBuffer); logByteBuffer("CB", keySourceBuffer); logByteBuffer("OB", targetDestinBuffer); }
 			    writeTargetDestinChannel.close();
+			    dstMessageDigest.update(targetDestinBuffer); // Build up sha-1 checksum
 //				    wrteTargetDestinStat.setFileEndEpoch(); wrteTargetDestinStat.clock();
 //                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
 			} catch (IOException ex) { ui.log("Error: writeTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
@@ -535,7 +554,7 @@ public class FinalCrypt extends Thread
 //                      Counting encrypting and shredding for the average throughtput performance
 
 //                      Shredding process
-
+		
 		ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
 		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_SHRED_SYMBOL, false, true, true, false, false);
 
@@ -547,8 +566,8 @@ public class FinalCrypt extends Thread
 		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1,           false,            false,	    true))
 		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.log("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n", true, true, true, true, false); } } else 
 
-		    readTargetSourceChannelPosition = 0;	readTargetSourceChannelTransfered = 0;
-		    readKeySourceChannelPosition = 0;    readKeySourceChannelTransfered = 0;
+		    readTargetSourceChannelPosition = 0;    readTargetSourceChannelTransfered = 0;
+		    readKeySourceChannelPosition = 0;	    readKeySourceChannelTransfered = 0;
 
 		    writeTargetDestChannelPosition = 0;
 
@@ -617,9 +636,15 @@ public class FinalCrypt extends Thread
 		    }
 		} // End ! dry
 
+		byte[] srcHashBytes = srcMessageDigest.digest();
+		String srcHashString = getHexString(srcHashBytes,2); // print sha-1 checksum
+
+		byte[] dstHashBytes = dstMessageDigest.digest();
+		String dstHashString = getHexString(dstHashBytes,2); // print sha-1 checksum
+		
 //		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage();
 		fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
-		ui.log(fileStatusLine + "\r\n", true, true, true, false, false);
+		ui.log("SHA-1: \"" + srcHashString + "\"->\"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);
 
 		allDataStats.addFilesProcessed(1);
 
@@ -655,6 +680,9 @@ public class FinalCrypt extends Thread
         ui.processFinished();
     }
     
+    synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
+    synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
+
     public static ByteBuffer encryptBuffer(ByteBuffer targetSourceBuffer, ByteBuffer keySourceBuffer, boolean printEnabled)
     {
         ByteBuffer targetDestinBuffer = ByteBuffer.allocate(keySourceBuffer.capacity()); targetDestinBuffer.clear();
@@ -675,7 +703,7 @@ public class FinalCrypt extends Thread
     public static byte encryptByte(final byte targetSourceByte, byte keySourceByte)
     {
 	byte returnByte; // Final result to return
-	byte keyXORByte;
+//	byte keyXORByte;
 	
         if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } // Inverting / negate key 0 bytes (none encryption not allowed)
 	
@@ -685,7 +713,7 @@ public class FinalCrypt extends Thread
 	}
 	else
 	{
-	    keyXORByte = (byte)(targetSourceByte ^ keySourceByte);
+	    byte keyXORByte = (byte)(targetSourceByte ^ keySourceByte);
 	    returnByte = (byte)(keyXORByte ^ (byte)pwd.charAt(pwdPos)); pwdPos++;
 	    if ( pwdPos == pwd.length() ) { pwdPos = 0; }
 	}

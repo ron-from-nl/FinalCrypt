@@ -1,5 +1,5 @@
 [Version] =		{2.9.0}
-[Release Notes] =	{Extra Key Password Protection}
-[Release Message] =	{Protect possible key exposure}
+[Release Notes] =	{Added Key + Password Encryption}
+[Release Message] =	{Added SHA-1 Checksum logentries}
 [Alert Subject] =	{}
 [Alert Message] =	{}

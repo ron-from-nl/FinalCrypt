@@ -31,6 +31,8 @@ Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
 ============================= Binaries Released =============================
 
 Key Password Protection
+SHA-1 Target Checksums
+
 Refined progress logging
 Encrypt & Shred Progress
 Improved filemanager usage

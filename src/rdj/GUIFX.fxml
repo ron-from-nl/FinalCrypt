@@ -194,7 +194,7 @@
                            <children>
                               <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" style="-fx-control-inner-background: #222222; -fx-text-fill: #FFC200;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Monospaced Regular" size="12.0" />
+                                    <Font name="Monospaced Regular" size="10.0" />
                                  </font>
                                  <effect>
                                     <Glow level="0.5" />
