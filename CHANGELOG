@@ -14,7 +14,6 @@
 2.4.0 Major Cosmetic GUI Change. Minor fixes filter stats
 2.3.1 Improved Cipher validation. Fixed MacOSX Update Stats
 2.3.0 Added Cipher Checksum SHA-1. Standardized encrypt method
-2.2.2 Added Cipher Checksum SHA-1. Standardized encrypt method
 2.2.1 Fixed print un-rd/wr files. Minor update for printing
 2.2.0 New: Cipher Device Types. Better: Printing, Clocks
 2.1.2 Auto decrypt open file. Fixed desktop open bug
