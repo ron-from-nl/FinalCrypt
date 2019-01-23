@@ -1,0 +1,42 @@
+2.9.0 Added Key + Password Encryption. Added SHA-1 Checksum logentries
+2.8.2 JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !
+2.8.1 Refined progress logging. Encrypt & Shred Progress
+2.8.0 Improved filemanager usage. Minor logging improvements
+2.7.2 Bugfix: Falsely armed delete buttons. Please update as soon as possible
+2.7.1 Removed GUI(FX) component from rdj.CLUI.Removed deprecated javax.xml dependency
+2.7.0 Added Legacy / Non-MAC Mode. Disables Message Auth. Code
+2.6.3 Fixed unselect key. Added Create OTP Key
+2.6.2 Added Create OTP Key. Automat Update Check
+2.6.1 Added Create OTP Key. Fix OTP Key Size Bug
+2.6.0 Added Create OTP Key. Cipher now called Key
+2.4.3 FileChooser Refresh Update
+2.4.2 Fixed MultiOS GUI bug. Fixed MacOSX busy-bug
+2.4.0 Major Cosmetic GUI Change. Minor fixes filter stats
+2.3.1 Improved Cipher validation. Fixed MacOSX Update Stats
+2.3.0 Added Cipher Checksum SHA-1. Standardized encrypt method
+2.2.2 Added Cipher Checksum SHA-1. Standardized encrypt method
+2.2.1 Fixed print un-rd/wr files. Minor update for printing
+2.2.0 New: Cipher Device Types. Better: Printing, Clocks
+2.1.2 Auto decrypt open file. Fixed desktop open bug
+2.1.1 Auto decrypt open file. Fixed desktop open bug
+2.1.0 Change Target Response
+2.0.0 Better Looks & Feel. Modernized Interface
+1.9.9 Added seperate buttons [Encrypt] & [Decrypt]
+1.9.1 Bugfix Full Message Authentication Code
+1.9.0 Added Full Message Authentication Code
+1.8.4 Better validation & GUI performance
+1.8.3 Improved: Updates, Validation
+1.8.2 Release: Minor update2
+1.8.1 Release: Minor update
+1.8.0 Release: Added Hybrid Message Authentication Code
+1.7.3 Optimized GPT Manager Object
+1.7.2 Removed JavaFX components from CLI. Test r/w permissions on cipher devices
+1.7.1 Added Cross Platform FileSystem Attributes. Added batchfiles to CLI. Added file logging
+1.7.0 Added DryRun mode to CLI. Excluded symlinks
+1.6.0 Added raw Cipher Devices including GUID Partition Table Manager (GPT Tooling)
+1.5.0 Added Secure Delete Files (Shredding)
+1.4.0 Added Globbing Pattern & RegEx file filters
+1.3.0 Added in/excluding *.bit extension filter
+1.2.0 Added Check Update function
+1.1.0 Added recursive delete selected targets
+1.0.0 FinalCrypt first release
