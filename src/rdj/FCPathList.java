@@ -202,7 +202,7 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Readable Files		: " +	readableFiles + "\r\n";
 	returnString += "Writable Files		: " +	writableFiles + "\r\n";
 	returnString += "Hidden Files		: " +	hiddenFiles + "\r\n";
-	returnString += "Key Matching 	: " +	matchingKey + "\r\n";
+	returnString += "Key Matching		: " +	matchingKey + "\r\n";
 	returnString += "Valid Paths		: " +	validPaths + " (" + Validate.getHumanSize(validPathsSize,1) + ")\r\n";
 	returnString += "Valid Files		: " +	validFiles + " (" + Validate.getHumanSize(validFilesSize,1) + ")\r\n";
 	returnString += "Valid Devices		: " +	validDevices + " (" + Validate.getHumanSize(validDevicesSize,1) + ")\r\n";
