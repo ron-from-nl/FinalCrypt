@@ -69,7 +69,7 @@ public class FinalCrypt extends Thread
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private long	bytesPerMilliSecond = 0;
-//							❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ
+//							❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘
     private final String UTF8_ENCRYPT_SYMBOL =          "🔒";
     private final String UTF8_ENCRYPT_LEGACY_SYMBOL =   "🔀";
     private final String UTF8_UNENCRYPTABLE_SYMBOL =    "⚠";
@@ -78,9 +78,15 @@ public class FinalCrypt extends Thread
     private final String UTF8_UNDECRYPTABLE_SYMBOL =    "⚠";
     private final String UTF8_DECRYPT_ABORT_SYMBOL =    "💣";
 
-    private final String UTF8_SHRED_SYMBOL =            "🗑";
+    private	  String UTF8_PROCESS_SYMBOL =          "?";
+
+    private final String UTF8_CLONE_SYMBOL =             "℄";
+    private final String UTF8_DELETE_SYMBOL =           "🗑";
+    private final String UTF8_UNEXIST_SYMBOL =          "🗑!";
 
     private final String UTF8_FINISHED_SYMBOL =          "✔";
+    private final String UTF8_UNFINISHED_SYMBOL =        "❌";
+    
     private final String UTF8_PAUSE_SYMBOL =		 "Ⅱ";
     private final String UTF8_STOP_SYMBOL =		 "■";
 
@@ -143,14 +149,7 @@ public class FinalCrypt extends Thread
 	    , String pwdParam
     )// throws InterruptedException
     {
-	if (pwdParam.length() > 0)
-	{
-	    pwd = pwdParam;
-	}
-	else
-	{
-	    pwd = "";
-	}
+	if (pwdParam.length() > 0) { pwd = pwdParam; } else { pwd = ""; }
 
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 
@@ -235,15 +234,17 @@ public class FinalCrypt extends Thread
 
 		if ( ! disableMAC)
 		{
-		    if	(encryptmode)				{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
+		    if	(encryptmode)				{ UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_SYMBOL; targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		    else // (decryptmode)
 		    {
+			UTF8_PROCESS_SYMBOL = UTF8_DECRYPT_SYMBOL;
 			if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
 			else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		    }
 		}
 		else // Disable Message Authentication Mode
 		{
+		    UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_LEGACY_SYMBOL;
 		    if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
 		    else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
@@ -289,8 +290,8 @@ public class FinalCrypt extends Thread
 			{
 			    if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			    {				
-				ui.log(UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_ENCRYPT_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_ENCRYPT_SYMBOL, false, true, true, false, false);
+				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_PROCESS_SYMBOL, false, true, true, false, false);
 
 				if ( ! dry )
 				{
@@ -320,8 +321,8 @@ public class FinalCrypt extends Thread
 			{
 			    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated MAC (Decryptable)
 			    {
-				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_DECRYPT_SYMBOL + " \"" + targetDestinPath.toString() + "\" " + UTF8_DECRYPT_SYMBOL, false, true, true, false, false);
+				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toString() + "\" " + UTF8_PROCESS_SYMBOL, false, true, true, false, false);
 				
 				ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2))); targetSourceBuffer.clear();
 				try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
@@ -344,7 +345,7 @@ public class FinalCrypt extends Thread
 		}
 		else
 		{
-		    fileStatusLine =    UTF8_ENCRYPT_LEGACY_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_ENCRYPT_LEGACY_SYMBOL;
+		    fileStatusLine =    UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_PROCESS_SYMBOL;
 		    ui.log(fileStatusLine, true, true, true, false, false);
 		}
 		
@@ -385,7 +386,7 @@ public class FinalCrypt extends Thread
 		    {
 			boolean deleted = false;
 			try { deleted = Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			if ( deleted ) { ui.log(" " + UTF8_STOP_SYMBOL + " ", false, true, true, false, false); } else { ui.log(" " + UTF8_STOP_SYMBOL + "! ", false, true, true, false, false); }
+			if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 			targetSourceEnded = true;
 			ui.log("\r\n", true, true, true, false, false);
 			break encryptTargetloop;
@@ -528,8 +529,8 @@ public class FinalCrypt extends Thread
 
 //                      Shredding process
 		
-		ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
-		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_SHRED_SYMBOL, false, true, true, false, false);
+		ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
+		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_CLONE_SYMBOL, false, true, true, false, false);
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 
@@ -560,10 +561,21 @@ public class FinalCrypt extends Thread
 			{
 			    boolean deleted = false;
 			    try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			if ( deleted ) { ui.log(" " +UTF8_STOP_SYMBOL + " ", false, true, true, false, false); } else { ui.log(" " + UTF8_STOP_SYMBOL + "! ", false, true, true, false, false); }
+			    if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 			    targetSourceEnded = true;
 //			    ui.log("\r\n", true, true, true, false, false);
-			    targetDestinEnded = true; break shredloop;
+			    targetDestinEnded = true;
+
+			    byte[] srcHashBytes = srcMessageDigest.digest();
+			    String srcHashString = getHexString(srcHashBytes,2); // print sha-1 checksum
+
+			    byte[] dstHashBytes = dstMessageDigest.digest();
+			    String dstHashString = getHexString(dstHashBytes,2); // print sha-1 checksum
+
+			    fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
+			    ui.log("SHA-1: \"" + srcHashString + "\" -> \"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);
+			    
+			    break encryptTargetloop;
 			}
 
 //			if (stopPending)    { targetDestinEnded = true; break shredloop; }
@@ -604,7 +616,7 @@ public class FinalCrypt extends Thread
 			targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
 		    }
 
-		    ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
+		    ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
 		    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 
 //                  FILE STATUS 
@@ -622,17 +634,6 @@ public class FinalCrypt extends Thread
 		    }
 		} // End ! dry
 
-		byte[] srcHashBytes = srcMessageDigest.digest();
-		String srcHashString = getHexString(srcHashBytes,2); // print sha-1 checksum
-
-		byte[] dstHashBytes = dstMessageDigest.digest();
-		String dstHashString = getHexString(dstHashBytes,2); // print sha-1 checksum
-		
-//		fileStatusLine += allDataStats.getAllDataBytesProgressPercentage();
-		fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
-		ui.log("SHA-1: \"" + srcHashString + "\"->\"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);
-
-		allDataStats.addFilesProcessed(1);
 
 //		if ( print ) { ui.log(" ----------------------------------------------------------------------\r\n"); } // Tail after printheader
 
@@ -648,15 +649,35 @@ public class FinalCrypt extends Thread
 		    )
 		    {
 //			After the shredding stage of the process
-			try { Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(inputFilePath): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; } }
+			boolean deleted = false;
+			try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(" " + UTF8_DELETE_SYMBOL + " " + UTF8_UNFINISHED_SYMBOL, false, true, true, false, false); }
+		    }
 		}
+
+		byte[] srcHashBytes = srcMessageDigest.digest();
+		String srcHashString = getHexString(srcHashBytes,2); // print sha-1 checksum
+
+		byte[] dstHashBytes = dstMessageDigest.digest();
+		String dstHashString = getHexString(dstHashBytes,2); // print sha-1 checksum
+		
+		fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
+		ui.log("SHA-1: \"" + srcHashString + "\" -> \"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);
+
+		allDataStats.addFilesProcessed(1);
 	    } // else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + keySourcePath.toAbsolutePath() + " (is key!)\r\n"); }
 	    
+	    
+	    
+//	    ===================================================================================================================================================
+	    
+
+
 //					     getFCPath(UI ui, String caller,	    Path path, boolean isKey,		 Path keyPath, boolean report)
 	    newTargetSourceFCPath = Validate.getFCPath(   ui,            "", targetDestinPath,		  false, keySourceFCPath.path,	 verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop // Encrypt Files Loop
+        } // End Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.log("\r\n", true, false, false, false, false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 
