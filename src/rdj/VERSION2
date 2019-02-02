@@ -1,5 +1,5 @@
 [Version] =		{2.9.1}
 [Release Notes] =	{Command Line Interrupt Signal Handler}
-[Release Message] =	{Delete unfinished file on termination}
+[Release Message] =	{Switched to SHA-256 Hashing Checksums}
 [Alert Subject] =	{}
 [Alert Message] =	{}

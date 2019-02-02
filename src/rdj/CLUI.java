@@ -338,12 +338,12 @@ public class CLUI implements UI
 
 	if (key_checksum)
 	{
-	    log("\r\nKey CheckSum: (SHA-1): \"" + keyFCPath.path.toAbsolutePath().toString() + "\"...\r\n", false, true, false, false, false); 
+	    log("\r\nKey CheckSum: (" + FinalCrypt.HASH_ALGORITHM_NAME + "): \"" + keyFCPath.path.toAbsolutePath().toString() + "\"...\r\n", false, true, false, false, false); 
 	    long    readKeySourceChannelPosition =  0; 
 	    long    readKeySourceChannelTransfered =  0; 
 	    int readKeySourceBufferSize = (1 * 1024 * 1024);
 	    ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", false, true, true, true, false);}
 	    int x = 0;
 	    while ( ! keySourceChecksumReadEnded )
 	    {

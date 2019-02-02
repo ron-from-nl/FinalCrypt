@@ -374,6 +374,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Button checkUpdateButton;
     @FXML
     private AnchorPane mainAnchorPane;
+    @FXML
+    private Label checksumHeader;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -481,6 +483,7 @@ public class GUIFX extends Application implements UI, Initializable
 	noKeyFile = keyFileChooser.getSelectedFile();
 	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
+	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	
         welcome();
     }
@@ -502,12 +505,24 @@ public class GUIFX extends Application implements UI, Initializable
         configuration = new Configuration(ui);
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion(this);
+	
+	String symbols = "";
+	symbols += "Symbols:         ";
+	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
+//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
+	
         log("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", true, false, false, false ,false);        
         log(   "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false ,false);
         log("\r\n", false, true, true, false ,false);
         log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n", false, true, true, false ,false);
         log(   "Email:           " + Version.getAuthorEmail() + "\r\n", false, true, true, false ,false);
         log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n", false, true, true, false ,false); // System.getProperty("java.version")
+        log(   "Command line:	 java -cp FinalCrypt.jar rdj/CLUI --help\r\n", false, true, true, false ,false);
         log(   "License:         " + Version.getLicense() + "\r\n", false, true, true, false ,false);
         log("\r\n", false, true, true, false ,false);
         log(   "OS Name:         " + System.getProperty("os.name") + "\r\n", false, true, true, false ,false);
@@ -522,8 +537,7 @@ public class GUIFX extends Application implements UI, Initializable
         log(   "User Home:       " + System.getProperty("user.home") + "\r\n", false, true, true, false ,false);
         log(   "User Dir:        " + System.getProperty("user.dir") + "\r\n", false, true, true, false ,false);
         log("\r\n", false, true, true, false ,false);
-        log("Tip: FinalCrypt command line (DOS) usage:\r\n", false, true, true, false ,false);
-        log("java -cp FinalCrypt.jar rdj/CLUI --help\r\n", false, true, true, false ,false);
+        log(symbols + "\r\n", false, true, true, false ,false);
         log("\r\n", false, true, true, false ,false);
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
 
@@ -1106,7 +1120,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if ((keyFCPath.isValidKey)) // Valid Key
 		{
-		    // Calculate Key SHA-1 Checksum 
+		    // Calculate Key Checksum 
 		    checksumBlock:
 		    {
 			keySourceChecksumReadEnded = false;
@@ -1117,7 +1131,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    long    readKeySourceChannelTransfered =  0; 
 			    int readKeySourceBufferSize = (1 * 1024 * 1024);
 			    ByteBuffer keySourceBuffer = ByteBuffer.allocate(readKeySourceBufferSize); keySourceBuffer.clear();
-			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance("SHA-1"); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
 			    int x = 0;
 			    while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
 			    {
