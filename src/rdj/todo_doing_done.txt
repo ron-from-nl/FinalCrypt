@@ -13,10 +13,11 @@ Reproduce pause / stop buildSelection bug maybe?
 
 =============================== Don't forget ================================
 
-Change FinalCrypt -> properties -> splash screen -> icon on Windows
 Set version nbproject/project.properties application.implementation.version=1.2.3
-Set version on file: Version & Version2
 Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
+Set version on file: Version & Version2
+Update CHANGELOG file
+Change FinalCrypt -> properties -> splash screen -> icon on Windows
 
 =================================== Done ====================================
 
@@ -30,9 +31,10 @@ Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
 
 ============================= Binaries Released =============================
 
+Added Command Line Interrupt Cleanup Handler
+
 Key Password Protection
 SHA-1 Target Checksums
-
 Refined progress logging
 Encrypt & Shred Progress
 Improved filemanager usage

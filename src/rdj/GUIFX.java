@@ -105,7 +105,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
@@ -132,9 +131,10 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Label statusLabel;    
 
-    FinalCrypt finalCrypt;
-    UI ui;
-    GUIFX guifx;
+    private FinalCrypt finalCrypt;
+    private UI ui;
+    private GUIFX guifx;
+    
     private JFileChooser targetFileChooser;
     private boolean negatePattern;
     public JFileChooser keyFileChooser;
@@ -372,6 +372,8 @@ public class GUIFX extends Application implements UI, Initializable
     private PasswordField pwdField;
     @FXML
     private Button checkUpdateButton;
+    @FXML
+    private AnchorPane mainAnchorPane;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -381,18 +383,26 @@ public class GUIFX extends Application implements UI, Initializable
         this.stage = stage;
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
+	
         
 //        try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); }
-        
+        setUserAgentStylesheet(STYLESHEET_MODENA);
+//        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+
+
         stage.setScene(scene);
         stage.setTitle(Version.getProduct());
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         stage.setMaximized(true);
-        stage.setOnCloseRequest(e -> Platform.exit());
-	stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent window) ->	{ System.exit(0); });
+        stage.setOnCloseRequest(e -> Platform.exit());	
+//	stage.setOnCloseRequest(new EventHandler<WindowEvent>() { @Override public void handle(WindowEvent e)
+//	{
+//	    if (finalCrypt == null) { System.out.println("fc null"); } else { System.out.println("fc not null"); }
+//	}});
+//	stage.getScene().getWindow().addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent window) -> { if (finalCrypt == null) { System.out.println("fc null"); } else { System.out.println("fc not null"); } System.exit(0); });
         stage.show();
-        
+	
         version = new Version(ui);
         stage.setTitle(Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString());
     }
@@ -463,6 +473,8 @@ public class GUIFX extends Application implements UI, Initializable
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
+	
+	
 //        device = new Device(this); device.start();
 
 	noTargetFile = targetFileChooser.getSelectedFile();
@@ -1626,8 +1638,22 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void encrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
+	Runtime.getRuntime().addShutdownHook(new Thread()
+	{
+	    @Override public void run()
+	    {
+		if (finalCrypt.processRunning)
+		{
+		    finalCrypt.setStopPending(true);
+		    try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
+		    log("\r\nEncryption User Interrupted...\r\n", false, true, true, false, false);
+		}
+	    }
+	});
+
 	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText());
+	processStarted();
+	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText());
     }
 
     @FXML
@@ -1650,8 +1676,22 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
     {
+	Runtime.getRuntime().addShutdownHook(new Thread()
+	{
+	    @Override public void run()
+	    {
+		if (finalCrypt.processRunning)
+		{
+		    finalCrypt.setStopPending(true);
+		    try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
+		    log("\r\nDecryption User Interrupted...\r\n", false, true, true, false, false);
+		}
+	    }
+	});
+	
 	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
-	processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText());
+	processStarted();
+	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText());
     }
 
     @FXML
@@ -2032,9 +2072,10 @@ public class GUIFX extends Application implements UI, Initializable
     }
     
     @FXML
-    private void stopButtonAction(ActionEvent event)
+    private void stopButtonAction(ActionEvent event) { stop(false); }
+    
+    private void stop(boolean stopAndExit)
     {
-//        if ( encryptButton.getText().equals("Encrypt") )
         if ((processRunning) && ((processRunningType == ENCRYPT) || (processRunningType == DECRYPT)))
         {
             finalCrypt.setStopPending(true);
@@ -2087,14 +2128,14 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void emptyFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     private void symlinkFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     @FXML
@@ -2102,8 +2143,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ( (unreadableList != null) && (unreadableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n", false, true, false, false, false);
-	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false);
+	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
@@ -2115,8 +2156,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ( (unwritableList != null) && (unwritableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n", false, true, false, false, false);
-	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false);
+	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
@@ -2125,43 +2166,43 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void hiddenFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void emptyFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void symlinkFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void unreadableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void unwritableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void hiddenFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
     
     private void setAttribute(FCPath fcPath, boolean read, boolean write)
@@ -2198,66 +2239,66 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private void encryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void decryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void decryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void encryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void newEncryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
 
     @FXML
     private void unencryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void newDecryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
 
     @FXML
     private void undecryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void invalidFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n", false, true, false, false, false);
-	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, false, false, false); } log("\r\n", false, true, false, false, false); }
+	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n", false, true, true, false, false);
+	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
@@ -2390,11 +2431,9 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
 
-
 //  ==============================================================================================================
 //  End Message Authentication Mode
 //  ==============================================================================================================
-
 
 
     @Override

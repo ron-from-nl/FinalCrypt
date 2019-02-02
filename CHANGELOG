@@ -1,3 +1,4 @@
+2.9.1 Command Line Interrupt Signal Handler. Delete unfinished file on termination
 2.9.0 Added Key + Password Encryption. Added SHA-1 Checksum logentries
 2.8.2 JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !
 2.8.1 Refined progress logging. Encrypt & Shred Progress

@@ -93,7 +93,7 @@ public class CLUI implements UI
     private String pwd =		"";
     private boolean pwdPromptNeeded =	false;
     private boolean pwdIsSet =		false;
-
+    
     public CLUI(String[] args)
     {	
         this.ui = this;
@@ -436,7 +436,7 @@ public class CLUI implements UI
 	else if ((deletegpt) && (targetFCPathList.validDevicesProtected > 0))
 	{
 	    deleteGPTTargetList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE_PROTECTED); // log("Create Key List:\r\n" + createKeyList.getStats());
-	    FCPath fcPath = (FCPath) deleteGPTTargetList.get(0); log("WARNING: Device: " + fcPath.path + " is protected!!!\r\n", false, true, true, true, false); deleteGPTDeviceFound = false; 
+	    FCPath fcPath = (FCPath) deleteGPTTargetList.get(0); log("WARNING: Device: " + fcPath.path + " is protected!!!\r\n", false, true, true, false, false); deleteGPTDeviceFound = false; 
 	}
 	else { deleteGPTDeviceFound = false; }
 
@@ -451,8 +451,26 @@ public class CLUI implements UI
 	{
 	    if (finalCrypt.disableMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
 	    
-	    if ((encryptablesFound))    { processStarted(); finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd); }
-	    else			{ log("No encryptable targets found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
+	    if ((encryptablesFound))
+	    {
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+		    @Override public void run()
+		    {
+			
+			if (finalCrypt.processRunning)
+			{
+			    finalCrypt.setStopPending(true);
+			    try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
+			    log("\r\nEncryption User Interrupted...\r\n", false, true, true, false, false);
+			}
+		    }
+		});
+		processStarted(); 
+		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd);
+//		catch (InterruptedException ex){ log("Encryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
+	    }
+	    else			{ log("No encryptable targets found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((decrypt))
 	{
@@ -462,10 +480,27 @@ public class CLUI implements UI
 	    }
 	    else
 	    {
-		if (decryptablesFound)	{ processStarted(); finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd); }
+		if (decryptablesFound)
+		{
+		    Runtime.getRuntime().addShutdownHook(new Thread()
+		    {
+			@Override public void run()
+			{
+			    if (finalCrypt.processRunning)
+			    {
+				finalCrypt.setStopPending(true);
+				try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
+				log("\r\nDecryption User Interrupted...\r\n", false, true, true, false, false);
+			    }
+			}
+		    });
+		    processStarted();
+		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd);
+//		    catch (InterruptedException ex) { log("Decryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
+		}
 		else			
 		{
-		    log("No decryptable targets found\r\n\r\n", false, true, true, true, false);
+		    log("No decryptable targets found\r\n\r\n", false, true, true, false, false);
 		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key / password?\r\n\r\n", false, true, false, false, false); }
 		    log(targetFCPathList.getStats(), false, true, true, false, false);
 		}
@@ -474,22 +509,22 @@ public class CLUI implements UI
 	else if (createkeydev)
 	{
 	    if (createKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createKeyDevice(keyFCPath, (FCPath) createKeyList.get(0)); processFinished(); }
-	    else			{ log("No valid target device found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
+	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((clonekeydev) && (cloneKeyDeviceFound))
 	{
 	    if (cloneKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneKeyDevice(keyFCPath, (FCPath) cloneKeyList.get(0));  processFinished(); }
-	    else			{ log("No valid target device found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
+	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((printgpt) && (printGPTDeviceFound))
 	{
 	    if (printGPTDeviceFound)	{ deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.printGPT( (FCPath) printGPTTargetList.get(0)); }
-	    else			{ log("No valid target device found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
+	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((deletegpt) && (deleteGPTDeviceFound))
 	{
 	    if (deleteGPTDeviceFound)	{ deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.deleteGPT( (FCPath) deleteGPTTargetList.get(0)); }
-	    else			{ log("No valid target device found:\r\n", false, true, true, true, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
+	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
     } // End of default constructor
     

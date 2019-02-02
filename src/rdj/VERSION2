@@ -1,5 +1,5 @@
-[Version] =		{2.9.0}
-[Release Notes] =	{Added Key + Password Encryption}
-[Release Message] =	{Added SHA-1 Checksum logentries}
+[Version] =		{2.9.1}
+[Release Notes] =	{Command Line Interrupt Signal Handler}
+[Release Message] =	{Delete unfinished file on termination}
 [Alert Subject] =	{}
 [Alert Message] =	{}
