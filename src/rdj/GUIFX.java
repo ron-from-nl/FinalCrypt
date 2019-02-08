@@ -97,6 +97,8 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.PasswordField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
@@ -506,40 +508,9 @@ public class GUIFX extends Application implements UI, Initializable
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion(this);
 	
-	String symbols = "";
-	symbols += "Symbols:         ";
-	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
-	
-        log("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", true, false, false, false ,false);        
-        log(   "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
-        log(   "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n", false, true, true, false ,false);
-        log(   "Email:           " + Version.getAuthorEmail() + "\r\n", false, true, true, false ,false);
-        log(   "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n", false, true, true, false ,false); // System.getProperty("java.version")
-        log(   "Command line:	 java -cp FinalCrypt.jar rdj/CLUI --help\r\n", false, true, true, false ,false);
-        log(   "License:         " + Version.getLicense() + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
-        log(   "OS Name:         " + System.getProperty("os.name") + "\r\n", false, true, true, false ,false);
-        log(   "OS Architecture: " + System.getProperty("os.arch") + "\r\n", false, true, true, false ,false);
-        log(   "OS Version:      " + System.getProperty("os.version") + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
-        log(   "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n", false, true, true, false ,false);
-        log(   "Java Version:    " + System.getProperty("java.version") + "\r\n", false, true, true, false ,false);
-        log(   "Class Version:   " + System.getProperty("java.class.version") + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
-        log(   "User Name:       " + System.getProperty("user.name") + "\r\n", false, true, true, false ,false);
-        log(   "User Home:       " + System.getProperty("user.home") + "\r\n", false, true, true, false ,false);
-        log(   "User Dir:        " + System.getProperty("user.dir") + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
-        log(symbols + "\r\n", false, true, true, false ,false);
-        log("\r\n", false, true, true, false ,false);
+	statusLabel.setText("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString());
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
+	log(getRuntimeEnvironment(), false, true, true, false ,false);
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
@@ -555,7 +526,9 @@ public class GUIFX extends Application implements UI, Initializable
                 cpuIndicator.setProgress(getProcessCpuLoad())
         )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
 	
-	checksumTooltip = new Tooltip(""); checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
+	checksumTooltip = new Tooltip("");
+//	checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
+	checksumTooltip.setFont(javafx.scene.text.Font.font("Monospaced", FontWeight.NORMAL, FontPosture.REGULAR, 13));
 
         Platform.runLater(new Runnable()
         {
@@ -565,7 +538,7 @@ public class GUIFX extends Application implements UI, Initializable
                 String title =  "Welcome to " + Version.getProduct();
                 String header = "Brief Introduction:";
                 String infotext = "";
-                infotext += "Step   Optional create an OTP key file (below).\r\n";
+                infotext += "Step   Optional create an OTP key file.\r\n";
                 infotext += "Step 1 Select items to en/decrypt on the left.\r\n";
                 infotext += "Step 2 Select your (OTP) key file on the right.\r\n";
                 infotext += "Step 3 Click [Encrypt] / [Decrypt] button below.\r\n";
@@ -576,7 +549,7 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "Click [LOG] to see details.\r\n";
                 infotext += "Tip:  Watch statusbar at bottom.\r\n";
                 infotext += "Tip:  Make backups of your keys and data.\r\n";
-                infotext += "Tip:  Keep your keys secret (store external).\r\n";
+                infotext += "Tip:  Keep your keys secret (backup external).\r\n";
                 infotext += "\r\n";
                 infotext += "Live to love - Enjoy your privacy.\r\n\r\n";
 /*
@@ -639,6 +612,47 @@ public class GUIFX extends Application implements UI, Initializable
 //            }
 //        });
 //        alert.showAndWait();        
+    }
+    
+    private String getRuntimeEnvironment()
+    {
+	String env = "";
+	
+	String symbols = "";
+	symbols += "Symbols:         ";
+	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
+//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
+	
+	env +=    "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
+	env += "\r\n";
+	env +=    "Interface:       rdj/GUIFX\r\n";
+	env +=    "Email:           " + Version.getAuthorEmail() + "\r\n";
+	env +=    "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
+	env +=    "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n";
+	env +=    "Command line:	 java -cp FinalCrypt.jar rdj/CLUI --help\r\n";
+	env +=    "License:         " + Version.getLicense() + "\r\n";
+	env += "\r\n";
+	env +=    "OS Name:         " + System.getProperty("os.name") + "\r\n";
+	env +=    "OS Architecture: " + System.getProperty("os.arch") + "\r\n";
+	env +=    "OS Version:      " + System.getProperty("os.version") + "\r\n";
+	env += "\r\n";
+	env +=    "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n";
+	env +=    "Java Version:    " + System.getProperty("java.version") + "\r\n";
+	env +=    "Class Version:   " + System.getProperty("java.class.version") + "\r\n";
+	env += "\r\n";
+	env +=    "User Name:       " + System.getProperty("user.name") + "\r\n";
+	env +=    "User Home:       " + System.getProperty("user.home") + "\r\n";
+	env +=    "User Dir:        " + System.getProperty("user.dir") + "\r\n";
+	env += "\r\n";
+	env += symbols + "\r\n";
+	env += "\r\n";
+		
+	return env;
     }
     
     public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
@@ -762,7 +776,6 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void keyFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {                                                            
-//        PlatformImpl.runAndWait(new Runnable()
         Platform.runLater(new Runnable()
         {
             @Override
@@ -965,7 +978,7 @@ public class GUIFX extends Application implements UI, Initializable
             keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
             keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
             keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-            checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+            checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 	    pwdField.setDisable(true);
         }});
 
@@ -1006,15 +1019,9 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
-//			log("CC Key Valid\r\n");
-			// Set Key Status Colors
 			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.getFileName().toString());
 			checksumLabel.setTextFill(Color.WHITESMOKE);
-			checksumLabel.setText("");
-			Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			Tooltip.install(checksumLabel, checksumTooltip); 
-			
-//			try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
+			checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 
 			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
@@ -1026,15 +1033,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    }
 		    else // Not Valid Key
 		    {
-//			log("CC Key Not Valid\r\n");
-			// Set Key Status Colors
 			if (keyFCPath.type == FCPath.DIRECTORY)
 			{
 			    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
 			    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
 			    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 			    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 			}
 			else
 			{
@@ -1043,9 +1048,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    else					{ keyTypeLabel.setTextFill(Color.ORANGE); }
 			    keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
-			    checksumLabel.setText(""); checksumTooltip.setText("");
-			    Tooltip.uninstall(checksumLabel, checksumTooltip);
-			    // Tooltip.install(checksumLabel, checksumTooltip); 
+			    checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 			    keyValidLabel.setTextFill(Color.ORANGE); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));			    
 			}
 			
@@ -1070,8 +1073,6 @@ public class GUIFX extends Application implements UI, Initializable
 			    checksumLabel.setTextFill(Color.WHITESMOKE);
 			    checksumLabel.setText("Calculating...");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			    Tooltip.install(checksumLabel, checksumTooltip); 
-//			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			    calculateChecksum();
 			}});
 		    }
@@ -1082,8 +1083,6 @@ public class GUIFX extends Application implements UI, Initializable
 			    checksumLabel.setTextFill(Color.WHITESMOKE);
 			    checksumLabel.setText("Click for checksum");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			    Tooltip.install(checksumLabel, checksumTooltip); 
-//			    try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
 			}});
 		    }
 		}
@@ -1102,7 +1101,7 @@ public class GUIFX extends Application implements UI, Initializable
                     keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
                     keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
                     keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-                    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+                    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
                 }});
 
 		buildReady(targetFCPathList);
@@ -1141,7 +1140,6 @@ public class GUIFX extends Application implements UI, Initializable
 				    readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
 				    readKeySourceChannel.close();
 
-	//				    checksumLabel.setText("SHA256 calculating: " + checksumStatusTotalTransfered);
 				    messageDigest.update(keySourceBuffer);
 				    if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
 				} catch (IOException ex)
@@ -1149,7 +1147,6 @@ public class GUIFX extends Application implements UI, Initializable
 				    Platform.runLater(new Runnable(){ @Override public void run()
 				    {
 					keySourceChecksumReadEnded = true;
-    //				    ui.error("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n"); 
 				    }});
 				}
 				x++;
@@ -1160,11 +1157,11 @@ public class GUIFX extends Application implements UI, Initializable
 			    {
 				byte[] hashBytes = messageDigest.digest();
 				String hashString = getHexString(hashBytes,2);
-				Platform.runLater(new Runnable(){ @Override public void run() {
+				Platform.runLater(new Runnable(){ @Override public void run()
+				{
 				    checksumLabel.setTextFill(Color.GREENYELLOW);
 				    checksumLabel.setText(hashString);
-				    checksumTooltip.setText(hashString);
-//				    Tooltip.uninstall(checksumLabel, checksumTooltip);
+				    checksumTooltip.setText(hashString + "\r\n\r\ncalculate checksum: left-click\r\ncopy to clipboard:  right-click");
 				    Tooltip.install(checksumLabel, checksumTooltip); 
 				    isCalculatingCheckSum = false;
 				}});
@@ -1173,13 +1170,12 @@ public class GUIFX extends Application implements UI, Initializable
 			    {
 				messageDigest.reset();
 				Tooltip.uninstall(checksumLabel, checksumTooltip);
-//				Tooltip.install(checksumLabel, checksumTooltip);
 				isCalculatingCheckSum = false;
 			    }
 			}});
 			calcKeyThread.setName("calcKeyThread"); calcKeyThread.setDaemon(true); calcKeyThread.start();
 		    }
-    //		targetFileChooserPropertyCheck(true);
+//		    targetFileChooserPropertyCheck(true);
 		}
 	    }});
 	}
@@ -1187,10 +1183,29 @@ public class GUIFX extends Application implements UI, Initializable
     
     @FXML private void checksumLabelOnMouseClicked(MouseEvent event)
     {
-	checksumLabel.setTextFill(Color.WHITESMOKE);
-	checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
-//	try { Thread.sleep(50); } catch (InterruptedException ex) {  } // Just to update GUI
-	Platform.runLater(new Runnable(){ @Override public void run() { calculateChecksum(); }});
+	Platform.runLater(new Runnable(){ @Override public void run()
+	{ 
+	    if ( event.getButton() == MouseButton.PRIMARY )
+	    {
+		checksumLabel.setTextFill(Color.WHITESMOKE);
+		checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
+		Platform.runLater(new Runnable(){ @Override public void run() { calculateChecksum(); }});
+	    }
+	    else if ( event.getButton() == MouseButton.SECONDARY )
+	    {
+		Thread blinkThread = new Thread(new Runnable() { @Override @SuppressWarnings({"static-access"}) public void run()
+		{
+		    Paint oldColor = checksumLabel.getTextFill();
+		    checksumLabel.setTextFill(Color.WHITE);
+		    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+		    checksumLabel.setTextFill(oldColor);	    
+		}}); blinkThread.setName("blinkThread"); blinkThread.setDaemon(true); blinkThread.start();
+		
+		final ClipboardContent content = new ClipboardContent();
+		content.putString(checksumLabel.getText());
+		Clipboard.getSystemClipboard().setContent(content);
+	    }	
+	}});
     }
     
     synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
@@ -1709,7 +1724,12 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML
-    private void keyDeviceButtonAction(ActionEvent event)
+    private void createKeyLabelOnMouseClicked(MouseEvent event) { createOTPKeyFile(); }
+
+    @FXML
+    private void keyDeviceButtonAction(ActionEvent event){ createOTPKeyFile(); }
+    
+    synchronized private void createOTPKeyFile()
     {
         // Needs Threading to early split off from the UI Event Dispatch Thread
         final GUIFX guifx = this;
@@ -1766,7 +1786,6 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.setDaemon(true);
         encryptThread.start();
     }
-    
     
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
 //    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
@@ -2021,18 +2040,20 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setHeaderText("What is your secret Key file?");
         alert.setResizable(true);
         String infotext = new String();
-        infotext = "FinalCrypt de/encrypts your files with a key file.\r\n";
+        infotext =  "";
+        infotext += "FinalCrypt de/encrypts your files with a key file.\r\n";
         infotext += "Any personal photo or video can be your key file.\r\n";
-        infotext += "Best is to create a One-Time Pad Key File below.\r\n";
+        infotext += "Best is to encrypt with a One-Time Pad key file.\r\n";
         infotext += "\r\n";
-        infotext += "Keep keys secret and backed up (on USB sticks)\r\n";
-        infotext += "Without keys you can NEVER decrypt your files!\r\n";
+        infotext += "An optional password enforces extra encryption\r\n";
+        infotext += "so a lost / stolen key file can't unlock your data.\r\n";
         infotext += "\r\n";
         infotext += "==============================\r\n";
         infotext += "\r\n";
-        infotext += "Don't keep key file(s) on your computer too long\r\n";
-        infotext += "to prevent someone or something copying them.\r\n";
+        infotext += "Keep keys secret and backed up on USB sticks!\r\n";
         infotext += "\r\n";
+        infotext += "Without your key file (and optional password)\r\n";
+        infotext += "there is no way to decrypt / recover your data\r\n";
 //        infotext += "Encryption / Decryption (advanced explanation):\r\n";
 //        infotext += "\r\n";
 //        infotext += "Your key bit patterns negate your file bit patterns.\r\n";
@@ -2457,14 +2478,14 @@ public class GUIFX extends Application implements UI, Initializable
 	if (log)	{ log(message); }
 	if (logfile)	{ logfile(message); }
 	if (errfile)	{ errfile(message); }
-	if (print)	{ print(message); }
+	if (print)	{ print(message,errfile); }
     }
 
-    public void status(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}}); }
-    public void log(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
-    public void logfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
-    public void errfile(String message)	    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
-    public void print(String message)	    { System.out.print(message); }
+    public void status(String message)		    { Platform.runLater(new Runnable() { @Override public void run() { statusLabel.setText(message.replace("\r\n", ""));}}); }
+    public void log(String message)		    { Platform.runLater(new Runnable() { @Override public void run() { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }}); }
+    public void logfile(String message)		    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }}); }
+    public void errfile(String message)		    { Platform.runLater(new Runnable() { @Override public void run() { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }}); }
+    public void print(String message,boolean err)   { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
     
     public static void main(String[] args)  { launch(args); }
 

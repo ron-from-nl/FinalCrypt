@@ -128,7 +128,10 @@ public class CLUI implements UI
 //        finalCrypt.execute();
 
         // Validate Parameters
-	if (args.length == 0 ) { log("\r\nError: No parameters entered!\r\n", false, true, true, true, false); usagePrompt(true); } 
+	
+	log(getRuntimeEnvironment(), false, false, true, false ,false);
+	
+	if (args.length == 0 ) { log("\r\nError: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
 	
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
         {
@@ -158,8 +161,19 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
-            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, true, false); usagePrompt(true); }}
-            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, true, false); usagePrompt(true); }}
+            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
+            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
+
+//	    Mode parameters
+	    else if (
+			    (!encrypt)
+			&&  (!decrypt)
+			&&  (!createkeydev)
+			&&  (!clonekeydev)
+			&&  (!printgpt)
+			&&  (!deletegpt)
+			&&  (!createkeydev)
+		    )												    { log("\r\nWarning: No <--Mode> parameter specified" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
 
 //          Filtering Options
             else if ( args[paramCnt].equals("--dry"))                                                               { finalCrypt.setDry(true); }
@@ -168,31 +182,43 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-            else if ( ( args[paramCnt].equals("-k")) && (paramCnt+1 < args.length) )				    { keyFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); kfset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-k")) )								    { if (paramCnt+1 < args.length) { keyFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); kfset = true; paramCnt++; } else { log("\r\nWarning: Missing key parameter <-k \"keyfile\">" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
             else if ( ( args[paramCnt].equals("-K")) && (!args[paramCnt+1].isEmpty()) )				    { keyPath = Paths.get(args[paramCnt+1]); paramCnt++; } // Create OTP Key File
-            else if ( ( args[paramCnt].equals("-t")) && (!args[paramCnt+1].isEmpty()) )				    { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; }
+            else if ( ( args[paramCnt].equals("-t")) )								    { if (paramCnt+1 < args.length) { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; } else { log("\r\nWarning: Missing target parameter <[-t \"file/dir\"]>" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
-	    
             else { log("\r\nError: Invalid Parameter: " + args[paramCnt] + "\r\n", false, true, true, true, false); usagePrompt(true); }
         }
 
-        if (( encryptModeNeeded )   && ( decrypt ))								    { log("\r\nError: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n",  false, true, true, true, false); usagePrompt(true); }
-        if (( encryptModeNeeded )   && ( ! encrypt ))								    { log("\r\nError: Missing valid parameter <--encrypt>" + "\r\n",			    false, true, true, true, false); usagePrompt(true); }
-        if (( kfsetneeded )	    && ( ! kfset ))								    { log("\r\nError: Missing valid parameter <-k \"keyfile\">" + "\r\n",			    false, true, true, true, false); usagePrompt(true); }
-        if (( tfsetneeded )	    && ( ! tfset ))								    { log("\r\nError: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n",false, true, true, true, false); usagePrompt(true); }
-
+        if (( encryptModeNeeded )   && ( decrypt ))								    { log("\r\nWarning: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n",  false, true, true, false, false); usagePrompt(true); }
+        if (( encryptModeNeeded )   && ( ! encrypt ))								    { log("\r\nWarning: Missing valid parameter <--encrypt>" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
+        if (( kfsetneeded )	    && ( ! kfset ))								    { log("\r\nWarning: Missing valid parameter <-k \"keyfile\">" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
+        if (( tfsetneeded )	    && ( ! tfset ))								    { log("\r\nWarning: Missing valid parameter <-t \"file/dir\"> or <-b \"batchfile\">" + "\r\n",false, true, true, false, false); usagePrompt(true); }
+//	if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)&&(!createkeydev))    { log("\r\nWarning: No <--Mode> parameter specified" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
                 
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
 
 	// Key Validation
 	if ((kfsetneeded) && ( ! keyFCPath.isValidKey))
 	{
-	    String size = ""; if (keyFCPath.size < FCPath.KEY_SIZE_MIN) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] "; } 
-	    String dir = ""; if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
-	    String sym = ""; if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
-	    String all = size + dir + sym;
+	    String exist ="";
+	    String size ="";
+	    String dir ="";
+	    String sym ="";
+	    String all = "";
 	    
-            log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, true, false);
+	    if (keyFCPath.exist == false)
+	    {
+		exist += " [key does not exist] "; 		
+	    }
+	    else
+	    {
+		if (keyFCPath.size < FCPath.KEY_SIZE_MIN) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] "; } 
+		if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
+		if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
+	    }
+	    
+	    all = exist + size + dir + sym;
+            log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
 	    log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	}
 	
@@ -207,17 +233,17 @@ public class CLUI implements UI
     //			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
 		    if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
 		    {
-			if (verbose) { log("Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
+			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
 		    }
     //				   isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
 		    {
-			if (verbose) { log("Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
+			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
 		    }
 		}
 		else
 		{ 
-			log("Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, true, false); usagePrompt(true);
+			log("Warning: Target parameter: -t \"" + targetPath + "\" does not exists\r\n", false, true, true, false, false); usagePrompt(true);
 		}            
 	    }
 	}
@@ -358,7 +384,7 @@ public class CLUI implements UI
 		} catch (IOException ex)
 		{
 		    keySourceChecksumReadEnded = true;
-		    log("readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, false, false, false);
+		    log("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, false, true, false);
 		}
 		x++;
 		keySourceBuffer.clear();
@@ -562,7 +588,7 @@ public class CLUI implements UI
         }
         else
         {
-            log("Error: batchfile: " + batchFilePathString + " is not a valid file!\r\n", false, true, true, true, false);
+            log("Warning: batchfile: " + batchFilePathString + " is not a valid file!\r\n", false, true, true, false, false);
         }
         return ifset;
     }
@@ -750,23 +776,65 @@ public class CLUI implements UI
 	targetFCPathList = fcPathListParam;
     }
     
+    private String getRuntimeEnvironment()
+    {
+	String env = "";
+	
+	String symbols = "";
+	symbols += "Symbols:         ";
+	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
+//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
+	
+	env +=    "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
+	env += "\r\n";
+	env +=    "Interface:       rdj/CLUI\r\n";
+	env +=    "Email:           " + Version.getAuthorEmail() + "\r\n";
+	env +=    "Copyright:       " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
+	env +=    "Logfiles:        " + configuration.getLogDirPath().toString() + "\r\n";
+	env +=    "Command line:	 java -cp FinalCrypt.jar rdj/CLUI --help\r\n";
+	env +=    "License:         " + Version.getLicense() + "\r\n";
+	env += "\r\n";
+	env +=    "OS Name:         " + System.getProperty("os.name") + "\r\n";
+	env +=    "OS Architecture: " + System.getProperty("os.arch") + "\r\n";
+	env +=    "OS Version:      " + System.getProperty("os.version") + "\r\n";
+	env += "\r\n";
+	env +=    "Java Vendor:     " + System.getProperty("java.vendor") + "\r\n";
+	env +=    "Java Version:    " + System.getProperty("java.version") + "\r\n";
+	env +=    "Class Version:   " + System.getProperty("java.class.version") + "\r\n";
+	env += "\r\n";
+	env +=    "User Name:       " + System.getProperty("user.name") + "\r\n";
+	env +=    "User Home:       " + System.getProperty("user.home") + "\r\n";
+	env +=    "User Dir:        " + System.getProperty("user.dir") + "\r\n";
+	env += "\r\n";
+	env += symbols + "\r\n";
+	env += "\r\n";
+		
+	return env;
+    }
+    
+    
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
     {
 	if	((!status) && (!log))   {  }
-	else if ((!status) && ( log))   { log(message); }
+	else if ((!status) && ( log))   { log(message,errfile); }
 	else if (( status) && (!log))   {  }
-	else if (( status) && ( log))	{ log(message); }
+	else if (( status) && ( log))	{ log(message,errfile); }
 	if	(logfile)		{ logfile(message); }
 	if	(errfile)		{ errfile(message); }
-	if	(print)			{ errfile(message); }
+	if	(print)			{ print(message,errfile); }
     }
 
-    public void status(String message)	    {  }
-    public void log(String message)	    { System.out.print(message); }
-    public void logfile(String message)	    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
-    public void errfile(String message)	    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
-    public void print(String message)	    { System.out.print(message); }
+    public void status(String message)		    {  }
+    public void log(String message, boolean err)    { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
+    public void logfile(String message)		    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
+    public void errfile(String message)		    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
+    public void print(String message, boolean err)  { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
     
     public static void main(String[] args) { new CLUI(args); }
 }
@@ -779,7 +847,7 @@ class ReaderThread extends Thread
     
     @Override public void run()
     {
-	clui.log("\r\nWould you like to see the User Manual (y/N)? ", false, true, false, false, false);
+	clui.log("\r\nWould you like to see the User Manual (y/N)? ", false, true, false, false, false); // Leave Error file to: true
         try(Scanner in = new Scanner(System.in))
 	{
             String input = in.nextLine();
@@ -798,7 +866,7 @@ class TimeoutThread extends Thread
     @Override public void run()
     {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(3000);
 //            Robot robot = new Robot();
 //            robot.keyPress(KeyEvent.VK_ENTER);
 //            robot.keyRelease(KeyEvent.VK_ENTER);
@@ -810,6 +878,6 @@ class TimeoutThread extends Thread
 class ConsoleEraser extends Thread
 {
     private boolean running = true;
-    public void run()		    { while (running) { System.out.print("\b "); try { Thread.currentThread().sleep(1); } catch(InterruptedException err) { break; } } }
+    public void run()		    { while (running) { System.err.print("\b "); try { Thread.currentThread().sleep(1); } catch(InterruptedException err) { break; } } }
     public synchronized void halt() { running = false; }
 }

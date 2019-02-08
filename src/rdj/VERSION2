@@ -1,5 +1,5 @@
-[Version] =		{2.9.1}
-[Release Notes] =	{Command Line Interrupt Signal Handler}
-[Release Message] =	{Switched to SHA-256 Hashing Checksums}
+[Version] =		{2.9.2}
+[Release Notes] =	{Improved Cmd-Line logging & param validation}
+[Release Message] =	{Added right-click copy checksum to clipboard}
 [Alert Subject] =	{}
 [Alert Message] =	{}

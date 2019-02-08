@@ -1,3 +1,4 @@
+2.9.2 Improved Cmd-Line logging & param validation. Added right-click copy checksum to clipboard
 2.9.1 Command Line Interrupt Signal Handler. Delete unfinished file on termination. Switched to SHA-256 Hashing Checksums
 2.9.0 Added Key + Password Encryption. Added SHA-1 Checksum logentries
 2.8.2 JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !

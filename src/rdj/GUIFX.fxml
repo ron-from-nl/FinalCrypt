@@ -125,7 +125,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select (One-Time Pad) key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select One-Time Pad key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -134,10 +134,13 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="or other keyfiles (like personal photo / video)" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="BASELINE_CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#createKeyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" text="or create a new One Time Pad key file here" textAlignment="CENTER" textFill="LIGHTGRAY" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor>
                                                             </Label>
                                                          </children>
                                                       </AnchorPane>
