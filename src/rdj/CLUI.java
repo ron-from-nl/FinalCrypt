@@ -131,7 +131,7 @@ public class CLUI implements UI
 	
 	log(getRuntimeEnvironment(), false, false, true, false ,false);
 	
-	if (args.length == 0 ) { log("\r\nError: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
+	if (args.length == 0 ) { log("\r\nWarning: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
 	
         for (int paramCnt=0; paramCnt < args.length; paramCnt++)
         {
@@ -161,8 +161,8 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
-            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
-            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nError: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
+            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
+            else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
 
 //	    Mode parameters
 	    else if (
@@ -186,7 +186,7 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-K")) && (!args[paramCnt+1].isEmpty()) )				    { keyPath = Paths.get(args[paramCnt+1]); paramCnt++; } // Create OTP Key File
             else if ( ( args[paramCnt].equals("-t")) )								    { if (paramCnt+1 < args.length) { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; } else { log("\r\nWarning: Missing target parameter <[-t \"file/dir\"]>" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
-            else { log("\r\nError: Invalid Parameter: " + args[paramCnt] + "\r\n", false, true, true, true, false); usagePrompt(true); }
+            else { log("\r\nWarning: Invalid Parameter: " + args[paramCnt] + "\r\n", false, true, true, true, false); usagePrompt(true); }
         }
 
         if (( encryptModeNeeded )   && ( decrypt ))								    { log("\r\nWarning: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n",  false, true, true, false, false); usagePrompt(true); }
@@ -218,7 +218,7 @@ public class CLUI implements UI
 	    }
 	    
 	    all = exist + size + dir + sym;
-            log("\r\nKey parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
+            log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
 	    log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	}
 	
@@ -381,11 +381,7 @@ public class CLUI implements UI
 
 		    messageDigest.update(keySourceBuffer);
 		    if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
-		} catch (IOException ex)
-		{
-		    keySourceChecksumReadEnded = true;
-		    log("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, false, true, false);
-		}
+		} catch (IOException ex) { keySourceChecksumReadEnded = true; log("Error: readKeySourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", false, true, false, true, false); }
 		x++;
 		keySourceBuffer.clear();
 	    }
