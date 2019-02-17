@@ -673,7 +673,14 @@ public class FinalCrypt extends Thread
 		String dstHashString = getHexString(dstHashBytes,2); // print checksum
 		
 		fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
-		ui.log(HASH_ALGORITHM_NAME + ": \"" + srcHashString + "\"->\"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);
+		if (! dry)
+		{
+		    ui.log(HASH_ALGORITHM_NAME + ": \"" + srcHashString + "\"->\"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);		    
+		}
+		else
+		{
+		    ui.log(fileStatusLine + "\r\n", true, true, true, false, false);		    
+		}
 
 		allDataStats.addFilesProcessed(1);
 	    } // else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + keySourcePath.toAbsolutePath() + " (is key!)\r\n"); }

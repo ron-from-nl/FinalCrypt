@@ -1,5 +1,5 @@
-[Version] =		{2.9.2}
-[Release Notes] =	{Improved Cmd-Line logging & param validation}
-[Release Message] =	{Added right-click copy checksum to clipboard}
+[Version] =		{2.9.3}
+[Release Notes] =	{Fixed Create Keyfile from command line}
+[Release Message] =	{No cmd-line checksum logs on --dry opt}
 [Alert Subject] =	{}
 [Alert Message] =	{}

@@ -172,7 +172,7 @@ public class CLUI implements UI
 			&&  (!clonekeydev)
 			&&  (!printgpt)
 			&&  (!deletegpt)
-			&&  (!createkeydev)
+			&&  (!createkeyfile)
 		    )												    { log("\r\nWarning: No <--Mode> parameter specified" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
 
 //          Filtering Options

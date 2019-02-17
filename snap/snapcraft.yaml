@@ -1,5 +1,5 @@
 name: finalcrypt
-version: '2.9.2'
+version: '2.9.3'
 summary: Encryption program with strong Personal Key Encryption
 description: |
   FinalCrypt encrypts your files with a personal key file (a personal photo or video).
