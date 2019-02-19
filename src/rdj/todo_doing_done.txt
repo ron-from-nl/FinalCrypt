@@ -18,6 +18,7 @@ Set "<Program_Version>2.7.2</Program_Version>" in FinalCrypt_pad.xml file
 Set version on file: Version & Version2
 Update CHANGELOG file
 Change FinalCrypt -> properties -> splash screen -> icon on Windows
+Update MANPAGE
 
 =================================== Done ====================================
 
