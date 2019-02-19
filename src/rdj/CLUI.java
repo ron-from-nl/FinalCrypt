@@ -648,7 +648,7 @@ public class CLUI implements UI
         log("            [--key-chksum]        -k \"key_file\"			    Calculate key checksum.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, false, false, false);
-        log("            [--print]		  Print all encrypted bytes.\r\n", false, true, false, false, false);
+        log("            [--print]		  Print all encrypted bytes (slows encryption severely).\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
         log("            [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).\r\n", false, true, false, false, false);
         log("            [--version]           Print " + version.getProduct() + " version.\r\n", false, true, false, false, false);
@@ -659,7 +659,7 @@ public class CLUI implements UI
 //        log("            [--dec]               Print decimal calculations.\r\n", false, true, false, false, false);
 //        log("            [--hex]               Print hexadecimal calculations.\r\n", false, true, false, false, false);
 //        log("            [--chr]               Print character calculations.\r\n", false, true, false, false, false);
-        log("                                  Warning: The above Print options slows encryption severely.\r\n", false, true, false, false, false);
+//        log("                                  Warning: The above Print options slows encryption severely.\r\n", false, true, false, false, false);
         log("            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n", false, true, false, false, false);
         log("            [-S size]             OTP Key File Size (size = bytes). See --create-keyfile \r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
@@ -673,11 +673,10 @@ public class CLUI implements UI
         log("Parameters:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            <-k \"keyfile\">        The file that encrypts your file(s). Keep keyfile SECRET!\r\n", false, true, false, false, false);
-        log("                                  A key-file is a unique file like a personal photo or video!\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, false, false, false);
         log("            <[-t \"file/dir\"]>     Target file or dir you want to encrypt (encrypts dirs recursively).\r\n", false, true, false, false, false);
-        log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files accepted).\r\n", false, true, false, false, false);
+        log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);

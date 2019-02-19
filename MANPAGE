@@ -26,13 +26,12 @@ Options:
             [--key-chksum]        -k "key_file"			    Calculate key checksum.
             [-d] [--debug]        Enables debugging mode.
             [-v] [--verbose]      Enables verbose mode.
-            [--print]		  Print all encrypted bytes.
+            [--print]		  Print all encrypted bytes (slows encryption severely).
             [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).
             [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).
             [--version]           Print FinalCrypt version.
             [--license]           Print FinalCrypt license.
             [--check-update]      Check for online updates.
-                                  Warning: The above Print options slows encryption severely.
             [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).
             [-S size]             OTP Key File Size (size = bytes). See --create-keyfile 
 
@@ -46,10 +45,9 @@ Filtering Options:
 Parameters:
 
             <-k "keyfile">        The file that encrypts your file(s). Keep keyfile SECRET!
-                                  A key-file is a unique file like a personal photo or video!
 
             <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).
             <[-t "file/dir"]>     Target file or dir you want to encrypt (encrypts dirs recursively).
-            <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files accepted).
+            <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files).
 
 FinalCrypt 2.9.3 - Author: Ron de Jong - Copyright: © 2017-2019
