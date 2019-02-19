@@ -148,6 +148,7 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--create-keyfile"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeyfile = true; kfsetneeded = false; tfsetneeded = false; } }
             else if (  args[paramCnt].equals("--clone-keydev"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { clonekeydev = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("--key-chksum") ))							    { key_checksum = true; kfsetneeded = true; }
+            else if (( args[paramCnt].equals("--no-key-size") ))						    { FCPath.KEY_SIZE_MIN = 1; }
             else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { printgpt = true; kfsetneeded = false; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; kfsetneeded = false; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
@@ -646,6 +647,7 @@ public class CLUI implements UI
         log("            [--password]          -p \'password\'			    Additional password (non-interactive).\r\n", false, true, false, false, false);
         log("            [--password-prompt]   -pp				    Additional password (interactive prompt).\r\n", false, true, false, false, false);
         log("            [--key-chksum]        -k \"key_file\"			    Calculate key checksum.\r\n", false, true, false, false, false);
+        log("            [--no-key-size]       Allow key-size less than the default minimum of 1024 bytes.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, false, false, false);
         log("            [--print]		  Print all encrypted bytes (slows encryption severely).\r\n", false, true, false, false, false);

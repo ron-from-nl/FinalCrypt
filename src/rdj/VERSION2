@@ -1,5 +1,5 @@
-[Version] =		{2.9.3}
-[Release Notes] =	{Fixed Create Keyfile from command line}
-[Release Message] =	{No cmd-line checksum logs on --dry opt}
+[Version] =		{2.9.4}
+[Release Notes] =	{Improved --print option (command line interface)}
+[Release Message] =	{Added --no-key-size opt (command line interface)}
 [Alert Subject] =	{}
 [Alert Message] =	{}

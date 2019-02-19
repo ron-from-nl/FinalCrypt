@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 public class FCPath
 {
-    public static final    int	    KEY_SIZE_MIN =	1024;
+    public static	   int	    KEY_SIZE_MIN =	1024;
 
     public static final    int	    INVALID =		0;
     public static final    int	    FILE =		1;

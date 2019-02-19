@@ -24,6 +24,7 @@ Options:
             [--password]          -p 'password'			    Additional password (non-interactive).
             [--password-prompt]   -pp				    Additional password (interactive prompt).
             [--key-chksum]        -k "key_file"			    Calculate key checksum.
+            [--no-key-size]       Allow key-size less than the default minimum of 1024 bytes.
             [-d] [--debug]        Enables debugging mode.
             [-v] [--verbose]      Enables verbose mode.
             [--print]		  Print all encrypted bytes (slows encryption severely).
@@ -50,4 +51,4 @@ Parameters:
             <[-t "file/dir"]>     Target file or dir you want to encrypt (encrypts dirs recursively).
             <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 2.9.3 - Author: Ron de Jong - Copyright: © 2017-2019
+FinalCrypt 2.9.4 - Author: Ron de Jong - Copyright: © 2017-2019

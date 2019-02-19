@@ -106,6 +106,7 @@ public class FinalCrypt extends Thread
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
     public static final String HASH_ALGORITHM_NAME = "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
+    private static String printString;
 
     public FinalCrypt(UI ui)
     {   
@@ -267,21 +268,15 @@ public class FinalCrypt extends Thread
 //		At the start of the encryption process
 		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
-		// Prints printByte Header ones                
+		// Prints printByte Header ones
 		if ( print )
-		{
-//		    ui.log("\r\n");
-//		    ui.log(" ----------------------------------------------------------------------\r\n");
-//		    ui.log("|          |       Input       |      Key       |      Output       |\r\n");
-//		    ui.log("| ---------|-------------------|-------------------|-------------------|\r\n");
-//		    ui.log("| adr      | bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n");
-//		    ui.log("|----------|-------------------|-------------------|-------------------|\r\n");
-		    ui.log("\r\n", true, true, true, false, false);
-		    ui.log(" -----------------------------------------------------------\r\n", true, true, true, false, false);
-		    ui.log("|       Input       |      Key       |      Output       |\r\n", true, true, true, false, false);
-		    ui.log("|-------------------|-------------------|-------------------|\r\n", true, true, true, false, false);
-		    ui.log("| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n", true, true, true, false, false);
-		    ui.log("|-------------------|-------------------|-------------------|\r\n", true, true, true, false, false);
+		{		    
+		    printString = "\r\n";
+		    printString += " -----------------------------------------------------------\r\n";
+		    printString += "|       Input       |         Key       |      Output       |\r\n";
+		    printString += "|-------------------|-------------------|-------------------|\r\n";
+		    printString += "| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n";
+		    printString += "|-------------------|-------------------|-------------------|\r\n";
 		}
 //___________________________________________________________________________________________________________________________________________________________
 //
@@ -682,6 +677,12 @@ public class FinalCrypt extends Thread
 		    ui.log(fileStatusLine + "\r\n", true, true, true, false, false);		    
 		}
 
+		if ( print )
+		{
+		    printString += " -----------------------------------------------------------\r\n"; // Footer
+		    ui.log(printString + "\r\n", true, true, true, false, false);
+		}
+
 		allDataStats.addFilesProcessed(1);
 	    } // else { ui.error(targetSourcePath.toAbsolutePath() + " ignoring:   " + keySourcePath.toAbsolutePath() + " (is key!)\r\n"); }
 	    
@@ -722,7 +723,7 @@ public class FinalCrypt extends Thread
 	    byte targetSourceByte = targetSourceBuffer.get(targetSourceBufferCount);
 	    byte keySourceByte = keySourceBuffer.get(targetSourceBufferCount);
 	    targetDestinByte = encryptByte(targetSourceByte, keySourceByte); targetDestinBuffer.put(targetDestinByte);
-	    if ((printEnabled) && ( print )) { logByte(targetSourceByte, keySourceByte, targetDestinByte); }
+	    if ((printEnabled) && ( print )) { printString += getByteString(targetSourceByte, keySourceByte, targetDestinByte); }
 	}
         targetDestinBuffer.flip();
 	return targetDestinBuffer;
@@ -843,7 +844,7 @@ public class FinalCrypt extends Thread
     }
 
 //    private static void logByte(byte dataByte, byte keyByte, byte outputByte)
-    private static void logByte(byte dataByte, byte keyByte, byte outputByte)
+    private static String getByteString(byte dataByte, byte keyByte, byte outputByte)
     {
         String datbin = getBinaryString(dataByte);
         String dathex = getHexString(dataByte, "2");
@@ -860,15 +861,16 @@ public class FinalCrypt extends Thread
         String outdec = getDecString(outputByte);
         String outchr = getChar(outputByte);
         
-//        ui.log("|          | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
-//        ui.log                 (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-//        ui.log                 (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\r\n");
-//        System.out.print("|          | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
-//        System.out.print	      (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-//        System.out.print	      (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\r\n");
-        System.out.print("| " + datbin + " " +  dathex + " " + datdec + " " + datchr + " | " );
-        System.out.print	      (cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | " );
-        System.out.print	      (outbin + " " +  outhex + " " + outdec + " " + outchr + " |\r\n");
+//	System.out.print(datbin + " " +  dathex + " " + datdec + " " + datchr + " | ");
+//        System.out.print(cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | ");
+//        System.out.print(outbin + " " +  outhex + " " + outdec + " " + outchr + " |");
+
+	String returnString = "| ";
+	returnString += datbin + " " +  dathex + " " + datdec + " " + datchr + " | ";
+	returnString += cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | ";
+	returnString += outbin + " " +  outhex + " " + outdec + " " + outchr + " | \r\n";
+
+	return returnString;
     }
     
     private static void logByteBinary(byte inputByte, byte keyByte, byte outputByte, int dum, int dnm, int dbm)

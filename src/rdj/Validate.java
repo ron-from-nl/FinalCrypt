@@ -329,8 +329,8 @@ public class Validate
 	    // Target =============================================================================================================================================================================================
 	    
 	    // isValid in general
-	    if ( isKey ) { if (( exist ) && ( size >  0 ) && ( readable ) )			{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
-	    else	    { if (( exist ) && ( size >  0 ) && ( readable ) && ( writable ))	{ isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    if ( isKey )    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( readable ) )    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    else	    { if (( exist ) && ( size >  0 ) && ( readable )   && ( writable ))	    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    
 	    // File validity
 	    if (( isValid ) && ( type == FCPath.FILE ))								{ isValidFile = true; } else { isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
@@ -369,7 +369,7 @@ public class Validate
 			    ||	( type == FCPath.DEVICE )
 			    ||	( type == FCPath.DEVICE_PROTECTED )
 			)
-			    && ( size >=  1024 ) && ( readable  ) && ( isKey ) )	{ isValidKey = true; }
+			    && ( size >=  FCPath.KEY_SIZE_MIN ) && ( readable  ) && ( isKey ) )	{ isValidKey = true; }
 	}
 	else { }
 

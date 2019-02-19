@@ -32,9 +32,11 @@ Update MANPAGE
 
 ============================= Binaries Released =============================
 
+Improved --print option in command line interface
+Added --no-key-size option to command line interface
+
 Improved Cmd-Line logging & param validation
 Added right-click copy checksum to clipboard
-
 Command Line Interrupt Signal Handler
 Delete unfinished file on termination
 Switched to SHA-256 Hashing Checksums
