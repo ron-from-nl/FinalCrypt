@@ -2050,9 +2050,6 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "An optional password enforces extra encryption\r\n";
         infotext += "so a lost / stolen key file can't unlock your data.\r\n";
         infotext += "\r\n";
-        infotext += "A password can be set after selecting a valid key\r\n";
-        infotext += "between the [Encrypt] and [Decrypt] button.\r\n";
-        infotext += "\r\n";
         infotext += "==============================\r\n";
         infotext += "\r\n";
         infotext += "Keep keys secret and backed up on USB sticks!\r\n";
