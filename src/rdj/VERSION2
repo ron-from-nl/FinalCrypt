@@ -1,5 +1,5 @@
-[Version] =		{2.9.4}
-[Release Notes] =	{Improved --print option (command line interface)}
-[Release Message] =	{Added --no-key-size opt (command line interface)}
+[Version] =		{2.9.5}
+[Release Notes] =	{Password usage more intuitive and visible}
+[Release Message] =	{Command line: Add --print & --no-key-size}
 [Alert Subject] =	{}
 [Alert Message] =	{}

@@ -300,22 +300,22 @@
                                           <Label fx:id="hiddenFilesHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-6.0" prefHeight="17.0" prefWidth="74.0" styleClass="text_color_standard" text="Hidden" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="2">
                                        <children>
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Key" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="13">
                                        <children>
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="56.0" layoutY="-3.0" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Type" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="13">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14">
                                        <children>
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" layoutY="-6.0" prefHeight="30.0" prefWidth="61.0" styleClass="text_color_standard" text="Size" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15">
                                        <children>
                                           <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-3.0" layoutY="-5.0" prefHeight="30.0" prefWidth="62.0" styleClass="text_color_standard" text="Valid" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
@@ -380,22 +380,22 @@
                                           <Label fx:id="hiddenFilesSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" layoutY="1.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="74.0" styleClass="text_color_low" text="0 Bytes" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="9" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.rowIndex="1">
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="keyTypeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="17.0" layoutY="-2.0" prefHeight="30.0" prefWidth="183.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="1">
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="keySizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-68.0" layoutY="-3.0" prefHeight="30.0" prefWidth="61.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="1">
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="keyValidLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" layoutY="-3.0" prefHeight="30.0" prefWidth="62.0" textFill="GREY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
@@ -860,18 +860,46 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.columnSpan="3">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2">
                                        <children>
                                           <Label fx:id="checksumHeader" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Checksum (?)" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="checksumLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" onMouseClicked="#checksumLabelOnMouseClicked" prefHeight="15.0" prefWidth="222.0" textFill="#c9c9c9" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11" GridPane.columnSpan="2">
+                                       <children>
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="30.0" prefWidth="183.0" styleClass="text_color_standard" text="Password" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="An optional password can be set after selecting a valid key">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="11" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                       <children>
+                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" disable="true" focusTraversable="false" layoutX="-15.0" layoutY="-15.0" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="23.0" prefWidth="142.0" promptText="Password (Optional)" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip text="Extra password encryption protects against lost / stolen keys" textAlignment="JUSTIFY" wrapText="true">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font></Tooltip>
+                                             </tooltip>
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </PasswordField>
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -885,9 +913,8 @@
                            <children>
                               <GridPane maxHeight="57.0" maxWidth="1.7976931348623157E308" minHeight="35.0" prefHeight="57.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="16.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="16.0" prefWidth="8.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
@@ -909,7 +936,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="2">
+                                    <AnchorPane GridPane.columnIndex="1">
                                        <children>
                                           <Button fx:id="decryptButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="35.0" prefWidth="213.0" text="Decrypt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -918,7 +945,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="6">
+                                    <AnchorPane GridPane.columnIndex="5">
                                        <children>
                                           <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="25.0" mnemonicParsing="false" onAction="#keyDeviceButtonAction" prefHeight="35.0" prefWidth="239.0" text="Create OTP Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -927,7 +954,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4">
+                                    <AnchorPane GridPane.columnIndex="3">
                                        <opaqueInsets>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
@@ -942,7 +969,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="7">
+                                    <AnchorPane GridPane.columnIndex="6">
                                        <children>
                                           <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="35.0" prefWidth="298.0" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -951,12 +978,12 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="5">
+                                    <AnchorPane GridPane.columnIndex="4">
                                        <children>
                                           <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" opacity="0.5" prefHeight="35.0" prefWidth="60.0" progress="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="3">
+                                    <AnchorPane GridPane.columnIndex="2">
                                        <children>
                                           <ToggleButton fx:id="pauseToggleButton" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="35.0" prefWidth="99.0" text="Ⅱ" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -968,7 +995,7 @@
                                           </ToggleButton>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="8">
+                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">
                                        <children>
                                           <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="35.0" prefWidth="107.0" text="Open Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -977,7 +1004,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="9">
+                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
                                        <children>
                                           <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="57.0" prefWidth="80.0" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -991,18 +1018,6 @@
                                                 </Tooltip>
                                              </tooltip>
                                           </ToggleButton>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
-                                       <children>
-                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" disable="true" focusTraversable="false" layoutX="-2.0" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="35.0" prefWidth="133.0" promptText="Key Password (Opt)" style="-fx-text-fill: grey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip text="Adds extra password encryption. Protects against exposed keys" textAlignment="JUSTIFY" wrapText="true" />
-                                             </tooltip>
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
-                                          </PasswordField>
                                        </children>
                                     </AnchorPane>
                                  </children>

@@ -1,3 +1,4 @@
+2.9.5 Password usage more intuitive and visible. Command line: Add --print & --no-key-size
 2.9.4 Improved --print option in command line interface. Added --no-key-size option to command line interface
 2.9.3 Fixed Create Keyfile from Command Line Interface. No cmd-line checksum logs on --dry opt
 2.9.2 Improved Cmd-Line logging & param validation. Added right-click copy checksum to clipboard

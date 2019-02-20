@@ -979,7 +979,7 @@ public class GUIFX extends Application implements UI, Initializable
             keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
             keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
             checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-	    pwdField.setDisable(true);
+	    pwdField.setDisable(true); pwdField.setVisible(false);
         }});
 
 	keySourceChecksumReadEnded = true;
@@ -1027,7 +1027,7 @@ public class GUIFX extends Application implements UI, Initializable
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
 			
-			pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
+			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
 						
 			targetFileChooserPropertyCheck(true);
 		    }
@@ -1057,7 +1057,7 @@ public class GUIFX extends Application implements UI, Initializable
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 			targetFCPathList = new FCPathList();
 			
-			pwdField.setDisable(true);
+			pwdField.setDisable(true); pwdField.setVisible(false);
 
 			buildReady(targetFCPathList);
 		    }
@@ -1278,7 +1278,7 @@ public class GUIFX extends Application implements UI, Initializable
 		// BuildSelection
 //		cursorWait();
 
-		pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
+		pwdField.setDisable(false); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
 
 		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
@@ -1739,6 +1739,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    pwdField.setText("");
 	    pwdField.setDisable(true);
+	     pwdField.setVisible(false);
 	    FinalCrypt.setPwd("");
 	    FinalCrypt.resetPwdPos();
 	}});
@@ -1828,6 +1829,7 @@ public class GUIFX extends Application implements UI, Initializable
                 encryptButton.setDisable(true);
                 decryptButton.setDisable(true);
 		pwdField.setDisable(true);
+		 pwdField.setVisible(false);
                 pauseToggleButton.setDisable(false);
                 stopButton.setDisable(false);
 
@@ -1932,7 +1934,7 @@ public class GUIFX extends Application implements UI, Initializable
                 updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		if ( keyFCPath.isValidKey ) { pwdField.setDisable(false); }
+		if ( keyFCPath.isValidKey ) { pwdField.setDisable(false); pwdField.setVisible(true); }
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
                 fileProgressBar.setProgress(0);
@@ -2047,6 +2049,9 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "\r\n";
         infotext += "An optional password enforces extra encryption\r\n";
         infotext += "so a lost / stolen key file can't unlock your data.\r\n";
+        infotext += "\r\n";
+        infotext += "A password can be set after selecting a valid key\r\n";
+        infotext += "between the [Encrypt] and [Decrypt] button.\r\n";
         infotext += "\r\n";
         infotext += "==============================\r\n";
         infotext += "\r\n";
