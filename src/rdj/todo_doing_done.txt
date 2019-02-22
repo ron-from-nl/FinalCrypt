@@ -31,8 +31,10 @@ Update MANPAGE
 
 
 ============================= Binaries Released =============================
-Password usage more intuitive and visible
 
+FinalCrypt v3.0.0 A New Major Version
+
+Password usage more intuitive and visible
 Improved --print option in command line interface
 Added --no-key-size option to command line interface
 Improved Cmd-Line logging & param validation

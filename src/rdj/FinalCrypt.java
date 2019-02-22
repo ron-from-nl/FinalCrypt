@@ -69,7 +69,8 @@ public class FinalCrypt extends Thread
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private long	bytesPerMilliSecond = 0;
-//							❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘
+//											❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘ ✔ ⚛
+//											🡔 🡕 🡖 🡗 | 🡤 🡥 🡦 🡧 | 🡬 🡭 🡮 🡯 | 🡴 🡵 🡶 🡷 | 🡼 🡽 🡾 🡿 | 🢄 🢅 🢆 🢇 | ⬈ ⬉ ⬊ ⬋ | ⇖ ⇗ ⇘ ⇙ | ↖ ↗ ↘ ↙
     public static final String UTF8_ENCRYPT_SYMBOL =		    "🔒";
     public static final String UTF8_ENCRYPT_LEGACY_SYMBOL =	    "🔀";
     public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "⚠";

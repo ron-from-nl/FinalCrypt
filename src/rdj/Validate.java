@@ -195,7 +195,7 @@ public class Validate
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n", true, true, true, true, false); }
 	}
 	mySimpleFCFileVisitor.running = false;
-	ui.buildReady(targetFCPathList);
+	ui.buildReady(targetFCPathList, true);
 	
 //	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) )
 //	if ( (targetFCPathList.size() > 0) )

@@ -768,7 +768,7 @@ public class CLUI implements UI
 //    @Override public void buildProgress(FCPathList targetFCPathList) {  }
 
     @Override
-    public void buildReady(FCPathList fcPathListParam)
+    public void buildReady(FCPathList fcPathListParam, boolean validBuild)
     {
 	targetFCPathList = fcPathListParam;
     }
