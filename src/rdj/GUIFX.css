@@ -1,5 +1,6 @@
 @font-face {src: url(“FontFreeHack.ttf”);} /* Hack */
 @font-face {src: url(“FontFreeSans.ttf”);} /*FreeSans*/
+@font-face {src: url(“FontDejaVuSansMono.ttf”);} /*FontDejaVuSansMono*/
 
 .background_top
 {
@@ -127,7 +128,7 @@
 
 .log
 {
-    -fx-font-family: "Hack";
+    -fx-font-family: "DejaVu Sans Mono";
     -fx-font-size: 10px;
     -fx-text-fill: #FFC200;
     -fx-background-color: #222222;
