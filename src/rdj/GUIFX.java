@@ -707,8 +707,20 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0);
 		
 		userGuidanceLabel.setOpacity(0);
-//		textLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
+//		userGuidanceLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
 //		userGuidanceLabel.setFont(fontfreemono);
+
+		String platform = System.getProperty("os.name").toLowerCase(); // CrossPlatform Layout allignment issues
+		
+		if	( platform.indexOf("linux") != -1 )	{ bottomleftLabel.setTranslateX(-3); topleftLabel.setTranslateX(-3); toprightLabel.setTranslateX( 3); bottomrightLabel.setTranslateX( 3);
+								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY(-5); toprightLabel.setTranslateY(-5); bottomrightLabel.setTranslateY( 0); }
+		else if ( platform.indexOf("windows") != -1 )	{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
+								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
+		else if ( platform.indexOf("mac") != -1 )	{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
+								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
+		else						{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
+								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
+
 		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
 		userGuidanceLabel.setText(message);
 		fadevar = 0.0;
