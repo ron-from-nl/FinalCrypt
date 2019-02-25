@@ -688,7 +688,7 @@
                                                       </RadialGradient>
                                                    </textFill>
                                                 </Label>
-                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◤" textAlignment="CENTER" textFill="#bbbbbb" translateX="-3.0" translateY="-5.0" StackPane.alignment="TOP_LEFT">
+                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◤" textAlignment="CENTER" textFill="#bbbbbb" translateX="-4.0" translateY="-5.0" StackPane.alignment="TOP_LEFT">
                                                    <font>
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
@@ -696,7 +696,7 @@
                                                       <BoxBlur />
                                                    </effect>
                                                 </Label>
-                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◥" textAlignment="CENTER" textFill="#bbbbbb" translateX="3.0" translateY="-5.0" StackPane.alignment="TOP_RIGHT">
+                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◥" textAlignment="CENTER" textFill="#bbbbbb" translateX="4.0" translateY="-5.0" StackPane.alignment="TOP_RIGHT">
                                                    <effect>
                                                       <BoxBlur />
                                                    </effect>
@@ -704,7 +704,7 @@
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="bottomrightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="342.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◢" textAlignment="CENTER" textFill="#bbbbbb" translateX="3.0" StackPane.alignment="BOTTOM_RIGHT">
+                                                <Label fx:id="bottomrightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="342.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◢" textAlignment="CENTER" textFill="#bbbbbb" translateX="4.0" StackPane.alignment="BOTTOM_RIGHT">
                                                    <effect>
                                                       <BoxBlur />
                                                    </effect>
@@ -712,7 +712,7 @@
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="bottomleftLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◣" textAlignment="CENTER" textFill="#bbbbbb" translateX="-3.0" StackPane.alignment="BOTTOM_LEFT">
+                                                <Label fx:id="bottomleftLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◣" textAlignment="CENTER" textFill="#bbbbbb" translateX="-4.0" StackPane.alignment="BOTTOM_LEFT">
                                                    <effect>
                                                       <BoxBlur />
                                                    </effect>

@@ -129,6 +129,7 @@
 .log
 {
     -fx-font-family: "DejaVu Sans Mono";
+    -fx-font-family: "Courier New";
     -fx-font-size: 10px;
     -fx-text-fill: #FFC200;
     -fx-background-color: #222222;

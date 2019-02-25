@@ -712,14 +712,30 @@ public class GUIFX extends Application implements UI, Initializable
 
 		String platform = System.getProperty("os.name").toLowerCase(); // CrossPlatform Layout allignment issues
 		
-		if	( platform.indexOf("linux") != -1 )	{ bottomleftLabel.setTranslateX(-3); topleftLabel.setTranslateX(-3); toprightLabel.setTranslateX( 3); bottomrightLabel.setTranslateX( 3);
-								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY(-5); toprightLabel.setTranslateY(-5); bottomrightLabel.setTranslateY( 0); }
-		else if ( platform.indexOf("windows") != -1 )	{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
-								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
-		else if ( platform.indexOf("mac") != -1 )	{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
-								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
-		else						{ bottomleftLabel.setTranslateX( 0); topleftLabel.setTranslateX( 0); toprightLabel.setTranslateX( 0); bottomrightLabel.setTranslateX( 0);
-								  bottomleftLabel.setTranslateY( 0); topleftLabel.setTranslateY( 0); toprightLabel.setTranslateY( 0); bottomrightLabel.setTranslateY( 0); }
+		if	( platform.indexOf("linux") != -1 )
+		{
+		    logTextArea.setStyle("-fx-font-family: \"DejaVu Sans Mono\";");
+		    bottomleftLabel.setTranslateX( -4); topleftLabel.setTranslateX( -4); toprightLabel.setTranslateX(  4); bottomrightLabel.setTranslateX(  4);
+		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY( -5); toprightLabel.setTranslateY( -5); bottomrightLabel.setTranslateY(  0);
+		}
+		else if ( platform.indexOf("windows") != -1 )
+		{
+		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
+		    bottomleftLabel.setTranslateX(-10); topleftLabel.setTranslateX(-10); toprightLabel.setTranslateX( 10); bottomrightLabel.setTranslateX( 10);
+		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(-20); toprightLabel.setTranslateY(-20); bottomrightLabel.setTranslateY(  0);
+		}
+		else if ( platform.indexOf("mac") != -1 )
+		{
+		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
+		    bottomleftLabel.setTranslateX(  0); topleftLabel.setTranslateX(  0); toprightLabel.setTranslateX(  0); bottomrightLabel.setTranslateX(  0);
+		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(  0); toprightLabel.setTranslateY(  0); bottomrightLabel.setTranslateY(  0);
+		}
+		else
+		{
+		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
+		    bottomleftLabel.setTranslateX(  0); topleftLabel.setTranslateX(  0); toprightLabel.setTranslateX(  0); bottomrightLabel.setTranslateX(  0);
+		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(  0); toprightLabel.setTranslateY(  0); bottomrightLabel.setTranslateY(  0);
+		}
 
 		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
 		userGuidanceLabel.setText(message);
