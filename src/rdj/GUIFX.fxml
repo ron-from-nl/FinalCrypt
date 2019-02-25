@@ -488,12 +488,12 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="remainingTimeHeaderLabel" alignment="BOTTOM_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="12.0" prefHeight="27.0" prefWidth="183.0" styleClass="dashboard_generic" text="Remain" translateY="-4.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="remainingTimeHeaderLabel" alignment="BOTTOM_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="12.0" prefHeight="27.0" prefWidth="183.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Remain" translateY="-4.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="remainingTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="3.0" layoutY="-7.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="remainingTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="3.0" layoutY="-7.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -505,12 +505,12 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="671.0" layoutY="10.0" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="elapsedTimeHeaderLabel" alignment="CENTER_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" layoutY="-3.0" prefHeight="25.0" prefWidth="213.0" styleClass="dashboard_generic" text="Elapsed" translateY="-1.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="elapsedTimeHeaderLabel" alignment="CENTER_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" layoutY="-3.0" prefHeight="25.0" prefWidth="213.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Elapsed" translateY="-1.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="elapsedTimeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="60.0" layoutY="10.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="elapsedTimeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="60.0" layoutY="10.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -522,12 +522,12 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="totalTimeHeaderLabel" alignment="TOP_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="185.0" styleClass="dashboard_generic" text="Tot time" translateY="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="totalTimeHeaderLabel" alignment="TOP_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="185.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Tot time" translateY="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
                                        <children>
-                                          <Label fx:id="totalTimeLabel" alignment="TOP_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="42.0" layoutY="-15.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="totalTimeLabel" alignment="TOP_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="42.0" layoutY="-15.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -688,7 +688,7 @@
                                                       </RadialGradient>
                                                    </textFill>
                                                 </Label>
-                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◤" textAlignment="CENTER" textFill="#bbbbbb" translateX="-0.0" translateY="-0.0" StackPane.alignment="TOP_LEFT">
+                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◤" textAlignment="CENTER" textFill="#bbbbbb" translateY="-5.0" StackPane.alignment="TOP_LEFT">
                                                    <font>
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
@@ -696,7 +696,7 @@
                                                       <BoxBlur />
                                                    </effect>
                                                 </Label>
-                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◥" textAlignment="CENTER" textFill="#bbbbbb" StackPane.alignment="TOP_RIGHT">
+                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◥" textAlignment="CENTER" textFill="#bbbbbb" translateY="-5.0" StackPane.alignment="TOP_RIGHT">
                                                    <effect>
                                                       <BoxBlur />
                                                    </effect>
