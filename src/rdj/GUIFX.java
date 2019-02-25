@@ -393,7 +393,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Label totalTimeHeaderLabel;
     @FXML
-    private Label textLabel;
+    private Label userGuidanceLabel;
     private int i;
     private double focusAngle;
     private double focusDistance;
@@ -416,6 +416,15 @@ public class GUIFX extends Application implements UI, Initializable
     private Label bottomleftLabel;
     private double blurbvar;
     private boolean settingPassword;
+    private javafx.scene.text.Font fontfreemono;
+    private javafx.scene.text.Font fontfreesans;
+    private javafx.scene.text.Font fontfreehack;
+    private Timeline textLabelTimeline;
+    private RadialGradient textLabelGradient1;
+    private RadialGradient textLabelGradient2;
+    private javafx.scene.text.Font fontlibemono;
+    private javafx.scene.text.Font fontnotomono;
+    private javafx.scene.text.Font fontveramono;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -423,6 +432,14 @@ public class GUIFX extends Application implements UI, Initializable
         ui = this;
         guifx = this;
         this.stage = stage;
+
+	fontfreemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeMono.ttf").toExternalForm(), 16);
+	fontfreesans = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeSans.ttf").toExternalForm(), 16);
+	fontfreehack = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeHack.ttf").toExternalForm(), 16);
+	fontlibemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontLiberationMono.ttf").toExternalForm(), 16);
+	fontnotomono = javafx.scene.text.Font.loadFont(getClass().getResource("FontNotoMono.ttf").toExternalForm(), 16);
+	fontveramono = javafx.scene.text.Font.loadFont(getClass().getResource("FontVeraMono.ttf").toExternalForm(), 16);
+	
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
 	
@@ -434,7 +451,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 
         stage.setScene(scene);
-        stage.setTitle(Version.getProduct());
+        stage.setTitle(Version.getProductName());
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         stage.setMaximized(true);
@@ -448,13 +465,21 @@ public class GUIFX extends Application implements UI, Initializable
 	stage.show();
 
         version = new Version(ui);
-        stage.setTitle(Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString());
+        stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
 	
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+	userGuidanceLabel.setFont(fontfreesans);
+//	logTextArea.setFont(fontfreemono);
+	
+	topleftLabel.setFont(fontfreesans);
+	toprightLabel.setFont(fontfreesans);
+	bottomleftLabel.setFont(fontfreesans);
+	bottomrightLabel.setFont(fontfreesans);
+
         targetFileDeleteButton = new javax.swing.JButton();
         targetFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
         targetFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
@@ -532,7 +557,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
 //	textLabel RadialGradient Animation =========================================================
 
-	textLabel.setText("FinalCrypt");
+	userGuidanceLabel.setText("FinalCrypt");
 
 	radius = 0.6;
 	focusAngle = 0.0;
@@ -544,10 +569,18 @@ public class GUIFX extends Application implements UI, Initializable
 	centerX = endX;
 	centerY = 0.55;
 	proportional = true;
+	textLabelGradient1 = new RadialGradient
+	    (
+		focusAngle, focusDistance, 0.5, centerY, radius, proportional, CycleMethod.NO_CYCLE, new Stop[]
+		{
+		    new Stop(0, Color.valueOf("#bbbbbb"))
+		    ,new Stop(1, Color.valueOf("#5A2D0C"))
+		}
+	    );
 
-        Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+        textLabelTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 	{
-	    RadialGradient gradient1 = new RadialGradient
+	    textLabelGradient2 = new RadialGradient
 	    (
 		focusAngle, focusDistance, centerX, centerY, radius, proportional, CycleMethod.NO_CYCLE, new Stop[]
 		{
@@ -558,17 +591,17 @@ public class GUIFX extends Application implements UI, Initializable
 	    variable += stepX; if (variable >= endX ) { variable = startX; }
 	    centerX = variable;
 	    
-	    textLabel.setTextFill(gradient1);
+	    userGuidanceLabel.setTextFill(textLabelGradient2);
 //	    log(Double.toString(variable), true, false, false, false ,false);
 	}));
-	labelTimeline.setCycleCount(Animation.INDEFINITE);
-	labelTimeline.play();
+	textLabelTimeline.setCycleCount(Animation.INDEFINITE);
+	textLabelTimeline.play();
 	
 	
 //	textLabel Introduction Animation ==========================================================
 
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(2000), textLabel);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(2000), userGuidanceLabel);
         fadeTransition.setFromValue(0.05f);
         fadeTransition.setToValue(0.4f);
         fadeTransition.setCycleCount(1);
@@ -576,7 +609,7 @@ public class GUIFX extends Application implements UI, Initializable
 	fadeTransition.setDelay(Duration.seconds(1));
 	fadeTransition.setInterpolator(Interpolator.EASE_OUT);
 	
-	ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(2000), textLabel);
+	ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(2000), userGuidanceLabel);
         scaleTransition.setFromX(0.98f);scaleTransition.setToX(1.0f);
         scaleTransition.setFromY(0.98f);scaleTransition.setToY(1.0f);
         scaleTransition.setFromZ(0.98f);scaleTransition.setToZ(1.0f);
@@ -592,13 +625,13 @@ public class GUIFX extends Application implements UI, Initializable
         );
         parallelTransition.setCycleCount(1);
         
-	parallelTransition.setOnFinished(new EventHandler<ActionEvent>()
-	{
-            @Override public void handle(ActionEvent actionEvent)
-	    {
-		textLabelFadeMessage("Select Key", 64, false, false, true, false);
-            }
-        });
+//	parallelTransition.setOnFinished(new EventHandler<ActionEvent>()
+//	{
+//            @Override public void handle(ActionEvent actionEvent)
+//	    {
+//		textLabelFadeMessage("Select Key", 64, false, false, true, false);
+//            }
+//        });
 	
 	parallelTransition.play();
 
@@ -614,7 +647,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
         Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(durationMSec/count), ae ->
 	{
-	    textLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
+	    userGuidanceLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
 	    blurbvar += step;
 	}));
 	labelTimeline.setCycleCount(count);
@@ -622,12 +655,12 @@ public class GUIFX extends Application implements UI, Initializable
 	{
             @Override public void handle(ActionEvent actionEvent)
 	    {
-		textLabel.setText(message);
+		userGuidanceLabel.setText(message);
 		blurbvar = blurval;
 		
 		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(durationMSec/count), ae ->
 		{
-		    textLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
+		    userGuidanceLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
 		    blurbvar -= step;
 		}));
 		labelTimeline.setCycleCount(count);
@@ -635,7 +668,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    @Override public void handle(ActionEvent actionEvent)
 		    {
-			textLabel.setEffect(new Glow(1.0));
+			userGuidanceLabel.setEffect(new Glow(1.0));
 		    }
 		});
 		
@@ -648,12 +681,13 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
     {
 //	FADE OUT
+	
 	fadevar = 0.5;
 	final double step = 0.05;
         Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
 	{
 //	    Do Something
-	    textLabel.setOpacity(fadevar);
+	    userGuidanceLabel.setOpacity(fadevar);
 	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
 	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
 	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
@@ -666,19 +700,21 @@ public class GUIFX extends Application implements UI, Initializable
             @Override public void handle(ActionEvent actionEvent)
 	    {
 //		FADE IN
+		
 		bottomleftLabel.setOpacity(0);
 		topleftLabel.setOpacity(0);
 		toprightLabel.setOpacity(0);
 		bottomrightLabel.setOpacity(0);
 		
-		textLabel.setOpacity(0);
-		textLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
-		textLabel.setText(message);
+		userGuidanceLabel.setOpacity(0);
+//		textLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
+		userGuidanceLabel.setFont(fontfreemono); userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
+		userGuidanceLabel.setText(message);
 		fadevar = 0.0;
 		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
 		{
 //		    Do Something
-		    textLabel.setOpacity(fadevar);
+		    userGuidanceLabel.setOpacity(fadevar);
 		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
 		    if (topleft) { topleftLabel.setOpacity(fadevar); }
 		    if (topright) { toprightLabel.setOpacity(fadevar); }
@@ -694,7 +730,7 @@ public class GUIFX extends Application implements UI, Initializable
 			if (!topleft) { topleftLabel.setOpacity(0.0); }
 			if (!topright) { toprightLabel.setOpacity(0.0); }
 			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
-		        textLabel.setOpacity(0.5);
+		        userGuidanceLabel.setOpacity(0.5);
 		    }
 		});
 		
@@ -722,7 +758,7 @@ public class GUIFX extends Application implements UI, Initializable
         version = new Version(ui);
         version.checkCurrentlyInstalledVersion(this);
 		
-	statusLabel.setText("Welcome to " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString());
+	statusLabel.setText("Welcome to " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
 
 //	Set the corner arrows
 
@@ -731,13 +767,15 @@ public class GUIFX extends Application implements UI, Initializable
 	toprightLabel.setOpacity(0);
 	bottomrightLabel.setOpacity(0);
 
+//	Prefer monospaced ◤ XY -18 -28 | ◥ XY 18 -28 | ◢ XY 18 8 | ◣ XY -18 8 
+
 	String[] arrowsArray = new String[]
 	{
 	    ""
 	    ,"❸❷❶❹"
 	    ,"🅒🅑🅐🅓"
 	    ,"⚉⚉⚉⚉"
-	    ,"◤◥◢◣" // Prefer
+	    ,"◤◥◢◣" // Prefer monospaced ◤ XY -18 -28 | ◥ XY 18 -28 | ◢ XY 18 8 | ◣ XY -18 8 
 	    ,"◸◹◿◺"
 	    ,"🡔🡕🡖🡗"
 	    ,"🢄🢅🢆🢇"
@@ -781,7 +819,11 @@ public class GUIFX extends Application implements UI, Initializable
         catch (MalformedObjectNameException | NullPointerException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
-                cpuIndicator.setProgress(getProcessCpuLoad())
+	{
+	    double load = getProcessCpuLoad();
+	    cpuIndicator.setProgress(load);
+	    if (load >= 0.99) { textLabelTimeline.stop(); userGuidanceLabel.setTextFill(textLabelGradient1); }
+	}
         )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
 	
 	checksumTooltip = new Tooltip("");
@@ -793,7 +835,7 @@ public class GUIFX extends Application implements UI, Initializable
             @Override
             public void run()
             {
-                String title =  "Welcome to " + Version.getProduct();
+                String title =  "Welcome to " + Version.getProductName();
                 String header = "Brief Introduction:";
                 String infotext = "";
                 infotext += "Step   Optional create an OTP key file.\r\n";
@@ -824,15 +866,22 @@ public class GUIFX extends Application implements UI, Initializable
 */                
                 
                 prefs = Preferences.userRoot().node(this.getClass().getName());
+//                prefs = Preferences.userRoot().node(Version.getProductName());
 
 //		Hide Intro
 		String val = prefs.get("Hide Intro", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 
-                if (! val.equals("Yes"))
+                if (! val.equals("Yes")) // if NOT Yes
                 {
-                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
-                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
+		    textLabelFadeMessage("Create Key", 64, false, false, false, true);
+		    prefs.put("Hide Intro", "Yes");
+//                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
+//                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
                 }
+		else
+		{
+		    textLabelFadeMessage("Select Key", 64, false, false, true, false); 
+		}
 
 //		Last Update Checked
 		long updateChecked = 0; // Epoch date
@@ -886,7 +935,7 @@ public class GUIFX extends Application implements UI, Initializable
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
 	
-	env +=    "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
+	env +=    "Welcome to:      " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
 	env +=    "Interface:       rdj/GUIFX\r\n";
 	env +=    "Email:           " + Version.getAuthorEmail() + "\r\n";
@@ -1200,7 +1249,7 @@ public class GUIFX extends Application implements UI, Initializable
 				
 				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath);
 				Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
-				try { Thread.sleep(300); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
+				try { Thread.sleep(500); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
 				
 				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 			    }
@@ -2296,13 +2345,15 @@ public class GUIFX extends Application implements UI, Initializable
         {
 	    File curTargetDir = targetFileChooser.getCurrentDirectory();
 	    File curKeyDir = keyFileChooser.getCurrentDirectory();
-	    File upDir = new File("..");
+//	    File upDir = new File("..");
+	    File upTargetDir = curTargetDir.getParentFile().getAbsoluteFile();
+	    File upKeyDir = curKeyDir.getParentFile().getAbsoluteFile();
 
 //	    Target FileChooser
 	    if (updateTargetFC)
 	    {
 		targetFileChooser.setSelectedFile(noTargetFile);
-		targetFileChooser.setCurrentDirectory(upDir);
+		targetFileChooser.setCurrentDirectory(upTargetDir);
 		targetFileChooser.setCurrentDirectory(curTargetDir);
 		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
@@ -2314,7 +2365,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    if (updateKeyFC)
 	    {
 		keyFileChooser.setSelectedFile(noKeyFile);
-		keyFileChooser.setCurrentDirectory(upDir);
+		keyFileChooser.setCurrentDirectory(upKeyDir);
 		keyFileChooser.setCurrentDirectory(curKeyDir);
 		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();

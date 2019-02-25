@@ -1,3 +1,6 @@
+@font-face {src: url(“FontFreeHack.ttf”);} /* Hack */
+@font-face {src: url(“FontFreeSans.ttf”);} /*FreeSans*/
+
 .background_top
 {
     /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/
@@ -11,8 +14,8 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
-    /*-fx-font-family: "Helvetica";
-    -fx-font-size: 18px;
+    -fx-font-family: "FreeSans";
+    /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
@@ -32,8 +35,8 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
-    /*-fx-font-family: "Helvetica";
-    -fx-font-size: 18px;
+    -fx-font-family: "FreeSans";
+    /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
@@ -54,8 +57,8 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 10 10 10 10;
     -fx-text-fill: white;
-    /*-fx-font-family: "Helvetica";
-    -fx-font-size: 18px;
+    -fx-font-family: "FreeSans";
+    /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
@@ -76,8 +79,8 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 10 10 10 10;
     -fx-text-fill: white;
-    /*-fx-font-family: "Helvetica";
-    -fx-font-size: 18px;
+    -fx-font-family: "FreeSans";
+    /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
@@ -86,23 +89,48 @@
 
 .text_color_standard
 {
+    -fx-font-family: "FreeSans";
     -fx-text-fill: lightgray;
 }
 
 .text_color_low
 {
+    -fx-font-family: "FreeSans";
     -fx-text-fill: #888888;
 }
 
 .dashboard_generic
 {
+    -fx-font-family: "FreeSans";
     -fx-text-fill: lightgray;
     -fx-font-size: 10px;
 }
 
 .dashboard_low_profile
 {
+    -fx-font-family: "FreeSans";
     -fx-text-fill: gray;
     -fx-font-size: 10px;
+}
+
+.userguide
+{
+    -fx-font-family: "FreeSans";
+    -fx-font-size: 64px;
+}
+
+.userguide_arrows
+{
+    -fx-font-family: "FreeSans";
+    -fx-font-size: 64px;
+}
+
+.log
+{
+    -fx-font-family: "Hack";
+    -fx-font-size: 10px;
+    -fx-text-fill: #FFC200;
+    -fx-background-color: #222222;
+    -fx-control-inner-background: #222222;
 }
 

@@ -8,8 +8,11 @@ Social Media Share buttons?
 Added optional key password to protect key from unauthorized usage
 Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
-Directory CheckSum Comparison?
+Compare last two encrypt decrypt sessions
 Reproduce pause / stop buildSelection bug maybe?
+Reproduce open decryptable file (hangs sometimes)
+relocate arrows win & mac (embedded font?)
+Replace introduction with create / select key guidance
 
 =============================== Don't forget ================================
 
@@ -32,8 +35,10 @@ Update MANPAGE
 
 ============================= Binaries Released =============================
 
-FinalCrypt v3.0.0 A New Major Version
+New Interface & User Guidance. Improved layout & performance
 
+New Layout & performance improvements
+FinalCrypt v3.0.0 A New Major Version
 Password usage more intuitive and visible
 Improved --print option in command line interface
 Added --no-key-size option to command line interface

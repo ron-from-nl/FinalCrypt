@@ -52,7 +52,7 @@
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -61,7 +61,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" text="Tip: Hold down: [Ctrl] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" styleClass="text_color_standard" text="Tip: Hold down: [Ctrl] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -70,7 +70,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="20.0" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="20.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <cursor>
                                                                   <Cursor fx:constant="HAND" />
                                                                </cursor>
@@ -112,7 +112,7 @@
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                                       <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" styleClass="text_color_standard" text="Select One-Time Pad key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -121,7 +121,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#createKeyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" text="or create a new One Time Pad key file here" textAlignment="CENTER" textFill="LIGHTGRAY" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#createKeyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" text="or create a new One Time Pad key file here" textAlignment="CENTER" textFill="LIGHTGRAY" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -133,7 +133,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans Italic" size="18.0" />
                                                                </font>
@@ -183,9 +183,9 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
-                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" style="-fx-control-inner-background: #222222; -fx-text-fill: #FFC200; -fx-background-color: #222222;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" styleClass="log" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="Monospaced Regular" size="10.0" />
+                                    <Font size="10.0" />
                                  </font>
                                  <effect>
                                     <Glow level="0.5" />
@@ -672,7 +672,7 @@
                                        <children>
                                           <StackPane prefHeight="170.0" prefWidth="422.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label fx:id="textLabel" alignment="CENTER" opacity="0.05" prefHeight="155.0" prefWidth="441.0" text="FinalCrypt" textAlignment="CENTER">
+                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" opacity="0.05" prefHeight="155.0" prefWidth="441.0" styleClass="userguide" text="FinalCrypt" textAlignment="CENTER">
                                                    <font>
                                                       <Font size="64.0" />
                                                    </font>
@@ -688,33 +688,33 @@
                                                       </RadialGradient>
                                                    </textFill>
                                                 </Label>
-                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" text="." textAlignment="CENTER" textFill="#bbbbbb" translateX="-18.0" translateY="-28.0" StackPane.alignment="TOP_LEFT">
+                                                <Label fx:id="topleftLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◤" textAlignment="CENTER" textFill="#bbbbbb" translateX="-0.0" translateY="-0.0" StackPane.alignment="TOP_LEFT">
                                                    <font>
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                    <effect>
-                                                      <Glow />
+                                                      <BoxBlur />
                                                    </effect>
                                                 </Label>
-                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" text="." textAlignment="CENTER" textFill="#bbbbbb" translateX="18.0" translateY="-28.0" StackPane.alignment="TOP_RIGHT">
+                                                <Label fx:id="toprightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◥" textAlignment="CENTER" textFill="#bbbbbb" StackPane.alignment="TOP_RIGHT">
                                                    <effect>
-                                                      <Glow />
-                                                   </effect>
-                                                   <font>
-                                                      <Font name="Monospaced Bold" size="64.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label fx:id="bottomrightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="342.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" text="." textAlignment="CENTER" textFill="#bbbbbb" translateX="18.0" translateY="8.0" StackPane.alignment="BOTTOM_RIGHT">
-                                                   <effect>
-                                                      <Glow />
+                                                      <BoxBlur />
                                                    </effect>
                                                    <font>
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="bottomleftLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" text="." textAlignment="CENTER" textFill="#bbbbbb" translateX="-18.0" translateY="8.0" StackPane.alignment="BOTTOM_LEFT">
+                                                <Label fx:id="bottomrightLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="342.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◢" textAlignment="CENTER" textFill="#bbbbbb" StackPane.alignment="BOTTOM_RIGHT">
                                                    <effect>
-                                                      <Glow />
+                                                      <BoxBlur />
+                                                   </effect>
+                                                   <font>
+                                                      <Font name="Monospaced Bold" size="64.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="bottomleftLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="10.0" maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" opacity="0.5" prefHeight="70.0" prefWidth="70.0" styleClass="userguide_arrows" text="◣" textAlignment="CENTER" textFill="#bbbbbb" StackPane.alignment="BOTTOM_LEFT">
+                                                   <effect>
+                                                      <BoxBlur />
                                                    </effect>
                                                    <font>
                                                       <Font name="Monospaced Bold" size="64.0" />
@@ -751,7 +751,7 @@
                                  <children>
                                     <AnchorPane>
                                        <children>
-                                          <Button fx:id="encryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="55.0" prefWidth="216.0" styleClass="background_bottom" text="Encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="encryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="55.0" prefWidth="216.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -760,7 +760,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="1">
                                        <children>
-                                          <Button fx:id="decryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="55.0" prefWidth="229.0" styleClass="background_bottom" text="Decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="decryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="55.0" prefWidth="229.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -769,7 +769,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="2">
                                        <children>
-                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="55.0" prefWidth="69.0" styleClass="background_bottom" text="Ⅱ" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="55.0" prefWidth="69.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Ⅱ" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -784,7 +784,7 @@
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
                                        <children>
-                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="99.0" styleClass="background_bottom" text="■" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="99.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="■" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -816,7 +816,7 @@
                                     </AnchorPane>
                                     <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
                                        <children>
-                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="43.0" prefWidth="100.0" styleClass="background_bottom" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="43.0" prefWidth="100.0" style="-fx-font-size: 12;" styleClass="background_bottom" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>

@@ -209,23 +209,23 @@ public class Version
         {
             if      (currentVersionTotal < latestVersionTotal)
             {
-                returnString += getProduct() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
+                returnString += getProductName() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
 		if (! getLatestReleaseNotesString().isEmpty())	    { returnString += getLatestReleaseNotesString() + "\r\n"; }
 		if (! getLatestVersionMessageString().isEmpty())    { returnString += getLatestVersionMessageString() + "\r\n"; }
             } 
             else if (currentVersionTotal > latestVersionTotal)
             {
-                returnString += getProduct() + " " + currentOverallVersionString + " is a development version!\r\n";
+                returnString += getProductName() + " " + currentOverallVersionString + " is a development version!\r\n";
             } 
             else
             {
-                returnString += getProduct() + " " + currentOverallVersionString + " is up to date\r\n";
+                returnString += getProductName() + " " + currentOverallVersionString + " is up to date\r\n";
             } 
         }
         else
         {
-            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProduct() + " Version\r\n"; }
-            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProduct() + " Version\r\n"; }
+            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProductName() + " Version\r\n"; }
+            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProductName() + " Version\r\n"; }
         }
         return returnString;
     }
@@ -238,6 +238,6 @@ public class Version
     public static String getLicense()	    { return LICENSE; }
     public static String getAuthor()        { return AUTHOR; }
     public static String getAuthorEmail()   { return AUTHOREMAIL; }
-    public static String getProduct()       { return PRODUCTNAME; }
+    public static String getProductName()   { return PRODUCTNAME; }
     public static String getCompany()       { return COMPANYNAME; }
 }

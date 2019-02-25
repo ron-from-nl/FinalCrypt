@@ -159,8 +159,8 @@ public class CLUI implements UI
 //            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
 //            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
 //            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
-            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProduct() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProductName() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--check-update"))                                                           { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
             else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
@@ -653,8 +653,8 @@ public class CLUI implements UI
         log("            [--print]		  Print all encrypted bytes (slows encryption severely).\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
         log("            [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).\r\n", false, true, false, false, false);
-        log("            [--version]           Print " + version.getProduct() + " version.\r\n", false, true, false, false, false);
-        log("            [--license]           Print " + version.getProduct() + " license.\r\n", false, true, false, false, false);
+        log("            [--version]           Print " + version.getProductName() + " version.\r\n", false, true, false, false, false);
+        log("            [--license]           Print " + version.getProductName() + " license.\r\n", false, true, false, false, false);
         log("            [--check-update]      Check for online updates.\r\n", false, true, false, false, false);
 //        log("            [--txt]               Print text calculations.\r\n", false, true, false, false, false);
 //        log("            [--bin]               Print binary calculations.\r\n", false, true, false, false, false);
@@ -680,7 +680,7 @@ public class CLUI implements UI
         log("            <[-t \"file/dir\"]>     Target file or dir you want to encrypt (encrypts dirs recursively).\r\n", false, true, false, false, false);
         log("            <[-b \"batchfile\"]>    Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);
     }
 
@@ -740,7 +740,7 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k /dev/sdb1 -t myfile\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k /dev/sdb1 -t myfile\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProduct() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
         System.exit(0);
     }
 
@@ -787,7 +787,7 @@ public class CLUI implements UI
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
 	
-	env +=    "Welcome to:      " + Version.getProduct() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
+	env +=    "Welcome to:      " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
 	env += "\r\n";
 	env +=    "Interface:       rdj/CLUI\r\n";
 	env +=    "Email:           " + Version.getAuthorEmail() + "\r\n";
