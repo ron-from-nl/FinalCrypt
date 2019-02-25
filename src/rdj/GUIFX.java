@@ -2437,13 +2437,13 @@ public class GUIFX extends Application implements UI, Initializable
         dialogPane.getStyleClass().add("myDialog");
         
         alert.setTitle("Information Dialog");
-        alert.setHeaderText("What is your secret Key file?");
+        alert.setHeaderText("What is your One Time Pad Key file?");
         alert.setResizable(true);
         String infotext = new String();
         infotext =  "";
-        infotext += "FinalCrypt de/encrypts your files with a key file.\r\n";
-        infotext += "Any personal photo or video can be your key file.\r\n";
-        infotext += "Best is to encrypt with a One-Time Pad key file.\r\n";
+        infotext += "One Time Pad Keys are the most unbreakble keys.\r\n";
+        infotext += "FinalCrypt de/encrypts files with OTP key files.\r\n";
+        infotext += "If you don't have a key then create a key first.\r\n";
         infotext += "\r\n";
         infotext += "An optional password enforces extra encryption\r\n";
         infotext += "so a lost / stolen key file can't unlock your data.\r\n";
@@ -2454,15 +2454,6 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "\r\n";
         infotext += "Without your key file (and optional password)\r\n";
         infotext += "there is no way to decrypt / recover your data\r\n";
-//        infotext += "Encryption / Decryption (advanced explanation):\r\n";
-//        infotext += "\r\n";
-//        infotext += "Your key bit patterns negate your file bit patterns.\r\n";
-//        infotext += "\r\n";
-//        infotext += "                  Encrypt                      Decrypt\r\n";
-//        infotext += "Data byte: 00000011 = 3    ╭─> 00000110 = 6\r\n";
-//        infotext += "Ciph byte: 00000101 = 5    │      00000101 = 5\r\n";
-//        infotext += "Encr byte: 00000110 = 6 ─╯       00000011 = 3\r\n\r\n";
-//        infotext += " \r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
