@@ -114,6 +114,11 @@ public class CreateOTPKey extends Application implements Initializable
     private Timer updateProgressTaskTimer;
     private long totalTranfered;
 
+//    public CreateOTPKey(GUIFX guifx)
+//    {
+//	this.guifx = guifx;
+//    }
+    
     @Override
     public void start(Stage primaryStage) throws Exception
     {
@@ -404,6 +409,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
 		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
+		guifx.textLabelFadeMessage("Select Key", 64, false, false, true, false);
 	    }});
 
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));

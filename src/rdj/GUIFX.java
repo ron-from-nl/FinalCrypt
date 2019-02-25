@@ -416,15 +416,15 @@ public class GUIFX extends Application implements UI, Initializable
     private Label bottomleftLabel;
     private double blurbvar;
     private boolean settingPassword;
-    private javafx.scene.text.Font fontfreemono;
-    private javafx.scene.text.Font fontfreesans;
-    private javafx.scene.text.Font fontfreehack;
     private Timeline textLabelTimeline;
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
-    private javafx.scene.text.Font fontlibemono;
-    private javafx.scene.text.Font fontnotomono;
-    private javafx.scene.text.Font fontveramono;
+//    private javafx.scene.text.Font fontfreemono;
+//    private javafx.scene.text.Font fontfreesans;
+//    private javafx.scene.text.Font fontfreehack;
+//    private javafx.scene.text.Font fontlibemono;
+//    private javafx.scene.text.Font fontnotomono;
+//    private javafx.scene.text.Font fontveramono;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -433,12 +433,12 @@ public class GUIFX extends Application implements UI, Initializable
         guifx = this;
         this.stage = stage;
 
-	fontfreemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeMono.ttf").toExternalForm(), 16);
-	fontfreesans = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeSans.ttf").toExternalForm(), 16);
-	fontfreehack = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeHack.ttf").toExternalForm(), 16);
-	fontlibemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontLiberationMono.ttf").toExternalForm(), 16);
-	fontnotomono = javafx.scene.text.Font.loadFont(getClass().getResource("FontNotoMono.ttf").toExternalForm(), 16);
-	fontveramono = javafx.scene.text.Font.loadFont(getClass().getResource("FontVeraMono.ttf").toExternalForm(), 16);
+//	fontfreemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeMono.ttf").toExternalForm(), 16);
+//	fontfreesans = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeSans.ttf").toExternalForm(), 16);
+//	fontfreehack = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeHack.ttf").toExternalForm(), 16);
+//	fontlibemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontLiberationMono.ttf").toExternalForm(), 16);
+//	fontnotomono = javafx.scene.text.Font.loadFont(getClass().getResource("FontNotoMono.ttf").toExternalForm(), 16);
+//	fontveramono = javafx.scene.text.Font.loadFont(getClass().getResource("FontVeraMono.ttf").toExternalForm(), 16);
 	
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
@@ -472,13 +472,13 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-	userGuidanceLabel.setFont(fontfreesans);
+//	userGuidanceLabel.setFont(fontfreesans);
 //	logTextArea.setFont(fontfreemono);
 	
-	topleftLabel.setFont(fontfreesans);
-	toprightLabel.setFont(fontfreesans);
-	bottomleftLabel.setFont(fontfreesans);
-	bottomrightLabel.setFont(fontfreesans);
+//	topleftLabel.setFont(fontfreesans);
+//	toprightLabel.setFont(fontfreesans);
+//	bottomleftLabel.setFont(fontfreesans);
+//	bottomrightLabel.setFont(fontfreesans);
 
         targetFileDeleteButton = new javax.swing.JButton();
         targetFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
@@ -708,7 +708,8 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		userGuidanceLabel.setOpacity(0);
 //		textLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
-		userGuidanceLabel.setFont(fontfreemono); userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
+//		userGuidanceLabel.setFont(fontfreemono);
+		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
 		userGuidanceLabel.setText(message);
 		fadevar = 0.0;
 		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
@@ -880,7 +881,7 @@ public class GUIFX extends Application implements UI, Initializable
                 }
 		else
 		{
-		    textLabelFadeMessage("Select Key", 64, false, false, true, false); 
+		    textLabelFadeMessage("Select Key", 64, false, false, true, false);
 		}
 
 //		Last Update Checked
