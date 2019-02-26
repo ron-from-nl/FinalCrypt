@@ -727,8 +727,8 @@ public class GUIFX extends Application implements UI, Initializable
 		else if ( platform.indexOf("mac") != -1 )
 		{
 		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
-		    bottomleftLabel.setTranslateX(  0); topleftLabel.setTranslateX(  0); toprightLabel.setTranslateX(  0); bottomrightLabel.setTranslateX(  0);
-		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(  0); toprightLabel.setTranslateY(  0); bottomrightLabel.setTranslateY(  0);
+		    bottomleftLabel.setTranslateX(-13); topleftLabel.setTranslateX(-13); toprightLabel.setTranslateX( 13); bottomrightLabel.setTranslateX( 13);
+		    bottomleftLabel.setTranslateY( 10); topleftLabel.setTranslateY(-15); toprightLabel.setTranslateY(-15); bottomrightLabel.setTranslateY( 10);
 		}
 		else
 		{
