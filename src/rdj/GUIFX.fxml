@@ -861,7 +861,7 @@
                                     </AnchorPane>
                                     <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
                                        <children>
-                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="43.0" prefWidth="100.0" style="-fx-font-size: 12;" styleClass="background_bottom" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="43.0" prefWidth="100.0" style="-fx-font-size: 10;" styleClass="background_bottom" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
