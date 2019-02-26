@@ -35,8 +35,9 @@ Update MANPAGE
 
 ============================= Binaries Released =============================
 
-Improved user guidance layout for Mac OSX
+New JRE8u201 build. Embedded Fonts
 
+Improved user guidance layout for Mac OSX
 New Interface & User Guidance. Improved layout & performance
 New Layout & performance improvements
 FinalCrypt v3.0.0 A New Major Version

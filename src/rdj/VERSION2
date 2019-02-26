@@ -1,5 +1,5 @@
-[Version] =		{3.0.2}
-[Release Notes] =	{New Interface & User Guidance}
-[Release Message] =	{Improved layout & performance}
+[Version] =		{3.0.3}
+[Release Notes] =	{Build JRE8-u201 & Embedded Fonts}
+[Release Message] =	{Advise: remove FinalCrypt first}
 [Alert Subject] =	{}
 [Alert Message] =	{}

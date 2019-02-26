@@ -472,14 +472,6 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-//	userGuidanceLabel.setFont(fontfreesans);
-//	logTextArea.setFont(fontfreemono);
-	
-//	topleftLabel.setFont(fontfreesans);
-//	toprightLabel.setFont(fontfreesans);
-//	bottomleftLabel.setFont(fontfreesans);
-//	bottomrightLabel.setFont(fontfreesans);
-
         targetFileDeleteButton = new javax.swing.JButton();
         targetFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
         targetFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
@@ -714,19 +706,16 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		if	( platform.indexOf("linux") != -1 )
 		{
-		    logTextArea.setStyle("-fx-font-family: \"DejaVu Sans Mono\";");
 		    bottomleftLabel.setTranslateX( -4); topleftLabel.setTranslateX( -4); toprightLabel.setTranslateX(  4); bottomrightLabel.setTranslateX(  4);
 		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY( -5); toprightLabel.setTranslateY( -5); bottomrightLabel.setTranslateY(  0);
 		}
 		else if ( platform.indexOf("windows") != -1 )
 		{
-		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
 		    bottomleftLabel.setTranslateX(-10); topleftLabel.setTranslateX(-10); toprightLabel.setTranslateX( 10); bottomrightLabel.setTranslateX( 10);
 		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(-20); toprightLabel.setTranslateY(-20); bottomrightLabel.setTranslateY(  0);
 		}
 		else if ( platform.indexOf("mac") != -1 )
 		{
-		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
 		    bottomleftLabel.setTranslateX(-13); topleftLabel.setTranslateX(-13); toprightLabel.setTranslateX( 13); bottomrightLabel.setTranslateX( 13);
 		    bottomleftLabel.setTranslateY( 10); topleftLabel.setTranslateY(-15); toprightLabel.setTranslateY(-15); bottomrightLabel.setTranslateY( 10);
 		}

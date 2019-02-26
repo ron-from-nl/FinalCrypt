@@ -27,7 +27,7 @@ Options:
             [--no-key-size]       Allow key-size less than the default minimum of 1024 bytes.
             [-d] [--debug]        Enables debugging mode.
             [-v] [--verbose]      Enables verbose mode.
-            [--print]		  Print all encrypted bytes (slows encryption severely).
+            [--print]		  Print all encrypted bytes binary, hexdec & char (slows encryption severely).
             [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).
             [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).
             [--version]           Print FinalCrypt version.
@@ -51,4 +51,4 @@ Parameters:
             <[-t "file/dir"]>     Target file or dir you want to encrypt (encrypts dirs recursively).
             <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 3.0.2 - Author: Ron de Jong - Copyright: © 2017-2019
+FinalCrypt 3.0.3 - Author: Ron de Jong - Copyright: © 2017-2019

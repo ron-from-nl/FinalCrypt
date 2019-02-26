@@ -650,7 +650,7 @@ public class CLUI implements UI
         log("            [--no-key-size]       Allow key-size less than the default minimum of 1024 bytes.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]        Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]      Enables verbose mode.\r\n", false, true, false, false, false);
-        log("            [--print]		  Print all encrypted bytes (slows encryption severely).\r\n", false, true, false, false, false);
+        log("            [--print]		  Print all bytes binary, hexdec & char (slows encryption severely).\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
         log("            [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).\r\n", false, true, false, false, false);
         log("            [--version]           Print " + version.getProductName() + " version.\r\n", false, true, false, false, false);

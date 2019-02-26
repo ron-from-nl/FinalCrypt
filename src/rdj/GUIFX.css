@@ -1,5 +1,5 @@
-@font-face {src: url(“FontFreeSans.ttf”);} /*FreeSans*/
-@font-face {src: url(“FontDejaVuSansMono.ttf”);} /*FontDejaVuSansMono*/
+@font-face { font-family: 'Liberation Mono'; src: url('fonts/LiberationMono-Regular.ttf'); }
+@font-face { font-family: 'Liberation Sans'; src: url('fonts/LiberationSans-Regular.ttf'); }
 
 .background_top
 {
@@ -14,7 +14,7 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
@@ -35,7 +35,7 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
@@ -57,7 +57,7 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 10 10 10 10;
     -fx-text-fill: white;
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
@@ -79,7 +79,7 @@
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 10 10 10 10;
     -fx-text-fill: white;
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     /*-fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
@@ -89,46 +89,45 @@
 
 .text_color_standard
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-text-fill: lightgray;
 }
 
 .text_color_low
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-text-fill: #888888;
 }
 
 .dashboard_generic
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-text-fill: lightgray;
     -fx-font-size: 10px;
 }
 
 .dashboard_low_profile
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-text-fill: gray;
     -fx-font-size: 10px;
 }
 
 .userguide
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-font-size: 64px;
 }
 
 .userguide_arrows
 {
-    -fx-font-family: "FreeSans";
+    -fx-font-family: "Liberation Sans";
     -fx-font-size: 64px;
 }
 
 .log
 {
-    -fx-font-family: "DejaVu Sans Mono";
-    -fx-font-family: "Courier New";
+    -fx-font-family: "Liberation Mono";
     -fx-font-size: 10px;
     -fx-text-fill: #FFC200;
     -fx-background-color: #222222;
