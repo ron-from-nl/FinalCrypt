@@ -1,5 +1,6 @@
-FinalCrypt can be run portable with JPortable (a portable version of a JRE/JVM):
+FinalCrypt can be run portable with JPortable (a portable version of a JRE8)
 Get JPortable here: https://portableapps.com/apps/utilities/java_portable_64
+Please be aware that FinalCrypt only runs on JavaSE8 / JRE8 (includes JavaFX)
 
 After installing JPortable you can copy [JPortable Install Dir] to any location like a USB stick.
 Then just copy FinalCrypt_Z.jar: https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt_Z.jar
