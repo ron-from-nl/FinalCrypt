@@ -209,7 +209,7 @@ public class CreateOTPKey extends Application implements Initializable
 //	UnitChoiceBox Listener
 	unitChoiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>()
 	{ @Override public void changed(ObservableValue<? extends Number> observableValue, Number num1, Number num2) { calculateOTPKeyFileSize(); } });
-	
+
 //	Initial FileSize Calculation
 //	calculateOTPKeyFileSize();
     }    
@@ -220,6 +220,7 @@ public class CreateOTPKey extends Application implements Initializable
 	currentDirPath = curDirPath; 
 	statusLabel1.setText("Current directory");
 	statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
+	guifx.textLabelFadeMessage("Create Key", 64, false, false, false, true);
     }
         
     @FXML
