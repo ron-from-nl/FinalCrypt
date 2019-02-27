@@ -1825,14 +1825,6 @@ public class GUIFX extends Application implements UI, Initializable
 		    if ((targetFCPathList.files - targetFCPathList.validFiles) > 0) { invalidFilesList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.INVALID); } else { invalidFilesList = null; }
 
 
-//    private FCPathList newEncryptedList;
-//    private FCPathList encryptRemainingList;
-//    private FCPathList unencryptableList;
-//    private FCPathList newDecryptedList;
-//    private FCPathList decryptRemainingList;
-//    private FCPathList undecryptableList;
-//    private FCPathList invalidFilesList;
-		    
 		    // Key Device Selected
 		    if ((keyFCPath.type == FCPath.FILE) && (keyFCPath.isValidKey))
 		    {
@@ -2065,7 +2057,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
-	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText(), false);
+//	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText(), false);
+	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwdField.getText(), false);
     }
 
     @FXML
@@ -2103,7 +2096,8 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
-	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
+//	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
+	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwdField.getText(), open);
     }
 
     @FXML
