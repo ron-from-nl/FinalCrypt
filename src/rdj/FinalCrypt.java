@@ -157,10 +157,11 @@ public class FinalCrypt extends Thread
     public void encryptSelection
     (
 	    FCPathList targetSourceFCPathList
-	    , FCPathList filteredTargetSourceFCPathList
+	    , FCPathList filteredTargetSourceFCPathList // encryptableList / decryptableList
 	    , FCPath keySourceFCPath
 	    , boolean encryptmode
 	    , String pwdParam
+	    , boolean open // Opens targets after finishing
     )// throws InterruptedException
     {
 	if (pwdParam.length() > 0) { pwd = pwdParam; } else { pwd = ""; }
@@ -707,7 +708,7 @@ public class FinalCrypt extends Thread
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
 //        updateProgressTimeline.stop();
 	processRunning = false;
-	ui.processFinished();
+	ui.processFinished(filteredTargetSourceFCPathList, open);
     }
     
     synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }

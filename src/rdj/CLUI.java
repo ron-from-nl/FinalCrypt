@@ -490,7 +490,7 @@ public class CLUI implements UI
 		    }
 		});
 		processStarted(); 
-		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd);
+		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd, false);
 //		catch (InterruptedException ex){ log("Encryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
 	    }
 	    else			{ log("No encryptable targets found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
@@ -518,7 +518,7 @@ public class CLUI implements UI
 			}
 		    });
 		    processStarted();
-		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd);
+		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd, false);
 //		    catch (InterruptedException ex) { log("Decryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
 		}
 		else			
@@ -531,12 +531,12 @@ public class CLUI implements UI
 	}
 	else if (createkeydev)
 	{
-	    if (createKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createKeyDevice(keyFCPath, (FCPath) createKeyList.get(0)); processFinished(); }
+	    if (createKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createKeyDevice(keyFCPath, (FCPath) createKeyList.get(0)); processFinished(new FCPathList(), false); }
 	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((clonekeydev) && (cloneKeyDeviceFound))
 	{
-	    if (cloneKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneKeyDevice(keyFCPath, (FCPath) cloneKeyList.get(0));  processFinished(); }
+	    if (cloneKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneKeyDevice(keyFCPath, (FCPath) cloneKeyList.get(0));  processFinished(new FCPathList(), false); }
 	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((printgpt) && (printGPTDeviceFound))
@@ -756,7 +756,7 @@ public class CLUI implements UI
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }
     
-    @Override public void processFinished()
+    @Override public void processFinished(FCPathList openFCPathList, boolean open)
     {
     }
 

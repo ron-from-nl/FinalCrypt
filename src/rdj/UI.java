@@ -26,7 +26,7 @@ public interface UI
     public void processGraph(int value);
     public void processProgress(int filesProgressPercent, int fileProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam);
     public void fileProgress();
-    public void processFinished();
+    public void processFinished(FCPathList openFCPathList, boolean open);
     public void processStarted();
     public void buildReady(FCPathList fcPathListParam, boolean validBuild);
 }

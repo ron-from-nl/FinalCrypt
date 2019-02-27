@@ -274,7 +274,7 @@ public class DeviceController
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
 //        updateProgressTimeline.stop();
-        ui.processFinished();
+        ui.processFinished(new FCPathList(), false);
     }
 
 //  Write KeyFile to partition 1 & 2
@@ -409,7 +409,7 @@ public class DeviceController
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
     //        updateProgressTimeline.stop();
-	    ui.processFinished();
+	    ui.processFinished(new FCPathList(), false);
 	}
 	else
 	{

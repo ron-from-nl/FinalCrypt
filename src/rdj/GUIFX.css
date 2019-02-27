@@ -146,6 +146,8 @@
 
 .log
 {
+    -fx-font-family: "Courier New";
+    -fx-font-family: "DejaVu Sans Mono";
     -fx-font-family: "Liberation Mono";
     -fx-font-size: 10px;
     -fx-text-fill: #FFC200;

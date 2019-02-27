@@ -185,7 +185,7 @@
                            <children>
                               <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" styleClass="log" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
-                                    <Font name="DejaVu Sans Mono Bold" size="10.0" />
+                                    <Font size="10.0" />
                                  </font>
                                  <effect>
                                     <Glow level="0.5" />

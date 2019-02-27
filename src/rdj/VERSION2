@@ -1,4 +1,4 @@
-[Version] =		{3.0.3}
+[Version] =		{3.1.0}
 [Release Notes] =	{Build JRE8-u201 & Better Fonts}
 [Release Message] =	{Please remove FinalCrypt first}
 [Alert Subject] =	{}

@@ -1231,7 +1231,11 @@ public class GUIFX extends Application implements UI, Initializable
 		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,          false,         path,          true);
 	    }
 	    
+	    
+	    
+//	    
 	    Path targetPath = targetFileChooser.getSelectedFile().toPath();
+	    
 //					   getFCPath(UI ui,  String caller,  Path path,  boolean isKey,   Path keyPath, boolean report)
 	    FCPath targetFCPath = Validate.getFCPath( this,		"", targetPath,		 false, keyFCPath.path,		  true);
 	    
@@ -1252,28 +1256,23 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if ((targetFCPath.isEncrypted) && ( targetFCPath.isDecryptable ) && ( keyFCPath != null ) && ( keyFCPath.isValidKey ))
 		    {
-			Thread encryptThread = new Thread(new Runnable()
+			Thread decryptThread = new Thread(new Runnable()
 			{
 //			    private DeviceManager deviceManager;
 			    @Override
 			    @SuppressWarnings({"static-access"})
 			    public void run()
 			    {
-				FCPathList targetFCPathList = new FCPathList();
-				FCPathList fileteredTargetFCPathList = new FCPathList();
+				FCPathList targetFCPathList =		new FCPathList();
+				FCPathList filteredTargetFCPathList =	new FCPathList();
 				targetFCPathList.add(targetFCPath);
-				fileteredTargetFCPathList.add(targetFCPath);
-				
-				decrypt(targetFCPathList, fileteredTargetFCPathList, keyFCPath);
-				Path newPath = Paths.get(targetFCPath.path.toString().substring(0, targetFCPath.path.toString().lastIndexOf('.')));
-				try { Thread.sleep(500); } catch (InterruptedException ex) {  } // Hangs in FinalCrypt.encryptSelection method (somewhere after shred)
-				
-				Desktop desktop = Desktop.getDesktop(); try { desktop.open(newPath.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+				filteredTargetFCPathList.add(targetFCPath);
+				decrypt(targetFCPathList, filteredTargetFCPathList, keyFCPath, true); // true means open after decrypt when finalcrypt calls processFinished
 			    }
 			});
-			encryptThread.setName("encryptThread");
-			encryptThread.setDaemon(true);
-			encryptThread.start();
+			decryptThread.setName("decryptThread");
+			decryptThread.setDaemon(true);
+			decryptThread.start();
 		    }
 		    else // Not decryptable
 		    { 
@@ -1302,7 +1301,8 @@ public class GUIFX extends Application implements UI, Initializable
             keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
             keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //            keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-            checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+            checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
+	    if ( checksumTooltip != null ) { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
 	    pwdField.setDisable(true); pwdField.setVisible(false);
 	    keyImageView.setOpacity(0.1);
         }});
@@ -1350,7 +1350,8 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.getFileName().toString());
 			checksumLabel.setTextFill(Color.WHITESMOKE);
-			checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+			checksumLabel.setText("");
+			if ( checksumTooltip != null )  { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
 
 			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
@@ -1496,7 +1497,7 @@ public class GUIFX extends Application implements UI, Initializable
 				{
 				    checksumLabel.setTextFill(Color.GREENYELLOW);
 				    checksumLabel.setText(hashString);
-				    checksumTooltip.setText(hashString + "\r\n\r\ncalculate checksum: left-click\r\ncopy to clipboard:  right-click");
+				    if ( checksumTooltip != null ) { checksumTooltip.setText(hashString + "\r\n\r\ncalculate checksum: left-click\r\ncopy to clipboard:  right-click"); }
 				    Tooltip.install(checksumLabel, checksumTooltip); 
 				    isCalculatingCheckSum = false;
 				}});
@@ -2064,7 +2065,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
-	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText());
+	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText(), false);
     }
 
     @FXML
@@ -2077,7 +2078,7 @@ public class GUIFX extends Application implements UI, Initializable
             @SuppressWarnings({"static-access"})
             public void run()
             {
-		decrypt(targetFCPathList, encryptableList, keyFCPath);
+		decrypt(targetFCPathList, decryptableList, keyFCPath, false);
             }
         });
         encryptThread.setName("decryptThread");
@@ -2085,7 +2086,7 @@ public class GUIFX extends Application implements UI, Initializable
         encryptThread.start();
     }
 
-    private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
+    private void decrypt(FCPathList targetSourceFCPathList, FCPathList filteredTargetSourceFCPathList, FCPath keySourceFCPath, boolean open) // Only run within thread | open opens targets after decryption
     {
 	Runtime.getRuntime().addShutdownHook(new Thread()
 	{
@@ -2102,7 +2103,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
-	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText());
+	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
     }
 
     @FXML
@@ -2154,7 +2155,7 @@ public class GUIFX extends Application implements UI, Initializable
                     processStarted();
                     deviceManager = new DeviceManager(guifx); deviceManager.start();
                     deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-                    processFinished();
+                    processFinished(targetFCPathList, false);
 		}
 		else if ( keyDeviceButton.getText().equals("Clone Key Device") )
 		{
@@ -2163,7 +2164,7 @@ public class GUIFX extends Application implements UI, Initializable
                     processStarted();
                     deviceManager = new DeviceManager(ui); deviceManager.start();
                     deviceManager.cloneKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-                    processFinished();
+                    processFinished(targetFCPathList, false);
 		}
 		
             }
@@ -2305,7 +2306,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     @Override public void processGraph(int value) { Platform.runLater(new Runnable() { @Override public void run() { }}); }
     
-    @Override public void processFinished()
+    @Override public void processFinished(FCPathList openFCPathList, boolean open)
     {
         Platform.runLater(new Runnable()
         {
@@ -2325,10 +2326,8 @@ public class GUIFX extends Application implements UI, Initializable
 		    totalTimeLabel.setText(totalTimeString);
 		}
 		
+
 		targetFCPathList = new FCPathList();
-//                Path homePath = Paths.get(System.getProperty("user.home")); // Just to reset the selected key
-//                             Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
-//                keyFCPath = Validate.getFCPath(   ui,            "",  homePath,            false,        homePath,          false);
 
 		updateDashboard(targetFCPathList);
 		encryptButton.setDisable(true);
@@ -2350,6 +2349,31 @@ public class GUIFX extends Application implements UI, Initializable
 		
                 processRunningType = NONE;
                 processRunning = false;
+
+//		The Open when finished section
+
+		Thread openThread;
+		openThread = new Thread(() ->
+		{
+		    try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
+		    if (open)
+		    {
+			for (Iterator it = openFCPathList.iterator(); it.hasNext();)
+			{
+			    FCPath openFCPath = (FCPath) it.next();
+			    Path newPath = Paths.get(openFCPath.path.toString().substring(0, openFCPath.path.toString().lastIndexOf('.')));
+
+			    try { Desktop.getDesktop().open(newPath.toFile()); }
+			    catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			    
+			    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+			    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
+			}
+		    }
+		});
+		openThread.setName("openThread");
+		openThread.setDaemon(true);
+		openThread.start();
             }
         });
     }    
