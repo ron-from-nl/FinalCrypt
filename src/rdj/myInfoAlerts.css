@@ -17,14 +17,18 @@
  * Public License License along with this software;
  */
 
+@font-face { font-family: 'Liberation Mono'; src: url('fonts/LiberationMono-Regular.ttf'); }
+@font-face { font-family: 'Liberation Sans'; src: url('fonts/LiberationSans-Regular.ttf'); }
+
 .myDialog:header *.header-panel
 {
     -fx-background-color: #aaaaaa;
 }
 .myDialog:header *.header-panel *.label
 {
-    -fx-font-size: 20px;
-    -fx-font-style: normal;
+    -fx-font-family: "Liberation Sans";
+    -fx-font-size: 28px;
+    /*-fx-font-style: normal;*/
     -fx-fill: #292929;
 }
 .myDialog /* middel section */
@@ -33,8 +37,8 @@
 }
 .myDialog > *.label.content
 {
+    -fx-font-family: "Liberation Mono";
     -fx-font-size: 14px;
-    -fx-font: 14px Courier;
     -fx-font-weight: normal;
     -fx-font-smoothing-type: lcd;
 }

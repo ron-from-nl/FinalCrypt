@@ -414,17 +414,11 @@ public class GUIFX extends Application implements UI, Initializable
     private Label bottomrightLabel;
     @FXML
     private Label bottomleftLabel;
-    private double blurbvar;
+    private double blurvar;
     private boolean settingPassword;
     private Timeline textLabelTimeline;
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
-//    private javafx.scene.text.Font fontfreemono;
-//    private javafx.scene.text.Font fontfreesans;
-//    private javafx.scene.text.Font fontfreehack;
-//    private javafx.scene.text.Font fontlibemono;
-//    private javafx.scene.text.Font fontnotomono;
-//    private javafx.scene.text.Font fontveramono;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -433,13 +427,6 @@ public class GUIFX extends Application implements UI, Initializable
         guifx = this;
         this.stage = stage;
 
-//	fontfreemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeMono.ttf").toExternalForm(), 16);
-//	fontfreesans = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeSans.ttf").toExternalForm(), 16);
-//	fontfreehack = javafx.scene.text.Font.loadFont(getClass().getResource("FontFreeHack.ttf").toExternalForm(), 16);
-//	fontlibemono = javafx.scene.text.Font.loadFont(getClass().getResource("FontLiberationMono.ttf").toExternalForm(), 16);
-//	fontnotomono = javafx.scene.text.Font.loadFont(getClass().getResource("FontNotoMono.ttf").toExternalForm(), 16);
-//	fontveramono = javafx.scene.text.Font.loadFont(getClass().getResource("FontVeraMono.ttf").toExternalForm(), 16);
-	
         root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
         Scene scene = new Scene((Parent)root);
 	
@@ -546,9 +533,54 @@ public class GUIFX extends Application implements UI, Initializable
 	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	keyImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/key.png")));
 
-	
+//	=========================================================================================================================================
+//	============================================================= USER GUIDANCE =============================================================
 //	textLabel RadialGradient Animation =========================================================
 
+//	First relayout user guidance arrows
+
+	bottomleftLabel.setOpacity(0);	bottomleftLabel.setVisible(true);
+	topleftLabel.setOpacity(0);	topleftLabel.setVisible(true);
+	toprightLabel.setOpacity(0);	toprightLabel.setVisible(true);
+	bottomrightLabel.setOpacity(0);	bottomrightLabel.setVisible(true);
+
+	String platform = System.getProperty("os.name").toLowerCase(); // CrossPlatform Layout allignment issues
+
+	if	( platform.indexOf("linux") != -1 )
+	{
+	    bottomleftLabel.setTranslateX( -11); topleftLabel.setTranslateX( -11); toprightLabel.setTranslateX( 11); bottomrightLabel.setTranslateX( 11);
+	    bottomleftLabel.setTranslateY(  5);  topleftLabel.setTranslateY( -17); toprightLabel.setTranslateY(-17); bottomrightLabel.setTranslateY(  5);
+	}
+	else if ( platform.indexOf("windows") != -1 )
+	{
+//		    com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+//		    INFO: Could not load @font-face font [file:/C:/Users/Ron%20de%20Jong/Documents/FinalCrypt/build/classes/rdj/fonts/LiberationMono-Regular.ttf]
+//		    Trips over %20 run from homedir caused by ¨url¨ in GUIFX.css @font-face { font-family: 'Liberation Mono'; src: url('fonts/LiberationMono-Regular.ttf'); }
+//		    However running native from Win install dir poses no problem as the path does not encounter spaces converted into %20 url symbols
+
+//		    Valid when loading embedded font failed
+//		    bottomleftLabel.setTranslateX(-21); topleftLabel.setTranslateX(-21); toprightLabel.setTranslateX( 21); bottomrightLabel.setTranslateX( 21);
+//		    bottomleftLabel.setTranslateY( 11); topleftLabel.setTranslateY(-32); toprightLabel.setTranslateY(-32); bottomrightLabel.setTranslateY( 11);
+
+//		    Valid when loading embedded font
+	    bottomleftLabel.setTranslateX(-22); topleftLabel.setTranslateX(-22); toprightLabel.setTranslateX( 22); bottomrightLabel.setTranslateX( 22);
+	    bottomleftLabel.setTranslateY( 23); topleftLabel.setTranslateY(-21); toprightLabel.setTranslateY(-21); bottomrightLabel.setTranslateY( 23);
+	}
+	else if ( platform.indexOf("mac") != -1 )
+	{
+	    bottomleftLabel.setTranslateX(-22); topleftLabel.setTranslateX(-22); toprightLabel.setTranslateX( 22); bottomrightLabel.setTranslateX( 22);
+	    bottomleftLabel.setTranslateY( 24); topleftLabel.setTranslateY(-20); toprightLabel.setTranslateY(-20); bottomrightLabel.setTranslateY( 24);
+	}
+	else
+	{
+	    bottomleftLabel.setTranslateX(  0); topleftLabel.setTranslateX(  0); toprightLabel.setTranslateX(  0); bottomrightLabel.setTranslateX(  0);
+	    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(  0); toprightLabel.setTranslateY(  0); bottomrightLabel.setTranslateY(  0);
+	}
+
+//	===============================================================================================================================================
+//	USER GUIDANCE TEXTLABEL
+//	===============================================================================================================================================
+	
 	userGuidanceLabel.setText("FinalCrypt");
 
 	radius = 0.6;
@@ -593,7 +625,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	textLabel Introduction Animation ==========================================================
 
 
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(2000), userGuidanceLabel);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
         fadeTransition.setFromValue(0.05f);
         fadeTransition.setToValue(0.4f);
         fadeTransition.setCycleCount(1);
@@ -601,7 +633,7 @@ public class GUIFX extends Application implements UI, Initializable
 	fadeTransition.setDelay(Duration.seconds(1));
 	fadeTransition.setInterpolator(Interpolator.EASE_OUT);
 	
-	ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(2000), userGuidanceLabel);
+	ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(3000), userGuidanceLabel);
         scaleTransition.setFromX(0.98f);scaleTransition.setToX(1.0f);
         scaleTransition.setFromY(0.98f);scaleTransition.setToY(1.0f);
         scaleTransition.setFromZ(0.98f);scaleTransition.setToZ(1.0f);
@@ -611,36 +643,24 @@ public class GUIFX extends Application implements UI, Initializable
 	scaleTransition.setInterpolator(Interpolator.EASE_BOTH);
 
 	ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll(
-                fadeTransition,
-                scaleTransition
-        );
+        parallelTransition.getChildren().addAll( fadeTransition, scaleTransition );
         parallelTransition.setCycleCount(1);
         
-//	parallelTransition.setOnFinished(new EventHandler<ActionEvent>()
-//	{
-//            @Override public void handle(ActionEvent actionEvent)
-//	    {
-//		textLabelFadeMessage("Select Key", 64, false, false, true, false);
-//            }
-//        });
-	
+	parallelTransition.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent actionEvent) { welcome(); } }); // Starts Welcome
 	parallelTransition.play();
-
-        welcome();
     }
     
     public void textLabelBlurMessage(String message, int durationMSec) // 1000
     {
-	blurbvar = 3.0;
+	blurvar = 3.0;
 	final int count = 20;
 	final int blurval = 40;
 	final double step = blurval/count;
 	
         Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(durationMSec/count), ae ->
 	{
-	    userGuidanceLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
-	    blurbvar += step;
+	    userGuidanceLabel.setEffect(new BoxBlur(blurvar, blurvar, 3));
+	    blurvar += step;
 	}));
 	labelTimeline.setCycleCount(count);
 	labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
@@ -648,12 +668,12 @@ public class GUIFX extends Application implements UI, Initializable
             @Override public void handle(ActionEvent actionEvent)
 	    {
 		userGuidanceLabel.setText(message);
-		blurbvar = blurval;
+		blurvar = blurval;
 		
 		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(durationMSec/count), ae ->
 		{
-		    userGuidanceLabel.setEffect(new BoxBlur(blurbvar, blurbvar, 3));
-		    blurbvar -= step;
+		    userGuidanceLabel.setEffect(new BoxBlur(blurvar, blurvar, 3));
+		    blurvar -= step;
 		}));
 		labelTimeline.setCycleCount(count);
 		labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
@@ -699,36 +719,13 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0);
 		
 		userGuidanceLabel.setOpacity(0);
-//		userGuidanceLabel.setFont(javafx.scene.text.Font.font("System", FontWeight.NORMAL, FontPosture.REGULAR, fontsize));
-//		userGuidanceLabel.setFont(fontfreemono);
-
-		String platform = System.getProperty("os.name").toLowerCase(); // CrossPlatform Layout allignment issues
-		
-		if	( platform.indexOf("linux") != -1 )
-		{
-		    bottomleftLabel.setTranslateX( -4); topleftLabel.setTranslateX( -4); toprightLabel.setTranslateX(  4); bottomrightLabel.setTranslateX(  4);
-		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY( -5); toprightLabel.setTranslateY( -5); bottomrightLabel.setTranslateY(  0);
-		}
-		else if ( platform.indexOf("windows") != -1 )
-		{
-		    bottomleftLabel.setTranslateX(-10); topleftLabel.setTranslateX(-10); toprightLabel.setTranslateX( 10); bottomrightLabel.setTranslateX( 10);
-		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(-20); toprightLabel.setTranslateY(-20); bottomrightLabel.setTranslateY(  0);
-		}
-		else if ( platform.indexOf("mac") != -1 )
-		{
-		    bottomleftLabel.setTranslateX(-13); topleftLabel.setTranslateX(-13); toprightLabel.setTranslateX( 13); bottomrightLabel.setTranslateX( 13);
-		    bottomleftLabel.setTranslateY( 10); topleftLabel.setTranslateY(-15); toprightLabel.setTranslateY(-15); bottomrightLabel.setTranslateY( 10);
-		}
-		else
-		{
-		    logTextArea.setStyle("-fx-font-family: \"Courier New\";");
-		    bottomleftLabel.setTranslateX(  0); topleftLabel.setTranslateX(  0); toprightLabel.setTranslateX(  0); bottomrightLabel.setTranslateX(  0);
-		    bottomleftLabel.setTranslateY(  0); topleftLabel.setTranslateY(  0); toprightLabel.setTranslateY(  0); bottomrightLabel.setTranslateY(  0);
-		}
 
 		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
+		
 		userGuidanceLabel.setText(message);
+		
 		fadevar = 0.0;
+		
 		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
 		{
 //		    Do Something
@@ -840,13 +837,13 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    double load = getProcessCpuLoad();
 	    cpuIndicator.setProgress(load);
-	    if (load >= 0.99) { textLabelTimeline.stop(); userGuidanceLabel.setTextFill(textLabelGradient1); }
+	    if (load >= 1.0) { textLabelTimeline.stop(); userGuidanceLabel.setTextFill(textLabelGradient1); }
 	}
         )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
 	
 	checksumTooltip = new Tooltip("");
 //	checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
-	checksumTooltip.setFont(javafx.scene.text.Font.font("Monospaced", FontWeight.NORMAL, FontPosture.REGULAR, 13));
+	checksumTooltip.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 13));
 
         Platform.runLater(new Runnable()
         {
@@ -944,14 +941,15 @@ public class GUIFX extends Application implements UI, Initializable
 	String env = "";
 	
 	String symbols = "";
-	symbols += "Symbols:         ";
+	symbols += "Symbols:            ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
 	
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
@@ -965,6 +963,7 @@ public class GUIFX extends Application implements UI, Initializable
 	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
 	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
 	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
+	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
 	env += "\r\n";
 	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
 	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
@@ -2426,23 +2425,24 @@ public class GUIFX extends Application implements UI, Initializable
         dialogPane.getStyleClass().add("myDialog");
         
         alert.setTitle("Information Dialog");
-        alert.setHeaderText("What is your One Time Pad Key file?");
+        alert.setHeaderText("What is your One Time Pad Key?");
         alert.setResizable(true);
         String infotext = new String();
         infotext =  "";
         infotext += "One Time Pad Keys are the most unbreakble keys.\r\n";
-        infotext += "FinalCrypt de/encrypts files with OTP key files.\r\n";
+        infotext += "FinalCrypt en/decrypts files with OTP key files.\r\n";
         infotext += "If you don't have a key then create a key first.\r\n";
         infotext += "\r\n";
         infotext += "An optional password enforces extra encryption\r\n";
-        infotext += "so a lost / stolen key file can't unlock your data.\r\n";
+        infotext += "so a lost/stolen key file can't unlock your data.\r\n";
         infotext += "\r\n";
-        infotext += "==============================\r\n";
+        infotext += "=================================================\r\n";
         infotext += "\r\n";
         infotext += "Keep keys secret and backed up on USB sticks!\r\n";
         infotext += "\r\n";
         infotext += "Without your key file (and optional password)\r\n";
         infotext += "there is no way to decrypt / recover your data\r\n";
+//        infotext += "\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }
@@ -2467,7 +2467,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "Decrypted files get the \".bit\" extension removed.\r\n";
         infotext += "\r\n";
         infotext += "Original files are securely deleted after encryption.\r\n";
-        infotext += "\r\n";
+//        infotext += "\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
     }

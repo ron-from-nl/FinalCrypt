@@ -72,11 +72,11 @@ public class FinalCrypt extends Thread
 //											❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘ ✔ ⚛
 //											🡔 🡕 🡖 🡗 | 🡤 🡥 🡦 🡧 | 🡬 🡭 🡮 🡯 | 🡴 🡵 🡶 🡷 | 🡼 🡽 🡾 🡿 | 🢄 🢅 🢆 🢇 | ⬈ ⬉ ⬊ ⬋ | ⇖ ⇗ ⇘ ⇙ | ↖ ↗ ↘ ↙
     public static final String UTF8_ENCRYPT_SYMBOL =		    "🔒";
-    public static final String UTF8_ENCRYPT_LEGACY_SYMBOL =	    "🔀";
+    public static final String UTF8_XOR_NOMAC_SYMBOL =	    "🔀";
     public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "⚠";
 
     public static final String UTF8_ENCRYPT_DESC =		    "Encrypt";
-    public static final String UTF8_ENCRYPT_LEGACY_DESC =	    "Encrypt Legacy";
+    public static final String UTF8_XOR_NOMAC_DESC =	    "XOR";
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
 
     public static final String UTF8_DECRYPT_SYMBOL =		    "🔓";
@@ -257,7 +257,7 @@ public class FinalCrypt extends Thread
 		}
 		else // Disable Message Authentication Mode
 		{
-		    UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_LEGACY_SYMBOL;
+		    UTF8_PROCESS_SYMBOL = UTF8_XOR_NOMAC_SYMBOL;
 		    if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
 		    else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
@@ -697,7 +697,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(   ui,            "", targetDestinPath,		  false, keySourceFCPath.path,	 verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.log("\r\n", true, false, false, false, false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 

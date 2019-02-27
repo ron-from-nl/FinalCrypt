@@ -55,6 +55,7 @@ public class Configuration
     private  Path errorFilePath;
     private final Calendar currentTimeCalendar;
     private final String timeStampString;
+    private final String timeString;
 
     public Configuration(UI ui)
     {
@@ -71,6 +72,14 @@ public class Configuration
         String.format("%02d", currentTimeCalendar.get(Calendar.HOUR_OF_DAY)) +
         String.format("%02d", currentTimeCalendar.get(Calendar.MINUTE)) +
         String.format("%02d", currentTimeCalendar.get(Calendar.SECOND));
+
+	timeString = "" +
+        String.format("%04d", currentTimeCalendar.get(Calendar.YEAR)) + "-" +
+        String.format("%02d", currentTimeCalendar.get(Calendar.MONTH) + 1) + "-" +
+        String.format("%02d", currentTimeCalendar.get(Calendar.DAY_OF_MONTH)) + " " +
+        String.format("%02d", currentTimeCalendar.get(Calendar.HOUR_OF_DAY)) + ":" +
+        String.format("%02d", currentTimeCalendar.get(Calendar.MINUTE)) + ":" +
+        String.format("%02d", currentTimeCalendar.get(Calendar.SECOND));
         
         dataDirPath =   Paths.get(System.getProperty("user.home"), ".finalcrypt");
         logDirPath =    Paths.get(dataDirPath.toString(),"log");
@@ -85,10 +94,11 @@ public class Configuration
 
     // Just the getters and setters
 
-    public Path  getDataDirPath()   {return dataDirPath;}
-    public Path  getLogDirPath()    {return logDirPath;}
-    public Path  getLogFilePath()   {return logFilePath;}
-    public Path  getErrFilePath() {return errorFilePath;}
+    public Path	    getDataDirPath()	{return dataDirPath;}
+    public Path	    getLogDirPath()	{return logDirPath;}
+    public Path	    getLogFilePath()	{return logFilePath;}
+    public Path	    getErrFilePath()	{return errorFilePath;}
+    public String   getTime()		{return timeString;}
     
     private void println(String string)
     {

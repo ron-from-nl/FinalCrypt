@@ -778,14 +778,15 @@ public class CLUI implements UI
 	String env = "";
 	
 	String symbols = "";
-	symbols += "Symbols:         ";
+	symbols += "Symbols:            ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-//	symbols += FinalCrypt.UTF8_ENCRYPT_LEGACY_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_LEGACY_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL;
 	
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
 	env += "\r\n";
@@ -799,6 +800,7 @@ public class CLUI implements UI
 	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
 	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
 	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
+	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
 	env += "\r\n";
 	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
 	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
