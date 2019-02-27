@@ -419,6 +419,9 @@ public class GUIFX extends Application implements UI, Initializable
     private Timeline textLabelTimeline;
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
+    private final String MAC_ON = "MAC ON";
+    private final String MAC_OFF = "MAC OFF";
+    private final String MAC_OFF_Q = "MAC OFF ?";
     
     @Override
     public void start(Stage stage) throws Exception
@@ -439,8 +442,8 @@ public class GUIFX extends Application implements UI, Initializable
 
         stage.setScene(scene);
         stage.setTitle(Version.getProductName());
-        stage.setMinWidth(1100);
-        stage.setMinHeight(700);
+        stage.setMinWidth(1440);
+        stage.setMinHeight(800);
         stage.setMaximized(true);
         stage.setOnCloseRequest(e -> Platform.exit());	
 //	stage.setOnCloseRequest(new EventHandler<WindowEvent>() { @Override public void handle(WindowEvent e)
@@ -2759,7 +2762,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	encryptionModeToggleButton.setDisable(true);
 	encryptionModeToggleButton.setSelected(false);
-	encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
+	encryptionModeToggleButton.setText(MAC_ON);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
 	encryptionModeToggleButton.setMouseTransparent(false);
     }
@@ -2769,7 +2772,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	encryptionModeToggleButton.setDisable(false);
 	encryptionModeToggleButton.setSelected(false);
-	encryptionModeToggleButton.setText("Disable\r\n MAC Mode?");
+	encryptionModeToggleButton.setText(MAC_OFF_Q);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
 	encryptionModeToggleButton.setMouseTransparent(false);
 	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
@@ -2785,7 +2788,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void enableMACMode()
     {
 	if ( flashMACTimeline != null ) { flashMACTimeline.stop(); }
-	encryptionModeToggleButton.setText("Enabled\r\nMAC Mode");
+	encryptionModeToggleButton.setText(MAC_ON);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
 
 	updateFileChoosers(true, true);
@@ -2801,7 +2804,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ( autoDisableTimeline != null ) { autoDisableTimeline.stop(); }
 
-	encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");
+	encryptionModeToggleButton.setText(MAC_OFF);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
 	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
 
@@ -2817,7 +2820,7 @@ public class GUIFX extends Application implements UI, Initializable
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 0.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.0), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} ));
-	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText("Disabled\r\nMAC Mode");} ));
+	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 1.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText(MAC_OFF);} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));   encryptionModeToggleButton.setText("");} ));
 	flashMACTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds( 2.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText("");} ));
 	flashMACTimeline.setCycleCount(Animation.INDEFINITE);

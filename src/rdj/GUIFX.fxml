@@ -13,18 +13,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="700.0" minWidth="1100.0" prefHeight="886.0" prefWidth="1327.0" style="-fx-background-color: #000000;" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFX">
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="800.0" minWidth="1600.0" prefHeight="800.0" prefWidth="1400.0" style="-fx-background-color: #000000;" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFX">
     <children>
-      <VBox minHeight="700.0" prefHeight="700.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TabPane fx:id="tab" focusTraversable="false" minHeight="350.0" style="-fx-border-color: #000000;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <TabPane fx:id="tab" focusTraversable="false" style="-fx-border-color: #000000;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
                 <Tab fx:id="encryptTab" closable="false" onSelectionChanged="#encryptTabSelectionChanged" text="Encrypt">
                      <content>
                         <GridPane>
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -32,11 +32,11 @@
                            <children>
                               <AnchorPane minWidth="500.0" GridPane.vgrow="ALWAYS">
                                  <children>
-                                    <VBox prefHeight="396.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox prefHeight="601.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top">
+                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top" VBox.vgrow="NEVER">
                                              <children>
-                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefWidth="664.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefHeight="50.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="22.0" />
                                                       <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="181.0" minWidth="11.0" prefWidth="52.0" />
@@ -87,12 +87,12 @@
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane minHeight="300.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                          <AnchorPane VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane minHeight="450.0" prefHeight="450.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="targetFileSwingNode" />
-                                                      <BorderPane cache="true" mouseTransparent="true" opacity="0.15" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #554400;" />
+                                                      <BorderPane cache="true" mouseTransparent="true" opacity="0.15" style="-fx-background-color: #554400;" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -103,11 +103,11 @@
                               </AnchorPane>
                               <AnchorPane focusTraversable="true" minWidth="500.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                                  <children>
-                                    <VBox prefHeight="396.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox prefHeight="601.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top">
+                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top" VBox.vgrow="NEVER">
                                              <children>
-                                                <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" prefWidth="663.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" prefHeight="50.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                                       <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="2">
@@ -161,12 +161,12 @@
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane minHeight="300.0" prefWidth="500.0" VBox.vgrow="ALWAYS">
+                                          <AnchorPane VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane minHeight="450.0" prefHeight="571.0" prefWidth="663.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="keyFileSwingNode" StackPane.alignment="BOTTOM_CENTER" />
-                                                      <BorderPane cache="true" mouseTransparent="true" opacity="0.15" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #554400;" />
+                                                      <SwingNode fx:id="keyFileSwingNode" StackPane.alignment="CENTER" />
+                                                      <BorderPane cache="true" mouseTransparent="true" opacity="0.15" style="-fx-background-color: #554400;" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -181,9 +181,9 @@
                 </Tab>
                 <Tab fx:id="logTab" closable="false" onSelectionChanged="#logTabSelectionChanged" text="Log">
                      <content>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane>
                            <children>
-                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="567.0" prefWidth="1200.0" styleClass="log" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="580.0" prefWidth="1298.0" styleClass="log" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -196,32 +196,32 @@
                 </Tab>
               </tabs>
             </TabPane>
-            <AnchorPane maxHeight="329.0" minHeight="85.0" prefHeight="289.0" prefWidth="1327.0" styleClass="background_bottom" VBox.vgrow="SOMETIMES">
+            <AnchorPane maxHeight="260.0" minHeight="260.0" styleClass="background_bottom" VBox.vgrow="NEVER">
                <children>
-                  <VBox alignment="BOTTOM_CENTER" cache="true" layoutY="16.0" maxHeight="292.0" maxWidth="1.7976931348623157E308" minHeight="85.0" prefHeight="289.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="BOTTOM_CENTER" cache="true" layoutX="60.0" layoutY="48.0" maxHeight="260.0" maxWidth="1.7976931348623157E308" minHeight="85.0" prefHeight="260.0" prefWidth="1400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane prefHeight="156.0" prefWidth="1327.0">
+                        <AnchorPane>
                            <children>
-                              <GridPane fx:id="dashboardGridPane" alignment="TOP_CENTER" layoutX="48.0" layoutY="55.0" prefHeight="137.0" prefWidth="1267.0" style="-fx-font-size: 11;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane fx:id="dashboardGridPane" alignment="TOP_CENTER" layoutX="48.0" layoutY="19.0" prefHeight="140.0" prefWidth="1340.0" style="-fx-font-size: 11;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" valignment="CENTER" />
@@ -237,7 +237,7 @@
                                  <children>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="44.0" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="targetWarningLabel" alignment="BASELINE_LEFT" contentDisplay="CENTER" layoutX="15.0" layoutY="8.0" prefHeight="25.0" prefWidth="73.0" styleClass="dashboard_generic" text="Skipping" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="targetWarningLabel" alignment="BASELINE_LEFT" contentDisplay="CENTER" layoutX="15.0" layoutY="8.0" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="Skipping" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
@@ -286,7 +286,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.columnSpan="2">
                                        <children>
-                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="142.0" styleClass="dashboard_generic" text="Key" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="190.0" styleClass="dashboard_generic" text="Key" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="2">
@@ -364,7 +364,7 @@
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" scaleX="0.9" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="30.0" prefWidth="183.0" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="15.0" prefWidth="190.0" textFill="#808080" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="2">
@@ -525,12 +525,12 @@
                                           <Label fx:id="encryptableSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-7.0" layoutY="-4.0" prefHeight="27.0" prefWidth="61.0" styleClass="dashboard_generic" text="0 Bytes" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                                    <AnchorPane GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="remainingTimeHeaderLabel" alignment="BOTTOM_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="12.0" prefHeight="27.0" prefWidth="183.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Remain" translateY="-4.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                                    <AnchorPane GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="remainingTimeLabel" alignment="BOTTOM_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="3.0" layoutY="-7.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -542,12 +542,12 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane layoutX="671.0" layoutY="10.0" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
+                                    <AnchorPane layoutX="671.0" layoutY="10.0" maxHeight="25.0" minHeight="25.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="elapsedTimeHeaderLabel" alignment="CENTER_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" layoutY="-3.0" prefHeight="25.0" prefWidth="213.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Elapsed" translateY="-1.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
+                                    <AnchorPane GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="5" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="elapsedTimeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="60.0" layoutY="10.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -559,12 +559,12 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
+                                    <AnchorPane GridPane.columnIndex="14" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="totalTimeHeaderLabel" alignment="TOP_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="14.0" layoutY="2.0" prefHeight="27.0" prefWidth="185.0" style="-fx-font-size: 13;" styleClass="dashboard_generic" text="Tot time" translateY="3.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
+                                    <AnchorPane GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.rowSpan="2">
                                        <children>
                                           <Label fx:id="totalTimeLabel" alignment="TOP_CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" layoutX="42.0" layoutY="-15.0" opacity="0.9" prefHeight="36.0" prefWidth="222.0" style="-fx-font-size: 18;" styleClass="text_color_standard" text="00:00:00" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -642,21 +642,21 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2">
                                        <children>
-                                          <Label fx:id="checksumHeader" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="142.0" styleClass="dashboard_generic" text="Checksum (?)" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Label fx:id="checksumHeader" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="190.0" styleClass="dashboard_generic" text="Checksum (?)" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="200.0" scaleX="0.9" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                        <children>
-                                          <Label fx:id="checksumLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" onMouseClicked="#checksumLabelOnMouseClicked" prefHeight="15.0" prefWidth="222.0" textFill="#c9c9c9" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="checksumLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-2.0" onMouseClicked="#checksumLabelOnMouseClicked" prefHeight="15.0" prefWidth="190.0" textFill="#c9c9c9" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="11.0" />
                                              </font>
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2">
+                                    <AnchorPane GridPane.columnIndex="12" GridPane.columnSpan="2">
                                        <children>
-                                          <Label fx:id="passwordHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="15.0" prefWidth="142.0" styleClass="dashboard_generic" text="Password" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="passwordHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="15.0" prefWidth="112.0" styleClass="dashboard_generic" text="Password" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
                                                 <Tooltip text="An optional password can be set after selecting a valid key">
                                                    <font>
@@ -667,7 +667,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" scaleX="0.9" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                                    <AnchorPane scaleX="0.9" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                        <children>
                                           <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="21.0" prefWidth="142.0" promptText="Password&lt;Enter&gt;" scaleShape="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
@@ -704,7 +704,7 @@
                                           <Label fx:id="undecryptableSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-6.0" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0 Bytes" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="126.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.rowSpan="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                    <AnchorPane GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.rowSpan="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                                        <children>
                                           <ImageView fx:id="keyImageView" disable="true" layoutY="-20.0" opacity="0.1" pickOnBounds="true" scaleX="0.4" scaleY="0.4">
                                              <image>
@@ -713,11 +713,11 @@
                                           </ImageView>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="root" prefHeight="170.0" prefWidth="471.0" styleClass="background_dark" GridPane.columnIndex="6" GridPane.columnSpan="6" GridPane.rowSpan="9">
+                                    <AnchorPane fx:id="root" maxWidth="600.0" styleClass="background_dark" GridPane.columnIndex="6" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowSpan="9" GridPane.valignment="CENTER">
                                        <children>
-                                          <StackPane prefHeight="170.0" prefWidth="422.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <StackPane prefHeight="135.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" opacity="0.05" prefHeight="155.0" prefWidth="441.0" styleClass="userguide" text="FinalCrypt" textAlignment="CENTER">
+                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" opacity="0.05" prefHeight="135.0" prefWidth="580.0" styleClass="userguide" text="FinalCrypt" textAlignment="CENTER" StackPane.alignment="CENTER">
                                                    <font>
                                                       <Font size="64.0" />
                                                    </font>
@@ -776,27 +776,27 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="60.0" prefWidth="1327.0">
+                        <AnchorPane minHeight="50.0" minWidth="800.0" prefHeight="41.0" prefWidth="900.0">
                            <children>
-                              <GridPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="35.0" prefHeight="36.0" prefWidth="1267.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane prefHeight="50.0" prefWidth="1140.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="17.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="17.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="NEVER" minWidth="90.0" prefWidth="90.0" />
-                                    <ColumnConstraints hgrow="NEVER" minWidth="90.0" prefWidth="90.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="50.0" prefWidth="50.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="18.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="18.0" prefWidth="8.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" prefWidth="50.0" />
                                     <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="15.0" prefWidth="8.0" />
                                     <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
                                     <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="11.0" prefWidth="8.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="40.0" valignment="CENTER" vgrow="NEVER" />
                                 </rowConstraints>
                                  <children>
                                     <AnchorPane>
                                        <children>
-                                          <Button fx:id="encryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="55.0" prefWidth="216.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="encryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#encryptButtonAction" prefHeight="50.0" prefWidth="194.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Encrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -805,7 +805,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="1">
                                        <children>
-                                          <Button fx:id="decryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="55.0" prefWidth="229.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="decryptButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#decryptButtonAction" prefHeight="50.0" prefWidth="194.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -814,7 +814,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="2">
                                        <children>
-                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="55.0" prefWidth="69.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Ⅱ" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="Ⅱ" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -829,7 +829,7 @@
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
                                        <children>
-                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="35.0" prefWidth="99.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="■" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" minHeight="40.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 18;" styleClass="background_bottom" text="■" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -841,27 +841,27 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="4">
                                        <children>
-                                          <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" layoutY="-6.0" opacity="0.5" prefHeight="39.0" prefWidth="89.0" progress="0.5" scaleX="0.8" scaleY="0.8" style="-fx-text-fill: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" layoutY="-6.0" minHeight="40.0" opacity="0.5" prefHeight="50.0" prefWidth="50.0" progress="0.5" scaleX="0.8" scaleY="0.8" style="-fx-text-fill: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="5">
                                        <children>
-                                          <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-20.0" mnemonicParsing="false" onAction="#keyDeviceButtonAction" prefHeight="36.0" prefWidth="191.0" styleClass="background_bottom" text="Create OTP Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyDeviceButtonAction" prefHeight="50.0" prefWidth="171.0" styleClass="background_bottom" text="Create OTP Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="6">
                                        <children>
-                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="45.0" prefWidth="153.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">
                                        <children>
-                                          <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="45.0" prefWidth="153.0" styleClass="background_bottom" text="Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" minHeight="40.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
                                        <children>
-                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="43.0" prefWidth="100.0" style="-fx-font-size: 10;" styleClass="background_bottom" text="Enabled&#10;MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="50.0" prefWidth="125.0" style="-fx-font-size: 10;" styleClass="background_bottom" text="MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -908,9 +908,9 @@
                                   <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane>
+                                    <AnchorPane GridPane.hgrow="ALWAYS">
                                        <children>
-                                          <Label fx:id="statusLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1033.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="statusLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" maxHeight="25.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="25.0" prefWidth="1106.0" style="-fx-background-color: #222222;" styleClass="text_color_low" text="Status" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Monospaced Regular" size="12.0" />
                                              </font>
