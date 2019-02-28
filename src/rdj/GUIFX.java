@@ -95,6 +95,7 @@ import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -112,6 +113,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -168,12 +170,12 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Button stopButton;
     private boolean processRunning;
-    private final int NONE = 0;
-    private final int ENCRYPT = 1;
-    private final int DECRYPT = 2;
-    private final int CREATE = 3;
-    private final int CLONE = 4;
-    private int processRunningType = NONE;
+    private final int NONE		    = 0;
+    private final int ENCRYPT_MODE	    = 1;
+    private final int DECRYPT_MODE	    = 2;
+    private final int CREATE_KEYDEV_MODE    = 3;
+    private final int CLONE_KEYDEV_MODE	    = 4;
+    private int processRunningMode =	    NONE;
     @FXML
     private Label copyrightLabel;
 //    private TimerTask updateProgressTask;
@@ -419,9 +421,37 @@ public class GUIFX extends Application implements UI, Initializable
     private Timeline textLabelTimeline;
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
-    private final String MAC_ON = "MAC ON";
-    private final String MAC_OFF = "MAC OFF";
-    private final String MAC_OFF_Q = "MAC OFF ?";
+
+    private final String MAC_ON		= "MAC ON";
+    private final String MAC_OFF	= "MAC OFF";
+    private final String MAC_OFF_Q	= "MAC OFF ?";
+
+    public final String CREATE_KEY	= "Create Key";
+    public final String CREATE_KEYDEV	= "Create Key Device";
+    public final String CLONE_KEYDEV	= "Clone Key Device";
+
+    public final String SELECT_KEY	= "Select Key";
+    public final String SELECT_FILES	= "Select Files";
+
+    public final String SCANNING	= "Scanning";
+    public final String WRONG_KEY_PASS	= "Wrong Key / Pass ?";
+
+    public final String ENCRYPT		= "Encrypt";
+    public final String DECRYPT		= "Decrypt";
+    public final String EN_DECRYPT	= "Encrypt / Decrypt";
+
+    public final String ENCRYPTING	= "Encrypting";
+    public final String DECRYPTING	= "Decrypting";
+    private double fontsizefactor;
+    private String fadeInMessage;
+    private int loadLowCounter;
+    private int loadHighCounter;
+    private int cyclecount;
+    private int cyclecenter;
+    @FXML
+    private BorderPane targetFileFoil;
+    @FXML
+    private BorderPane keyFileFoil;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -455,8 +485,9 @@ public class GUIFX extends Application implements UI, Initializable
 	stage.show();
 
         version = new Version(ui);
+	version.checkCurrentlyInstalledVersion(ui);
         stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
-	
+	fadeInMessage = version.getCurrentlyInstalledOverallVersionString();
     }
 
     @Override
@@ -489,6 +520,7 @@ public class GUIFX extends Application implements UI, Initializable
 //        targetFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
 //        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         targetFileChooser = new JFileChooser();
+	
         targetFileChooser.setControlButtonsAreShown(false);
         targetFileChooser.setToolTipText("Right mousclick for Refresh");
         targetFileChooser.setMultiSelectionEnabled(true);
@@ -508,6 +540,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 //        keyFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
         keyFileChooser = new JFileChooser();
+	
         keyFileChooser.setControlButtonsAreShown(false);
         keyFileChooser.setToolTipText("Right mousclick for Refresh");
         keyFileChooser.setMultiSelectionEnabled(true);
@@ -535,6 +568,8 @@ public class GUIFX extends Application implements UI, Initializable
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	keyImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/key.png")));
+	
+	keyDeviceButton.setText(CREATE_KEY);
 
 //	=========================================================================================================================================
 //	============================================================= USER GUIDANCE =============================================================
@@ -581,16 +616,21 @@ public class GUIFX extends Application implements UI, Initializable
 	}
 
 //	===============================================================================================================================================
-//	USER GUIDANCE TEXTLABEL
+//	USERGUIDANCE GRADIENT ANIMATION
 //	===============================================================================================================================================
-	
-	userGuidanceLabel.setText("FinalCrypt");
 
+	
+
+	
+	String colorbase = "#504030";// #5A2D0C #663B1B
+	String colorhigh = "#BBBBBB";
+	
 	radius = 0.6;
 	focusAngle = 0.0;
         focusDistance = 0.0;
 	startX = -0.5;
 	endX = 1.55;
+	cyclecenter = 50;
 	variable = startX;
 	stepX = 0.02;
 	centerX = endX;
@@ -600,8 +640,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    (
 		focusAngle, focusDistance, 0.5, centerY, radius, proportional, CycleMethod.NO_CYCLE, new Stop[]
 		{
-		    new Stop(0, Color.valueOf("#bbbbbb"))
-		    ,new Stop(1, Color.valueOf("#5A2D0C"))
+		    new Stop(0, Color.valueOf(colorhigh))
+		    ,new Stop(1, Color.valueOf(colorbase))
 		}
 	    );
 
@@ -611,8 +651,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    (
 		focusAngle, focusDistance, centerX, centerY, radius, proportional, CycleMethod.NO_CYCLE, new Stop[]
 		{
-		    new Stop(0, Color.valueOf("#bbbbbb"))
-		    ,new Stop(1, Color.valueOf("#5A2D0C"))
+		    new Stop(0, Color.valueOf(colorhigh))
+		    ,new Stop(1, Color.valueOf(colorbase))
 		}
 	    );
 	    variable += stepX; if (variable >= endX ) { variable = startX; }
@@ -622,35 +662,9 @@ public class GUIFX extends Application implements UI, Initializable
 //	    log(Double.toString(variable), true, false, false, false ,false);
 	}));
 	textLabelTimeline.setCycleCount(Animation.INDEFINITE);
-	textLabelTimeline.play();
 	
+	welcome();
 	
-//	textLabel Introduction Animation ==========================================================
-
-
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
-        fadeTransition.setFromValue(0.05f);
-        fadeTransition.setToValue(0.4f);
-        fadeTransition.setCycleCount(1);
-        fadeTransition.setAutoReverse(true);
-	fadeTransition.setDelay(Duration.seconds(1));
-	fadeTransition.setInterpolator(Interpolator.EASE_OUT);
-	
-	ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(3000), userGuidanceLabel);
-        scaleTransition.setFromX(0.98f);scaleTransition.setToX(1.0f);
-        scaleTransition.setFromY(0.98f);scaleTransition.setToY(1.0f);
-        scaleTransition.setFromZ(0.98f);scaleTransition.setToZ(1.0f);
-        scaleTransition.setCycleCount(1);
-        scaleTransition.setAutoReverse(false);
-	scaleTransition.setDelay(Duration.seconds(1));
-	scaleTransition.setInterpolator(Interpolator.EASE_BOTH);
-
-	ParallelTransition parallelTransition = new ParallelTransition();
-        parallelTransition.getChildren().addAll( fadeTransition, scaleTransition );
-        parallelTransition.setCycleCount(1);
-        
-	parallelTransition.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent actionEvent) { welcome(); } }); // Starts Welcome
-	parallelTransition.play();
     }
     
     public void textLabelBlurMessage(String message, int durationMSec) // 1000
@@ -693,71 +707,6 @@ public class GUIFX extends Application implements UI, Initializable
 	labelTimeline.play();
     }
     
-    synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
-    {
-//	FADE OUT
-	
-	fadevar = 0.5;
-	final double step = 0.05;
-        Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
-	{
-//	    Do Something
-	    userGuidanceLabel.setOpacity(fadevar);
-	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
-	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
-	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
-	    if (bottomrightLabel.getOpacity() > 0.0)	{ bottomrightLabel.setOpacity(fadevar); }
-	    fadevar -= step;
-	}));
-	labelTimeline.setCycleCount(10);
-	labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
-	{
-            @Override public void handle(ActionEvent actionEvent)
-	    {
-//		FADE IN
-		
-		bottomleftLabel.setOpacity(0);
-		topleftLabel.setOpacity(0);
-		toprightLabel.setOpacity(0);
-		bottomrightLabel.setOpacity(0);
-		
-		userGuidanceLabel.setOpacity(0);
-
-		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
-		
-		userGuidanceLabel.setText(message);
-		
-		fadevar = 0.0;
-		
-		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
-		{
-//		    Do Something
-		    userGuidanceLabel.setOpacity(fadevar);
-		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
-		    if (topleft) { topleftLabel.setOpacity(fadevar); }
-		    if (topright) { toprightLabel.setOpacity(fadevar); }
-		    if (bottomright) { bottomrightLabel.setOpacity(fadevar); }
-		    if ( fadevar < 0.5 ) { fadevar += step;}
-		}));
-		labelTimeline.setCycleCount(10);
-		labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
-		{
-		    @Override public void handle(ActionEvent actionEvent)
-		    {
-			if (!bottomleft) { bottomleftLabel.setOpacity(0.0); }
-			if (!topleft) { topleftLabel.setOpacity(0.0); }
-			if (!topright) { toprightLabel.setOpacity(0.0); }
-			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
-		        userGuidanceLabel.setOpacity(0.5);
-		    }
-		});
-		
-		labelTimeline.play();
-	    }
-        });
-	labelTimeline.play();
-    }
-    
     public double getProcessCpuLoad()
     {
         try { attribList = mbs.getAttributes(name, new String[]{ procCPULoadAttribute });}
@@ -789,23 +738,23 @@ public class GUIFX extends Application implements UI, Initializable
 
 	String[] arrowsArray = new String[]
 	{
-	    ""
-	    ,"❸❷❶❹"
-	    ,"🅒🅑🅐🅓"
-	    ,"⚉⚉⚉⚉"
-	    ,"◤◥◢◣" // Prefer monospaced ◤ XY -18 -28 | ◥ XY 18 -28 | ◢ XY 18 8 | ◣ XY -18 8 
-	    ,"◸◹◿◺"
-	    ,"🡔🡕🡖🡗"
-	    ,"🢄🢅🢆🢇"
-	    ,"⬈⬉⬊⬋" // asci
-	    ,"⇖⇗⇘⇙" // asci
-	    ,"↖↗↘↙"
-	    ,"🡤🡥🡦🡧"
-	    ,"🡬🡭🡮🡯"
-	    ,"🡴🡵🡶🡷"
-	    ,"🡼🡽🡾🡿" // nice
+	    ""			//  0
+	    ,"❸❷❶❹"		//  1
+	    ,"🅒🅑🅐🅓"		//  2
+	    ,"⚉⚉⚉⚉"		//  3
+	    ,"◤◥◢◣"		//  4
+	    ,"◸◹◿◺"		//  5
+	    ,"🡔🡕🡖🡗"		//  6
+	    ,"🢄🢅🢆🢇"		//  7
+	    ,"⬈⬉⬊⬋"		//  8 asci
+	    ,"⇖⇗⇘⇙"		//  9 asci
+	    ,"↖↗↘↙"		// 10
+	    ,"🡤🡥🡦🡧"		// 11
+	    ,"🡬🡭🡮🡯"		// 12
+	    ,"🡴🡵🡶🡷"		// 13
+	    ,"🡼🡽🡾🡿"		// 14 nice
 	};
-	String arrows = arrowsArray[4];
+	String arrows = arrowsArray[4]; // Select the symbol
 
 	if (arrows.length()==4)
 	{
@@ -840,7 +789,17 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    double load = getProcessCpuLoad();
 	    cpuIndicator.setProgress(load);
-	    if (load >= 1.0) { textLabelTimeline.stop(); userGuidanceLabel.setTextFill(textLabelGradient1); }
+//	    userGuidanceLabel.setTextFill(textLabelGradient1);
+	    if (load >= 0.95)
+	    {
+		loadHighCounter++; loadLowCounter = 0;
+		if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (loadHighCounter > 5) )  { textLabelTimeline.pause(); /*textLabelTimeline.setCycleCount(cyclecenter);*/ } 
+	    }
+	    else
+	    {
+		loadLowCounter++; loadHighCounter = 0;
+		if ( (textLabelTimeline.getStatus() == Animation.Status.PAUSED) & (loadLowCounter > 25) )  { textLabelTimeline.play(); } 
+	    }
 	}
         )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
 	
@@ -881,37 +840,77 @@ public class GUIFX extends Application implements UI, Initializable
                 the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
                 See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
                 JDK 8 all the items in java.util.prefs:                 
-*/                
-                
-                prefs = Preferences.userRoot().node(this.getClass().getName());
-//                prefs = Preferences.userRoot().node(Version.getProductName());
+*/
+		fontsizefactor = 1.3;
+		
+		Version ver = new Version(ui); ver.checkCurrentlyInstalledVersion(ui);
+		fadeInMessage = Version.getProductName();
+//		fadeInMessage = Version.getProductName() + " " + ver.getCurrentlyInstalledOverallVersionString();
+		userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / fadeInMessage.length() * fontsizefactor) + "px;");
+	//	userGuidanceLabel.setStyle("-fx-font-size: 64px;");
+		userGuidanceLabel.setText(fadeInMessage);
+		textLabelTimeline.play();
 
-//		Hide Intro
-		String val = prefs.get("Hide Intro", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 
-                if (! val.equals("Yes")) // if NOT Yes
-                {
-		    textLabelFadeMessage("Create Key", 64, false, false, false, true);
-		    prefs.put("Hide Intro", "Yes");
-//                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
-//                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
-                }
-		else
+	//	textLabel Introduction Animation ==========================================================
+
+
+		FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
+		fadeTransition.setFromValue(0.05f);
+		fadeTransition.setToValue(0.7f);
+		fadeTransition.setCycleCount(1);
+		fadeTransition.setAutoReverse(true);
+		fadeTransition.setDelay(Duration.seconds(1));
+		fadeTransition.setInterpolator(Interpolator.EASE_OUT);
+
+		ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(3000), userGuidanceLabel);
+		scaleTransition.setFromX(0.98f);scaleTransition.setToX(1.0f);
+		scaleTransition.setFromY(0.98f);scaleTransition.setToY(1.0f);
+		scaleTransition.setFromZ(0.98f);scaleTransition.setToZ(1.0f);
+		scaleTransition.setCycleCount(1);
+		scaleTransition.setAutoReverse(false);
+		scaleTransition.setDelay(Duration.seconds(1));
+		scaleTransition.setInterpolator(Interpolator.EASE_BOTH);
+
+		ParallelTransition parallelTransition = new ParallelTransition();
+		parallelTransition.getChildren().addAll( fadeTransition, scaleTransition );
+		parallelTransition.setCycleCount(1);
+
+		parallelTransition.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent actionEvent)
 		{
-		    textLabelFadeMessage("Select Key", 64, false, false, true, false);
-		}
+//		    welcome();
+//		    prefs = Preferences.userRoot().node(this.getClass().getName());
+			prefs = Preferences.userRoot().node(Version.getProductName());
 
-//		Last Update Checked
-		long updateChecked = 0; // Epoch date
-//		long updateCheckPeriod = 1000L*20L; // Just to test auto update function
-		long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
-		now = Calendar.getInstance().getTimeInMillis(); // Epoch date
-		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-		boolean invalidUpdateCheckedValue = false;
-		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
-		if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
+			String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+			if (! val.equals("Yes")) // First time
+			{
+			    textLabelFadeMessage(CREATE_KEY, 64, false, false, false, true);
+			    prefs.put("Initialized", "Yes");
+//	                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
+//	                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
+			}
+			else
+			{
+			    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+			}
+			
+			disableFileChoosers(false);
+
+//			Last Update Checked
+			long updateChecked = 0; // Epoch date
+//			long updateCheckPeriod = 1000L*20L; // Just to test auto update function
+			long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
+			now = Calendar.getInstance().getTimeInMillis(); // Epoch date
+			val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+			boolean invalidUpdateCheckedValue = false;
+			try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
+			if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
+		}});
+		parallelTransition.play();
             }
         });
+	
         Alert alert = new Alert(AlertType.INFORMATION);
 
 //      Style the Alert
@@ -937,6 +936,111 @@ public class GUIFX extends Application implements UI, Initializable
 //            }
 //        });
 //        alert.showAndWait();        
+    }
+    
+    private void disableFileChoosers(boolean param)
+    {
+	if (param)
+	{
+	    keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
+	    
+	    Timeline disableTimeline = new Timeline
+	    (
+		    new KeyFrame(Duration.ZERO,
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.15),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.15)),
+		    new KeyFrame(Duration.seconds(1),
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.35),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.35))
+	    );
+	    disableTimeline.setAutoReverse(false);
+	    disableTimeline.setOnFinished(new EventHandler<ActionEvent>() {@Override public void handle(ActionEvent actionEvent) {  }});
+	    disableTimeline.play();
+	}
+	else
+	{
+	    Timeline enableTimeline = new Timeline
+	    (
+		    new KeyFrame(Duration.ZERO,
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.35),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.35)),
+		    new KeyFrame(Duration.seconds(1),
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.15),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.15))
+	    );
+	    enableTimeline.setAutoReverse(false);
+	    enableTimeline.setOnFinished(new EventHandler<ActionEvent>() {@Override public void handle(ActionEvent actionEvent) { keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param); }});
+	    enableTimeline.play();
+	}
+    }
+synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
+    {
+//	FADE OUT
+	
+	final int count = 10;
+	final int cycleduration = 50;
+	final double fadevarmax = 0.7;
+	
+	fadevar = fadevarmax;
+	final double step = fadevarmax/count;
+        Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae ->
+	{
+//	    Do Something
+	    userGuidanceLabel.setOpacity(fadevar);
+	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
+	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
+	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
+	    if (bottomrightLabel.getOpacity() > 0.0)	{ bottomrightLabel.setOpacity(fadevar); }
+	    fadevar -= step;
+	}));
+	labelTimeline.setCycleCount(10);
+	labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
+	{
+            @Override public void handle(ActionEvent actionEvent)
+	    {
+//		FADE IN
+		
+		bottomleftLabel.setOpacity(0);
+		topleftLabel.setOpacity(0);
+		toprightLabel.setOpacity(0);
+		bottomrightLabel.setOpacity(0);
+		
+		userGuidanceLabel.setOpacity(0);
+
+//		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
+		userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * fontsizefactor) + "px;");
+		
+		userGuidanceLabel.setText(message);
+		
+		fadevar = 0.0;
+		
+		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae ->
+		{
+//		    Do Something
+		    userGuidanceLabel.setOpacity(fadevar);
+		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
+		    if (topleft) { topleftLabel.setOpacity(fadevar); }
+		    if (topright) { toprightLabel.setOpacity(fadevar); }
+		    if (bottomright) { bottomrightLabel.setOpacity(fadevar); }
+		    if ( fadevar < fadevarmax ) { fadevar += step;}
+		}));
+		labelTimeline.setCycleCount(count);
+		labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
+		{
+		    @Override public void handle(ActionEvent actionEvent)
+		    {
+			if (!bottomleft) { bottomleftLabel.setOpacity(0.0); }
+			if (!topleft) { topleftLabel.setOpacity(0.0); }
+			if (!topright) { toprightLabel.setOpacity(0.0); }
+			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
+		        userGuidanceLabel.setOpacity(fadevarmax);
+		    }
+		});
+		
+		labelTimeline.play();
+	    }
+        });
+	labelTimeline.play();
     }
     
     private String getRuntimeEnvironment()
@@ -1195,7 +1299,7 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(true); keyDeviceButton.setText("Create OTP Key File");
+		    keyDeviceButton.setDisable(true); keyDeviceButton.setText(CREATE_KEY);
 		}});
 	    }
 //												  isKey device  minsize  symlink  writable status
@@ -1206,14 +1310,14 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);
 		}});
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
+	    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);
 	}
 	
         keyFileChooser.setFileFilter(this.nonFinalCryptFilter);
@@ -1249,7 +1353,7 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 		Platform.runLater(new Runnable(){ @Override public void run() {
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File");
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);
 		}});
 	    }
 	    else // Not a Device
@@ -1284,7 +1388,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
+		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
 		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
@@ -1395,7 +1499,7 @@ public class GUIFX extends Application implements UI, Initializable
 			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
 			keyImageView.setOpacity(0.1);
 			
-			textLabelFadeMessage("Select Key", 64, false, false, true, false);
+			textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 
 			buildReady(targetFCPathList, false);
 		    }
@@ -1440,7 +1544,7 @@ public class GUIFX extends Application implements UI, Initializable
                     keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //                    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
                     checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-		    textLabelFadeMessage("Select Key", 64, false, false, true, false);
+		    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
                 }});
 
 		buildReady(targetFCPathList, false);
@@ -1630,7 +1734,7 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
 //		    textLabelBlurMessage("Scanning", 500);
-		    textLabelFadeMessage("Scanning", 64, false, false, false, false);
+		    textLabelFadeMessage(SCANNING, 64, false, false, false, false);
 		    
 		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
@@ -1646,11 +1750,11 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		if ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
 		{
-		    textLabelFadeMessage("Select Target", 64, false, true, false, false);
+		    textLabelFadeMessage(SELECT_FILES, 64, false, true, false, false);
 		}
 		else
 		{
-		    textLabelFadeMessage("Select Key", 64, false, false, true, false);
+		    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 		}
 		
 		targetFCPathList = new FCPathList();
@@ -1836,8 +1940,8 @@ public class GUIFX extends Application implements UI, Initializable
 //			    log("1 " + keyFCPath.getString());
 			    createKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Key List:\r\n" + createKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create Key Device");
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
+			    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEYDEV);
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
 		    }		
 		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
@@ -1845,28 +1949,28 @@ public class GUIFX extends Application implements UI, Initializable
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
 			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
-			    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Clone Key Device"); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
-		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }
+			    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
+		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
 		    
 		    if (validBuild)
 		    {
 			if (! keyFCPath.isValidKey)
 			{
-			    textLabelFadeMessage("Select Key", 64, false, false, true, false);
+			    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 			}
 			else
 			{
 			    if	((targetFCPathList.encryptedFiles > 0) && (targetFCPathList.decryptableFiles == 0))
 			    {
-				if (targetFCPathList.encryptedFiles > 0) { textLabelFadeMessage("Wrong Key/Pass?", 48, false, false, true, false); }
+				if (targetFCPathList.encryptedFiles > 0) { textLabelFadeMessage(WRONG_KEY_PASS, 48, false, false, true, false); }
 			    }
 			    else
 			    {
-				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage("Select Target", 64, false, true, false, false); }
-				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage("Decrypt", 64, true, false, false, false); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage("Encrypt", 64, true, false, false, false); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage("En/Decypt", 64, true, false, false, false); }
+				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage(SELECT_FILES, 64, false, true, false, false); }
+				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(DECRYPT, 64, true, false, false, false); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage(ENCRYPT, 64, true, false, false, false); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(EN_DECRYPT, 64, true, false, false, false); }
 			    }
 			}
 		    }
@@ -1874,7 +1978,7 @@ public class GUIFX extends Application implements UI, Initializable
 		else
 		{
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); // Default enabler
+		    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); // Default enabler
 		}
 	    }
 	}});
@@ -2058,7 +2162,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	});
 
-	processRunningType = ENCRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+	processRunningMode = ENCRYPT_MODE; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
 //	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText(), false);
 	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwdField.getText(), false);
@@ -2097,7 +2201,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	});
 	
-	processRunningType = DECRYPT; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+	processRunningMode = DECRYPT_MODE; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
 	processStarted();
 //	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
 	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwdField.getText(), open);
@@ -2107,7 +2211,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void createKeyLabelOnMouseClicked(MouseEvent event) { createOTPKeyFile(); }
 
     @FXML
-    private void keyDeviceButtonAction(ActionEvent event){ createOTPKeyFile(); }
+    private void keyDeviceButtonOnAction(ActionEvent event) { createOTPKeyFile(); }
     
     synchronized private void createOTPKeyFile()
     {
@@ -2135,7 +2239,7 @@ public class GUIFX extends Application implements UI, Initializable
             public void run()
             {
 		
-		if ( keyDeviceButton.getText().equals("Create OTP Key File") )
+		if ( keyDeviceButton.getText().equals(CREATE_KEY) )
 		{
 		    Platform.runLater(new Runnable() { @Override public void run()
 		    {
@@ -2145,18 +2249,18 @@ public class GUIFX extends Application implements UI, Initializable
 			createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
 		    }});
 		}
-		else if	( keyDeviceButton.getText().equals("Create Key Device") )
+		else if	( keyDeviceButton.getText().equals(CREATE_KEYDEV) )
 		{
-		    processRunningType = CREATE;
+		    processRunningMode = CREATE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
                     deviceManager = new DeviceManager(guifx); deviceManager.start();
                     deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
                     processFinished(targetFCPathList, false);
 		}
-		else if ( keyDeviceButton.getText().equals("Clone Key Device") )
+		else if ( keyDeviceButton.getText().equals(CLONE_KEYDEV) )
 		{
-		    processRunningType = CLONE;
+		    processRunningMode = CLONE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
                     deviceManager = new DeviceManager(ui); deviceManager.start();
@@ -2206,21 +2310,24 @@ public class GUIFX extends Application implements UI, Initializable
 		remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
 		totalTimeCalendar =	Calendar.getInstance(Locale.ROOT);
 		
-		if ((processRunningType == ENCRYPT)  || (processRunningType == DECRYPT)) { updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play(); }
+		if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play(); }
 
-		if	(processRunningType == ENCRYPT) { textLabelFadeMessage("Encrypting", 64, false, false, false, false); }
-		else if (processRunningType == DECRYPT) { textLabelFadeMessage("Decrypting", 64, false, false, false, false); }
-		else if (processRunningType == CREATE) { textLabelFadeMessage("Creating", 64, false, false, false, false); }
-		else if (processRunningType == CLONE) { textLabelFadeMessage("Cloning", 64, false, false, false, false); }
+		if	(processRunningMode == ENCRYPT_MODE) { textLabelFadeMessage("Encrypting", 64, false, false, false, false); }
+		else if (processRunningMode == DECRYPT_MODE) { textLabelFadeMessage("Decrypting", 64, false, false, false, false); }
+		else if (processRunningMode == CREATE_KEYDEV_MODE) { textLabelFadeMessage("Creating", 64, false, false, false, false); }
+		else if (processRunningMode == CLONE_KEYDEV_MODE) { textLabelFadeMessage("Cloning", 64, false, false, false, false); }
 		
                 processRunning = true;
-                encryptButton.setDisable(true);
+		
+		disableFileChoosers(true);
+
+		encryptButton.setDisable(true);
                 decryptButton.setDisable(true);
 		pwdField.setDisable(true);
 //		pwdField.setVisible(false);
 //		keyImageView.setOpacity(0.1);
 
-                pauseToggleButton.setDisable(false);
+		pauseToggleButton.setDisable(false);
                 stopButton.setDisable(false);
 
 		remainingTimeHeaderLabel.setVisible(true); remainingTimeLabel.setVisible(true);
@@ -2302,7 +2409,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @Override public void processGraph(int value) { Platform.runLater(new Runnable() { @Override public void run() { }}); }
-    
+        
     @Override public void processFinished(FCPathList openFCPathList, boolean open)
     {
         Platform.runLater(new Runnable()
@@ -2311,7 +2418,7 @@ public class GUIFX extends Application implements UI, Initializable
             {
 		// Clocks
 
-		if ((processRunningType == ENCRYPT)  || (processRunningType == DECRYPT)) { updateClockTimeLine.stop(); }
+		if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { updateClockTimeLine.stop(); }
 		if (clockUpdated)
 		{
 		    remainingTimeLabel.setText("00:00:00");
@@ -2327,6 +2434,9 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList();
 
 		updateDashboard(targetFCPathList);
+		
+		disableFileChoosers(false);
+		
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
 		if ( keyFCPath.isValidKey )
@@ -2344,7 +2454,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		updateFileChoosers(true, false);
 		
-                processRunningType = NONE;
+                processRunningMode = NONE;
                 processRunning = false;
 
 //		The Open when finished section
@@ -2364,7 +2474,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 			    
 			    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-			    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
+			    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
 			}
 		    }
 		});
@@ -2497,7 +2607,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void pauseToggleButtonAction(ActionEvent event)
     {
 //        if ( encryptButton.getText().equals("Encrypt") )
-        if ((processRunning) && ((processRunningType == ENCRYPT) || (processRunningType == DECRYPT)))
+        if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
         {
             finalCrypt.setPausing(pauseToggleButton.isSelected());
         }
@@ -2512,7 +2622,7 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void stop(boolean stopAndExit)
     {
-        if ((processRunning) && ((processRunningType == ENCRYPT) || (processRunningType == DECRYPT)))
+        if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
         {
             finalCrypt.setStopPending(true);
             if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
@@ -2582,7 +2692,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
@@ -2595,7 +2705,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText("Create OTP Key File"); }});
+	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }

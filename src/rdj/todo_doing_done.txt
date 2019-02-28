@@ -35,8 +35,9 @@ Update MANPAGE
 
 ============================= Binaries Released =============================
 
+A new beautiful Look & Feel
+Safe and Smooth Transitions
 New JRE8u201 build. Embedded Fonts
-
 Improved user guidance layout for Mac OSX
 New Interface & User Guidance. Improved layout & performance
 New Layout & performance improvements

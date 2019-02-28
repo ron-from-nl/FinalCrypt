@@ -134,14 +134,23 @@
 
 .userguide
 {
+    /*Liberation Sans*/
+    /*Dyuthi*/
+    /*EB Garamond*/
+    /*IPAPGothic*/
+    /*Edit Undo Dot BRK(super)*/
+    /*Gather Gapped BRK(heel gaaf)*/
+    /*Lyneous Linear BRK(gaaf)*/
+    /*Manjari(super)*/
+    
     -fx-font-family: "Liberation Sans";
-    -fx-font-size: 64px;
 }
 
 .userguide_arrows
 {
     -fx-font-family: "Liberation Sans";
     -fx-font-size: 64px;
+    -fx-text-fill: #AAAAAA;
 }
 
 .log
