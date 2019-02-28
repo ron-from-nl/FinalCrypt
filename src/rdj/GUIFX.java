@@ -472,8 +472,8 @@ public class GUIFX extends Application implements UI, Initializable
 
         stage.setScene(scene);
         stage.setTitle(Version.getProductName());
-        stage.setMinWidth(1366);
-        stage.setMinHeight(768);
+        stage.setMinWidth(1280);
+        stage.setMinHeight(700);
         stage.setMaximized(true);
         stage.setOnCloseRequest(e -> Platform.exit());	
 //	stage.setOnCloseRequest(new EventHandler<WindowEvent>() { @Override public void handle(WindowEvent e)
