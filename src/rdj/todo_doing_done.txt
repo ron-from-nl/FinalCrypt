@@ -35,6 +35,7 @@ Update MANPAGE
 
 ============================= Binaries Released =============================
 
+Minor cosmetic update
 A new beautiful Look & Feel
 Safe and Smooth Transitions
 New JRE8u201 build. Embedded Fonts
