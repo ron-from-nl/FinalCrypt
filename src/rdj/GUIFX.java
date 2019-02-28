@@ -434,7 +434,7 @@ public class GUIFX extends Application implements UI, Initializable
     public final String PASSWORD_ENTER	    = "Password<Enter>";
     public final String SELECT_FILES	    = "Select Files";
 
-    public final String SCANNING	    = "Scanning";
+    public final String SCANNING	    = "Scanning Files";
     public final String WRONG_KEY_PASS	    = "Wrong Key / Pass ?";
 
     public final String ENCRYPT_FILES	    = "Encrypt Files";
