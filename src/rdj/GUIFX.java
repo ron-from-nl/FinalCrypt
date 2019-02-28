@@ -422,26 +422,27 @@ public class GUIFX extends Application implements UI, Initializable
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
 
-    private final String MAC_ON		= "MAC ON";
-    private final String MAC_OFF	= "MAC OFF";
-    private final String MAC_OFF_Q	= "MAC OFF ?";
+    private final String MAC_ON		    = "MAC ON";
+    private final String MAC_OFF	    = "MAC OFF";
+    private final String MAC_OFF_Q	    = "MAC OFF ?";
 
-    public final String CREATE_KEY	= "Create Key";
-    public final String CREATE_KEYDEV	= "Create Key Device";
-    public final String CLONE_KEYDEV	= "Clone Key Device";
+    public final String CREATE_KEY	    = "Create Key";
+    public final String CREATE_KEYDEV	    = "Create Key Device";
+    public final String CLONE_KEYDEV	    = "Clone Key Device";
 
-    public final String SELECT_KEY	= "Select Key";
-    public final String SELECT_FILES	= "Select Files";
+    public final String SELECT_KEY	    = "Select Key";
+    public final String PASSWORD_ENTER	    = "Password<Enter>";
+    public final String SELECT_FILES	    = "Select Files";
 
-    public final String SCANNING	= "Scanning";
-    public final String WRONG_KEY_PASS	= "Wrong Key / Pass ?";
+    public final String SCANNING	    = "Scanning";
+    public final String WRONG_KEY_PASS	    = "Wrong Key / Pass ?";
 
-    public final String ENCRYPT		= "Encrypt";
-    public final String DECRYPT		= "Decrypt";
-    public final String EN_DECRYPT	= "Encrypt / Decrypt";
+    public final String ENCRYPT_FILES	    = "Encrypt Files";
+    public final String DECRYPT_FILES	    = "Decrypt Files";
+    public final String EN_DECRYPT_FILES    = "Encrypt • Decrypt Files";
 
-    public final String ENCRYPTING	= "Encrypting";
-    public final String DECRYPTING	= "Decrypting";
+    public final String ENCRYPTING_FILES    = "Encrypting Files";
+    public final String DECRYPTING_FILES    = "Decrypting Files";
     private double fontsizefactor;
     private String fadeInMessage;
     private int loadLowCounter;
@@ -947,11 +948,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    Timeline disableTimeline = new Timeline
 	    (
 		    new KeyFrame(Duration.ZERO,
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.15),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.15)),
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.1),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.1)),
 		    new KeyFrame(Duration.seconds(1),
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.35),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.35))
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.5),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.5))
 	    );
 	    disableTimeline.setAutoReverse(false);
 	    disableTimeline.setOnFinished(new EventHandler<ActionEvent>() {@Override public void handle(ActionEvent actionEvent) {  }});
@@ -962,11 +963,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    Timeline enableTimeline = new Timeline
 	    (
 		    new KeyFrame(Duration.ZERO,
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.35),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.35)),
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.5),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.5)),
 		    new KeyFrame(Duration.seconds(1),
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.15),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.15))
+		    new KeyValue(keyFileFoil.opacityProperty(), 0.1),
+		    new KeyValue(targetFileFoil.opacityProperty(), 0.1))
 	    );
 	    enableTimeline.setAutoReverse(false);
 	    enableTimeline.setOnFinished(new EventHandler<ActionEvent>() {@Override public void handle(ActionEvent actionEvent) { keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param); }});
@@ -1968,9 +1969,9 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 			    else
 			    {
 				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage(SELECT_FILES, 64, false, true, false, false); }
-				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(DECRYPT, 64, true, false, false, false); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage(ENCRYPT, 64, true, false, false, false); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(EN_DECRYPT, 64, true, false, false, false); }
+				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(DECRYPT_FILES, 64, true, false, false, false); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ textLabelFadeMessage(ENCRYPT_FILES, 64, true, false, false, false); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ textLabelFadeMessage(EN_DECRYPT_FILES, 64, true, false, false, false); }
 			    }
 			}
 		    }
@@ -2312,10 +2313,10 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 		
 		if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { updateClockTimeLine = new Timeline(new KeyFrame( Duration.seconds(1), ae ->updateClocks())); updateClockTimeLine.setCycleCount(Animation.INDEFINITE); updateClockTimeLine.setDelay(Duration.seconds(1)); updateClockTimeLine.play(); }
 
-		if	(processRunningMode == ENCRYPT_MODE) { textLabelFadeMessage("Encrypting", 64, false, false, false, false); }
-		else if (processRunningMode == DECRYPT_MODE) { textLabelFadeMessage("Decrypting", 64, false, false, false, false); }
-		else if (processRunningMode == CREATE_KEYDEV_MODE) { textLabelFadeMessage("Creating", 64, false, false, false, false); }
-		else if (processRunningMode == CLONE_KEYDEV_MODE) { textLabelFadeMessage("Cloning", 64, false, false, false, false); }
+		if	(processRunningMode == ENCRYPT_MODE) { textLabelFadeMessage(ENCRYPTING_FILES, 64, false, false, false, false); }
+		else if (processRunningMode == DECRYPT_MODE) { textLabelFadeMessage(DECRYPTING_FILES, 64, false, false, false, false); }
+		else if (processRunningMode == CREATE_KEYDEV_MODE) { textLabelFadeMessage(CREATE_KEYDEV, 64, false, false, false, false); }
+		else if (processRunningMode == CLONE_KEYDEV_MODE) { textLabelFadeMessage(CLONE_KEYDEV, 64, false, false, false, false); }
 		
                 processRunning = true;
 		
@@ -3012,8 +3013,8 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 	{
 	    finalCrypt.setPwd(pwdField.getText());
 	    finalCrypt.resetPwdPos();
-	    passwordHeaderLabel.setText("Password<Enter>");
-	    if (!settingPassword) { textLabelFadeMessage("Password<Enter>", 48, false, false, true, false); }
+	    passwordHeaderLabel.setText(PASSWORD_ENTER);
+	    if (!settingPassword) { textLabelFadeMessage(PASSWORD_ENTER, 48, false, false, true, false); }
 	    settingPassword = true;
 	    targetFCPathList = new FCPathList();
 	    buildReady(targetFCPathList, false);

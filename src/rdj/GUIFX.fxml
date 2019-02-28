@@ -92,7 +92,7 @@
                                                 <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="targetFileSwingNode" mouseTransparent="true" />
-                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.35" style="-fx-background-color: #554400;" />
+                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -166,7 +166,7 @@
                                                 <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="keyFileSwingNode" mouseTransparent="true" StackPane.alignment="CENTER" />
-                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.35" style="-fx-background-color: #554400;" />
+                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" />
                                                    </children>
                                                 </StackPane>
                                              </children>
