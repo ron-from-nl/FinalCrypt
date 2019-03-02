@@ -434,7 +434,7 @@ public class GUIFX extends Application implements UI, Initializable
     public final String PASSWORD_ENTER	    = "Password<Enter>";
     public final String SELECT_FILES	    = "Select Files";
 
-    public final String SCANNING	    = "Scanning Files";
+    public final String SCANNING_FILES	    = "Scanning Files";
     public final String WRONG_KEY_PASS	    = "Wrong Key / Pass ?";
 
     public final String ENCRYPT_FILES	    = "Encrypt Files";
@@ -830,18 +830,7 @@ public class GUIFX extends Application implements UI, Initializable
                 infotext += "Tip:  Keep your keys secret (backup external).\r\n";
                 infotext += "\r\n";
                 infotext += "Live to love - Enjoy your privacy.\r\n\r\n";
-/*
-                Linux: ${user.home}/.java/.userPrefs/_\!\(\)\!~\!\"q\!#4\!\[w\"_\!%k\!\[g\"\}\!#@\!\<\!\=\=/prefs.xml 
-                
-                For Windows systemRoot and userRoot are stored in HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Prefs and HKEY_CURRENT_USER\Software\JavaSoft\Prefs respectively.
-                For Unix systemRoot and userRoot are stored in "/etc/.java" and "${user.home}/.java/.userPrefs", respectively.
-                Note that for Unix the locations can be changed by specifying "java.util.prefs.userRoot" and "java.util.prefs.systemRoot" properties
-                Mac OS X ~/Library/Preferences in multiple plist files.
-                Mac OS X uses the java.util.prefs.MacOSXPreferencesFactory class. See lists.apple.com/archives/java-dev/2010/Jul/msg00056.html 
-                the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
-                See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
-                JDK 8 all the items in java.util.prefs:                 
-*/
+
 		fontsizefactor = 1.3;
 		
 		Version ver = new Version(ui); ver.checkCurrentlyInstalledVersion(ui);
@@ -880,33 +869,46 @@ public class GUIFX extends Application implements UI, Initializable
 		parallelTransition.setOnFinished(new EventHandler<ActionEvent>() { @Override public void handle(ActionEvent actionEvent)
 		{
 //		    welcome();
-//		    prefs = Preferences.userRoot().node(this.getClass().getName());
-			prefs = Preferences.userRoot().node(Version.getProductName());
+/*
+		    Linux:
+			    ${user.home}/.java/.userPrefs/FinalCrypt/prefs.xml
+		    
+		    Windows:
+			    regedit remove HKEY_CURRENT_USER\Software\JavaSoft\Prefs\/Final/Crypt
 
-			String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-			if (! val.equals("Yes")) // First time
-			{
-			    textLabelFadeMessage(CREATE_KEY, 64, false, false, false, true);
-			    prefs.put("Initialized", "Yes");
+		    Mac OSX:
+			    Mac OS X ~/Library/Preferences in multiple plist files.
+			    Mac OS X uses the java.util.prefs.MacOSXPreferencesFactory class. See lists.apple.com/archives/java-dev/2010/Jul/msg00056.html 
+			    the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
+			    See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
+			    JDK 8 all the items in java.util.prefs:                 
+*/
+		    prefs = Preferences.userRoot().node(Version.getProductName());
+
+		    String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		    if (! val.equals("Yes")) // First time
+		    {
+			textLabelFadeMessage(CREATE_KEY, 64, false, false, false, true);
+			prefs.put("Initialized", "Yes");
 //	                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
 //	                    if (alert.showAndWait().filter(t -> t == ButtonType.OK).isPresent()) {    }                                
-			}
-			else
-			{
-			    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
-			}
-			
-			disableFileChoosers(false);
+		    }
+		    else
+		    {
+			textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+		    }
+
+		    disableFileChoosers(false);
 
 //			Last Update Checked
-			long updateChecked = 0; // Epoch date
+		    long updateChecked = 0; // Epoch date
 //			long updateCheckPeriod = 1000L*20L; // Just to test auto update function
-			long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
-			now = Calendar.getInstance().getTimeInMillis(); // Epoch date
-			val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-			boolean invalidUpdateCheckedValue = false;
-			try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
-			if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
+		    long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
+		    now = Calendar.getInstance().getTimeInMillis(); // Epoch date
+		    val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		    boolean invalidUpdateCheckedValue = false;
+		    try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
+		    if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
 		}});
 		parallelTransition.play();
             }
@@ -1735,7 +1737,7 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 		Platform.runLater(new Runnable(){ @Override public void run() // Not on FX Thread
 		{
 //		    textLabelBlurMessage("Scanning", 500);
-		    textLabelFadeMessage(SCANNING, 64, false, false, false, false);
+		    textLabelFadeMessage(SCANNING_FILES, 64, false, false, false, false);
 		    
 		    Thread scanThread = new Thread(new Runnable() { @Override@SuppressWarnings({"static-access"})public void run() // Relaxed interruptable thread
 		    {
