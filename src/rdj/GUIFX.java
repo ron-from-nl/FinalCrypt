@@ -129,24 +129,88 @@ import javax.management.ReflectionException;
 
 public class GUIFX extends Application implements UI, Initializable
 {
+    @FXML   private TabPane tab;
+    @FXML   private Tab encryptTab;
+    @FXML   private Tab logTab;
+    @FXML   private TextArea logTextArea;
+    @FXML   private Button encryptButton;
+    @FXML   private ProgressBar filesProgressBar;
+    @FXML   private ProgressBar fileProgressBar;
+    @FXML   private Label statusLabel;    
+    @FXML   private SwingNode keyFileSwingNode;
+    @FXML   private Object root;
+    @FXML   private ToggleButton pauseToggleButton;
+    @FXML   private Button stopButton;
+    @FXML   private Label copyrightLabel;
+    @FXML   private ProgressIndicator cpuIndicator;
+    @FXML   private SwingNode targetFileSwingNode;
+    @FXML   private Button decryptButton;
+    @FXML   private Label keyNameLabel;
+    @FXML   private Label keyTypeLabel;
+    @FXML   private Label keySizeLabel;
+    @FXML   private Label encryptedLabel;
+    @FXML   private Label encryptableSizeLabel;
+    @FXML   private Label encryptedSizeLabel;
+    @FXML   private Label decryptableLabel;
+    @FXML   private Label decryptedLabel;
+    @FXML   private Label decryptableSizeLabel;
+    @FXML   private Label decryptedSizeLabel;
+    @FXML   private Label unencryptableLabel;
+    @FXML   private Label undecryptableSizeLabel;
+    @FXML   private Label unencryptableSizeLabel;
+    @FXML   private Label undecryptableLabel;
+    @FXML   private Label encryptableLabel;
+    @FXML   private Label invalidFilesLabel;
+    @FXML   private Label totalFilesLabel;
+    @FXML   private Label validDevicesLabel;
+    @FXML   private Label validDevicesSizeLabel;
+    @FXML   private Label validPartitionsLabel;
+    @FXML   private Label validPartitionsSizeLabel;
+    @FXML   private Label invalidFilesSizeLabel;
+    @FXML   private Label validFilesLabel;
+    @FXML   private Label validFilesSizeLabel;
+    @FXML   private Label filesSizeLabel;
+    @FXML   private Label emptyFilesLabel;
+    @FXML   private Label symlinkFilesLabel;
+    @FXML   private Label unreadableFilesLabel;
+    @FXML   private Label unwritableFilesLabel;
+    @FXML   private Label hiddenFilesLabel;
+    @FXML   private Label targetWarningLabel;
+    @FXML   private Button keyDeviceButton;
+    @FXML   private Label totalTimeLabel;
+    @FXML   private Label remainingTimeLabel;
+    @FXML   private Label elapsedTimeLabel;
+    @FXML   private Label emptyFilesHeaderLabel;
+    @FXML   private Label symlinkFilesHeaderLabel;
+    @FXML   private Label unreadableFilesHeaderLabel;
+    @FXML   private Label unwritableFilesHeaderLabel;
+    @FXML   private Label hiddenFilesHeaderLabel;
+    @FXML   private Button websiteButton;
+    @FXML   private Label checksumLabel;
+    @FXML   private GridPane dashboardGridPane;
+    @FXML   private ToggleButton encryptionModeToggleButton;
+    @FXML   private Tooltip encryptionModeToolTip;
+    @FXML   private AnchorPane encryptionModeAnchorPane;
+    @FXML   private PasswordField pwdField;
+    @FXML   private Button checkUpdateButton;
+    @FXML   private AnchorPane mainAnchorPane;
+    @FXML   private Label checksumHeader;
+    @FXML   private ImageView keyImageView;
+    @FXML   private Label passwordHeaderLabel;
+    @FXML   private Label remainingTimeHeaderLabel;
+    @FXML   private Label elapsedTimeHeaderLabel;
+    @FXML   private Label totalTimeHeaderLabel;
+    @FXML   private Label userGuidanceLabel;
+    @FXML   private Label topleftLabel;
+    @FXML   private Label toprightLabel;
+    @FXML   private Label bottomrightLabel;
+    @FXML   private Label bottomleftLabel;
+    @FXML   private BorderPane targetFileFoil;
+    @FXML   private BorderPane keyFileFoil;
+
     private Stage stage;
     private Label label;
-    @FXML
-    private TabPane tab;
-    @FXML
-    private Tab encryptTab;
-    @FXML
-    private Tab logTab;
-    @FXML
-    private TextArea logTextArea;
-    @FXML
-    private Button encryptButton;
-    @FXML
-    private ProgressBar filesProgressBar;
-    @FXML
-    private ProgressBar fileProgressBar;
-    @FXML
-    private Label statusLabel;    
+
 
     private FinalCrypt finalCrypt;
     private UI ui;
@@ -154,34 +218,12 @@ public class GUIFX extends Application implements UI, Initializable
     
     private JFileChooser targetFileChooser;
     private boolean negatePattern;
-    public JFileChooser keyFileChooser;
-    @FXML
-    private SwingNode keyFileSwingNode;
+    public  JFileChooser keyFileChooser;
     private JButton targetFileDeleteButton;
     private JButton keyFileDeleteButton;
-//    private boolean hasEncryptable;
-//    private boolean hasKeyItem;
-    @FXML
-    private Object root;
     private Version version;
 
-    @FXML
-    private ToggleButton pauseToggleButton;
-    @FXML
-    private Button stopButton;
     private boolean processRunning;
-    private final int NONE		    = 0;
-    private final int ENCRYPT_MODE	    = 1;
-    private final int DECRYPT_MODE	    = 2;
-    private final int CREATE_KEYDEV_MODE    = 3;
-    private final int CLONE_KEYDEV_MODE	    = 4;
-    private int processRunningMode =	    NONE;
-    @FXML
-    private Label copyrightLabel;
-//    private TimerTask updateProgressTask;
-//    private Timer updateProgressTaskTimer;
-    @FXML
-    private ProgressIndicator cpuIndicator;
     private MBeanServer mbs;
     private ObjectName name;
     private AttributeList attribList;
@@ -193,91 +235,10 @@ public class GUIFX extends Application implements UI, Initializable
     private DeviceManager deviceManager;
     private int lineCounter;
     private Configuration configuration;
-    @FXML
-    private SwingNode targetFileSwingNode;
     private Path keyPath;
     private FCPath keyFCPath;
-//    private ArrayList<Path> targetPathList;
     private boolean symlink = false;
     private final String procCPULoadAttribute = "ProcessCpuLoad";
-    @FXML
-    private Button decryptButton;
-    @FXML
-    private Label keyNameLabel;
-    @FXML
-    private Label keyTypeLabel;
-    @FXML
-    private Label keySizeLabel;
-    private Label keyValidLabel;
-    @FXML
-    private Label encryptedLabel;
-    private Label encryptRemainingLabel;
-    @FXML
-    private Label encryptableSizeLabel;
-    @FXML
-    private Label encryptedSizeLabel;
-    private Label encryptRemainingSizeLabel;
-    @FXML
-    private Label decryptableLabel;
-    @FXML
-    private Label decryptedLabel;
-    private Label decryptRemainingLabel;
-    @FXML
-    private Label decryptableSizeLabel;
-    @FXML
-    private Label decryptedSizeLabel;
-    private Label decryptRemainingSizeLabel;
-    @FXML
-    private Label unencryptableLabel;
-    @FXML
-    private Label undecryptableSizeLabel;
-    @FXML
-    private Label unencryptableSizeLabel;
-    @FXML
-    private Label undecryptableLabel;
-    @FXML
-    private Label encryptableLabel;
-    private Label newEncryptedLabel;
-    private Label newEncryptedSizeLabel;
-    private Label newDecryptedLabel;
-    private Label newDecryptedSizeLabel;
-    @FXML
-    private Label invalidFilesLabel;
-    @FXML
-    private Label totalFilesLabel;
-    private Label totalFilesSizeLabel;
-    @FXML
-    private Label validDevicesLabel;
-    @FXML
-    private Label validDevicesSizeLabel;
-    @FXML
-    private Label validPartitionsLabel;
-    @FXML
-    private Label validPartitionsSizeLabel;
-    @FXML
-    private Label invalidFilesSizeLabel;
-    @FXML
-    private Label validFilesLabel;
-    @FXML
-    private Label validFilesSizeLabel;
-    @FXML
-    private Label filesSizeLabel;
-    @FXML
-    private Label emptyFilesLabel;
-    @FXML
-    private Label symlinkFilesLabel;
-    @FXML
-    private Label unreadableFilesLabel;
-    private Label unreadableFilesSizeLabel;
-    @FXML
-    private Label unwritableFilesLabel;
-    private Label unwritableFilesSizeLabel;
-    @FXML
-    private Label hiddenFilesLabel;
-    private Label hiddenFilesSizeLabel;
-    
-    @FXML
-    private Label targetWarningLabel;
     
     private FCPathList targetFCPathList; // Main List
 
@@ -307,14 +268,6 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList invalidFilesList;
 
     
-    @FXML
-    private Button keyDeviceButton;
-    @FXML
-    private Label totalTimeLabel;
-    @FXML
-    private Label remainingTimeLabel;
-    @FXML
-    private Label elapsedTimeLabel;
     
     private long	bytesTotal;	
     private long	bytesProcessed;	
@@ -329,29 +282,13 @@ public class GUIFX extends Application implements UI, Initializable
     private Calendar	totalTimeCalendar;
     private Calendar	remainingTimeCalendar;
     private long	bytesPerMilliSecond;
-    private Timeline updateClockTimeLine;
     private int offSetHours;
     private int offSetMinutes;
     private int offSetSeconds;
     private Calendar offsetTimeCalendar;
     private boolean clockUpdated;
-    private TimerTask updateDashboardTask;
     private Timer updateDashboardTaskTimer;
     private String pattern;
-    @FXML
-    private Label emptyFilesHeaderLabel;
-    @FXML
-    private Label symlinkFilesHeaderLabel;
-    @FXML
-    private Label unreadableFilesHeaderLabel;
-    @FXML
-    private Label unwritableFilesHeaderLabel;
-    @FXML
-    private Label hiddenFilesHeaderLabel;
-    @FXML
-    private Button websiteButton;
-    @FXML
-    private Label checksumLabel;
     private Tooltip checksumTooltip;
     private boolean keySourceChecksumReadEnded;
     private boolean keySourceChecksumReadCanceled;
@@ -360,42 +297,12 @@ public class GUIFX extends Application implements UI, Initializable
     private Preferences prefs;
     private long now;
     private boolean isCalculatingCheckSum;
-    @FXML
-    private GridPane dashboardGridPane;
-    @FXML
-    private ToggleButton encryptionModeToggleButton;
-    @FXML
-    private Tooltip encryptionModeToolTip;
-    @FXML
-    private AnchorPane encryptionModeAnchorPane;
     private long lastRawModeClicked;
-    private Timeline flashMACTimeline;
-    private Timeline autoDisableTimeline;
     private File noKeyFile;
     private File noTargetFile;
 
-    @FXML
-    private PasswordField pwdField;
-    @FXML
-    private Button checkUpdateButton;
-    @FXML
-    private AnchorPane mainAnchorPane;
-    @FXML
-    private Label checksumHeader;
-    @FXML
-    private ImageView keyImageView;
-    @FXML
-    private Label passwordHeaderLabel;
     private Label remainLabel;
     private Label elapsedLabel;
-    @FXML
-    private Label remainingTimeHeaderLabel;
-    @FXML
-    private Label elapsedTimeHeaderLabel;
-    @FXML
-    private Label totalTimeHeaderLabel;
-    @FXML
-    private Label userGuidanceLabel;
     private int i;
     private double focusAngle;
     private double focusDistance;
@@ -408,19 +315,44 @@ public class GUIFX extends Application implements UI, Initializable
     private double startX;
     private double stepX;
     private double fadevar;
-    @FXML
-    private Label topleftLabel;
-    @FXML
-    private Label toprightLabel;
-    @FXML
-    private Label bottomrightLabel;
-    @FXML
-    private Label bottomleftLabel;
     private double blurvar;
     private boolean settingPassword;
-    private Timeline textLabelTimeline;
     private RadialGradient textLabelGradient1;
     private RadialGradient textLabelGradient2;
+
+    private double fontsizefactor;
+    private String fadeInMessage;
+    private int cyclecenter;
+    private double arrowsfadevar;
+    private double arrowsfadestep;
+    private boolean bottomleftLabelEnabled;
+    private boolean topleftLabelEnabled;
+    private boolean toprightLabelEnabled;
+    private boolean bottomrightLabelEnabled;
+    private int loadcyclecounter;
+    private int loadcycleswanted;
+    private double secondsCounted;
+    
+    private double loadHighSecondsCounted;
+    private double loadLowSecondsCounted;
+
+    private Timeline updateClockTimeLine;
+    private TimerTask updateDashboardTask;
+    private Timeline flashMACTimeline;
+    private Timeline autoDisableTimeline;
+    private Timeline textLabelTimeline;
+    private Timeline mainTimeline;
+    private final Timeline pauseTimeline = new Timeline(new KeyFrame( Duration.millis(250), ae -> 
+    {
+	if ( pauseToggleButton.getText().length() == 0 ) { pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_SYMBOL); } else { pauseToggleButton.setText(""); }
+    }));
+
+    private final int NONE		    = 0;
+    private final int ENCRYPT_MODE	    = 1;
+    private final int DECRYPT_MODE	    = 2;
+    private final int CREATE_KEYDEV_MODE    = 3;
+    private final int CLONE_KEYDEV_MODE	    = 4;
+    private int processRunningMode =	    NONE;
 
     private final String MAC_ON		    = "MAC ON";
     private final String MAC_OFF	    = "MAC OFF";
@@ -443,33 +375,14 @@ public class GUIFX extends Application implements UI, Initializable
 
     public final String ENCRYPTING_FILES    = "Encrypting Files";
     public final String DECRYPTING_FILES    = "Decrypting Files";
-    private double fontsizefactor;
-    private String fadeInMessage;
-    private int cyclecenter;
-    @FXML
-    private BorderPane targetFileFoil;
-    @FXML
-    private BorderPane keyFileFoil;
-    private Timeline mainTimeline;
-    private double arrowsfadevarmax;
-    private int arrowsfadecount;
-    private double arrowsfadevar;
-    private double arrowsfadestep;
-    private boolean bottomleftLabelEnabled;
-    private boolean topleftLabelEnabled;
-    private boolean toprightLabelEnabled;
-    private boolean bottomrightLabelEnabled;
-    private int loadcyclecounter;
-    private int loadcycleswanted;
-    private int mainTimelineIntervalPeriod;
-    private double secondsCounted;
-    
-    private double loadHighSecondsCounted;
-    private double loadLowSecondsCounted;
 
-    private final double LOADHIGH_THRESHOLD =	    0.95d; // 0.0 - 1.0
-    private final double LOADHIGH_TIMEOUT_SECONDS = 1.0d;
-    private final double LOADLOW_TIMEOUT_SECONDS =  5.0d;
+    private final int MAIN_TIMELINE_INTERVAL_PERIOD =	50;
+    private final double ARROWS_OPACITY_MAX =		0.7d;
+    private final double LOADHIGH_THRESHOLD =		0.95d; // 0.0 - 1.0
+    private final double LOADHIGH_TIMEOUT_SECONDS =	1.0d;
+    private final double LOADLOW_TIMEOUT_SECONDS =	5.0d;
+    
+
     
     @Override
     public void start(Stage stage) throws Exception
@@ -573,6 +486,8 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
         
         keyFileChooserComponentAlteration(keyFileChooser);
+	
+	pauseTimeline.setCycleCount(Animation.INDEFINITE);
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
@@ -808,30 +723,32 @@ public class GUIFX extends Application implements UI, Initializable
 //	MAIN TIMELINE
 //	========================================================================
 
-	mainTimelineIntervalPeriod = 50;
-
 	loadcyclecounter = 0;
 	secondsCounted = 0.0d;
-	loadcycleswanted = 2;
+	loadcycleswanted = 3;
 	
 	loadHighSecondsCounted = 0.0d;
 	loadLowSecondsCounted = 0.0d;
-	
-	
-	arrowsfadecount = 10;
-	arrowsfadevarmax = 0.7d;	
-	arrowsfadestep = arrowsfadevarmax/arrowsfadecount;
+		
+	arrowsfadestep = (ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue())) * 2; // step = max / FPS
 	arrowsfadevar = 0.0d;
 	
-        mainTimeline = new Timeline(new KeyFrame( Duration.millis(mainTimelineIntervalPeriod), ae ->
+        mainTimeline = new Timeline(new KeyFrame( Duration.millis(MAIN_TIMELINE_INTERVAL_PERIOD), ae ->
 	{
 //	    ====================================================================
 //	    WORKLOAD
 //	    ====================================================================
 	    
+//	    LOAD MONITOR INTERVAL
+
+//	    LOAD MANAGER INTERVAL
+	    
+//	    mainTimeline.
+	    
 	    if ( loadcyclecounter >= loadcycleswanted )
+//	    if ( secondsCounted >= 1.0 )
 	    {
-		secondsCounted = ((loadcyclecounter * mainTimelineIntervalPeriod) / 1000.0d);
+		secondsCounted = ((loadcyclecounter * MAIN_TIMELINE_INTERVAL_PERIOD) / 1000.0d);
 		
 		double load = getProcessCpuLoad();
 		cpuIndicator.setProgress(load);
@@ -842,13 +759,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			textLabelTimeline.pause();
 			
-			arrowsfadestep = -(arrowsfadevarmax/arrowsfadecount);
-			arrowsfadevar = arrowsfadevarmax;
+			arrowsfadestep = -(ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue())) * 2; // step = max / FPS;
+			arrowsfadevar = ARROWS_OPACITY_MAX;
 
-			bottomleftLabel.setVisible(bottomleftLabelEnabled);	if (bottomleftLabelEnabled)	{ bottomleftLabel.setOpacity(arrowsfadevarmax); }
-			topleftLabel.setVisible(topleftLabelEnabled);		if (topleftLabelEnabled)	{ topleftLabel.setOpacity(arrowsfadevarmax); }
-			toprightLabel.setVisible(toprightLabelEnabled);		if (toprightLabelEnabled)	{ toprightLabel.setOpacity(arrowsfadevarmax); }
-			bottomrightLabel.setVisible(bottomrightLabelEnabled);	if (bottomrightLabelEnabled)	{ bottomrightLabel.setOpacity(arrowsfadevarmax); }			
+			bottomleftLabel.setVisible(bottomleftLabelEnabled);	if (bottomleftLabelEnabled)	{ bottomleftLabel.setOpacity(ARROWS_OPACITY_MAX); }
+			topleftLabel.setVisible(topleftLabelEnabled);		if (topleftLabelEnabled)	{ topleftLabel.setOpacity(ARROWS_OPACITY_MAX); }
+			toprightLabel.setVisible(toprightLabelEnabled);		if (toprightLabelEnabled)	{ toprightLabel.setOpacity(ARROWS_OPACITY_MAX); }
+			bottomrightLabel.setVisible(bottomrightLabelEnabled);	if (bottomrightLabelEnabled)	{ bottomrightLabel.setOpacity(ARROWS_OPACITY_MAX); }			
 		    } 
 		}
 		else
@@ -859,7 +776,13 @@ public class GUIFX extends Application implements UI, Initializable
 		loadcyclecounter = 0;
 		secondsCounted = 0;
 	    }
+	    
+	    
 	    loadcyclecounter++;
+	    
+	    
+	    
+	    
 	    
 //	    ====================================================================
 //	    ARROW FADE ANIMATION
@@ -874,7 +797,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		arrowsfadevar += arrowsfadestep;
 
-		if ( arrowsfadevar >= arrowsfadevarmax ) { arrowsfadevar = arrowsfadevarmax; arrowsfadestep = -arrowsfadestep; }
+		if ( arrowsfadevar >= ARROWS_OPACITY_MAX ) { arrowsfadevar = ARROWS_OPACITY_MAX; arrowsfadestep = -arrowsfadestep; }
 		if ( arrowsfadevar <= 0.0 ) // Only set (in)visible when opacity is 0
 		{
 		    arrowsfadevar = 0.0; arrowsfadestep = -arrowsfadestep;
@@ -2717,17 +2640,22 @@ public class GUIFX extends Application implements UI, Initializable
         alert.showAndWait();
     }
 
-    @FXML
-    private void pauseToggleButtonAction(ActionEvent event)
+    @FXML private void pauseToggleButtonAction(ActionEvent event)
     {
-//        if ( encryptButton.getText().equals("Encrypt") )
-        if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
+        if (processRunning)
         {
-            finalCrypt.setPausing(pauseToggleButton.isSelected());
-        }
-        else
-        {
-            DeviceController.setPausing(pauseToggleButton.isSelected());
+	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalCrypt.setPausing(pauseToggleButton.isSelected()); } else { DeviceController.setPausing(pauseToggleButton.isSelected()); }
+	    if ( pauseToggleButton.isSelected() )
+	    {
+		pauseToggleButton.setStyle(" -fx-text-fill: orange; -fx-font-size: 14; ");
+		pauseTimeline.play();
+	    }
+	    else
+	    {
+		pauseTimeline.stop();
+		pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_SYMBOL);
+		pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
+	    }
         }
     }
     
