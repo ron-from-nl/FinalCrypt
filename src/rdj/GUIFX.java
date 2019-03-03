@@ -453,6 +453,17 @@ public class GUIFX extends Application implements UI, Initializable
     private BorderPane targetFileFoil;
     @FXML
     private BorderPane keyFileFoil;
+    private Timeline mainTimeline;
+    private double arrowsfadevarmax;
+    private int arrowsfadecount;
+    private double arrowsfadevar;
+    private double arrowsfadestep;
+    private boolean bottomleftLabelEnabled;
+    private boolean topleftLabelEnabled;
+    private boolean toprightLabelEnabled;
+    private boolean bottomrightLabelEnabled;
+    private int loadcyclecounter;
+    private int loadcycleswanted;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -786,23 +797,66 @@ public class GUIFX extends Application implements UI, Initializable
         try {name    = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
         catch (MalformedObjectNameException | NullPointerException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
-        Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae ->
+	
+//	========================================================================
+//	MAIN TIMELINE
+//	========================================================================
+
+	loadcyclecounter = 0;
+	loadcycleswanted = 2;
+	
+	arrowsfadecount = 10;
+	arrowsfadevarmax = 0.7;	
+	arrowsfadestep = arrowsfadevarmax/arrowsfadecount;
+	arrowsfadevar = 0.0;
+	
+        mainTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
 	{
-	    double load = getProcessCpuLoad();
-	    cpuIndicator.setProgress(load);
-//	    userGuidanceLabel.setTextFill(textLabelGradient1);
-	    if (load >= 0.95)
+//	    ====================================================================
+//	    WORKLOAD
+//	    ====================================================================
+	    
+	    if ( loadcyclecounter >= loadcycleswanted )
 	    {
-		loadHighCounter++; loadLowCounter = 0;
-		if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (loadHighCounter > 5) )  { textLabelTimeline.pause(); /*textLabelTimeline.setCycleCount(cyclecenter);*/ } 
+		double load = getProcessCpuLoad();
+		cpuIndicator.setProgress(load);
+		if (load >= 0.95)
+		{
+		    loadHighCounter++; loadLowCounter = 0;
+		    if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (loadHighCounter > 5) )  { textLabelTimeline.pause(); /*textLabelTimeline.setCycleCount(cyclecenter);*/ } 
+		}
+		else
+		{
+		    loadLowCounter++; loadHighCounter = 0;
+		    if ( (textLabelTimeline.getStatus() == Animation.Status.PAUSED) & (loadLowCounter > 25) )  { textLabelTimeline.play(); } 
+		}
+		loadcyclecounter = 0;
 	    }
-	    else
+	    loadcyclecounter++;
+	    
+//	    ====================================================================
+//	    ARROW FADE ANIMATION
+//	    ====================================================================
+	
+	    if (bottomleftLabel.isVisible())	{ bottomleftLabel.setOpacity(arrowsfadevar); }
+	    if (topleftLabel.isVisible())	{ topleftLabel.setOpacity(arrowsfadevar); }
+	    if (toprightLabel.isVisible())	{ toprightLabel.setOpacity(arrowsfadevar); }
+	    if (bottomrightLabel.isVisible())	{ bottomrightLabel.setOpacity(arrowsfadevar); }
+	
+	    arrowsfadevar += arrowsfadestep;
+
+	    if ( arrowsfadevar >= arrowsfadevarmax ) { arrowsfadevar = arrowsfadevarmax; arrowsfadestep = -arrowsfadestep; }
+	    if ( arrowsfadevar <= 0.0 ) // Only set (in)visible when opacity is 0
 	    {
-		loadLowCounter++; loadHighCounter = 0;
-		if ( (textLabelTimeline.getStatus() == Animation.Status.PAUSED) & (loadLowCounter > 25) )  { textLabelTimeline.play(); } 
+		arrowsfadevar = 0.0; arrowsfadestep = -arrowsfadestep;
+//		arrowsfadevar = arrowsfadevarmax;
+		bottomleftLabel.setVisible(bottomleftLabelEnabled);
+		topleftLabel.setVisible(topleftLabelEnabled);
+		toprightLabel.setVisible(toprightLabelEnabled);
+		bottomrightLabel.setVisible(bottomrightLabelEnabled);
 	    }
 	}
-        )); timeline.setCycleCount(Animation.INDEFINITE); timeline.play();
+        )); mainTimeline.setCycleCount(Animation.INDEFINITE); mainTimeline.play();
 	
 	checksumTooltip = new Tooltip("");
 //	checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
@@ -976,8 +1030,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    enableTimeline.play();
 	}
     }
-synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
+    
+    synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
     {
+	bottomleftLabelEnabled = bottomleft; topleftLabelEnabled = topleft; toprightLabelEnabled = topright; bottomrightLabelEnabled = bottomright;
 //	FADE OUT
 	
 	final int count = 10;
@@ -990,10 +1046,10 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 	{
 //	    Do Something
 	    userGuidanceLabel.setOpacity(fadevar);
-	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
-	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
-	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
-	    if (bottomrightLabel.getOpacity() > 0.0)	{ bottomrightLabel.setOpacity(fadevar); }
+//	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
+//	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
+//	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
+//	    if (bottomrightLabel.getOpacity() > 0.0)	{ bottomrightLabel.setOpacity(fadevar); }
 	    fadevar -= step;
 	}));
 	labelTimeline.setCycleCount(10);
@@ -1003,10 +1059,10 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 	    {
 //		FADE IN
 		
-		bottomleftLabel.setOpacity(0);
-		topleftLabel.setOpacity(0);
-		toprightLabel.setOpacity(0);
-		bottomrightLabel.setOpacity(0);
+//		bottomleftLabel.setOpacity(0);
+//		topleftLabel.setOpacity(0);
+//		toprightLabel.setOpacity(0);
+//		bottomrightLabel.setOpacity(0);
 		
 		userGuidanceLabel.setOpacity(0);
 
@@ -1021,10 +1077,10 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 		{
 //		    Do Something
 		    userGuidanceLabel.setOpacity(fadevar);
-		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
-		    if (topleft) { topleftLabel.setOpacity(fadevar); }
-		    if (topright) { toprightLabel.setOpacity(fadevar); }
-		    if (bottomright) { bottomrightLabel.setOpacity(fadevar); }
+//		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
+//		    if (topleft) { topleftLabel.setOpacity(fadevar); }
+//		    if (topright) { toprightLabel.setOpacity(fadevar); }
+//		    if (bottomright) { bottomrightLabel.setOpacity(fadevar); }
 		    if ( fadevar < fadevarmax ) { fadevar += step;}
 		}));
 		labelTimeline.setCycleCount(count);
@@ -1032,10 +1088,10 @@ synchronized public void textLabelFadeMessage(String message, int fontsize, bool
 		{
 		    @Override public void handle(ActionEvent actionEvent)
 		    {
-			if (!bottomleft) { bottomleftLabel.setOpacity(0.0); }
-			if (!topleft) { topleftLabel.setOpacity(0.0); }
-			if (!topright) { toprightLabel.setOpacity(0.0); }
-			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
+//			if (!bottomleft) { bottomleftLabel.setOpacity(0.0); }
+//			if (!topleft) { topleftLabel.setOpacity(0.0); }
+//			if (!topright) { toprightLabel.setOpacity(0.0); }
+//			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
 		        userGuidanceLabel.setOpacity(fadevarmax);
 		    }
 		});
