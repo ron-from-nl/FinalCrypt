@@ -1243,7 +1243,7 @@ parallelTransition.play();
     
     private String getSelectedPatternFromFileChooser( javax.swing.filechooser.FileFilter fileFilter)
     {
-        negatePattern = false; String pattern = "glob:*";
+        negatePattern = false; String patternLocal = "glob:*";
         String desc = "*";
         if ( fileFilter != null ) {desc = fileFilter.getDescription();}
         javax.swing.filechooser.FileNameExtensionFilter ef = null;
@@ -1254,11 +1254,11 @@ parallelTransition.play();
             desc = ef.getDescription();
         }
 //        else { extension = "*"; }
-        if      ( desc.startsWith("FinalCrypt") )       { negatePattern = false; pattern = "glob:*.bit"; }
-        else if ( desc.startsWith("NON FinalCrypt") )   { negatePattern = true;  pattern = "glob:*.bit"; }
+        if      ( desc.startsWith("FinalCrypt") )       { negatePattern = false; patternLocal = "glob:*.bit"; }
+        else if ( desc.startsWith("NON FinalCrypt") )   { negatePattern = true;  patternLocal = "glob:*.bit"; }
 //        else if ( desc.startsWith("NON FinalCrypt") )   { negatePattern = true; pattern = "glob:*.[!b][!i][!t]"; }
-        else                                            { negatePattern = false; pattern = "glob:*"; }
-        return pattern;
+        else                                            { negatePattern = false; patternLocal = "glob:*"; }
+        return patternLocal;
     }
     
 //  Doubleclicked item
