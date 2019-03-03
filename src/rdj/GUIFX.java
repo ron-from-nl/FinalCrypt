@@ -435,8 +435,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
         keyFileDeleteButton.setEnabled(false);
         keyFileDeleteButton.setToolTipText("Delete selected item");
-        keyFileDeleteButton.addActionListener(new java.awt.event.ActionListener()
-        { public void actionPerformed(java.awt.event.ActionEvent evt) { keyFileDeleteButtonActionPerformed(evt); } });
+        keyFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { keyFileDeleteButtonActionPerformed(evt); });
         
 //      Create filefilters        
         finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
@@ -1322,12 +1321,9 @@ parallelTransition.play();
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
 		tab.getSelectionModel().select(1);
-		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(targetFCPath);
+		DeviceManager deviceManagerLocal = new DeviceManager(this); deviceManagerLocal.start(); deviceManagerLocal.printGPT(targetFCPath);
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		Platform.runLater(new Runnable(){ @Override public void run() {
-		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);
-		}});
+		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);});
 	    }
 	    else // Not a Device
 	    {
@@ -1355,7 +1351,7 @@ parallelTransition.play();
 		    
 		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
+		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); });
 		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
@@ -1418,7 +1414,7 @@ parallelTransition.play();
 //					      getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
 		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
 
-		Platform.runLater(new Runnable(){ @Override public void run() 
+		Platform.runLater(() -> 
 		{
 		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
@@ -1430,11 +1426,11 @@ parallelTransition.play();
 			keyTypeLabel.setTextFill(Color.GREENYELLOW); keyTypeLabel.setText(FCPath.getTypeString(keyFCPath.type));
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 //			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
-			
+
 			if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText("Password (optional)"); } else { passwordHeaderLabel.setText("Password (set)"); }
 			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
 			keyImageView.setOpacity(0.8);
-			
+
 			targetFileChooserPropertyCheck(true);
 		    }
 		    else // Not Valid Key
@@ -1445,7 +1441,7 @@ parallelTransition.play();
 			    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
 			    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //			    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 			}
 			else
 			{
@@ -1460,17 +1456,17 @@ parallelTransition.play();
 			
 //			MySimpleFCFileVisitor.running = false;
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
-			targetFCPathList = new FCPathList();
-			
-			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
-			keyImageView.setOpacity(0.1);
-			
-			textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
+targetFCPathList = new FCPathList();
 
-			buildReady(targetFCPathList, false);
+pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
+keyImageView.setOpacity(0.1);
+
+textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+
+buildReady(targetFCPathList, false);
 		    }
-		}});
+		});
 		
 		// Checksum Calculation
 		if ((keyFCPath.isValidKey)) // Valid Key
@@ -1554,10 +1550,7 @@ textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 				    if ( readKeySourceChannelTransfered < 0 ) { keySourceChecksumReadEnded = true; }
 				} catch (IOException ex)
 				{
-				    Platform.runLater(new Runnable(){ @Override public void run()
-				    {
-					keySourceChecksumReadEnded = true;
-				    }});
+				    Platform.runLater(() -> { keySourceChecksumReadEnded = true; });
 				}
 				x++;
 				keySourceBuffer.clear();
