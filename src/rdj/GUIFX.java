@@ -445,9 +445,6 @@ public class GUIFX extends Application implements UI, Initializable
     public final String DECRYPTING_FILES    = "Decrypting Files";
     private double fontsizefactor;
     private String fadeInMessage;
-    private int loadLowCounter;
-    private int loadHighCounter;
-    private int cyclecount;
     private int cyclecenter;
     @FXML
     private BorderPane targetFileFoil;
@@ -464,6 +461,15 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean bottomrightLabelEnabled;
     private int loadcyclecounter;
     private int loadcycleswanted;
+    private int mainTimelineIntervalPeriod;
+    private double secondsCounted;
+    
+    private double loadHighSecondsCounted;
+    private double loadLowSecondsCounted;
+
+    private final double LOADHIGH_THRESHOLD =	    0.95d; // 0.0 - 1.0
+    private final double LOADHIGH_TIMEOUT_SECONDS = 1.0d;
+    private final double LOADLOW_TIMEOUT_SECONDS =  5.0d;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -741,10 +747,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	Set the corner arrows
 
-	bottomleftLabel.setOpacity(0);
-	topleftLabel.setOpacity(0);
-	toprightLabel.setOpacity(0);
-	bottomrightLabel.setOpacity(0);
+	bottomleftLabel.setOpacity(0);	bottomleftLabel.setVisible(bottomleftLabelEnabled);
+	topleftLabel.setOpacity(0);	topleftLabel.setVisible(topleftLabelEnabled);
+	toprightLabel.setOpacity(0);	toprightLabel.setVisible(toprightLabelEnabled);
+	bottomrightLabel.setOpacity(0);	bottomrightLabel.setVisible(bottomrightLabelEnabled);
 
 //	Prefer monospaced ◤ XY -18 -28 | ◥ XY 18 -28 | ◢ XY 18 8 | ◣ XY -18 8 
 
@@ -802,15 +808,22 @@ public class GUIFX extends Application implements UI, Initializable
 //	MAIN TIMELINE
 //	========================================================================
 
+	mainTimelineIntervalPeriod = 50;
+
 	loadcyclecounter = 0;
+	secondsCounted = 0.0d;
 	loadcycleswanted = 2;
 	
-	arrowsfadecount = 10;
-	arrowsfadevarmax = 0.7;	
-	arrowsfadestep = arrowsfadevarmax/arrowsfadecount;
-	arrowsfadevar = 0.0;
+	loadHighSecondsCounted = 0.0d;
+	loadLowSecondsCounted = 0.0d;
 	
-        mainTimeline = new Timeline(new KeyFrame( Duration.millis(50), ae ->
+	
+	arrowsfadecount = 10;
+	arrowsfadevarmax = 0.7d;	
+	arrowsfadestep = arrowsfadevarmax/arrowsfadecount;
+	arrowsfadevar = 0.0d;
+	
+        mainTimeline = new Timeline(new KeyFrame( Duration.millis(mainTimelineIntervalPeriod), ae ->
 	{
 //	    ====================================================================
 //	    WORKLOAD
@@ -818,19 +831,33 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    if ( loadcyclecounter >= loadcycleswanted )
 	    {
+		secondsCounted = ((loadcyclecounter * mainTimelineIntervalPeriod) / 1000.0d);
+		
 		double load = getProcessCpuLoad();
 		cpuIndicator.setProgress(load);
-		if (load >= 0.95)
+		if (load >= LOADHIGH_THRESHOLD)
 		{
-		    loadHighCounter++; loadLowCounter = 0;
-		    if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (loadHighCounter > 5) )  { textLabelTimeline.pause(); /*textLabelTimeline.setCycleCount(cyclecenter);*/ } 
+		    loadHighSecondsCounted += secondsCounted; loadLowSecondsCounted = 0.0d;
+		    if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (loadHighSecondsCounted >= LOADHIGH_TIMEOUT_SECONDS) )
+		    {
+			textLabelTimeline.pause();
+			
+			arrowsfadestep = -(arrowsfadevarmax/arrowsfadecount);
+			arrowsfadevar = arrowsfadevarmax;
+
+			bottomleftLabel.setVisible(bottomleftLabelEnabled);	if (bottomleftLabelEnabled)	{ bottomleftLabel.setOpacity(arrowsfadevarmax); }
+			topleftLabel.setVisible(topleftLabelEnabled);		if (topleftLabelEnabled)	{ topleftLabel.setOpacity(arrowsfadevarmax); }
+			toprightLabel.setVisible(toprightLabelEnabled);		if (toprightLabelEnabled)	{ toprightLabel.setOpacity(arrowsfadevarmax); }
+			bottomrightLabel.setVisible(bottomrightLabelEnabled);	if (bottomrightLabelEnabled)	{ bottomrightLabel.setOpacity(arrowsfadevarmax); }			
+		    } 
 		}
 		else
 		{
-		    loadLowCounter++; loadHighCounter = 0;
-		    if ( (textLabelTimeline.getStatus() == Animation.Status.PAUSED) & (loadLowCounter > 25) )  { textLabelTimeline.play(); } 
+		    loadLowSecondsCounted += secondsCounted; loadHighSecondsCounted = 0.0d;
+		    if ( (textLabelTimeline.getStatus() == Animation.Status.PAUSED) & (loadLowSecondsCounted >= LOADLOW_TIMEOUT_SECONDS) )  { textLabelTimeline.play(); } 
 		}
 		loadcyclecounter = 0;
+		secondsCounted = 0;
 	    }
 	    loadcyclecounter++;
 	    
@@ -838,22 +865,25 @@ public class GUIFX extends Application implements UI, Initializable
 //	    ARROW FADE ANIMATION
 //	    ====================================================================
 	
-	    if (bottomleftLabel.isVisible())	{ bottomleftLabel.setOpacity(arrowsfadevar); }
-	    if (topleftLabel.isVisible())	{ topleftLabel.setOpacity(arrowsfadevar); }
-	    if (toprightLabel.isVisible())	{ toprightLabel.setOpacity(arrowsfadevar); }
-	    if (bottomrightLabel.isVisible())	{ bottomrightLabel.setOpacity(arrowsfadevar); }
-	
-	    arrowsfadevar += arrowsfadestep;
-
-	    if ( arrowsfadevar >= arrowsfadevarmax ) { arrowsfadevar = arrowsfadevarmax; arrowsfadestep = -arrowsfadestep; }
-	    if ( arrowsfadevar <= 0.0 ) // Only set (in)visible when opacity is 0
+	    if (textLabelTimeline.getStatus() == Animation.Status.RUNNING)
 	    {
-		arrowsfadevar = 0.0; arrowsfadestep = -arrowsfadestep;
-//		arrowsfadevar = arrowsfadevarmax;
-		bottomleftLabel.setVisible(bottomleftLabelEnabled);
-		topleftLabel.setVisible(topleftLabelEnabled);
-		toprightLabel.setVisible(toprightLabelEnabled);
-		bottomrightLabel.setVisible(bottomrightLabelEnabled);
+		if (bottomleftLabel.isVisible())    { bottomleftLabel.setOpacity(arrowsfadevar); }
+		if (topleftLabel.isVisible())	    { topleftLabel.setOpacity(arrowsfadevar); }
+		if (toprightLabel.isVisible())	    { toprightLabel.setOpacity(arrowsfadevar); }
+		if (bottomrightLabel.isVisible())   { bottomrightLabel.setOpacity(arrowsfadevar); }
+
+		arrowsfadevar += arrowsfadestep;
+
+		if ( arrowsfadevar >= arrowsfadevarmax ) { arrowsfadevar = arrowsfadevarmax; arrowsfadestep = -arrowsfadestep; }
+		if ( arrowsfadevar <= 0.0 ) // Only set (in)visible when opacity is 0
+		{
+		    arrowsfadevar = 0.0; arrowsfadestep = -arrowsfadestep;
+    //		arrowsfadevar = arrowsfadevarmax;
+		    bottomleftLabel.setVisible(bottomleftLabelEnabled);
+		    topleftLabel.setVisible(topleftLabelEnabled);
+		    toprightLabel.setVisible(toprightLabelEnabled);
+		    bottomrightLabel.setVisible(bottomrightLabelEnabled);
+		}
 	    }
 	}
         )); mainTimeline.setCycleCount(Animation.INDEFINITE); mainTimeline.play();
@@ -1034,64 +1064,84 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized public void textLabelFadeMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright)
     {
 	bottomleftLabelEnabled = bottomleft; topleftLabelEnabled = topleft; toprightLabelEnabled = topright; bottomrightLabelEnabled = bottomright;
+	
+	if (textLabelTimeline.getStatus() == Animation.Status.PAUSED)
+	{
+	    if (bottomleftLabel.getOpacity() == 0.0)	{ bottomleftLabel.setVisible(bottomleftLabelEnabled); }
+	    if (topleftLabel.getOpacity() == 0.0)	{ topleftLabel.setVisible(topleftLabelEnabled); }
+	    if (toprightLabel.getOpacity() == 0.0)	{ toprightLabel.setVisible(toprightLabelEnabled); }
+	    if (bottomrightLabel.getOpacity() == 0.0)	{ bottomrightLabel.setVisible(bottomrightLabelEnabled); }
+	}
 //	FADE OUT
 	
 	final int count = 10;
 	final int cycleduration = 50;
 	final double fadevarmax = 0.7;
-	
+
 	fadevar = fadevarmax;
 	final double step = fadevarmax/count;
         Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae ->
 	{
 //	    Do Something
 	    userGuidanceLabel.setOpacity(fadevar);
-//	    if (bottomleftLabel.getOpacity() > 0.0)	{ bottomleftLabel.setOpacity(fadevar); }
-//	    if (topleftLabel.getOpacity() > 0.0)	{ topleftLabel.setOpacity(fadevar); }
-//	    if (toprightLabel.getOpacity() > 0.0)	{ toprightLabel.setOpacity(fadevar); }
-//	    if (bottomrightLabel.getOpacity() > 0.0)	{ bottomrightLabel.setOpacity(fadevar); }
+//
+	    if (textLabelTimeline.getStatus() != Animation.Status.RUNNING)
+	    {
+		if (bottomleftLabel.getOpacity() > 0.0)	    { bottomleftLabel.setOpacity(fadevar); }
+		if (topleftLabel.getOpacity() > 0.0)	    { topleftLabel.setOpacity(fadevar); }
+		if (toprightLabel.getOpacity() > 0.0)	    { toprightLabel.setOpacity(fadevar); }
+		if (bottomrightLabel.getOpacity() > 0.0)    { bottomrightLabel.setOpacity(fadevar); }
+	    }
+
 	    fadevar -= step;
 	}));
 	labelTimeline.setCycleCount(10);
-	labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
+	labelTimeline.setOnFinished(new EventHandler<ActionEvent>() // Do at fade out ready
 	{
             @Override public void handle(ActionEvent actionEvent)
 	    {
 //		FADE IN
 		
-//		bottomleftLabel.setOpacity(0);
-//		topleftLabel.setOpacity(0);
-//		toprightLabel.setOpacity(0);
-//		bottomrightLabel.setOpacity(0);
+		if (textLabelTimeline.getStatus() != Animation.Status.RUNNING)
+		{
+		    bottomleftLabel.setOpacity(0);  bottomleftLabel.setVisible(bottomleftLabelEnabled);
+		    topleftLabel.setOpacity(0);	    topleftLabel.setVisible(topleftLabelEnabled);
+		    toprightLabel.setOpacity(0);    toprightLabel.setVisible(toprightLabelEnabled);
+		    bottomrightLabel.setOpacity(0); bottomrightLabel.setVisible(bottomrightLabelEnabled);
+		}
 		
 		userGuidanceLabel.setOpacity(0);
-
-//		userGuidanceLabel.setStyle("-fx-font-size: " + fontsize + ";");
 		userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * fontsizefactor) + "px;");
-		
 		userGuidanceLabel.setText(message);
 		
 		fadevar = 0.0;
 		
-		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae ->
+		Timeline labelTimeline = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae -> // Begin fade in
 		{
 //		    Do Something
 		    userGuidanceLabel.setOpacity(fadevar);
-//		    if (bottomleft) { bottomleftLabel.setOpacity(fadevar); }
-//		    if (topleft) { topleftLabel.setOpacity(fadevar); }
-//		    if (topright) { toprightLabel.setOpacity(fadevar); }
-//		    if (bottomright) { bottomrightLabel.setOpacity(fadevar); }
+		    if (textLabelTimeline.getStatus() != Animation.Status.RUNNING)
+		    {
+			if (bottomleftLabelEnabled)	{ bottomleftLabel.setOpacity(fadevar); }
+			if (topleftLabelEnabled)	{ topleftLabel.setOpacity(fadevar); }
+			if (toprightLabelEnabled)	{ toprightLabel.setOpacity(fadevar); }
+			if (bottomrightLabelEnabled)	{ bottomrightLabel.setOpacity(fadevar); }
+		    }
 		    if ( fadevar < fadevarmax ) { fadevar += step;}
+		    
 		}));
 		labelTimeline.setCycleCount(count);
 		labelTimeline.setOnFinished(new EventHandler<ActionEvent>()
 		{
 		    @Override public void handle(ActionEvent actionEvent)
 		    {
-//			if (!bottomleft) { bottomleftLabel.setOpacity(0.0); }
-//			if (!topleft) { topleftLabel.setOpacity(0.0); }
-//			if (!topright) { toprightLabel.setOpacity(0.0); }
-//			if (!bottomright) { bottomrightLabel.setOpacity(0.0); }
+			if (textLabelTimeline.getStatus() != Animation.Status.RUNNING)
+			{
+			    if (!bottomleftLabelEnabled)    { bottomleftLabel.setOpacity(0.0); }
+			    if (!topleftLabelEnabled)	    { topleftLabel.setOpacity(0.0); }
+			    if (!toprightLabelEnabled)	    { toprightLabel.setOpacity(0.0); }
+			    if (!bottomrightLabelEnabled)   { bottomrightLabel.setOpacity(0.0); }
+			}
 		        userGuidanceLabel.setOpacity(fadevarmax);
 		    }
 		});
@@ -2388,6 +2438,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 		pauseToggleButton.setDisable(false);
                 stopButton.setDisable(false);
+		
+		keyDeviceButton.setDisable(true);
 
 		remainingTimeHeaderLabel.setVisible(true); remainingTimeLabel.setVisible(true);
 		elapsedTimeHeaderLabel.setVisible(true); elapsedTimeLabel.setVisible(true);
@@ -2505,6 +2557,9 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
+		
+		keyDeviceButton.setDisable(false);
+		
                 fileProgressBar.setProgress(0); fileProgressBar.setVisible(false);
                 filesProgressBar.setProgress(0); filesProgressBar.setVisible(false);
 
