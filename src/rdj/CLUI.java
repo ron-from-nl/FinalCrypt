@@ -621,6 +621,8 @@ public class CLUI implements UI
 	
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
         log("\r\n", false, true, false, false, false);
+        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
         log("Examples:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.\r\n", false, true, false, false, false);
@@ -628,10 +630,10 @@ public class CLUI implements UI
         log("            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_file -t target_file\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_dir\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file -t target_dir\r\n", false, true, false, false, false);
-        log("\r\n", false, true, false, false, false);
-        log("Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Mode:\r\n", false, true, false, false, false);
         log("            <--encrypt>           -k \"key_file\"   -t \"target\"	    Encrypt Targets.\r\n", false, true, false, false, false);

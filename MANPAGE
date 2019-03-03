@@ -1,3 +1,5 @@
+Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
+
 Examples:
 
             java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.
@@ -5,10 +7,10 @@ Examples:
             java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # (256 MiB) echo $((1024**2*256))
 
             java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file
+            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_file -t target_file
+
             java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_dir
             java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file -t target_dir
-
-Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
 
 Mode:
             <--encrypt>           -k "key_file"   -t "target"	    Encrypt Targets.
@@ -51,4 +53,4 @@ Parameters:
             <[-t "file/dir"]>     Target file or dir you want to encrypt (encrypts dirs recursively).
             <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 3.2.1 - Author: Ron de Jong - Copyright: © 2017-2019
+FinalCrypt 3.2.2 - Author: Ron de Jong - Copyright: © 2017-2019

@@ -1,5 +1,5 @@
-[Version] =		{3.2.1}
-[Release Notes] =	{A new Beautiful Look & Feel}
-[Release Message] =	{Safe and Smooth Transitions}
+[Version] =		{3.2.2}
+[Release Notes] =	{User guidance arrows softly flashing}
+[Release Message] =	{Guides user attention to user action}
 [Alert Subject] =	{}
 [Alert Message] =	{}
