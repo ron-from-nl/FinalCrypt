@@ -656,8 +656,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    long usedMem = Double.valueOf(totMem - Runtime.getRuntime().freeMemory()).longValue();
 	    long totMem = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
-	    long freeMem = (totMem - Runtime.getRuntime().freeMemory());
-	    long usedMem = Runtime.getRuntime().freeMemory();
+	    long freeMem = (totMem - Runtime.getRuntime().totalMemory());
+	    long usedMem = Runtime.getRuntime().totalMemory();
 	    
 	    int usedMemPercentage = Long.valueOf(usedMem / (((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize()/100)).intValue();
 
