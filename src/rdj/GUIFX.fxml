@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.paint.*?>
@@ -52,7 +53,7 @@
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="targetLabel1" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -112,7 +113,7 @@
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
                                                       <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad Key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="keyLabel1" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad Key file" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -762,6 +763,16 @@
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
+                                                <Canvas fx:id="sysMonCanvas" height="20.0" width="100.0" StackPane.alignment="BOTTOM_CENTER" />
+                                                <Label maxHeight="20.0" maxWidth="100.0" minHeight="20.0" minWidth="100.0" prefHeight="20.0" prefWidth="100.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
+                                                   <tooltip>
+                                                      <Tooltip fx:id="sysMonTooltip" autoHide="true" text="userLoad (X%) I/O (MiB/S)">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Tooltip>
+                                                   </tooltip>
+                                                </Label>
                                              </children>
                                           </StackPane>
                                        </children>
@@ -836,11 +847,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4">
-                                       <children>
-                                          <ProgressIndicator fx:id="cpuIndicator" cache="true" focusTraversable="false" layoutY="-6.0" minHeight="40.0" opacity="0.5" prefHeight="50.0" prefWidth="50.0" progress="0.5" scaleX="0.8" scaleY="0.8" style="-fx-text-fill: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="4" />
                                     <AnchorPane GridPane.columnIndex="5">
                                        <children>
                                           <Button fx:id="keyDeviceButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyDeviceButtonOnAction" prefHeight="50.0" prefWidth="171.0" styleClass="background_bottom" text="Create Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

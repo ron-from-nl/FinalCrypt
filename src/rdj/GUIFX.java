@@ -55,7 +55,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
@@ -100,6 +99,9 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.event.Event;
+import javafx.geometry.VPos;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.PasswordField;
 import javafx.scene.effect.BoxBlur;
@@ -121,6 +123,7 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
@@ -141,7 +144,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private ToggleButton pauseToggleButton;
     @FXML   private Button stopButton;
     @FXML   private Label copyrightLabel;
-    @FXML   private ProgressIndicator cpuIndicator;
+//    @FXML   private ProgressIndicator cpuIndicator;
     @FXML   private SwingNode targetFileSwingNode;
     @FXML   private Button decryptButton;
     @FXML   private Label keyNameLabel;
@@ -249,7 +252,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private double load_High_MS_Passed = 0.0d;
     private double load_Low_MS_Passed = 0.0d;
-    private double arrowsfadestep = (ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue())); // step = max / FPS
+    private double arrowsfadestep = (ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue()) * 2); // step = max / FPS
     private double arrowsfadevar = 0.0d;
     private double load_Monitor_MS_Passed = 0.0d;
     private double load_Manager_MS_Passed = 0.0d;
@@ -379,7 +382,7 @@ public class GUIFX extends Application implements UI, Initializable
    
     private Calendar	totalTimeCalendar;
     private Calendar	remainingTimeCalendar;
-    private long	bytesPerMilliSecond;
+    private double	bytesPerMilliSecond;
     private int offSetHours;
     private int offSetMinutes;
     private int offSetSeconds;
@@ -419,6 +422,15 @@ public class GUIFX extends Application implements UI, Initializable
 
     private Timeline mainTimeline;
     private double userLoad;
+    @FXML
+    private Label targetLabel1;
+    @FXML
+    private Label keyLabel1;
+    @FXML
+    private Canvas sysMonCanvas;
+    private GraphicsContext sysmon;
+    @FXML
+    private Tooltip sysMonTooltip;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -613,8 +625,63 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	textLabelTimeline.setCycleCount(Animation.INDEFINITE);
 	
+	sysmon = sysMonCanvas.getGraphicsContext2D();
+	sysmon.setGlobalAlpha(0.8);
+        sysmon.setStroke(Color.RED);
+        sysmon.setLineWidth(2);
+	
+	sysmon.setFill(Color.valueOf("#4A4039"));
+	sysmon.setTextAlign(TextAlignment.LEFT);
+	sysmon.setTextBaseline(VPos.BOTTOM);
+	sysmon.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 14));
+	sysmon.fillText("🖳", 10, 20);
+	sysmon.fillText("🅼", 40, 20); // 🅼 🂓 🄼 Ⓜ ⓜ ⒨ 🄼 🆓 🅜
+	sysmon.fillText("🖴", 70, 20);
+	
 	welcome();
 	
+    }
+    
+    private void drawUserLoad() // 0.0 - 1.0
+    {
+	Platform.runLater(() ->
+	{
+	    int width = 2; sysmon.setLineWidth(width);
+	    
+	    int userLoadPosX = 33;
+	    int memUsePosX = userLoadPosX + 25;
+	    int ioLoadPosX = memUsePosX + 25;
+	    
+//	    Precalculations
+
+//	    long usedMem = Double.valueOf(totMem - Runtime.getRuntime().freeMemory()).longValue();
+	    long totMem = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+	    long freeMem = (totMem - Runtime.getRuntime().freeMemory());
+	    long usedMem = Runtime.getRuntime().freeMemory();
+	    
+	    log("totmem: " + totMem + " freemem: " + freeMem + " usedMem: " + usedMem + "\r\n");
+	    int usedMemPercentage = Long.valueOf(usedMem / (((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize()/100)).intValue();
+
+//	    I/O
+	    double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024); // if ( processRunningMode != NONE ) { log("MBPS: " + megaBytesPerSecond + "\r\n"); }
+	    double megaBytesPerSecondToYScale = ((megaBytesPerSecond) / 2); if ( megaBytesPerSecondToYScale > 20) { megaBytesPerSecondToYScale = 20; }
+
+//	    Drawing
+	    sysmon.clearRect(userLoadPosX - 1, 0, width, 20);
+	    for (int y=0; y < (userLoad) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20-y, userLoadPosX, 20-y+0); }
+	    	    	    
+	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
+	    for (int y=0; y < (usedMemPercentage / 100d) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20-y, memUsePosX, 20-y+0); }
+
+	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
+	    for (int y=0; y < (megaBytesPerSecondToYScale); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20-y, ioLoadPosX, 20-y+0); }
+
+	    String sysMonString = "";
+	    sysMonString += "CPU Workload (" + Stats.getDecimal(userLoad * 100,0) + "%)\r\n";
+	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPercentage,0) + "%) " + Stats.getDecimal(usedMem / (1024 * 1024),1) + " MiB / " + Stats.getDecimal(totMem / (1024 * 1024 * 1024),1) + " GiB\r\n"; 
+	    sysMonString += "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
+	    sysMonTooltip.setText(sysMonString);
+	});
     }
     
     public void textLabelBlurMessage(String message, int durationMSec) // 1000
@@ -715,7 +782,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
-        cpuIndicator.setTooltip(cpuIndicatorToolTip);
+//        cpuIndicator.setTooltip(cpuIndicatorToolTip);
 //	cpuIndicator.setStyle(" -fx-progress-color: grey;");
 
 //      for: ProcessCpuLoad()
@@ -739,7 +806,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    WORKLOAD MONITOR
 //	    ==================================================================================================================================================================	    
-	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL ) { userLoad = getProcessCpuLoad(); cpuIndicator.setProgress(userLoad); load_Monitor_MS_Passed = 0.0d; }
+	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL ) { userLoad = getProcessCpuLoad(); drawUserLoad(); /*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d; }
 	    load_Monitor_MS_Passed += (mainTimeline.getCurrentRate() * MAIN_TIMELINE_INTERVAL_PERIOD);
 //	    ==================================================================================================================================================================	    
 
@@ -754,7 +821,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			textLabelTimeline.pause();
 			
-			arrowsfadestep = -(ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue())); // step = max / FPS;
+			arrowsfadestep = -(ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue()) * 2); // step = max / FPS;
 			arrowsfadevar = ARROWS_OPACITY_MAX;
 
 			bottomleftLabel.setVisible(bottomleftLabelEnabled);	if (bottomleftLabelEnabled)	{ bottomleftLabel.setOpacity(ARROWS_OPACITY_MAX); }
@@ -1445,7 +1512,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
 			    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //			    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+			    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 			}
 			else
 			{
@@ -1460,15 +1527,15 @@ checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumToolti
 			
 //			MySimpleFCFileVisitor.running = false;
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
-targetFCPathList = new FCPathList();
+			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
+			targetFCPathList = new FCPathList();
 
-pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
-keyImageView.setOpacity(0.1);
+			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
+			keyImageView.setOpacity(0.1);
 
-textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+			textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 
-buildReady(targetFCPathList, false);
+			buildReady(targetFCPathList, false);
 		    }
 		});
 		
@@ -1510,8 +1577,8 @@ buildReady(targetFCPathList, false);
 		    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
 		    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //                    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
-checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
+		    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+		    textLabelFadeMessage(SELECT_KEY, 64, false, false, true, false);
 		});
 
 		buildReady(targetFCPathList, false);
@@ -2275,15 +2342,16 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
 	    totalTimeCalendar =	Calendar.getInstance(Locale.ROOT);
 	    
-	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE))
-	    {
-		UPDATE_CLOCKS_TIMELINE.play();
-	    }
+	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.play(); }
 	    
-	    if	(processRunningMode == ENCRYPT_MODE) { textLabelFadeMessage(ENCRYPTING_FILES, 64, false, false, false, false); }
-	    else if (processRunningMode == DECRYPT_MODE) { textLabelFadeMessage(DECRYPTING_FILES, 64, false, false, false, false); }
-	    else if (processRunningMode == CREATE_KEYDEV_MODE) { textLabelFadeMessage(CREATE_KEYDEV, 64, false, false, false, false); }
-	    else if (processRunningMode == CLONE_KEYDEV_MODE) { textLabelFadeMessage(CLONE_KEYDEV, 64, false, false, false, false); }
+	    switch (processRunningMode)
+	    {
+	    	case ENCRYPT_MODE: textLabelFadeMessage(ENCRYPTING_FILES, 64, false, false, false, false); break;
+	    	case DECRYPT_MODE: textLabelFadeMessage(DECRYPTING_FILES, 64, false, false, false, false); break;
+	    	case CREATE_KEYDEV_MODE: textLabelFadeMessage(CREATE_KEYDEV, 64, false, false, false, false); break;
+	    	case CLONE_KEYDEV_MODE: textLabelFadeMessage(CLONE_KEYDEV, 64, false, false, false, false); break;
+	    	default: break;
+	    }
 	    
 	    processRunning = true;
 	    
@@ -2326,7 +2394,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
 	    totalTimeCalendar =	    Calendar.getInstance(Locale.ROOT);
 
-	    totalTimeCalendar.setTimeInMillis(bytesTotal / bytesPerMilliSecond);
+	    totalTimeCalendar.setTimeInMillis(bytesTotal / (Double.valueOf(bytesPerMilliSecond).longValue() + 1));
 	    elapsedTimeCalendar.setTimeInMillis(nowTimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
 	    remainingTimeCalendar.setTimeInMillis(totalTimeCalendar.getTimeInMillis() - elapsedTimeCalendar.getTimeInMillis());
 	    String elapsedTimeString = "";
@@ -2355,7 +2423,7 @@ keyFileChooser.rescanCurrentDirectory();
 	});
     }
 
-    @Override public void processProgress(int fileProgressPercent, int filesProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam)
+    @Override public void processProgress(int fileProgressPercent, int filesProgressPercent, long bytesTotalParam, long bytesProcessedParam, double bytesPerMiliSecondParam)
     {
 	
         Platform.runLater(() ->
@@ -2382,6 +2450,7 @@ keyFileChooser.rescanCurrentDirectory();
     {
         Platform.runLater(() ->
 	{
+	    bytesPerMilliSecond = 0; drawUserLoad();
 	    // Clocks
 	    
 	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }

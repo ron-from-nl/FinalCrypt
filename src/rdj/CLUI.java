@@ -753,7 +753,7 @@ public class CLUI implements UI
     {
     }
 
-    @Override public void processProgress(int filesProgress, int fileProgress, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam)
+    @Override public void processProgress(int filesProgress, int fileProgress, long bytesTotalParam, long bytesProcessedParam, double bytesPerMiliSecondParam)
     {
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }

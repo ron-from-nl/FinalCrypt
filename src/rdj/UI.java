@@ -24,7 +24,7 @@ public interface UI
     public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print);
 //    
     public void processGraph(int value);
-    public void processProgress(int filesProgressPercent, int fileProgressPercent, long bytesTotalParam, long bytesProcessedParam, long bytesPerMiliSecondParam);
+    public void processProgress(int filesProgressPercent, int fileProgressPercent, long bytesTotalParam, long bytesProcessedParam, double bytesPerMiliSecondParam);
     public void fileProgress();
     public void processFinished(FCPathList openFCPathList, boolean open);
     public void processStarted();
