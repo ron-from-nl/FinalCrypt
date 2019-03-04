@@ -1,3 +1,4 @@
+3.3.1 Removed a heavily logging memory logarea print statement
 3.3.0 Replaced the Process Usage Indicator with. Led Level Meters for CPU, Mem & I/O Usage
 3.2.2 Guide Users Attention to User Action. User Guidance Arrows softly flashing
 3.2.1 Minor cosmetic update

@@ -1,4 +1,4 @@
-[Version] =		{3.3.0}
+[Version] =		{3.3.1}
 [Release Notes] =	{Replaced the Process Usage Indicator with}
 [Release Message] =	{Led Level Meters for CPU, Mem & I/O Usage}
 [Alert Subject] =	{}
