@@ -36,6 +36,9 @@ Update file:						MANPAGE
 
 ============================= Binaries Released =============================
 
+Replaced the Process Usage Indicator with
+Led Level Meters for CPU, Mem & I/O Usage
+
 Minor cosmetic update
 A new beautiful Look & Feel
 Safe and Smooth Transitions

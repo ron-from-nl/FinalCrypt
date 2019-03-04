@@ -1,5 +1,5 @@
-[Version] =		{3.2.2}
-[Release Notes] =	{Guide Users Attention to User Action}
-[Release Message] =	{User Guidance Arrows softly flashing}
+[Version] =		{3.3.0}
+[Release Notes] =	{Replaced the Process Usage Indicator with}
+[Release Message] =	{Led Level Meters for CPU, Mem & I/O Usage}
 [Alert Subject] =	{}
 [Alert Message] =	{}
