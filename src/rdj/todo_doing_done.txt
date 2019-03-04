@@ -36,6 +36,7 @@ Update file:						MANPAGE
 
 ============================= Binaries Released =============================
 
+Removed a heavily logging memory logarea print statement
 Replaced the Process Usage Indicator with
 Led Level Meters for CPU, Mem & I/O Usage
 Minor cosmetic update
