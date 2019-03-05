@@ -654,15 +654,14 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    Precalculations
 
-//	    long usedMem = Double.valueOf(totMem - Runtime.getRuntime().freeMemory()).longValue();
 	    long totMem = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
 	    long freeMem = (totMem - Runtime.getRuntime().totalMemory());
 	    long usedMem = Runtime.getRuntime().totalMemory();
 	    
-	    int usedMemPercentage = Long.valueOf(usedMem / (((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize()/100)).intValue();
+	    int usedMemPercentage = Long.valueOf(usedMem / (totMem / 100)).intValue();
 
 //	    I/O
-	    double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024); // if ( processRunningMode != NONE ) { log("MBPS: " + megaBytesPerSecond + "\r\n"); }
+	    double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d); // if ( processRunningMode != NONE ) { log("MBPS: " + megaBytesPerSecond + "\r\n"); }
 	    double megaBytesPerSecondToYScale = ((megaBytesPerSecond) / 2); if ( megaBytesPerSecondToYScale > 20) { megaBytesPerSecondToYScale = 20; }
 
 //	    Drawing
@@ -670,14 +669,14 @@ public class GUIFX extends Application implements UI, Initializable
 	    for (int y=0; y < (userLoad) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20-y, userLoadPosX, 20-y+0); }
 	    	    	    
 	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
-	    for (int y=0; y < (usedMemPercentage / 100d) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20-y, memUsePosX, 20-y+0); }
+	    for (int y=0; y < (usedMemPercentage / 100) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20-y, memUsePosX, 20-y+0); }
 
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
 	    for (int y=0; y < (megaBytesPerSecondToYScale); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20-y, ioLoadPosX, 20-y+0); }
 
 	    String sysMonString = "";
 	    sysMonString += "CPU Workload (" + Stats.getDecimal(userLoad * 100,0) + "%)\r\n";
-	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPercentage,0) + "%) " + Stats.getDecimal(usedMem / (1024 * 1024),1) + " MiB / " + Stats.getDecimal(totMem / (1024 * 1024 * 1024),1) + " GiB\r\n"; 
+	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPercentage,0) + "%) " + Stats.getDecimal(Long.valueOf(usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
 	    sysMonString += "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
 	    sysMonTooltip.setText(sysMonString);
 	});
