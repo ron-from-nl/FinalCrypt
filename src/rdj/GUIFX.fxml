@@ -90,10 +90,10 @@
                                           </AnchorPane>
                                           <AnchorPane VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="targetFileSwingNode" mouseTransparent="true" />
-                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" />
+                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -164,10 +164,10 @@
                                           </AnchorPane>
                                           <AnchorPane VBox.vgrow="ALWAYS">
                                              <children>
-                                                <StackPane prefHeight="455.0" prefWidth="699.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <SwingNode fx:id="keyFileSwingNode" mouseTransparent="true" StackPane.alignment="CENTER" />
-                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" />
+                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -208,7 +208,7 @@
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
@@ -763,7 +763,7 @@
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
-                                                <Canvas fx:id="sysMonCanvas" height="20.0" width="100.0" StackPane.alignment="BOTTOM_CENTER" />
+                                                <Canvas fx:id="sysMonCanvas" height="20.0" opacity="0.0" width="100.0" StackPane.alignment="BOTTOM_CENTER" />
                                                 <Label maxHeight="20.0" maxWidth="100.0" minHeight="20.0" minWidth="100.0" prefHeight="20.0" prefWidth="100.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
                                                    <tooltip>
                                                       <Tooltip fx:id="sysMonTooltip" autoHide="true" text="userLoad (X%) I/O (MiB/S)">
@@ -788,15 +788,15 @@
                            <children>
                               <GridPane prefHeight="50.0" prefWidth="1140.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="18.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="18.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
-                                    <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="40.0" prefWidth="40.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="15.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="12.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="8.0" percentWidth="11.0" prefWidth="8.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" prefWidth="125.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="4.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="125.0" percentWidth="12.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="40.0" valignment="CENTER" vgrow="NEVER" />

@@ -43,6 +43,7 @@ import java.util.TimerTask;
 public class FinalCrypt extends Thread
 {
     public static boolean verbose = false;
+    private static double realtimeBytesPerMilliSecond;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
     private boolean symlink = false, txt = false, dry = false;
     private static boolean print = false, bin = false, dec = false, hex = false, chr = false;
@@ -56,7 +57,7 @@ public class FinalCrypt extends Thread
     private int printAddressByteCounter = 0;
     private final UI ui;
     
-    private TimerTask updateProgressTask;
+    private TimerTask updateProgressTimerTask;
     private java.util.Timer updateProgressTaskTimer;
 
     private boolean stopPending = false;
@@ -68,7 +69,8 @@ public class FinalCrypt extends Thread
     public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
-    private static double   bytesPerMilliSecond = 0;
+    private static double   filesBytesPerMilliSecond = 0;
+    private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //											❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘ ✔ ⚛
 //											🡔 🡕 🡖 🡗 | 🡤 🡥 🡦 🡧 | 🡬 🡭 🡮 🡯 | 🡴 🡵 🡶 🡷 | 🡼 🡽 🡾 🡿 | 🢄 🢅 🢆 🢇 | ⬈ ⬉ ⬊ ⬋ | ⇖ ⇗ ⇘ ⇙ | ↖ ↗ ↘ ↙
     public static final String UTF8_ENCRYPT_SYMBOL =		    "🔒";
@@ -108,7 +110,10 @@ public class FinalCrypt extends Thread
     private static int pwdPos = 0;
     public static final String HASH_ALGORITHM_NAME = "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
     private static String printString;
-    private long lastBytesProcessed;
+    private long lastBytesProcessed2;
+    private long throughputClock = 0L;
+    private long lastThroughputClock = 0L;
+    private long realtimeBytesProcessed;
 
     public FinalCrypt(UI ui)
     {   
@@ -199,8 +204,10 @@ public class FinalCrypt extends Thread
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
-        updateProgressTask = new TimerTask() { private long bytesTotal;
-	private long bytesProcessed;
+        updateProgressTimerTask = new TimerTask() { private long filesBytesTotal;
+
+	private long fileBytesProcessed;
+	
 	@Override public void run()
         {
 	    long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
@@ -211,14 +218,17 @@ public class FinalCrypt extends Thread
 	    double filesBytesPercent =	((allDataStats.getFilesBytesTotal() ) / 100.0);
 	    int filesBytesPercentage =	(int)(filesBytesProcessed / filesBytesPercent);
 
-	    processProgressCalendar = Calendar.getInstance(Locale.ROOT);
-	    bytesTotal =	    allDataStats.getFilesBytesTotal();
-	    bytesProcessed =	    allDataStats.getFileBytesProcessed();
-	    bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-	    lastBytesProcessed = bytesProcessed;
-            ui.processProgress( fileBytesPercentage, filesBytesPercentage, bytesTotal, bytesProcessed, bytesPerMilliSecond );
+	    processProgressCalendar =	Calendar.getInstance(Locale.ROOT);
+	    filesBytesTotal =		allDataStats.getFilesBytesTotal();
+	    fileBytesProcessed =	allDataStats.getFileBytesProcessed();
+	    filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 	    
-        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 100L, 100L);
+	    throughputClock = System.nanoTime();
+	    realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
+            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, fileBytesProcessed, realtimeBytesPerMilliSecond );
+	    
+        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTimerTask, 100L, UPDATE_PROGRESS_TIMERTASK_PERIOD);
 
 
 //      Start Files Encryption Clock
@@ -399,6 +409,7 @@ public class FinalCrypt extends Thread
 			if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 			targetSourceEnded = true;
 			ui.log("\r\n", true, true, true, false, false);
+			filesBytesPerMilliSecond = 0d;
 			break encryptTargetloop;
 		    }
 
@@ -441,7 +452,8 @@ public class FinalCrypt extends Thread
 			{
 			    // Encrypt inputBuffer and fill up outputBuffer
 			    targetDestinBuffer = encryptBuffer(targetSourceBuffer, keySourceBuffer, true); // last boolean = PrintEnabled
-			    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinBuffer); targetDestinBuffer.flip(); writeTargetDestChannelPosition += writeTargetDestChannelTransfered;
+			    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinBuffer); targetDestinBuffer.flip();
+			    writeTargetDestChannelPosition += writeTargetDestChannelTransfered; realtimeBytesProcessed += writeTargetDestChannelTransfered;
 			    if (txt) { logByteBuffer("DB", targetSourceBuffer); logByteBuffer("CB", keySourceBuffer); logByteBuffer("OB", targetDestinBuffer); }
 			    writeTargetDestinChannel.close();
 			    dstMessageDigest.update(targetDestinBuffer); // Build up checksum
@@ -610,7 +622,8 @@ public class FinalCrypt extends Thread
 			    {
 				// Fill up inputFileBuffer
 				writeTargetSourceChannel.position(writeTargetSourceChannelPosition);
-				writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip(); writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered;
+				writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip();
+				writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered; realtimeBytesProcessed += writeTargetSourceChannelTransfered;
 				if (( writeTargetSourceChannelTransfered < 1 )) { targetSourceEnded = true; }
 				writeTargetSourceChannel.close();
 				wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();
@@ -702,7 +715,7 @@ public class FinalCrypt extends Thread
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
         } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
-	bytesPerMilliSecond = 0.0;
+	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
         if ( stopPending ) { ui.log("\r\n", true, false, false, false, false); stopPending = false;  } // It breaks in the middle of encrypting, so the encryption summery needs to begin on a new line
 
@@ -720,10 +733,9 @@ public class FinalCrypt extends Thread
 
     public static ByteBuffer encryptBuffer(ByteBuffer targetSourceBuffer, ByteBuffer keySourceBuffer, boolean printEnabled)
     {
-	long startTime = System.nanoTime();
         ByteBuffer targetDestinBuffer = ByteBuffer.allocate(keySourceBuffer.capacity()); targetDestinBuffer.clear();
 	
-        while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+        while (pausing)     { realtimeBytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
         byte targetDestinByte;
 	for (int targetSourceBufferCount = 0; targetSourceBufferCount < targetSourceBuffer.limit(); targetSourceBufferCount++)
         {
@@ -733,11 +745,7 @@ public class FinalCrypt extends Thread
 	    if ((printEnabled) && ( print )) { printString += getByteString(targetSourceByte, keySourceByte, targetDestinByte); }
 	}
         targetDestinBuffer.flip();
-	
-	long endTime = System.nanoTime();
-	double secondsFactor = (1000000 / (endTime - startTime));
-	bytesPerMilliSecond = (targetDestinBuffer.limit() * secondsFactor);
-	
+		
 	return targetDestinBuffer;
     }
     
@@ -843,7 +851,7 @@ public class FinalCrypt extends Thread
     
     public boolean getPausing()             { return pausing; }
     public boolean getStopPending()         { return stopPending; }
-    public void setPausing(boolean val)     { pausing = val; }
+    public void setPausing(boolean val)     { pausing = val; if (pausing) {filesBytesPerMilliSecond = 0;}}
     public void setStopPending(boolean val) { stopPending = val; }
     
     public static void setPwd(String pwdParam)	    { pwd = pwdParam; }

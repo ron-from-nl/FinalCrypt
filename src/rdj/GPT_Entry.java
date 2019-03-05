@@ -120,7 +120,7 @@ public class GPT_Entry
     
     public void write(FCPath fcPath)						{ pos = ((DeviceController.getLBAOffSet(DeviceController.bytesPerSector, fcPath.size, ABSTRACT_LBA)) + (ENTRYNUMBER * LENGTH));
 										  new DeviceController(ui).writePos(getDesc(), getBytes(), fcPath, pos); } // Causes exeption on OSX
-    public void writeKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)	{ new DeviceController(ui).writeKeyPartition(keyFCPath, targetFCPath, startingLBA, endingLBA); }
+    public void writeKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)	{ new DeviceController(ui).createKeyPartition(keyFCPath, targetFCPath, startingLBA, endingLBA); }
     public void cloneKeyPartition(FCPath keyFCPath, FCPath targetFCPath)	{ new DeviceController(ui).cloneKeyPartition(keyFCPath, targetFCPath, startingLBA, endingLBA); }
     
         

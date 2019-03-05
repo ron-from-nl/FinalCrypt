@@ -431,6 +431,7 @@ public class GUIFX extends Application implements UI, Initializable
     private GraphicsContext sysmon;
     @FXML
     private Tooltip sysMonTooltip;
+    private int sysmonOffSetX;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -451,7 +452,7 @@ public class GUIFX extends Application implements UI, Initializable
 
         stage.setScene(scene);
         stage.setTitle(Version.getProductName());
-        stage.setMinWidth(1280);
+        stage.setMinWidth(1366);
         stage.setMinHeight(700);
         stage.setMaximized(true);
         stage.setOnCloseRequest(e -> Platform.exit());	
@@ -548,11 +549,6 @@ public class GUIFX extends Application implements UI, Initializable
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
 	
 	
-//        device = new Device(this); device.start();
-
-//	noTargetFile = targetFileChooser.getSelectedFile();
-//	noKeyFile = keyFileChooser.getSelectedFile();
-	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	keyImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/key.png")));
@@ -630,13 +626,15 @@ public class GUIFX extends Application implements UI, Initializable
         sysmon.setStroke(Color.RED);
         sysmon.setLineWidth(2);
 	
+	sysmonOffSetX = 25;
+	
 	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.setTextAlign(TextAlignment.LEFT);
 	sysmon.setTextBaseline(VPos.BOTTOM);
 	sysmon.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 14));
-	sysmon.fillText("🖳", 10, 20);
-	sysmon.fillText("🅼", 40, 20); // 🅼 🂓 🄼 Ⓜ ⓜ ⒨ 🄼 🆓 🅜
-	sysmon.fillText("🖴", 70, 20);
+	sysmon.fillText("🖳", sysmonOffSetX + 0, 20);
+	sysmon.fillText("🅼", sysmonOffSetX + 30, 20); // 🅼 🂓 🄼 Ⓜ ⓜ ⒨ 🄼 🆓 🅜
+	sysmon.fillText("🖴", sysmonOffSetX + 60, 20);
 	
 	welcome();
 	
@@ -648,7 +646,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    int width = 2; sysmon.setLineWidth(width);
 	    
-	    int userLoadPosX = 33;
+	    int userLoadPosX = sysmonOffSetX + 23;
 	    int memUsePosX = userLoadPosX + 25;
 	    int ioLoadPosX = memUsePosX + 25;
 	    
@@ -658,26 +656,27 @@ public class GUIFX extends Application implements UI, Initializable
 	    long freeMem = (totMem - Runtime.getRuntime().totalMemory());
 	    long usedMem = Runtime.getRuntime().totalMemory();
 	    
-	    int usedMemPercentage = Long.valueOf(usedMem / (totMem / 100)).intValue();
+	    int usedMemPerc = Long.valueOf(usedMem / (totMem / 100)).intValue();
 
 //	    I/O
 	    double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d); // if ( processRunningMode != NONE ) { log("MBPS: " + megaBytesPerSecond + "\r\n"); }
-	    double megaBytesPerSecondToYScale = ((megaBytesPerSecond) / 2); if ( megaBytesPerSecondToYScale > 20) { megaBytesPerSecondToYScale = 20; }
-
-//	    Drawing
-	    sysmon.clearRect(userLoadPosX - 1, 0, width, 20);
-	    for (int y=0; y < (userLoad) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20-y, userLoadPosX, 20-y+0); }
-	    	    	    
-	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
-	    for (int y=0; y < (usedMemPercentage / 100) * 20; y+=4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20-y, memUsePosX, 20-y+0); }
-
-	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
-	    for (int y=0; y < (megaBytesPerSecondToYScale); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20-y, ioLoadPosX, 20-y+0); }
+	    double megaBytesPerSecondToYScale = (((megaBytesPerSecond) / 250) * 20); if ( megaBytesPerSecondToYScale > 20) { megaBytesPerSecondToYScale = 20; }
 
 	    String sysMonString = "";
 	    sysMonString += "CPU Workload (" + Stats.getDecimal(userLoad * 100,0) + "%)\r\n";
-	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPercentage,0) + "%) " + Stats.getDecimal(Long.valueOf(usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
+	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
 	    sysMonString += "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
+
+//	    Drawing
+	    sysmon.clearRect(userLoadPosX - 1, 0, width, 20);
+	    for (int y = 0; y < (userLoad) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20 - y, userLoadPosX, 20 - y + 0); }
+	    	    	    
+	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
+	    for (int y = 0; y < (usedMemPerc / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
+
+	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
+	    for (int y = 0; y < (megaBytesPerSecondToYScale); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
+
 	    sysMonTooltip.setText(sysMonString);
 	});
     }
@@ -943,7 +942,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		if (! val.equals("Yes")) // First time
-		{
+		{		    
 		    textLabelFadeMessage(CREATE_KEY, 64, false, false, false, true);
 		    prefs.put("Initialized", "Yes");
 	    //	                    Alert alert = introAlert(AlertType.INFORMATION, title, header, infotext, "Don't show again", param -> prefs.put("Hide Intro", param ? "Yes" : "No"),  ButtonType.OK);
@@ -955,6 +954,15 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 
 		disableFileChoosers(false);
+
+		FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
+		sysmonFadeTransition.setFromValue(0.0f);
+		sysmonFadeTransition.setToValue(1.0f);
+		sysmonFadeTransition.setCycleCount(1);
+		sysmonFadeTransition.setAutoReverse(false);
+		sysmonFadeTransition.setDelay(Duration.seconds(0));
+		sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
+		sysmonFadeTransition.play();
 
 //		Last Update Checked
 		long updateChecked = 0; // Epoch date
@@ -2495,28 +2503,28 @@ keyFileChooser.rescanCurrentDirectory();
 	    
 //		The Open when finished section
 
-Thread openThread;
-openThread = new Thread(() ->
-{
-    try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
-    if (open)
-    {
-	for (Iterator it = openFCPathList.iterator(); it.hasNext();)
-	{
-	    FCPath openFCPath = (FCPath) it.next();
-	    Path newPath = Paths.get(openFCPath.path.toString().substring(0, openFCPath.path.toString().lastIndexOf('.')));
-	    
-	    try { Desktop.getDesktop().open(newPath.toFile()); }
-	    catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    
-	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
-	}
-    }
-});
-openThread.setName("openThread");
-openThread.setDaemon(true);
-openThread.start();
+	    Thread openThread;
+	    openThread = new Thread(() ->
+	    {
+		try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
+		if (open)
+		{
+		    for (Iterator it = openFCPathList.iterator(); it.hasNext();)
+		    {
+			FCPath openFCPath = (FCPath) it.next();
+			Path newPath = Paths.get(openFCPath.path.toString().substring(0, openFCPath.path.toString().lastIndexOf('.')));
+
+			try { Desktop.getDesktop().open(newPath.toFile()); }
+			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+
+			targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
+			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
+		    }
+		}
+	    });
+	    openThread.setName("openThread");
+	    openThread.setDaemon(true);
+	    openThread.start();
 	});
     }    
     
@@ -2644,6 +2652,7 @@ openThread.start();
 	    {
 		pauseToggleButton.setStyle(" -fx-text-fill: orange; -fx-font-size: 14; ");
 		PAUSE_TIMELINE.play();
+		bytesPerMilliSecond = 0d;
 	    }
 	    else
 	    {

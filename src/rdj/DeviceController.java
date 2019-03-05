@@ -53,11 +53,15 @@ public class DeviceController
     private static long cycles = 0;
     private static boolean finished = false;
     private Calendar	startCalendar;
-    private long bytesTotal;
-    private long bytesProcessed;
+    private long filesBytesTotal;
     private long filesBytesProcessed;
-    private long bytesPerMilliSecond;
+//    private long filesBytesProcessed;
+    private static double bytesPerMilliSecond;
     private Calendar processProgressCalendar;
+    private long throughputClock;
+    private long lastThroughputClock;
+    private double realtimeBytesProcessed;
+    private double realtimeBytesPerMilliSecond;
 
 	public DeviceController(UI ui)
     {
@@ -129,7 +133,7 @@ public class DeviceController
     }
 
 //  Write KeyFile to partition
-    synchronized public void writeKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
+    synchronized public void createKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 	boolean encryptkey = true;
@@ -158,18 +162,26 @@ public class DeviceController
         byte[]      randomizedBytes =       new byte[bufferSize];
         ByteBuffer  randomizedBuffer =      ByteBuffer.allocate(bufferSize); keyFileBuffer.clear();
         ByteBuffer  outputDeviceBuffer =    ByteBuffer.allocate(bufferSize); outputDeviceBuffer.clear();
+	
+	throughputClock = 0;
+	lastThroughputClock = 0;
 
 //      Setup the Progress TIMER & TASK
 
         updateProgressTask = new TimerTask()
 	{
 	    @Override public void run()
-	    {
-		processProgressCalendar = Calendar.getInstance(Locale.ROOT);
-		bytesTotal =	    allDataStats.getFilesBytesTotal();
-		bytesProcessed =	    allDataStats.getFilesBytesProcessed();
-		bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-		ui.processProgress
+	    {		
+		processProgressCalendar =   Calendar.getInstance(Locale.ROOT);
+		filesBytesTotal =	    allDataStats.getFilesBytesTotal();
+		filesBytesProcessed =	    allDataStats.getFilesBytesProcessed();
+		bytesPerMilliSecond =	    filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+
+		throughputClock = System.nanoTime();
+		realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+		lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
+
+	        ui.processProgress
 		(
 		    (int) (
 			    (( readKeyFileStat1.getFileBytesProcessed() + writeKeyFileStat1.getFileBytesProcessed() + readKeyFileStat2.getFileBytesProcessed() + writeKeyFileStat2.getFileBytesProcessed() ) * 2)
@@ -177,7 +189,7 @@ public class DeviceController
 
 		    (int) (
 			    ( allDataStats.getFilesBytesProcessed() * 2) / ( (allDataStats.getFilesBytesTotal() * 3) / 100.0)
-			  ), bytesTotal, bytesProcessed, bytesPerMilliSecond // long bytesPerMiliSecond
+			  ), filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond
 		);
 	    }
 	}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
@@ -185,9 +197,10 @@ public class DeviceController
         allDataStats.setAllDataStartNanoTime();
 
         ui.log("Writing " + keyFCPath.path.toAbsolutePath() + " to partition 1 (LBA:"+ firstLBA + ":" + (getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition) + ")", true, true, true, false, false);
-        write1loop: while ( ! inputEnded )
+        filesBytesProcessed = 0;
+	write1loop: while ( ! inputEnded )
         {
-            while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+            while (pausing)     { bytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
             if (stopPending)    { inputEnded = true; break write1loop; }
 
             readKeyFileStat1.setFileStartEpoch();
@@ -214,13 +227,13 @@ public class DeviceController
             {
 //              Write keyfile to partition 1
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
+                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); filesBytesProcessed += writeOutputDeviceChannelTransfered;
                 writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyFileChannelTransfered);
 //                ui.log("writeOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
 //              Write keyfile to partition 2
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, lastLBA + 1) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
+                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); filesBytesProcessed += writeOutputDeviceChannelTransfered;
                 writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyFileChannelTransfered);
 //                ui.log("writeOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
@@ -325,9 +338,15 @@ public class DeviceController
     //      Setup the Progress TIMER & TASK
 
 	    processProgressCalendar = Calendar.getInstance(Locale.ROOT);
-	    bytesTotal =	    allDataStats.getFilesBytesTotal();
-	    bytesProcessed =	    allDataStats.getFilesBytesProcessed();
+	    filesBytesTotal =	    allDataStats.getFilesBytesTotal();
+	    filesBytesProcessed =	    allDataStats.getFilesBytesProcessed();
 	    bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+
+
+	    throughputClock = System.nanoTime();
+	    realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
+
 	    updateProgressTask = new TimerTask() { @Override public void run()
 	    {
 		ui.processProgress
@@ -344,7 +363,7 @@ public class DeviceController
 				( 
 					allDataStats.getFilesBytesProcessed() * 1) /
 					( (allDataStats.getFilesBytesTotal() * 1) / 100.0)
-				), bytesTotal, bytesProcessed, bytesPerMilliSecond // long bytesPerMiliSecond
+				), filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond // long bytesPerMiliSecond
 		);
 	    }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
@@ -353,10 +372,12 @@ public class DeviceController
 	    ui.log("Cloning " + keyFCPath.path.toAbsolutePath() + " to " + targetFCPath.path.toAbsolutePath() + " partitions (LBA:"+ firstLBA + ":" + (getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition) + ")", true, true, true, false, false);
 
 	    readKeyDeviceFileChannelPosition = DeviceController.getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + readKeyDeviceFileChannelPosition;
+	    
+	    filesBytesProcessed = 0;
 	    write1loop: while ( ! inputEnded )
 	    {
-		while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-		if (stopPending)    { inputEnded = true; break write1loop; }
+		while (pausing)     { bytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+		if (stopPending)    { inputEnded = true; bytesPerMilliSecond = 0d; break write1loop; }
 
 		readKeyFileStat1.setFileStartEpoch();
 		try (final SeekableByteChannel readKeyDeviceFileChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ)))
@@ -379,7 +400,7 @@ public class DeviceController
 		{
     //              Write keyfile to partition 1
 		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
-		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind();
+		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); realtimeBytesProcessed += writeOutputDeviceChannelTransfered;
 		    writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyDeviceFileChannelTransfered);
 
 		    writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
@@ -590,7 +611,7 @@ public class DeviceController
 
     public static boolean getPausing()             { return pausing; }
     public static boolean getStopPending()         { return stopPending; }
-    public static void setPausing(boolean val)     { pausing = val; }
+    public static void setPausing(boolean val)     { pausing = val; if (pausing) { bytesPerMilliSecond = 0d; } } // bytesPerMilliSecond
     public static void setStopPending(boolean val) { stopPending = val; }
 
 }
