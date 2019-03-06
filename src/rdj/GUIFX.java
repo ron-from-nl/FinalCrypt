@@ -660,7 +660,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    String sysMonString = "";
 	    sysMonString += userLoadString + "\r\n";
 	    sysMonString += usedMemString + "\r\n";
-	    sysMonString += throughputString + "\r\n";
+	    sysMonString += throughputString;
 
 
 //	    Drawing
@@ -685,7 +685,7 @@ public class GUIFX extends Application implements UI, Initializable
 	memStats.usedMem = Runtime.getRuntime().totalMemory();
 	memStats.usedMemPerc = Long.valueOf(memStats.usedMem / (memStats.totMem / 100)).intValue();
 	memStats.memStatsString = "";
-	memStats.memStatsString += "RAM Mem Used (" + Stats.getDecimal(memStats.usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(memStats.usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(memStats.totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
+	memStats.memStatsString += "RAM Mem Used (" + Stats.getDecimal(memStats.usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(memStats.usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(memStats.totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB"; 
 
 	return memStats;
     }
