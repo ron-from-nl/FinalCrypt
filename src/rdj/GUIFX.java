@@ -325,8 +325,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Version version;
 
     private boolean processRunning;
-    private MBeanServer mbs;
-    private ObjectName name;
+    private MBeanServer mBeanServer;
+    private ObjectName attributeObjectName;
     private AttributeList attribList;
     private Attribute att;
     private Double value;
@@ -421,7 +421,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 
     private Timeline mainTimeline;
-    private double userLoad;
+    private double userLoadPerc;
     @FXML
     private Label targetLabel1;
     @FXML
@@ -640,8 +640,9 @@ public class GUIFX extends Application implements UI, Initializable
 	
     }
     
-    private void drawUserLoad() // 0.0 - 1.0
+    private void updateSystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString) // 0.0 - 1.0
     {
+//	double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d);
 	Platform.runLater(() ->
 	{
 	    int width = 2; sysmon.setLineWidth(width);
@@ -652,33 +653,41 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    Precalculations
 
-	    long totMem = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
-	    long freeMem = (totMem - Runtime.getRuntime().totalMemory());
-	    long usedMem = Runtime.getRuntime().totalMemory();
-	    
-	    int usedMemPerc = Long.valueOf(usedMem / (totMem / 100)).intValue();
-
 //	    I/O
-	    double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d); // if ( processRunningMode != NONE ) { log("MBPS: " + megaBytesPerSecond + "\r\n"); }
-	    double megaBytesPerSecondToYScale = (((megaBytesPerSecond) / 250) * 20); if ( megaBytesPerSecondToYScale > 20) { megaBytesPerSecondToYScale = 20; }
+	    double ceiling = 500d; // 250 MBPS = 100% ceiling
+	    double throughputPerc = ((megaBytesPerSecondParam) / (ceiling / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
 
 	    String sysMonString = "";
-	    sysMonString += "CPU Workload (" + Stats.getDecimal(userLoad * 100,0) + "%)\r\n";
-	    sysMonString += "RAM Mem Used (" + Stats.getDecimal(usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
-	    sysMonString += "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
+	    sysMonString += userLoadString + "\r\n";
+	    sysMonString += usedMemString + "\r\n";
+	    sysMonString += throughputString + "\r\n";
+
 
 //	    Drawing
 	    sysmon.clearRect(userLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (userLoad) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20 - y, userLoadPosX, 20 - y + 0); }
+	    for (int y = 0; y < (userLoadPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20 - y, userLoadPosX, 20 - y + 0); }
 	    	    	    
 	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
-	    for (int y = 0; y < (usedMemPerc / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
+	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
 
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (megaBytesPerSecondToYScale); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
+	    for (int y = 0; y < (throughputPerc); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
 
 	    sysMonTooltip.setText(sysMonString);
 	});
+    }
+    
+    private MemStats getMemStats()
+    {
+	MemStats memStats = new MemStats();
+	memStats.totMem = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+	memStats.freeMem = (memStats.totMem - Runtime.getRuntime().totalMemory());
+	memStats.usedMem = Runtime.getRuntime().totalMemory();
+	memStats.usedMemPerc = Long.valueOf(memStats.usedMem / (memStats.totMem / 100)).intValue();
+	memStats.memStatsString = "";
+	memStats.memStatsString += "RAM Mem Used (" + Stats.getDecimal(memStats.usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(memStats.usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(memStats.totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB\r\n"; 
+
+	return memStats;
     }
     
     public void textLabelBlurMessage(String message, int durationMSec) // 1000
@@ -710,14 +719,14 @@ public class GUIFX extends Application implements UI, Initializable
 	labelTimeline.play();
     }
     
-    public double getProcessCpuLoad()
+    public double getUserLoadPerc()
     {
-        try { attribList = mbs.getAttributes(name, new String[]{ procCPULoadAttribute });}
+        try { attribList = mBeanServer.getAttributes(attributeObjectName, new String[]{ procCPULoadAttribute });}
         catch (InstanceNotFoundException | ReflectionException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
         if (attribList.isEmpty()) { return Double.NaN; }
         att = (Attribute)attribList.get(0);
-        value  = (Double)att.getValue();    
+        value  = ((Double)att.getValue() * 100d);    
         return value;
     }
 
@@ -784,8 +793,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 //      for: ProcessCpuLoad()
 //        procCPULoadAttribute = "ProcessCpuLoad";
-        mbs = ManagementFactory.getPlatformMBeanServer();
-        try {name    = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
+        mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {attributeObjectName = ObjectName.getInstance("java.lang:type=OperatingSystem"); }
         catch (MalformedObjectNameException | NullPointerException ex) { log(ex.getMessage(), true, true, true, true ,false); }
         
 	
@@ -803,7 +812,18 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    WORKLOAD MONITOR
 //	    ==================================================================================================================================================================	    
-	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL ) { userLoad = getProcessCpuLoad(); drawUserLoad(); /*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d; }
+//	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL ) { userLoadPerc = getUserLoadPerc(); updateSystemMonitor(); /*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d; }
+	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL )
+	    {
+//		userLoadPerc = getUserLoadPerc();
+//		updateSystemMonitor();
+//		updateSystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString) // 0.0 - 1.0
+		
+		double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
+		double megaBytesPerSecond = bytesPerMilliSecond / 1024d; String throughputString = "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
+		updateSystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, megaBytesPerSecond, throughputString);
+		/*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d;
+	    }
 	    load_Monitor_MS_Passed += (mainTimeline.getCurrentRate() * MAIN_TIMELINE_INTERVAL_PERIOD);
 //	    ==================================================================================================================================================================	    
 
@@ -811,7 +831,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    ==================================================================================================================================================================	    
 	    if ( load_Manager_MS_Passed >= LOAD_MANAGER_MS_INTERVAL )
 	    {
-		if (userLoad >= LOADHIGH_THRESHOLD) // High load detected
+		if (userLoadPerc >= LOADHIGH_THRESHOLD) // High load detected
 		{
 		    load_High_MS_Passed += load_Manager_MS_Passed; load_Low_MS_Passed = 0.0d; // High load period register
 		    if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (load_High_MS_Passed >= LOAD_HIGH_MS_TIMEOUT) ) // High Load period exceeded
@@ -2457,7 +2477,10 @@ keyFileChooser.rescanCurrentDirectory();
     {
         Platform.runLater(() ->
 	{
-	    bytesPerMilliSecond = 0; drawUserLoad();
+	    bytesPerMilliSecond = 0;
+	    double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
+	    double megaBytesPerSecond = bytesPerMilliSecond / 1024d; String throughputString = "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
+	    updateSystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, megaBytesPerSecond, throughputString);
 	    // Clocks
 	    
 	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
@@ -2501,8 +2524,8 @@ keyFileChooser.rescanCurrentDirectory();
 	    
 	    processRunningMode = NONE;
 	    processRunning = false;
-	    
-//		The Open when finished section
+	    	    
+//	    The Open when finished section
 
 	    Thread openThread;
 	    openThread = new Thread(() ->
