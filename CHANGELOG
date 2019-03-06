@@ -1,3 +1,4 @@
+3.4.0 Added I/O throughput stats for all WRITE channels. Fixed NON-MAC Mode fileselection bugs (GUI & CLI)
 3.3.2 Corrected throughput calculations and improved cosmetics
 3.3.1 Removed a heavily logging memory logarea print statement
 3.3.0 Replaced the Process Usage Indicator with. Led Level Meters for CPU, Mem & I/O Usage

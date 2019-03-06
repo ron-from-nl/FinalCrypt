@@ -1,5 +1,5 @@
-[Version] =		{3.3.2}
-[Release Notes] =	{Replaced the Process Usage Indicator with}
-[Release Message] =	{Led Level Meters for CPU, Mem & I/O Usage}
+[Version] =		{3.4.0}
+[Release Notes] =	{Added I/O throughput stats for all WRITE channels}
+[Release Message] =	{Fixed NON-MAC Mode fileselection bugs (GUI & CLI)}
 [Alert Subject] =	{}
 [Alert Message] =	{}

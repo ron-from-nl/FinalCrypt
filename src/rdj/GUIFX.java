@@ -178,7 +178,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Label unwritableFilesLabel;
     @FXML   private Label hiddenFilesLabel;
     @FXML   private Label targetWarningLabel;
-    @FXML   private Button keyDeviceButton;
+    @FXML   private Button keyButton;
     @FXML   private Label totalTimeLabel;
     @FXML   private Label remainingTimeLabel;
     @FXML   private Label elapsedTimeLabel;
@@ -553,7 +553,7 @@ public class GUIFX extends Application implements UI, Initializable
 	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	keyImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/key.png")));
 	
-	keyDeviceButton.setText(CREATE_KEY);
+	keyButton.setText(CREATE_KEY);
 
 //	=========================================================================================================================================
 //	============================================================= USER GUIDANCE =============================================================
@@ -962,6 +962,8 @@ public class GUIFX extends Application implements UI, Initializable
 		sysmonFadeTransition.setAutoReverse(false);
 		sysmonFadeTransition.setDelay(Duration.seconds(0));
 		sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
+		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) -> { keyButton.setDisable(false); });
+		
 		sysmonFadeTransition.play();
 
 //		Last Update Checked
@@ -1351,7 +1353,7 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(keyFCPath);
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(true); keyDeviceButton.setText(CREATE_KEY); });
+		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(true); keyButton.setText(CREATE_KEY); });
 	    }
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
 	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      1L, true,    false,  true))
@@ -1360,13 +1362,13 @@ public class GUIFX extends Application implements UI, Initializable
 		catch (IOException ex) { log("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);
-		keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); });
+		keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);
+	    keyButton.setDisable(false); keyButton.setText(CREATE_KEY);
 	}
 	
         keyFileChooser.setFileFilter(this.nonFinalCryptFilter);
@@ -1400,7 +1402,7 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManagerLocal = new DeviceManager(this); deviceManagerLocal.start(); deviceManagerLocal.printGPT(targetFCPath);
 		targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY);});
+		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY);});
 	    }
 	    else // Not a Device
 	    {
@@ -1428,7 +1430,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); });
+		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 		} // Not a device / file or symlink
 	    }
         } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
@@ -1702,7 +1704,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		keyDeviceButton.setDisable(true);
+		keyButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 
@@ -1924,7 +1926,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		keyDeviceButton.setDisable(true);
+		keyButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 				
@@ -1976,8 +1978,8 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 //			    log("1 " + keyFCPath.getString());
 //			    createKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Key List:\r\n" + createKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEYDEV);
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
+			    keyButton.setDisable(false); keyButton.setText(CREATE_KEYDEV);
+			} else { keyButton.setDisable(false); keyButton.setText(CREATE_KEY); }
 		    }
 		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
@@ -1985,9 +1987,9 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
 //			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
-			    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
-		    } else { keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }
+			    keyButton.setDisable(false); keyButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			} else { keyButton.setDisable(false); keyButton.setText(CREATE_KEY); }
+		    } else { keyButton.setDisable(false); keyButton.setText(CREATE_KEY); }
 
 		    if (validBuild)
 		    {
@@ -2014,7 +2016,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		else
 		{
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		    keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); // Default enabler
+		    keyButton.setDisable(false); keyButton.setText(CREATE_KEY); // Default enabler
 		}
 	    }
 	});
@@ -2247,7 +2249,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     private void createKeyLabelOnMouseClicked(MouseEvent event) { createOTPKeyFile(); }
 
     @FXML
-    private void keyDeviceButtonOnAction(ActionEvent event) { createOTPKeyFile(); }
+    private void keyButtonOnAction(ActionEvent event) { createOTPKeyFile(); }
     
     synchronized private void createOTPKeyFile()
     {
@@ -2275,7 +2277,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
             public void run()
             {
 		
-		if ( keyDeviceButton.getText().equals(CREATE_KEY) )
+		if ( keyButton.getText().equals(CREATE_KEY) )
 		{
 		    Platform.runLater(() ->
 		    {
@@ -2285,7 +2287,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
 		    });
 		}
-		else if	( keyDeviceButton.getText().equals(CREATE_KEYDEV) )
+		else if	( keyButton.getText().equals(CREATE_KEYDEV) )
 		{
 		    processRunningMode = CREATE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
@@ -2294,7 +2296,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
                     deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
                     processFinished(targetFCPathList, false);
 		}
-		else if ( keyDeviceButton.getText().equals(CLONE_KEYDEV) )
+		else if ( keyButton.getText().equals(CLONE_KEYDEV) )
 		{
 		    processRunningMode = CLONE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
@@ -2371,7 +2373,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 pauseToggleButton.setDisable(false);
 stopButton.setDisable(false);
 
-keyDeviceButton.setDisable(true);
+keyButton.setDisable(true);
 
 remainingTimeHeaderLabel.setVisible(true); remainingTimeLabel.setVisible(true);
 elapsedTimeHeaderLabel.setVisible(true); elapsedTimeLabel.setVisible(true);
@@ -2487,7 +2489,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    pauseToggleButton.setDisable(true);
 	    stopButton.setDisable(true);
 	    
-	    keyDeviceButton.setDisable(false);
+	    keyButton.setDisable(false);
 	    
 	    fileProgressBar.setProgress(0); fileProgressBar.setVisible(false);
 	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false);
@@ -2517,7 +2519,7 @@ keyFileChooser.rescanCurrentDirectory();
 			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
 			targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); }});
+			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); }});
 		    }
 		}
 	    });
@@ -2737,7 +2739,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    /*tab.getSelectionModel().select(1);*/ log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
@@ -2750,7 +2752,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    /*tab.getSelectionModel().select(1);*/ log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(false); keyDeviceButton.setText(CREATE_KEY); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
     }
@@ -3054,4 +3056,5 @@ keyFileChooser.rescanCurrentDirectory();
 	    buildReady(targetFCPathList, false);
 	}
     }
+
 }
