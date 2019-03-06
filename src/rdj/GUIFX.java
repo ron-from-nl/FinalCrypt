@@ -1353,8 +1353,8 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyDeviceButton.setDisable(true); keyDeviceButton.setText(CREATE_KEY); });
 	    }
-//												  isKey device  minsize  symlink  writable status
-	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      0L, true,    false,  true))
+//					  ui	cll path				       isKey    device  minsize  symlink  writable status
+	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      1L, true,    false,  true))
 	    {
 		try { Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); }
 		catch (IOException ex) { log("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -1383,8 +1383,8 @@ public class GUIFX extends Application implements UI, Initializable
         {
 	    if (keyFCPath == null)
 	    {
-//							Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
-		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,          false,         path,          true);
+//							Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath,    boolean disabledMAC,	boolean report)
+		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,         false,         path, finalCrypt.disabledMAC,         true);
 	    }
 	    
 	    
@@ -1392,8 +1392,8 @@ public class GUIFX extends Application implements UI, Initializable
 //	    
 	    Path targetPath = targetFileChooser.getSelectedFile().toPath();
 	    
-//					   getFCPath(UI ui,  String caller,  Path path,  boolean isKey,   Path keyPath, boolean report)
-	    FCPath targetFCPath = Validate.getFCPath( this,		"", targetPath,		 false, keyFCPath.path,		  true);
+//					   getFCPath(UI ui,  String caller,  Path path,  boolean isKey,   Path keyPath,    boolean disabledMAC,	boolean report)
+	    FCPath targetFCPath = Validate.getFCPath(this,		"", targetPath,		 false, keyFCPath.path,	finalCrypt.disabledMAC,		  true);
 	    
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
@@ -1441,7 +1441,6 @@ public class GUIFX extends Application implements UI, Initializable
     
     synchronized private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
-//	log("keyFileChooserPropertyCheck: " + Calendar.getInstance().getTimeInMillis() + "\r\n", true, true, false, false, false);
         Platform.runLater(() ->
 	{
 	    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
@@ -1457,7 +1456,6 @@ public class GUIFX extends Application implements UI, Initializable
 	keySourceChecksumReadEnded = true;
 	keySourceChecksumReadCanceled = true;
 	
-//	if ((!processRunning ) && (!MySimpleFCFileVisitor.running))
 	if (!processRunning)
 	{
 	    Platform.runLater(() -> 
@@ -1488,8 +1486,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
 	    {
 		Path keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
-//					      getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean report)
-		keyFCPath = Validate.getFCPath(   this,	    "", keyPath,             true,      keyPath,           true);
+//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
 		Platform.runLater(() -> 
 		{
@@ -1775,7 +1773,8 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    Thread scanThread = new Thread(() -> // Relaxed interruptable thread
 		    {
-			Validate.buildSelection( ui, targetPathList, keyFCPath, targetFCPathList2, symlink, pattern, negatePattern, false);
+//				 buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern,	   boolean disabledMAC, boolean status)
+			Validate.buildSelection(ui,		 targetPathList,	keyFCPath,	     targetFCPathList2,		symlink,	pattern,	 negatePattern,	finalCrypt.disabledMAC,		false);
 		    }); scanThread.setName("scanThread"); scanThread.setDaemon(true); scanThread.start();
 		});
 	    }
@@ -1949,7 +1948,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 
 		    // Decryptables
 		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
-		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalCrypt.disableMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
+		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalCrypt.disabledMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
 		    {
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
@@ -2938,14 +2937,15 @@ keyFileChooser.rescanCurrentDirectory();
     }
     
 //  Default MAC Mode
-    private void enableMACMode()
+    private void enableMACMode() // Safe Mode
     {
 	if ( FLASH_MAC_MODE_TIMELINE != null ) { FLASH_MAC_MODE_TIMELINE.stop(); }
 	encryptionModeToggleButton.setText(MAC_ON);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
 
 	updateFileChoosers(true, true);
-	finalCrypt.disableMAC = false;
+	FCPath.KEY_SIZE_MIN = FCPath.KEY_SIZE_MIN_DEFAULT;
+	finalCrypt.disabledMAC = false;
 	dashboardGridPane.setDisable(false);
 	encryptionModeToggleButton.setDisable(true);
 	encryptionModeToggleButton.setMouseTransparent(true);
@@ -2953,7 +2953,7 @@ keyFileChooser.rescanCurrentDirectory();
 	log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
     }
 
-    private void disableMACMode()
+    private void disableMACMode() // Dangerous Mode
     {
 	if ( AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE != null ) { AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.stop(); }
 
@@ -2962,7 +2962,8 @@ keyFileChooser.rescanCurrentDirectory();
 	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
 
 	updateFileChoosers(true, true);
-	finalCrypt.disableMAC = true;
+	FCPath.KEY_SIZE_MIN = 1;
+	finalCrypt.disabledMAC = true;
 	dashboardGridPane.setDisable(true);
 	log("Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false);
 
@@ -3012,6 +3013,7 @@ keyFileChooser.rescanCurrentDirectory();
 //  End Message Authentication Mode
 //  ==============================================================================================================
 
+    @Override public void test(String message) { log(message, true, true, false, false, false); }
 
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)

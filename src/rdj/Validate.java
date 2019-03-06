@@ -59,16 +59,16 @@ public class Validate
         return validdir;
     }
 
-    synchronized public static boolean isValidFile(UI ui, String caller, Path path, Path keyPath, boolean device, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==keySource comparison)
-    {
-	
-        boolean validfile = true; String conditions = "";				    String key = "";
-	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
-	if ((keyPath != null) && validfile) { if (path.compareTo(keyPath) == 0) { validfile = false; key = "[is key] "; conditions += key; }}	
-        if ( ! validfile ) { if ( report )						    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }                    
-        return validfile;
-    }
-
+//    synchronized public static boolean isValidFile(UI ui, String caller, Path path, Path keyPath, boolean device, long minSize, boolean symlink, boolean writable, boolean report) // fileValidation Wrapper (including target==keySource comparison)
+//    {
+//	
+//        boolean validfile = true; String conditions = "";				    String key = "";
+//	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
+//	if ((keyPath != null) && validfile) { if (path.compareTo(keyPath) == 0) { validfile = false; key = "[is key] "; conditions += key; }}	
+//        if ( ! validfile ) { if ( report )						    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }                    
+//        return validfile;
+//    }
+//
     synchronized public static boolean isValidFile(UI ui, String caller, Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
     {
         boolean validfile = true; String conditions = "";				    String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = ""; String key = "";
@@ -77,11 +77,11 @@ public class Validate
         else
         {
             if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
-	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isKey); }
+	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isKey); } // Specifically done for OSX
 	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.log("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n", true, true, true, true, false); } }
             if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
             if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
-            if ((! isKey) && (writable) && ( ! Files.isWritable(path)))		    { validfile = false; write = "[not writable] "; conditions += write; }
+            if ((! isKey) && (writable) && ( ! Files.isWritable(path)))			    { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )				    { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
         }
 
@@ -185,11 +185,12 @@ public class Validate
 
 
     // Synchronized removes multifile target inconsistency, but also smooth busy animation
-    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
+    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean disabledMAC, boolean status)
     {
 //	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;} // Being set within MySimpleFCFileVisitor instantiation
-//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
-	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	     false,         false,          symlink,                  true,    keyFCPath,                   targetFCPathList,	pattern,         negatePattern);
+//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern,  boolean disabledMAC)
+	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	   false,          false,         symlink,                  true,    keyFCPath,                   targetFCPathList,	   pattern,         negatePattern,	    disabledMAC);
+	
 	for (Path path:pathList)
 	{
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n", true, true, true, true, false); }
@@ -277,7 +278,7 @@ public class Validate
 	return returnFCPathType;
     }
     
-    synchronized public static FCPath getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean report)
+    synchronized public static FCPath getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
     {
 	boolean exist =			    false;
 	int	type =			    FCPath.INVALID;
@@ -329,7 +330,11 @@ public class Validate
 	    // Target =============================================================================================================================================================================================
 	    
 	    // isValid in general
-	    if ( isKey )    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( readable ) )    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    if ( isKey )
+	    {
+		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) ) { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) ) { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; }}
+	    }
 	    else	    { if (( exist ) && ( size >  0 ) && ( readable )   && ( writable ))	    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    
 	    // File validity
@@ -353,7 +358,7 @@ public class Validate
 	    if (( isValidFile ))
 	    {
 		isEncrypted = targetSourceHasMAC(ui, path);
-		if ((isEncrypted) && (keyPath != null)  && (size > (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath); }
+		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath); } // Encrypted files must by MAC_SIZE at least
 	    }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
@@ -361,15 +366,33 @@ public class Validate
 	    // Key =============================================================================================================================================================================================
 	    
 	    if ( keyPath != null )							{ if (path.compareTo(keyPath) == 0)   { matchKey = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
-	    if ( isKey )								{ isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
-	    if (	( exist )
-		    &&  (
-				( type == FCPath.FILE )
-			    ||  ( type == FCPath.PARTITION )
-			    ||	( type == FCPath.DEVICE )
-			    ||	( type == FCPath.DEVICE_PROTECTED )
-			)
-			    && ( size >=  FCPath.KEY_SIZE_MIN ) && ( readable  ) && ( isKey ) )	{ isValidKey = true; }
+	    if (( isKey ) && (exist))
+	    {
+		isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;
+		if (disabledMAC) // Dangerous Mode
+		{
+		    if (	(
+					( type == FCPath.FILE )
+				    ||  ( type == FCPath.PARTITION )
+				    ||	( type == FCPath.DEVICE )
+				    ||	( type == FCPath.DEVICE_PROTECTED )
+				)
+				    && ( size >=  FCPath.KEY_SIZE_MIN )	&& ( readable  )
+			)	{ isValidKey = true; }
+		}
+		else // Safe MAC Mode
+		{
+		    if (
+			    (
+				    ( type == FCPath.FILE )
+				||  ( type == FCPath.PARTITION )
+				||  ( type == FCPath.DEVICE )
+				||  ( type == FCPath.DEVICE_PROTECTED )
+			    )
+				    && ( size >=  FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable  )
+			)	{ isValidKey = true; }
+		}
+	    }	    
 	}
 	else { }
 
@@ -454,12 +477,13 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     private boolean negatePattern;
     public long bytesCount = 0;
     public static boolean running = false; 
+    private static boolean disabledMAC = false; 
 
 //  regex pattern
 //  all *.bit   =   'regex:^.*\.bit$'
 //  all but *.bit   'regex:(?!.*\.bit$)^.*$'
     
-    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList targetFCPathList, String pattern, boolean negatePattern)
+    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
     {
         this.ui = ui;
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
@@ -470,6 +494,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	this.keyFCPath = keyFCPath;
 	this.targetFCPathList = targetFCPathList;
         this.negatePattern = negatePattern;
+	this.disabledMAC = disabledMAC;
 	bytesCount = 0;
 	running = true;
     }
@@ -494,8 +519,8 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 		else if (setFCPathlist)    
 		{
-//    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean report)
-		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path,           true); targetFCPathList.add(fcPath);
+//    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean disabledMAC, boolean report)
+		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path, disabledMAC,          true); targetFCPathList.add(fcPath);
 		}
 		else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    }
@@ -508,8 +533,8 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-//					     getFCPath(UI ui, String caller, Path path, boolean isKey,	     Path keyPath, boolean report)
-	    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path,           true); targetFCPathList.add(fcPath);
+//				    getFCPath(UI ui, String caller, Path path, boolean isKey,	     Path keyPath, boolean disabledMAC, boolean report)
+	    FCPath fcPath = Validate.getFCPath(  ui,            "",      path,         false, this.keyFCPath.path,	   disabledMAC,          true); targetFCPathList.add(fcPath);
 	    return FileVisitResult.SKIP_SIBLINGS;
 	}
 	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; } 

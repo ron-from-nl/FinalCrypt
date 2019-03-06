@@ -65,8 +65,9 @@ public class FinalCrypt extends Thread
     public boolean processRunning = false;
 
     private boolean targetSourceEnded;
-//							1234567890123456789012345678901234567890123456789012345678901234567890
-    public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE = "FinalCrypt - File Encryption Program - Plain Text Authentication Token";
+//											     1	       2         3         4         5         6         7
+//										    1234567890123456789012345678901234567890123456789012345678901234567890
+    public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE = "FinalCrypt - File Encryption Program - Plain Text Authentication Token"; // NEVER EVER CHANGE!!!!!!!!!!!
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private static double   filesBytesPerMilliSecond = 0;
@@ -104,7 +105,7 @@ public class FinalCrypt extends Thread
     public static final String UTF8_PAUSE_DESC =		    "Pause";
     public static final String UTF8_STOP_DESC =			    "Stop";
 
-    public boolean disableMAC = false; // Disable Message Authentication Mode DANGEROUS
+    public boolean disabledMAC = false; // Disable Message Authentication Mode DANGEROUS
     
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
@@ -194,11 +195,11 @@ public class FinalCrypt extends Thread
 	String modeDesc = "";
 	if (encryptmode)
 	{
-	    if ( ! disableMAC ) { modeDesc = "encrypting"; } else { modeDesc = "encrypting (legacy)"; }
+	    if ( ! disabledMAC ) { modeDesc = "encrypting"; } else { modeDesc = "encrypting (legacy)"; }
 	}
 	else
 	{
-	    if ( ! disableMAC ) { modeDesc = "decrypting"; } else { modeDesc = "decrypting (legacy)"; }
+	    if ( ! disabledMAC ) { modeDesc = "decrypting"; } else { modeDesc = "decrypting (legacy)"; }
 	}
 	ui.log(allDataStats.getStartSummary(modeDesc), true, true, true, false, false);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
@@ -258,7 +259,7 @@ public class FinalCrypt extends Thread
 
 //		Set new name of target destination
 
-		if ( ! disableMAC)
+		if ( ! disabledMAC)
 		{
 		    if	(encryptmode)				{ UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_SYMBOL; targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		    else // (decryptmode)
@@ -302,7 +303,7 @@ public class FinalCrypt extends Thread
 
 		long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
 		
-		if (! disableMAC) // Be carefull: TRUE value is highly dangerous
+		if (! disabledMAC) // Be carefull: TRUE value is highly dangerous
 		{
 		    if (encryptmode)
 		    {
@@ -559,7 +560,7 @@ public class FinalCrypt extends Thread
 		if ( ! dry)
 		{
 //				     isValidFile(UI ui, String caller,    Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1,           false,            false,	    true))
+		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1L,           false,            false,	    true)) // newly created targetdest file has to be tested
 		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.log("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n", true, true, true, true, false); } } else 
 
 		    readTargetSourceChannelPosition = 0;    readTargetSourceChannelTransfered = 0;
@@ -709,11 +710,11 @@ public class FinalCrypt extends Thread
 	    
 
 
-//					     getFCPath(UI ui, String caller,	    Path path, boolean isKey,		 Path keyPath, boolean report)
-	    newTargetSourceFCPath = Validate.getFCPath(   ui,            "", targetDestinPath,		  false, keySourceFCPath.path,	 verbose);
+//					     getFCPath(UI ui, String caller,	    Path path, boolean isKey,		 Path keyPath, boolean disabledMAC, boolean report)
+	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, keySourceFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
@@ -835,8 +836,8 @@ public class FinalCrypt extends Thread
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
 //							  MySimpleFileVisitor(UI ui, boolean verbose, boolean delete, long minSize, boolean symlink, boolean writable, boolean returnpathlist, ArrayList<FCPath>(),    String pattern, boolean negatePattern)
-//							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern)
-        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,               null,            new FCPathList(),        pattern,         negatePattern);
+//							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
+        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,            null,		   new FCPathList(),        pattern,	     negatePattern,	    disabledMAC);
         for (Path path:targetSourcePathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e){System.err.println(e);}

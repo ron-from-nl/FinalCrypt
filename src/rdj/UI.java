@@ -21,6 +21,7 @@ package rdj;
 
 public interface UI
 {
+    public void test(String message);
     public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print);
 //    
     public void processGraph(int value);

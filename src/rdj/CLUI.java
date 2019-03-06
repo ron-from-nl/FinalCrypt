@@ -85,7 +85,7 @@ public class CLUI implements UI
     private Long totalTranfered;
     private Long filesizeInBytes = 100L * (1024L * 1024L);  // Create OTP Key File Size
     private Path keyPath;
-//    private boolean disableMAC = false;
+//    private boolean disabledMAC = false;
     private boolean encryptModeNeeded;
     private TimeoutThread timeoutThread;
     private ReaderThread readerThread;
@@ -138,7 +138,7 @@ public class CLUI implements UI
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
-            else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disableMAC = true; encryptModeNeeded = true; }
+            else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disabledMAC = true; FCPath.KEY_SIZE_MIN = 1; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--password") ))                     { pwd = args[paramCnt+1]; pwdIsSet = true; paramCnt++; }
@@ -183,7 +183,7 @@ public class CLUI implements UI
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
 
 //          File Parameters
-            else if ( ( args[paramCnt].equals("-k")) )								    { if (paramCnt+1 < args.length) { keyFCPath = Validate.getFCPath( ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), true); kfset = true; paramCnt++; } else { log("\r\nWarning: Missing key parameter <-k \"keyfile\">" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
+            else if ( ( args[paramCnt].equals("-k")) )								    { if (paramCnt+1 < args.length) { keyFCPath = Validate.getFCPath(ui, "", Paths.get(args[paramCnt+1]), true, Paths.get(args[paramCnt+1]), finalCrypt.disabledMAC, true); kfset = true; paramCnt++; } else { log("\r\nWarning: Missing key parameter <-k \"keyfile\">" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
             else if ( ( args[paramCnt].equals("-K")) && (!args[paramCnt+1].isEmpty()) )				    { keyPath = Paths.get(args[paramCnt+1]); paramCnt++; } // Create OTP Key File
             else if ( ( args[paramCnt].equals("-t")) )								    { if (paramCnt+1 < args.length) { targetPathList.add(Paths.get(args[paramCnt+1])); tfset = true; paramCnt++; } else { log("\r\nWarning: Missing target parameter <[-t \"file/dir\"]>" + "\r\n", false, true, true, false, false); usagePrompt(true); } }
             else if ( ( args[paramCnt].equals("-b")) && (!args[paramCnt+1].isEmpty()) )				    { tfset = addBatchTargetFiles(args[paramCnt+1], targetPathList); paramCnt++; }
@@ -199,44 +199,58 @@ public class CLUI implements UI
 //////////////////////////////////////////////////// VALIDATE SELECTION /////////////////////////////////////////////////
 
 	// Key Validation
-	if ((kfsetneeded) && ( ! keyFCPath.isValidKey))
+	if ( (kfsetneeded) )
 	{
-	    String exist ="";
-	    String size ="";
-	    String dir ="";
-	    String sym ="";
-	    String all = "";
-	    
-	    if (keyFCPath.exist == false)
+	    if ( ! keyFCPath.isValidKey)
 	    {
-		exist += " [key does not exist] "; 		
+		String exist ="";
+		String size ="";
+		String dir ="";
+		String sym ="";
+		String all = "";
+
+		if (keyFCPath.exist == false)
+		{
+		    exist += " [key does not exist] "; 		
+		}
+		else
+		{
+		    if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
+		    if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; } // finalCrypt.disabledMAC = true
+
+		    if (! finalCrypt.disabledMAC)
+		    {
+			if (( keyFCPath.size < FCPath.KEY_SIZE_MIN )) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] try: \"--no-key-size\" option "; }
+			if (( keyFCPath.size < FCPath.MAC_SIZE ) ) { size += " [size < " + FCPath.MAC_SIZE + "] try: \"--disable-MAC\" option if you know what you are doing !!! "; }
+		    }
+		    else { if (( keyFCPath.size < FCPath.KEY_SIZE_MIN )) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] try: \"--no-key-size\" option "; } }
+		}
+
+		all = exist + dir + sym + size ;
+
+		log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
+		log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	    }
-	    else
-	    {
-		if (keyFCPath.size < FCPath.KEY_SIZE_MIN) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] "; } 
-		if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
-		if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; }
-	    }
-	    
-	    all = exist + size + dir + sym;
-            log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
-	    log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	}
-	
+	else
+	{
+
+	}
+			
 	// Target Validation
 	
 	if (tfsetneeded)
 	{
 	    for(Path targetPath : targetPathList)
-	    {
+	    {		
 		if (Files.exists(targetPath))
 		{
-    //			      isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
+//    				  isValidDir(UI ui, Path targetDirPath, boolean symlink, boolean report)
 		    if ( Validate.isValidDir( this,         targetPath,         symlink,        verbose))
 		    {
 			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
 		    }
-    //				   isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+//				       isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
 		    {
 			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
@@ -398,11 +412,11 @@ public class CLUI implements UI
 //	if (!cfsetneeded) { keyFCPath = (FCPath) targetPathList.get(0); }
 	if (!kfsetneeded) 
 	{
-//    					  getFCPath(UI ui, String caller,	      Path path, boolean isKey,          Path keyPath, boolean report)
-		     keyFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),         false, targetPathList.get(0),           true);
+//    					  getFCPath(UI ui, String caller,	      Path path, boolean isKey,          Path keyPath, boolean disabledMAC,    boolean report)
+		     keyFCPath = Validate.getFCPath(ui,            "", targetPathList.get(0),         false, targetPathList.get(0), finalCrypt.disabledMAC,          true);
 	}
-//		 buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean status)
-	Validate.buildSelection(       this,			        targetPathList,  keyFCPath,		    targetFCPathList,	      symlink,	      pattern,	       negatePattern,	       false);
+//	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
+	Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
@@ -472,7 +486,7 @@ public class CLUI implements UI
 	DeviceManager deviceManager;
 	if ((encrypt))
 	{
-	    if (finalCrypt.disableMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
+	    if (finalCrypt.disabledMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
 	    
 	    if ((encryptablesFound))
 	    {
@@ -497,7 +511,7 @@ public class CLUI implements UI
 	}
 	else if ((decrypt))
 	{
-	    if (finalCrypt.disableMAC)
+	    if (finalCrypt.disabledMAC)
 	    {
 		log("Warning: MAC Mode Disabled! Use --encrypt if you know what you are doing!!!\r\n", true, true, true, false, false);
 	    }
@@ -818,6 +832,7 @@ public class CLUI implements UI
 	return env;
     }
     
+    @Override public void test(String message) { log(message, true, true, false, false, false); }
     
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
@@ -848,11 +863,13 @@ class ReaderThread extends Thread
     
     @Override public void run()
     {
-	clui.log("\r\nWould you like to see the User Manual (y/N)? ", false, true, false, false, false); // Leave Error file to: true
+	clui.log("\r\nWould you like to see the User Manual (n/Y)? ", false, true, false, false, false); // Leave Error file to: true
         try(Scanner in = new Scanner(System.in))
 	{
-            String input = in.nextLine();
-	    if ( input.trim().toLowerCase().equals("y") ) { clui.usage(true); } else { clui.log("\r\n", false, true, false, false, false); System.exit(1); }
+            String input = in.nextLine(); 
+	    if ( input.trim().toLowerCase().equals("y") ) { clui.usage(true); } 
+	    else if (( input.trim().toLowerCase().length() == 0 ) || ( input.toLowerCase().equals("\r\n") ))  { clui.usage(true); }
+	    else { clui.log("\r\n", false, true, false, false, false); System.exit(1); }
         }
     }
 

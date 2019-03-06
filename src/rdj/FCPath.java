@@ -22,16 +22,18 @@ import java.nio.file.Path;
 
 public class FCPath
 {
-    public static	   int	    KEY_SIZE_MIN =	1024;
+    public static	   int	    KEY_SIZE_MIN_DEFAULT = 1024;
+    public static	   int	    KEY_SIZE_MIN =	   KEY_SIZE_MIN_DEFAULT;
+    public static	   int	    MAC_SIZE =		   (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2);
 
-    public static final    int	    INVALID =		0;
-    public static final    int	    FILE =		1;
-    public static final    int	    DIRECTORY =		2;
-    public static final    int	    SYMLINK =		3;
-    public static final    int	    DEVICE =		4;
-    public static final    int	    PARTITION =		5;
-    public static final    int	    DEVICE_INVALID =	6;
-    public static final    int	    DEVICE_PROTECTED =	7;
+    public static final    int	    INVALID =		   0;
+    public static final    int	    FILE =		   1;
+    public static final    int	    DIRECTORY =		   2;
+    public static final    int	    SYMLINK =		   3;
+    public static final    int	    DEVICE =		   4;
+    public static final    int	    PARTITION =		   5;
+    public static final    int	    DEVICE_INVALID =	   6;
+    public static final    int	    DEVICE_PROTECTED =	   7;
     
     public static final String[]   TYPE_DESCRIPTION_ARRAY = new String[] { "Invalid","File","Directory","Symlink","Device","Partition","Device Invalid","Device Protected" };
     
