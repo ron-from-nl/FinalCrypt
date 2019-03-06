@@ -23,6 +23,6 @@ public class MemStats
     public long totMem;
     public long freeMem;
     public long usedMem;
-    public int usedMemPerc;
+    public double usedMemPerc;
     public String memStatsString;    
 }
