@@ -72,6 +72,7 @@ public class CreateOTPKey extends Application implements Initializable
     private Path keyPath;
     private Timeline repeaterTimeline;
     public static final String OTPKEYURLSTRING = "https://en.wikipedia.org/wiki/One-time_pad";
+    private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
     
     @FXML
     private ImageView bgImageView;
@@ -113,6 +114,10 @@ public class CreateOTPKey extends Application implements Initializable
     private TimerTask updateProgressTask;
     private Timer updateProgressTaskTimer;
     private long totalTranfered;
+    private long throughputClock;
+    private long lastThroughputClock;
+    private long realtimeBytesProcessed;
+    private double realtimeBytesPerMilliSecond;
 
 //    public CreateOTPKey(GUIFX guifx)
 //    {
@@ -343,13 +348,23 @@ public class CreateOTPKey extends Application implements Initializable
 	    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
 	    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
 
+	    throughputClock = 0L;
+	    lastThroughputClock = 0L;
+	    realtimeBytesProcessed = 0L;
+	    realtimeBytesPerMilliSecond = 0.0d;
+	    
 	    updateProgressTask = new TimerTask()
 	    {
 		@Override public void run()
 		{
 		    Platform.runLater(new Runnable(){ @Override public void run()
 		    {
+			throughputClock = System.nanoTime();
+			realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+			lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
+			
 			progressBar.setProgress( (double)totalTranfered / filesizeInBytes); // percent needs to become factor in this gui
+			guifx.processProgress(		     0,			   0,		    0,			0, realtimeBytesPerMilliSecond );
 		    }});
 		}
 	    }; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
@@ -389,7 +404,7 @@ public class CreateOTPKey extends Application implements Initializable
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
-		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
+		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
 		    totalTranfered += writeKeyFileChannelTransfered; 
 //		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
 
@@ -404,6 +419,8 @@ public class CreateOTPKey extends Application implements Initializable
 	    inputEnded = false;
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
+	    realtimeBytesPerMilliSecond = 0d; realtimeBytesProcessed = 0;
+	    guifx.processProgress(		     0,			   0,		    0,			0, realtimeBytesPerMilliSecond );
 	    progressBar.setProgress( (double)totalTranfered / filesizeInBytes); // percent needs to become factor in this gui
 	    
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); }
