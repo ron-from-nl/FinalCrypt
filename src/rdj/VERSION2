@@ -1,5 +1,5 @@
-[Version] =		{3.4.0}
-[Release Notes] =	{Added I/O throughput stats for all WRITE channels}
-[Release Message] =	{Fixed NON-MAC Mode fileselection bugs (GUI & CLI)}
+[Version] =		{3.4.1}
+[Release Notes] =	{Fixed Total Elapsed & Remaining-Time Clocks}
+[Release Message] =	{Fixed the FileChooser refresh directory bug}
 [Alert Subject] =	{}
 [Alert Message] =	{}

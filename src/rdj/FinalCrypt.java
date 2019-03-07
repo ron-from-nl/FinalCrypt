@@ -54,7 +54,7 @@ public class FinalCrypt extends Thread
     private int readKeySourceBufferSize;
     private int wrteTargetDestinBufferSize;
 
-    private int printAddressByteCounter = 0;
+//    private int printAddressByteCounter = 0;
     private final UI ui;
     
     private TimerTask updateProgressTimerTask;
@@ -115,6 +115,7 @@ public class FinalCrypt extends Thread
     private long throughputClock = 0L;
     private long lastThroughputClock = 0L;
     private long realtimeBytesProcessed;
+    private long totalBytesProcessed;
 
     public FinalCrypt(UI ui)
     {   
@@ -144,14 +145,14 @@ public class FinalCrypt extends Thread
 //    public Path getOutputFilePath()                                         { return targetDestinPath; }
     
 //    public void setDebug(boolean debug)                                     { this.debug = debug; }
-    public void setVerbose(boolean verbose)                                 { this.verbose = verbose; }
-    public void setPrint(boolean print)                                     { this.print = print; }
+    public void setVerbose(boolean verbose)                                 { FinalCrypt.verbose = verbose; }
+    public void setPrint(boolean print)                                     { FinalCrypt.print = print; }
     public void setSymlink(boolean symlink)                                 { this.symlink = symlink; }
     public void setTXT(boolean txt)                                         { this.txt = txt; }
-    public void setBin(boolean bin)                                         { this.bin = bin; }
-    public void setDec(boolean dec)                                         { this.dec = dec; }
-    public void setHex(boolean hex)                                         { this.hex = hex; }
-    public void setChr(boolean chr)                                         { this.chr = chr; }
+    public void setBin(boolean bin)                                         { FinalCrypt.bin = bin; }
+    public void setDec(boolean dec)                                         { FinalCrypt.dec = dec; }
+    public void setHex(boolean hex)                                         { FinalCrypt.hex = hex; }
+    public void setChr(boolean chr)                                         { FinalCrypt.chr = chr; }
     public void setDry(boolean dry)                                         { this.dry = dry; }
     public void setBufferSize(int bufferSize)                               
     {
@@ -207,7 +208,7 @@ public class FinalCrypt extends Thread
 //      Setup the Progress TIMER & TASK
         updateProgressTimerTask = new TimerTask() { private long filesBytesTotal;
 
-	private long fileBytesProcessed;
+//	private long fileBytesProcessed;
 	
 	@Override public void run()
         {
@@ -224,10 +225,13 @@ public class FinalCrypt extends Thread
 	    fileBytesProcessed =	allDataStats.getFileBytesProcessed();
 	    filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 	    
+//	    System Monitor
 	    throughputClock = System.nanoTime();
 	    realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
-	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
-            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, fileBytesProcessed, realtimeBytesPerMilliSecond );
+	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0; // allDataStats.getFilesBytesProcessed()
+            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, allDataStats.getFilesBytesProcessed(), realtimeBytesPerMilliSecond );
+//            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond );
+//            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, totalBytesProcessed, realtimeBytesPerMilliSecond );
 	    
         }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTimerTask, 100L, UPDATE_PROGRESS_TIMERTASK_PERIOD);
 
@@ -240,6 +244,7 @@ public class FinalCrypt extends Thread
 	encryptTargetloop: for (Iterator it = filteredTargetSourceFCPathList.iterator(); it.hasNext();)
 	{
 	    pwdPos = 0;
+	    totalBytesProcessed = 0;
 	    MessageDigest srcMessageDigest = null; try { srcMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
 	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
 	    
@@ -359,7 +364,7 @@ public class FinalCrypt extends Thread
 			    else
 			    {
 				ui.log(UTF8_UNDECRYPTABLE_SYMBOL + " \"" + newTargetSourceFCPath.toString() + "\" - Key Failed : " + keySourceFCPath.toString() + "\r\n", true, true, true, true, false);
-				continue encryptTargetloop;
+				continue;
 			    }
 			}
 		    }
@@ -427,7 +432,7 @@ public class FinalCrypt extends Thread
 			    
 			readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
 			readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered / 2);
-			allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
+//			allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
 		    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("readTargetSourceChannelTransfered: " + readTargetSourceChannelTransfered + " targetSourceBuffer.limit(): " + Integer.toString(targetSourceBuffer.limit()) + "\r\n");
 
@@ -454,12 +459,13 @@ public class FinalCrypt extends Thread
 			    // Encrypt inputBuffer and fill up outputBuffer
 			    targetDestinBuffer = encryptBuffer(targetSourceBuffer, keySourceBuffer, true); // last boolean = PrintEnabled
 			    writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinBuffer); targetDestinBuffer.flip();
-			    writeTargetDestChannelPosition += writeTargetDestChannelTransfered; realtimeBytesProcessed += writeTargetDestChannelTransfered;
+			    writeTargetDestChannelPosition += writeTargetDestChannelTransfered; realtimeBytesProcessed += writeTargetDestChannelTransfered; totalBytesProcessed += writeTargetDestChannelTransfered;
 			    if (txt) { logByteBuffer("DB", targetSourceBuffer); logByteBuffer("CB", keySourceBuffer); logByteBuffer("OB", targetDestinBuffer); }
 			    writeTargetDestinChannel.close();
 			    dstMessageDigest.update(targetDestinBuffer); // Build up checksum
 //				    wrteTargetDestinStat.setFileEndEpoch(); wrteTargetDestinStat.clock();
 //                                    wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
+			    allDataStats.addAllDataBytesProcessed("wr dst", writeTargetDestChannelTransfered / 2);
 			} catch (IOException ex) { ui.log("Error: writeTargetDestinChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("writeTargetDestChannelTransfered: " + writeTargetDestChannelTransfered + " targetDestinBuffer.limit(): " + Integer.toString(targetDestinBuffer.limit()) + "\r\n");
 		    }
@@ -624,7 +630,7 @@ public class FinalCrypt extends Thread
 				// Fill up inputFileBuffer
 				writeTargetSourceChannel.position(writeTargetSourceChannelPosition);
 				writeTargetSourceChannelTransfered = writeTargetSourceChannel.write(targetDestinBuffer); targetSourceBuffer.flip();
-				writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered; realtimeBytesProcessed += writeTargetSourceChannelTransfered;
+				writeTargetSourceChannelPosition += writeTargetSourceChannelTransfered; realtimeBytesProcessed += writeTargetSourceChannelTransfered; totalBytesProcessed += writeTargetSourceChannelTransfered;
 				if (( writeTargetSourceChannelTransfered < 1 )) { targetSourceEnded = true; }
 				writeTargetSourceChannel.close();
 				wrteTargetSourceStat.setFileEndEpoch(); wrteTargetSourceStat.clock();

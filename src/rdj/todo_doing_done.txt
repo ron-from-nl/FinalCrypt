@@ -19,10 +19,10 @@ Replace introduction with create / select key guidance
 
 Set version						nbproject/project.properties application.implementation.version=1.2.3
 Set "<Program_Version>2.7.2</Program_Version>" in	FinalCrypt_pad.xml file
-Set version on file:					Version
-Set version on file:					Version2
 Update file:						CHANGELOG
 Update file:						MANPAGE
+Set version on file:					Version
+Set version on file:					Version2
 
 =================================== Done ====================================
 

@@ -371,8 +371,8 @@ public class GUIFX extends Application implements UI, Initializable
     
     
     private long	bytesTotal;	
-//    private long	bytesProcessed;	
-//    private double	processedTotalRatio;
+    private long	bytesProcessed;
+    private double	totalToProcessedRatio;
 //    private long	bytesPerSecond;	
    
     private Calendar	startTimeCalendar;
@@ -432,6 +432,10 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML
     private Tooltip sysMonTooltip;
     private int sysmonOffSetX;
+    private File curTargetDir;
+    private File curKeyDir;
+    private File upTargetDir;
+    private File upKeyDir;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -1459,7 +1463,16 @@ public class GUIFX extends Application implements UI, Initializable
 
 /////////////////////////////////////////////////////////////////////////////////////////////
     
-    synchronized private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { keyFileChooserPropertyCheck(); } }
+    synchronized private void keyFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)
+    {
+	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
+	{
+//	    remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
+//	    elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
+//	    totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
+	    keyFileChooserPropertyCheck();
+	}
+    }
     
     synchronized private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
     {
@@ -1485,9 +1498,9 @@ public class GUIFX extends Application implements UI, Initializable
 		fileProgressBar.setProgress(0);
 		filesProgressBar.setProgress(0);
 
-		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
+//		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
+//		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
+//		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
 	    });
 
 	    // En/Disable FileChooser deletebutton
@@ -1712,7 +1725,16 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
 
 //  FileChooser Listener methods
-    synchronized private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt) { if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty"))) { targetFileChooserPropertyCheck(true); } }
+    synchronized private void targetFileChooserPropertyChange(java.beans.PropertyChangeEvent evt)
+    {
+	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
+	{
+//	    remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
+//	    elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
+//	    totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
+	    targetFileChooserPropertyCheck(true);
+	}
+    }
     
     synchronized private void targetFileChooserPropertyCheck(boolean status)
     {
@@ -1731,9 +1753,9 @@ public class GUIFX extends Application implements UI, Initializable
 		fileProgressBar.setProgress(0);
 		filesProgressBar.setProgress(0);
 
-		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
+//		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
+//		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
+//		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
 	    });
 	    
 	    ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
@@ -2414,16 +2436,22 @@ keyFileChooser.rescanCurrentDirectory();
     
     private void updateClocks()
     {
-        Platform.runLater(() ->
+	totalToProcessedRatio = (Long.valueOf(bytesTotal).doubleValue() / Long.valueOf(bytesProcessed).doubleValue());
+        
+	Platform.runLater(() ->
 	{
 	    nowTimeCalendar =	    Calendar.getInstance(Locale.ROOT);
 	    elapsedTimeCalendar =   Calendar.getInstance(Locale.ROOT);
 	    remainingTimeCalendar = Calendar.getInstance(Locale.ROOT);
 	    totalTimeCalendar =	    Calendar.getInstance(Locale.ROOT);
-
-	    totalTimeCalendar.setTimeInMillis(bytesTotal / (Double.valueOf(bytesPerMilliSecond).longValue() + 1));
+	    
 	    elapsedTimeCalendar.setTimeInMillis(nowTimeCalendar.getTimeInMillis() - startTimeCalendar.getTimeInMillis());
+	    totalTimeCalendar.setTimeInMillis( Double.valueOf(Long.valueOf(elapsedTimeCalendar.getTimeInMillis()).doubleValue() * Double.valueOf(totalToProcessedRatio).doubleValue()).longValue());
 	    remainingTimeCalendar.setTimeInMillis(totalTimeCalendar.getTimeInMillis() - elapsedTimeCalendar.getTimeInMillis());
+	    
+//	    test("\r\nbt: " + bytesTotal + " bp: " + bytesProcessed + " ratio: " + Double.valueOf(totalToProcessedRatio).toString() + " ");
+//	    test("start: " + startTimeCalendar.getTimeInMillis() / 1000 + " now: " + nowTimeCalendar.getTimeInMillis() / 1000 + " elapsed: " + elapsedTimeCalendar.getTimeInMillis() / 1000 + "\r\n ");
+
 	    String elapsedTimeString = "";
 	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
 	    elapsedTimeString += String.format("%02d", elapsedTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
@@ -2457,7 +2485,8 @@ keyFileChooser.rescanCurrentDirectory();
 	{
 	    // updateClocks() data
 	    bytesTotal = bytesTotalParam;
-//	    bytesProcessed = bytesProcessedParam;
+//	    bytesProcessed = Double.valueOf(Long.valueOf(bytesProcessedParam).doubleValue() / 2d).longValue();
+	    bytesProcessed = Double.valueOf(Long.valueOf(bytesProcessedParam).doubleValue()).longValue();
 	    bytesPerMilliSecond = bytesPerMiliSecondParam;
 	    
 	    // update ProgressBars
@@ -2556,19 +2585,23 @@ keyFileChooser.rescanCurrentDirectory();
 
     public void updateFileChoosers(boolean updateTargetFC, boolean updateKeyFC)
     {
-	File curTargetDir = targetFileChooser.getCurrentDirectory(); // log("curTargetDir " + curTargetDir.getAbsolutePath() + "\r\n");
-	File curKeyDir = keyFileChooser.getCurrentDirectory(); // log("curKeyDir " + curKeyDir.getAbsolutePath() + "\r\n");
-//	    File upDir = new File("..");
-	File upTargetDir = curTargetDir.getParentFile().getAbsoluteFile();
-	File upKeyDir = curKeyDir.getParentFile().getAbsoluteFile();
-
 	Platform.runLater(() ->
 	{
+	    curTargetDir = targetFileChooser.getCurrentDirectory(); // log("curTargetDir " + curTargetDir.getAbsolutePath() + "\r\n");
+	    curKeyDir = keyFileChooser.getCurrentDirectory(); // log("curKeyDir " + curKeyDir.getAbsolutePath() + "\r\n");
+	    upTargetDir = curTargetDir.getParentFile().getAbsoluteFile();
+    	    upKeyDir = curKeyDir.getParentFile().getAbsoluteFile();
+
 	    if (updateTargetFC) //	    Target FileChooser
 	    {
-//		targetFileChooser.setSelectedFile(noTargetFile);
-		targetFileChooser.setCurrentDirectory(upTargetDir);
-		targetFileChooser.setCurrentDirectory(curTargetDir);
+		try { targetFileChooser.setCurrentDirectory(upTargetDir); }
+		catch (java.lang.IndexOutOfBoundsException ex) {  }
+		finally { targetFileChooser.setCurrentDirectory(upTargetDir); }
+
+		try { targetFileChooser.setCurrentDirectory(curTargetDir); }
+		catch (java.lang.IndexOutOfBoundsException ex) {  }
+		finally { targetFileChooser.setCurrentDirectory(curTargetDir); }
+
 		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
 		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
@@ -2578,8 +2611,14 @@ keyFileChooser.rescanCurrentDirectory();
 	    if (updateKeyFC) //	    Key FileChooser
 	    {
 //		keyFileChooser.setSelectedFile(noKeyFile);
-		keyFileChooser.setCurrentDirectory(upKeyDir);
-		keyFileChooser.setCurrentDirectory(curKeyDir);
+		try { keyFileChooser.setCurrentDirectory(upKeyDir); }
+		catch (java.lang.IndexOutOfBoundsException ex) {  }
+		finally { keyFileChooser.setCurrentDirectory(upKeyDir); }
+
+		try { keyFileChooser.setCurrentDirectory(curKeyDir); }
+		catch (java.lang.IndexOutOfBoundsException ex) {  }
+		finally { keyFileChooser.setCurrentDirectory(curKeyDir); }
+
 		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 		keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
