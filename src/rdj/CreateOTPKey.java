@@ -74,38 +74,23 @@ public class CreateOTPKey extends Application implements Initializable
     public static final String OTPKEYURLSTRING = "https://en.wikipedia.org/wiki/One-time_pad";
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
     
-    @FXML
-    private ImageView bgImageView;
-    @FXML
-    private TextField filenameTextField;
-    @FXML
-    private TextField filesizeTextField;
-    @FXML
-    private ChoiceBox<String> unitChoiceBox;
-    @FXML
-    private Button increaseButton;
-    @FXML
-    private Button decreaseButton;
-    @FXML
-    private Button cancelButton;
-    @FXML
-    private Button createButton;
+    @FXML private ImageView bgImageView;
+    @FXML private TextField filenameTextField;
+    @FXML private TextField filesizeTextField;
+    @FXML private ChoiceBox<String> unitChoiceBox;
+    @FXML private Button increaseButton;
+    @FXML private Button decreaseButton;
+    @FXML private Button cancelButton;
+    @FXML private Button createButton;
     
-    @FXML
-    private Label filenameLabel;
-    @FXML
-    private Label filesizeLabel;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label untiLabel;
-    @FXML
-    private Label statusLabel1;
-    @FXML
-    private Label statusLabel2;
+    @FXML private Label filenameLabel;
+    @FXML private Label filesizeLabel;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label untiLabel;
+    @FXML private Label statusLabel1;
+    @FXML private Label statusLabel2;
     public CreateOTPKey controller;
-    @FXML
-    private Label complianceLabel;
+    @FXML private Label complianceLabel;
     
     private Long filesizeNumber;
     private Long factor;
@@ -117,7 +102,7 @@ public class CreateOTPKey extends Application implements Initializable
     private long throughputClock;
     private long lastThroughputClock;
     private long realtimeBytesProcessed;
-    private double realtimeBytesPerMilliSecond;
+    private double realtimeMiBPS;
 
 //    public CreateOTPKey(GUIFX guifx)
 //    {
@@ -351,7 +336,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    throughputClock = 0L;
 	    lastThroughputClock = 0L;
 	    realtimeBytesProcessed = 0L;
-	    realtimeBytesPerMilliSecond = 0.0d;
+	    realtimeMiBPS = 0.0d;
 	    
 	    updateProgressTask = new TimerTask()
 	    {
@@ -360,11 +345,13 @@ public class CreateOTPKey extends Application implements Initializable
 		    Platform.runLater(new Runnable(){ @Override public void run()
 		    {
 			throughputClock = System.nanoTime();
-			realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+//			realtimeMiBPS = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+			realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
+			if ( realtimeMiBPS > FinalCrypt.io_Throughput_Ceiling ) { FinalCrypt.io_Throughput_Ceiling = realtimeMiBPS; }
 			lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
 			
 			progressBar.setProgress( (double)totalTranfered / filesizeInBytes); // percent needs to become factor in this gui
-			guifx.processProgress(		     0,			   0,		    0,			0, realtimeBytesPerMilliSecond );
+			guifx.processProgress(		     0,			   0,		    0,			0, realtimeMiBPS );
 		    }});
 		}
 	    }; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
@@ -419,8 +406,8 @@ public class CreateOTPKey extends Application implements Initializable
 	    inputEnded = false;
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
-	    realtimeBytesPerMilliSecond = 0d; realtimeBytesProcessed = 0;
-	    guifx.processProgress(		     0,			   0,		    0,			0, realtimeBytesPerMilliSecond );
+	    realtimeMiBPS = 0d; realtimeBytesProcessed = 0;
+	    guifx.processProgress(		     0,			   0,		    0,			0, realtimeMiBPS );
 	    progressBar.setProgress( (double)totalTranfered / filesizeInBytes); // percent needs to become factor in this gui
 	    
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); }

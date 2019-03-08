@@ -249,7 +249,6 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOADHIGH_THRESHOLD =		0.95d; // 0.0 - 1.0
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
-    private final double IO_THROUGHPUT_CEILING =	500d; // 100% ceiling
 
     private double load_High_MS_Passed = 0.0d;
     private double load_Low_MS_Passed = 0.0d;
@@ -686,7 +685,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void updateSystemMonitor()
     {
 	double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
-	double throughputPerc = ((megaBytesPerSecond) / (IO_THROUGHPUT_CEILING / 100)); String throughputString = "Storage I/O Throughput (" + Stats.getDecimal((throughputPerc * (IO_THROUGHPUT_CEILING / 100)),1) + " MiB/S)";
+	double throughputPerc = ((megaBytesPerSecond) / (finalCrypt.io_Throughput_Ceiling / 100)); String throughputString = "Storage I/O Throughput (" + Stats.getDecimal((throughputPerc * (finalCrypt.io_Throughput_Ceiling / 100)),1) + " MiB/S)";
 	displaySystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, throughputPerc, throughputString);
     }
     

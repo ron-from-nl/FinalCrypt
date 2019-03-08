@@ -43,7 +43,6 @@ import java.util.TimerTask;
 public class FinalCrypt extends Thread
 {
     public static boolean verbose = false;
-    private static double realtimeMiBPS;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
     private boolean symlink = false, txt = false, dry = false;
     private static boolean print = false, bin = false, dec = false, hex = false, chr = false;
@@ -109,8 +108,13 @@ public class FinalCrypt extends Thread
     
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
-    public static final String HASH_ALGORITHM_NAME = "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
+    public static final String HASH_ALGORITHM_NAME =			    "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
     private static String printString;
+
+    public static final double IO_THROUGHPUT_CEILING_DEFAULT =	    10d; // (MiB/S) Dynamic 100% ceiling
+    public static double io_Throughput_Ceiling =		    IO_THROUGHPUT_CEILING_DEFAULT;
+    private static double realtimeMiBPS;
+
     private long lastBytesProcessed2;
     private long throughputClock = 0L;
     private long lastThroughputClock = 0L;
@@ -172,6 +176,8 @@ public class FinalCrypt extends Thread
 	    , boolean open // Opens targets after finishing
     )// throws InterruptedException
     {
+	io_Throughput_Ceiling = IO_THROUGHPUT_CEILING_DEFAULT;
+	
 	if (pwdParam.length() > 0) { pwd = pwdParam; } else { pwd = ""; }
 
 	startCalendar = Calendar.getInstance(Locale.ROOT);
@@ -230,6 +236,7 @@ public class FinalCrypt extends Thread
     //	    System Monitor
 		throughputClock = System.nanoTime();
 		realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
+		if ( realtimeMiBPS > io_Throughput_Ceiling ) { io_Throughput_Ceiling = realtimeMiBPS; }
 		lastThroughputClock = throughputClock; realtimeBytesProcessed = 0; // allDataStats.getFilesBytesProcessed()
 		ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, allDataStats.getFilesBytesProcessed(), realtimeMiBPS );
 

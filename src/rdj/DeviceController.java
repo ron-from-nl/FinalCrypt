@@ -61,7 +61,7 @@ public class DeviceController
     private long throughputClock;
     private long lastThroughputClock;
     private double realtimeBytesProcessed;
-    private double realtimeBytesPerMilliSecond;
+    private double realtimeMiBPS;
 
 	public DeviceController(UI ui)
     {
@@ -135,6 +135,7 @@ public class DeviceController
 //  Write KeyFile to partition
     synchronized public void createKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
+	FinalCrypt.io_Throughput_Ceiling = FinalCrypt.IO_THROUGHPUT_CEILING_DEFAULT;
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 	boolean encryptkey = true;
         if ( keyFCPath.size < bufferSize)   { bufferSize = (int)keyFCPath.size; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n", true, true, true, false, false); }
@@ -178,7 +179,9 @@ public class DeviceController
 		bytesPerMilliSecond =	    filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 
 		throughputClock = System.nanoTime();
-		realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+		realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
+
+		if ( realtimeMiBPS > FinalCrypt.io_Throughput_Ceiling ) { FinalCrypt.io_Throughput_Ceiling = realtimeMiBPS; }
 		lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
 
 	        ui.processProgress
@@ -189,15 +192,20 @@ public class DeviceController
 
 		    (int) (
 			    ( allDataStats.getFilesBytesProcessed() * 2) / ( (allDataStats.getFilesBytesTotal() * 3) / 100.0)
-			  ), filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond
+			  ), filesBytesTotal, filesBytesProcessed, realtimeMiBPS
 		);
+
 	    }
 	}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
         allDataStats.setAllDataStartNanoTime();
 
         ui.log("Writing " + keyFCPath.path.toAbsolutePath() + " to partition 1 (LBA:"+ firstLBA + ":" + (getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition) + ")", true, true, true, false, false);
-        filesBytesProcessed = 0;
+
+	readKeyFileStat1.reset();
+	writeKeyFileStat1.reset();
+
+	filesBytesProcessed = 0;
 	write1loop: while ( ! inputEnded )
         {
             while (pausing)     { bytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
@@ -227,13 +235,13 @@ public class DeviceController
             {
 //              Write keyfile to partition 1
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); filesBytesProcessed += writeOutputDeviceChannelTransfered;
+                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); realtimeBytesProcessed += writeOutputDeviceChannelTransfered; filesBytesProcessed += writeOutputDeviceChannelTransfered;
                 writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyFileChannelTransfered);
 //                ui.log("writeOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
 //              Write keyfile to partition 2
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, lastLBA + 1) + writeOutputDeviceChannelPosition));
-                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); filesBytesProcessed += writeOutputDeviceChannelTransfered;
+                writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); realtimeBytesProcessed += writeOutputDeviceChannelTransfered; filesBytesProcessed += writeOutputDeviceChannelTransfered;
                 writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyFileChannelTransfered);
 //                ui.log("writeOutputDeviceChannelTransfered 1 : " + writeOutputDeviceChannelTransfered + "\r\n");
 
@@ -295,6 +303,7 @@ public class DeviceController
 //    synchronized public void cloneKeyPartition(Device keyDevice, Device targetDevice, long firstLBA, long lastLBA)
     synchronized public void cloneKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
+	FinalCrypt.io_Throughput_Ceiling = FinalCrypt.IO_THROUGHPUT_CEILING_DEFAULT;
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 //	       isValidFile(UI ui, Path path,      boolean readSize,     boolean isKey, boolean symlink, boolean report)
 	if ( ( isValidFile(   ui,keyFCPath.path,          false,keyFCPath.isKey,           false,           true) ) && ( isValidFile(ui, targetFCPath.path, targetFCPath.isKey, false, false, true) ) )
@@ -337,43 +346,62 @@ public class DeviceController
 
     //      Setup the Progress TIMER & TASK
 
-	    processProgressCalendar = Calendar.getInstance(Locale.ROOT);
-	    filesBytesTotal =	    allDataStats.getFilesBytesTotal();
-	    filesBytesProcessed =	    allDataStats.getFilesBytesProcessed();
-	    bytesPerMilliSecond =   filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+	    processProgressCalendar =	Calendar.getInstance(Locale.ROOT);
+	    filesBytesTotal =		allDataStats.getFilesBytesTotal();
+	    filesBytesProcessed =	allDataStats.getFilesBytesProcessed();
+	    bytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 
 
 	    throughputClock = System.nanoTime();
-	    realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
+	    realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
+
+	    if ( realtimeMiBPS > FinalCrypt.io_Throughput_Ceiling ) { FinalCrypt.io_Throughput_Ceiling = realtimeMiBPS; }
 	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
-
-	    updateProgressTask = new TimerTask() { @Override public void run()
+	    
+	    updateProgressTask = new TimerTask()
 	    {
-		ui.processProgress
-		(
-			(int) (
-				(
-					readKeyFileStat1.getFileBytesProcessed() +
-					writeKeyFileStat1.getFileBytesProcessed() +
-					readKeyFileStat2.getFileBytesProcessed() +
-					writeKeyFileStat2.getFileBytesProcessed()
-				)   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+		@Override public void run()
+		{		
+		    processProgressCalendar =   Calendar.getInstance(Locale.ROOT);
+		    filesBytesTotal =		allDataStats.getFilesBytesTotal();
+		    filesBytesProcessed =	allDataStats.getFilesBytesProcessed();
+		    bytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 
-			(int) (
-				( 
-					allDataStats.getFilesBytesProcessed() * 1) /
-					( (allDataStats.getFilesBytesTotal() * 1) / 100.0)
-				), filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond // long bytesPerMiliSecond
-		);
-	    }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+		    throughputClock = System.nanoTime();
+		    realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
 
+		    if ( realtimeMiBPS > FinalCrypt.io_Throughput_Ceiling ) { FinalCrypt.io_Throughput_Ceiling = realtimeMiBPS; }
+		    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0;
+
+		    ui.processProgress
+		    (
+			    (int) (
+				    (
+					    readKeyFileStat1.getFileBytesProcessed() +
+					    writeKeyFileStat1.getFileBytesProcessed() +
+					    readKeyFileStat2.getFileBytesProcessed() +
+					    writeKeyFileStat2.getFileBytesProcessed()
+				    )   /   ( (allDataStats.getFileBytesTotal() * 1 ) / 100.0)),
+
+			    (int) (
+				    ( 
+					    allDataStats.getFilesBytesProcessed() * 1) /
+					    ( (allDataStats.getFilesBytesTotal() * 1) / 100.0)
+				    ), filesBytesTotal, filesBytesProcessed, realtimeMiBPS // long bytesPerMiliSecond
+		    );
+		}
+	    }; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
+	    
 	    allDataStats.setAllDataStartNanoTime();
 
 	    ui.log("Cloning " + keyFCPath.path.toAbsolutePath() + " to " + targetFCPath.path.toAbsolutePath() + " partitions (LBA:"+ firstLBA + ":" + (getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition) + ")", true, true, true, false, false);
 
 	    readKeyDeviceFileChannelPosition = DeviceController.getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + readKeyDeviceFileChannelPosition;
 	    
+	    readKeyFileStat1.reset();
+	    writeKeyFileStat1.reset();
 	    filesBytesProcessed = 0;
+	    
 	    write1loop: while ( ! inputEnded )
 	    {
 		while (pausing)     { bytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
@@ -400,7 +428,7 @@ public class DeviceController
 		{
     //              Write keyfile to partition 1
 		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
-		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); realtimeBytesProcessed += writeOutputDeviceChannelTransfered;
+		    writeOutputDeviceChannelTransfered = writeOutputDeviceChannel.write(outputDeviceBuffer); outputDeviceBuffer.rewind(); realtimeBytesProcessed += writeOutputDeviceChannelTransfered; filesBytesProcessed += writeOutputDeviceChannelTransfered;
 		    writeKeyFileStat1.addFileBytesProcessed(writeOutputDeviceChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyDeviceFileChannelTransfered);
 
 		    writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
@@ -430,7 +458,7 @@ public class DeviceController
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
     //        updateProgressTimeline.stop();
-	    ui.processFinished(new FCPathList(), false);
+//	    ui.processFinished(new FCPathList(), false);
 	}
 	else
 	{
