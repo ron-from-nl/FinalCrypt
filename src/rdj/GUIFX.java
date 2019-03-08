@@ -249,6 +249,7 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOADHIGH_THRESHOLD =		0.95d; // 0.0 - 1.0
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
+    private final double IO_THROUGHPUT_CEILING =	500d; // 100% ceiling
 
     private double load_High_MS_Passed = 0.0d;
     private double load_Low_MS_Passed = 0.0d;
@@ -382,7 +383,7 @@ public class GUIFX extends Application implements UI, Initializable
    
     private Calendar	totalTimeCalendar;
     private Calendar	remainingTimeCalendar;
-    private double	bytesPerMilliSecond;
+    private double	megaBytesPerSecond;
     private int offSetHours;
     private int offSetMinutes;
     private int offSetSeconds;
@@ -436,6 +437,10 @@ public class GUIFX extends Application implements UI, Initializable
     private File curKeyDir;
     private File upTargetDir;
     private File upKeyDir;
+    private boolean update_System_Monitor_Enabled;
+    private double userloadPercTest;
+    private double userMemPercTest;
+    private double throughputPercTest;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -644,7 +649,8 @@ public class GUIFX extends Application implements UI, Initializable
 	
     }
     
-    private void updateSystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString) // 0.0 - 1.0
+//    private void displaySystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString)
+    private void displaySystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double throughputPercParam, String throughputString)
     {
 //	double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d);
 	Platform.runLater(() ->
@@ -658,8 +664,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    Precalculations
 
 //	    I/O
-	    double ceiling = 500d; // 250 MBPS = 100% ceiling
-	    double throughputPerc = ((megaBytesPerSecondParam) / (ceiling / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
+//	    double throughputPerc = ((throughputPercParam) / (IO_THROUGHPUT_CEILING / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
 
 	    String sysMonString = "";
 	    sysMonString += userLoadString + "\r\n";
@@ -675,10 +680,17 @@ public class GUIFX extends Application implements UI, Initializable
 	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
 
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (throughputPerc); y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
+	    for (int y = 0; y < (throughputPercParam/ 100) * 20; y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
 
 	    sysMonTooltip.setText(sysMonString);
 	});
+    }
+    
+    private void updateSystemMonitor()
+    {
+	double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
+	double throughputPerc = ((megaBytesPerSecond) / (IO_THROUGHPUT_CEILING / 100)); String throughputString = "Storage I/O Throughput (" + Stats.getDecimal((throughputPerc * (IO_THROUGHPUT_CEILING / 100)),1) + " MiB/S)";
+	displaySystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, throughputPerc, throughputString);
     }
     
     private MemStats getMemStats()
@@ -808,26 +820,15 @@ public class GUIFX extends Application implements UI, Initializable
 
 	
         
-	mainTimeline = new Timeline(new KeyFrame( Duration.millis(MAIN_TIMELINE_INTERVAL_PERIOD), ae ->
+	mainTimeline = new Timeline(new KeyFrame( Duration.millis(MAIN_TIMELINE_INTERVAL_PERIOD), (ActionEvent ae) ->
 	{
 //	    ====================================================================
 //	    WORKLOAD
 //	    ====================================================================
 	    
-//	    WORKLOAD MONITOR
-//	    ==================================================================================================================================================================	    
-//	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL ) { userLoadPerc = getUserLoadPerc(); updateSystemMonitor(); /*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d; }
-	    if ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL )
-	    {
-//		userLoadPerc = getUserLoadPerc();
-//		updateSystemMonitor();
-//		updateSystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString) // 0.0 - 1.0
-		
-		double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
-		double megaBytesPerSecond = bytesPerMilliSecond / 1024d; String throughputString = "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
-		updateSystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, megaBytesPerSecond, throughputString);
-		/*cpuIndicator.setProgress(userLoad);*/ load_Monitor_MS_Passed = 0.0d;
-	    }
+//	    SYSTEM MONITOR
+//	    ==================================================================================================================================================================
+	    if ((update_System_Monitor_Enabled) && ( load_Monitor_MS_Passed >= LOAD_MONITOR_MS_INTERVAL )) { updateSystemMonitor(); load_Monitor_MS_Passed = 0.0d; }
 	    load_Monitor_MS_Passed += (mainTimeline.getCurrentRate() * MAIN_TIMELINE_INTERVAL_PERIOD);
 //	    ==================================================================================================================================================================	    
 
@@ -986,8 +987,19 @@ public class GUIFX extends Application implements UI, Initializable
 		sysmonFadeTransition.setAutoReverse(false);
 		sysmonFadeTransition.setDelay(Duration.seconds(0));
 		sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
-		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) -> { keyButton.setDisable(false); });
-		
+		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
+		{
+		    keyButton.setDisable(false);
+		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
+		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		    {
+			displaySystemMonitor(userloadPercTest, "",userMemPercTest, "",throughputPercTest, "");
+			userloadPercTest -= 10.0d; userMemPercTest -= 10.0d; throughputPercTest -= (10.0d);
+		    }));
+		    systemMonitorTestTimeline.setCycleCount(10);
+		    systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) -> { update_System_Monitor_Enabled = true; });
+		    systemMonitorTestTimeline.play();
+		});
 		sysmonFadeTransition.play();
 
 //		Last Update Checked
@@ -2487,7 +2499,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    bytesTotal = bytesTotalParam;
 //	    bytesProcessed = Double.valueOf(Long.valueOf(bytesProcessedParam).doubleValue() / 2d).longValue();
 	    bytesProcessed = Double.valueOf(Long.valueOf(bytesProcessedParam).doubleValue()).longValue();
-	    bytesPerMilliSecond = bytesPerMiliSecondParam;
+	    megaBytesPerSecond = bytesPerMiliSecondParam;
 	    
 	    // update ProgressBars
 	    if (finalCrypt.getVerbose()) { log("Progress File : " + filesProgressPercent / 100.0  + " factor", false, false, false, false, true); }
@@ -2506,16 +2518,16 @@ keyFileChooser.rescanCurrentDirectory();
     {
         Platform.runLater(() ->
 	{
-	    bytesPerMilliSecond = 0;
-	    double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
-	    double megaBytesPerSecond = bytesPerMilliSecond / 1024d; String throughputString = "Storage I/O Throughput (" + Stats.getDecimal(megaBytesPerSecond,1) + " MiB/S)";
-	    updateSystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, megaBytesPerSecond, throughputString);
-	    // Clocks
-	    
-	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
+	    megaBytesPerSecond = 0;
+	    updateSystemMonitor();
+
+	    // Clocks	
+//	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
+	    UPDATE_CLOCKS_TIMELINE.stop();
 	    if (clockUpdated)
 	    {
 		remainingTimeLabel.setText("00:00:00");
+//		elapsedTimeLabel is already correct
 		totalTimeCalendar.setTimeInMillis(elapsedTimeCalendar.getTimeInMillis());
 		String totalTimeString = "";
 		totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
@@ -2523,7 +2535,6 @@ keyFileChooser.rescanCurrentDirectory();
 		totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
 		totalTimeLabel.setText(totalTimeString);
 	    }
-	    
 	    
 	    targetFCPathList = new FCPathList();
 	    
@@ -2554,7 +2565,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    processRunningMode = NONE;
 	    processRunning = false;
 	    	    
-//	    The Open when finished section
+//	    The Open selected file when finished section
 
 	    Thread openThread;
 	    openThread = new Thread(() ->
@@ -2562,9 +2573,9 @@ keyFileChooser.rescanCurrentDirectory();
 		try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
 		if (open)
 		{
-		    for (Iterator it = openFCPathList.iterator(); it.hasNext();)
+		    for (Iterator fcPathIterator = openFCPathList.iterator(); fcPathIterator.hasNext();)
 		    {
-			FCPath openFCPath = (FCPath) it.next();
+			FCPath openFCPath = (FCPath) fcPathIterator.next();
 			Path newPath = Paths.get(openFCPath.path.toString().substring(0, openFCPath.path.toString().lastIndexOf('.')));
 
 			try { Desktop.getDesktop().open(newPath.toFile()); }
@@ -2715,7 +2726,7 @@ keyFileChooser.rescanCurrentDirectory();
 	    {
 		pauseToggleButton.setStyle(" -fx-text-fill: orange; -fx-font-size: 14; ");
 		PAUSE_TIMELINE.play();
-		bytesPerMilliSecond = 0d;
+		megaBytesPerSecond = 0d;
 	    }
 	    else
 	    {

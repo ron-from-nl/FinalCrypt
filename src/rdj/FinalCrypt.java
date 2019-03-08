@@ -43,7 +43,7 @@ import java.util.TimerTask;
 public class FinalCrypt extends Thread
 {
     public static boolean verbose = false;
-    private static double realtimeBytesPerMilliSecond;
+    private static double realtimeMiBPS;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
     private boolean symlink = false, txt = false, dry = false;
     private static boolean print = false, bin = false, dec = false, hex = false, chr = false;
@@ -206,34 +206,35 @@ public class FinalCrypt extends Thread
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
         
 //      Setup the Progress TIMER & TASK
-        updateProgressTimerTask = new TimerTask() { private long filesBytesTotal;
+        updateProgressTimerTask = new TimerTask()
+	{
+	    private long filesBytesTotal;
 
-//	private long fileBytesProcessed;
-	
-	@Override public void run()
-        {
-	    long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
-	    double fileBytesPercent =	((readTargetSourceStat.getFileBytesTotal()) / 100.0); //  1000 / 100 = (long)10     10 > 0.1 (10*0.01)
-	    int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesPercent); // 600 / 10 = 60 - 600 * (10*0.01)
-	    
-	    long filesBytesProcessed =	(allDataStats.getFilesBytesProcessed());
-	    double filesBytesPercent =	((allDataStats.getFilesBytesTotal() ) / 100.0);
-	    int filesBytesPercentage =	(int)(filesBytesProcessed / filesBytesPercent);
+    //	private long fileBytesProcessed;
 
-	    processProgressCalendar =	Calendar.getInstance(Locale.ROOT);
-	    filesBytesTotal =		allDataStats.getFilesBytesTotal();
-	    fileBytesProcessed =	allDataStats.getFileBytesProcessed();
-	    filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-	    
-//	    System Monitor
-	    throughputClock = System.nanoTime();
-	    realtimeBytesPerMilliSecond = (realtimeBytesProcessed * (1000000d / (throughputClock - lastThroughputClock)));
-	    lastThroughputClock = throughputClock; realtimeBytesProcessed = 0; // allDataStats.getFilesBytesProcessed()
-            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, allDataStats.getFilesBytesProcessed(), realtimeBytesPerMilliSecond );
-//            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, filesBytesProcessed, realtimeBytesPerMilliSecond );
-//            ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, totalBytesProcessed, realtimeBytesPerMilliSecond );
-	    
-        }}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTimerTask, 100L, UPDATE_PROGRESS_TIMERTASK_PERIOD);
+	    @Override public void run()
+	    {
+		long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
+		double fileBytesPercent =	((readTargetSourceStat.getFileBytesTotal()) / 100.0); //  1000 / 100 = (long)10     10 > 0.1 (10*0.01)
+		int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesPercent); // 600 / 10 = 60 - 600 * (10*0.01)
+
+		long filesBytesProcessed =	(allDataStats.getFilesBytesProcessed());
+		double filesBytesPercent =	((allDataStats.getFilesBytesTotal() ) / 100.0);
+		int filesBytesPercentage =	(int)(filesBytesProcessed / filesBytesPercent);
+
+		processProgressCalendar =	Calendar.getInstance(Locale.ROOT);
+		filesBytesTotal =		allDataStats.getFilesBytesTotal();
+		fileBytesProcessed =	allDataStats.getFileBytesProcessed();
+		filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
+
+    //	    System Monitor
+		throughputClock = System.nanoTime();
+		realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
+		lastThroughputClock = throughputClock; realtimeBytesProcessed = 0; // allDataStats.getFilesBytesProcessed()
+		ui.processProgress( fileBytesPercentage, filesBytesPercentage, filesBytesTotal, allDataStats.getFilesBytesProcessed(), realtimeMiBPS );
+
+	    }
+	}; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTimerTask, 100L, UPDATE_PROGRESS_TIMERTASK_PERIOD);
 
 
 //      Start Files Encryption Clock
@@ -742,7 +743,7 @@ public class FinalCrypt extends Thread
     {
         ByteBuffer targetDestinBuffer = ByteBuffer.allocate(keySourceBuffer.capacity()); targetDestinBuffer.clear();
 	
-        while (pausing)     { realtimeBytesPerMilliSecond = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+        while (pausing)     { realtimeMiBPS = 0; try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
         byte targetDestinByte;
 	for (int targetSourceBufferCount = 0; targetSourceBufferCount < targetSourceBuffer.limit(); targetSourceBufferCount++)
         {
