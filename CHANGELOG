@@ -1,3 +1,4 @@
+3.5.0 Added System Monitor startup Testing. Added Dynamic I/O Throughput Ceiling
 3.4.1 Fixed Total Elapsed & Remaining-Time Clocks. Fixed the FileChooser refresh directory bug
 3.4.0 Added I/O throughput stats for all WRITE channels. Fixed NON-MAC Mode fileselection bugs (GUI & CLI)
 3.3.2 Corrected throughput calculations and improved cosmetics

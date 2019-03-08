@@ -1,5 +1,5 @@
-[Version] =		{3.4.1}
-[Release Notes] =	{Fixed Total Elapsed & Remaining-Time Clocks}
-[Release Message] =	{Fixed the FileChooser refresh directory bug}
+[Version] =		{3.5.0}
+[Release Notes] =	{Added System Monitor startup Testing}
+[Release Message] =	{Added Dynamic I/O Throughput Ceiling}
 [Alert Subject] =	{}
 [Alert Message] =	{}
