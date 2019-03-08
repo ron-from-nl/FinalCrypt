@@ -105,7 +105,6 @@ public class Validate
 
     synchronized public static boolean targetSourceHasMAC(UI ui, Path targetSourcePath) // Tested
     {
-	
 	boolean targetSourceHasMAC = false;
 	
         ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); plainTextMACBuffer.clear();

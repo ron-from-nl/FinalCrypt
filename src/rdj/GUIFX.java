@@ -612,10 +612,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	USERGUIDANCE GRADIENT ANIMATION
 //	===============================================================================================================================================
 
-	
-
-	
-	
+		
 	radius = 0.6;
 	focusAngle = 0.0;
         focusDistance = 0.0;
