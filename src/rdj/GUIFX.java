@@ -1006,7 +1006,7 @@ public class GUIFX extends Application implements UI, Initializable
 		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		boolean invalidUpdateCheckedValue = false;
 		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
-		if ( invalidUpdateCheckedValue ) { checkUpdate(); } else { if (now - updateChecked >= updateCheckPeriod) { checkUpdate(); } }
+		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(); }); } }
 	    });
 	    parallelTransition.play();
 	});
@@ -2754,9 +2754,7 @@ keyFileChooser.rescanCurrentDirectory();
     private void copyrightLabelOnMouseClicked(MouseEvent event)	{ /*checkUpdate();*/ }
 
     @FXML
-    private void checkUpdateButtonOnAction(ActionEvent event) { checkUpdate(); }
-
-    private void updateButtonAction(ActionEvent event) { checkUpdate(); }
+    private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { checkUpdate(); }); }
 
     @FXML
     private void encryptTabSelectionChanged(Event event)
