@@ -1,5 +1,5 @@
-[Version] =		{3.5.1}
-[Release Notes] =	{Fixed short GUI freeze moving}
-[Release Message] =	{CheckUpdate in the background}
+[Version] =		{3.5.2}
+[Release Notes] =	{Improved Check Update Online Function}
+[Release Message] =	{Slightly increased fontsize for files}
 [Alert Subject] =	{}
 [Alert Message] =	{}

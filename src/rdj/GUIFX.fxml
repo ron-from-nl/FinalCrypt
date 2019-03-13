@@ -162,7 +162,7 @@
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane VBox.vgrow="ALWAYS">
+                                          <AnchorPane fx:id="keyFileSwingPane" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -855,7 +855,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="6">
                                        <children>
-                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">

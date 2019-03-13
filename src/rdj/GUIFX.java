@@ -210,6 +210,8 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private BorderPane targetFileFoil;
     @FXML   private BorderPane keyFileFoil;
 
+    private final int FILE_CHOOSER_FONT_SIZE =		13;
+    
     private final int NONE =				0;
     private final int ENCRYPT_MODE =			1;
     private final int DECRYPT_MODE =			2;
@@ -440,6 +442,8 @@ public class GUIFX extends Application implements UI, Initializable
     private double userloadPercTest;
     private double userMemPercTest;
     private double throughputPercTest;
+    @FXML
+    private AnchorPane keyFileSwingPane;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -524,7 +528,7 @@ public class GUIFX extends Application implements UI, Initializable
 //        targetFileChooser.setFocusCycleRoot(true);
 //        targetFileChooser.setFocusTraversalKeysEnabled(true);
 //        targetFileChooser.setFocusTraversalPolicyProvider(true);
-        targetFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
+//        targetFileChooser.setFont(new Font("Liberation Sans", Font.PLAIN, 10));
         targetFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         targetFileChooser.addChoosableFileFilter(finalCryptFilter);
@@ -544,7 +548,7 @@ public class GUIFX extends Application implements UI, Initializable
 //        keyFileChooser.setFocusCycleRoot(true);
 //        keyFileChooser.setFocusTraversalKeysEnabled(true);
 //        keyFileChooser.setFocusTraversalPolicyProvider(true);
-        keyFileChooser.setFont(new Font("Open Sans", Font.PLAIN, 10));
+        keyFileChooser.setFont(new Font("Liberation Sans", Font.PLAIN, 10));
         keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         keyFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { keyFileChooserPropertyChange(evt); });
 //	keyFileChooser.add
@@ -560,6 +564,7 @@ public class GUIFX extends Application implements UI, Initializable
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	checksumHeader.setText("Checksum (" + FinalCrypt.HASH_ALGORITHM_NAME + ")");
 	keyImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/key.png")));
+	
 	
 	keyButton.setText(CREATE_KEY);
 
@@ -883,9 +888,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	}
         )); mainTimeline.setCycleCount(Animation.INDEFINITE); mainTimeline.play();
-	
-	
-	
+		
 	checksumTooltip = new Tooltip("");
 //	checksumTooltip.setFont(javafx.scene.text.Font.font(javafx.scene.text.Font.getDefault().getName(), FontWeight.NORMAL, FontPosture.REGULAR, 13));
 	checksumTooltip.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 13));
@@ -986,6 +989,7 @@ public class GUIFX extends Application implements UI, Initializable
 		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
 		{
 		    keyButton.setDisable(false);
+		    checkUpdateButton.setDisable(false);
 		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
 		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
@@ -1006,7 +1010,7 @@ public class GUIFX extends Application implements UI, Initializable
 		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		boolean invalidUpdateCheckedValue = false;
 		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
-		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(); }); } }
+		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 	    });
 	    parallelTransition.play();
 	});
@@ -1229,21 +1233,19 @@ public class GUIFX extends Application implements UI, Initializable
         return alert;
     }
 
-    private void checkUpdate()
+    private void checkUpdate(boolean userActivated)
     {
         Platform.runLater(() ->
 	{
 	    String alertString = "";
 	    version = new Version(ui);
 	    version.checkCurrentlyInstalledVersion(GUIFX.this);
-	    version.checkLatestOnlineVersion(GUIFX.this); prefs.putLong("Update Checked", now);
+	    version.checkLatestOnlineVersion(GUIFX.this);
+	    prefs.putLong("Update Checked", now);
 	    String[] lines = version.getUpdateStatus().split("\r\n");
 	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false);}
-	    
-	    alertString = "Download new version: " + version.getLatestOnlineOverallVersionString() + "?\r\n\r\n";
-	    if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += version.getLatestReleaseNotesString() + "\r\n"; }
-	    if (! version.getLatestVersionMessageString().isEmpty())    { alertString += version.getLatestVersionMessageString() + "\r\n"; }
-	    if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() ))
+	    	    
+	    if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() )) // Only display Alert in VERSION2 file
 	    {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		
@@ -1258,25 +1260,100 @@ public class GUIFX extends Application implements UI, Initializable
 		alert.setContentText(version.getLatestAlertMessageString());
 		alert.showAndWait();
 	    }
-	    if ( (version.versionIsDifferent()) && (version.versionCanBeUpdated()) )
+	    
+	    if (version.latestVersionIsKnown())
 	    {
-		Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
-		alert.setHeaderText("Download Update?");
-		alert.showAndWait();
-		
-		if (alert.getResult() == ButtonType.YES)
+		if (( ! version.versionIsDifferent() ) &&( userActivated ))
 		{
-		    Thread updateThread;
-		    updateThread = new Thread(() ->
-		    {
-			try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); }
-			catch (URISyntaxException ex)   { log(ex.getMessage(), true, true, true, true, false); }}
-			catch (IOException ex)	    { log(ex.getMessage(), true, true, true, true, false); }
-		    });
-		    updateThread.setName("updateThread");
-		    updateThread.setDaemon(true);
-		    updateThread.start();
+			Alert alert = new Alert(AlertType.INFORMATION);
+
+			DialogPane dialogPane = alert.getDialogPane();
+			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+			dialogPane.getStyleClass().add("myDialog");
+
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText("Your current version is up to date\r\n");
+			alert.setResizable(true);
+			alert.setContentText("You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n");
+			alert.showAndWait();
 		}
+		else
+		{
+		    if (version.versionCanBeUpdated())
+		    {
+										      alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
+										      alertString += "New:\r\n";
+			if (! version.getLatestReleaseNotesString().isEmpty())	{ alertString += "   " + version.getLatestReleaseNotesString() + "\r\n"; }
+			if (! version.getLatestVersionMessageString().isEmpty())	{ alertString += "   " + version.getLatestVersionMessageString() + "\r\n\r\n"; }
+										      alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
+
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+
+			DialogPane dialogPane = alert.getDialogPane();
+			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+			dialogPane.getStyleClass().add("myDialog");
+
+			alert.setHeaderText("New version " + Version.getProductName() + " available\r\n");
+			alert.showAndWait();
+
+			if (alert.getResult() == ButtonType.YES)
+			{
+			    Thread updateThread;
+			    updateThread = new Thread(() ->
+			    {
+				try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); } catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
+				catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
+			    });
+			    updateThread.setName("updateThread");
+			    updateThread.setDaemon(true);
+			    updateThread.start();
+			}
+		    }
+		    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )
+		    {
+    //		    Alert alert = new Alert(AlertType.INFORMATION);
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+
+			DialogPane dialogPane = alert.getDialogPane();
+			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+			dialogPane.getStyleClass().add("myDialog");
+
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText("You are using a development version\r\n");
+			alert.setResizable(true);
+			alert.setContentText("This is a development version:    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n"
+					    +"The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n\r\n"
+					    +"Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") now ?\r\n");
+			alert.showAndWait();
+
+			if (alert.getResult() == ButtonType.YES)
+			{
+			    Thread updateThread;
+			    updateThread = new Thread(() ->
+			    {
+				try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); } catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
+				catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
+			    });
+			    updateThread.setName("updateThread");
+			    updateThread.setDaemon(true);
+			    updateThread.start();
+			}
+		    }
+		}
+	    }
+	    else // latest online version is unknown
+	    {
+		Alert alert = new Alert(AlertType.INFORMATION);
+
+		DialogPane dialogPane = alert.getDialogPane();
+		dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+		dialogPane.getStyleClass().add("myDialog");
+
+		alert.setTitle("Information Dialog");
+		alert.setHeaderText("Online version could not be checked\r\n");
+		alert.setResizable(true);
+		alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
+		alert.showAndWait();
 	    }
 	});
     }
@@ -2091,7 +2168,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,11)); }
+	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,FILE_CHOOSER_FONT_SIZE)); }
 	    
 //            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
@@ -2156,7 +2233,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
         Component[] components = container.getComponents();
         for (Component component : components)
         {
-	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,11)); }
+	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,FILE_CHOOSER_FONT_SIZE)); }
 	    
 //            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
@@ -2754,7 +2831,7 @@ keyFileChooser.rescanCurrentDirectory();
     private void copyrightLabelOnMouseClicked(MouseEvent event)	{ /*checkUpdate();*/ }
 
     @FXML
-    private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { checkUpdate(); }); }
+    private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { checkUpdate( true ); }); }
 
     @FXML
     private void encryptTabSelectionChanged(Event event)

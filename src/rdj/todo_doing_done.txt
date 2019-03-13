@@ -36,6 +36,7 @@ Set version on file:					Version2
 
 ============================= Binaries Released =============================
 
+3.5.2 Improved Check Update Online Function. Slightly increased fontsize for files
 3.5.0 Added System Monitor startup Testing. Added Dynamic I/O Throughput Ceiling
 Removed a heavily logging memory logarea print statement
 Replaced the Process Usage Indicator with

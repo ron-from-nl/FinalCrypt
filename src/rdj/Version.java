@@ -230,9 +230,10 @@ public class Version
         return returnString;
     }
 
-    public boolean versionIsDifferent()     { if      ( currentVersionTotal != latestVersionTotal ) { return true; } else { return false; } }
-    public boolean versionCanBeUpdated()    { if      ( currentVersionTotal < latestVersionTotal )  { return true; } else { return false; } }
-    public boolean versionIsDevelopment()   { if      ( currentVersionTotal > latestVersionTotal )  { return true; } else { return false; } }    
+    public boolean latestVersionIsKnown()   { return latestVersionIsKnown; }    
+    public boolean versionIsDifferent()     { if ((latestVersionIsKnown) && ( currentVersionTotal != latestVersionTotal )) { return true; } else { return false; } }
+    public boolean versionCanBeUpdated()    { if ((latestVersionIsKnown) && ( currentVersionTotal < latestVersionTotal ))  { return true; } else { return false; } }
+    public boolean versionIsDevelopment()   { if ((latestVersionIsKnown) && ( currentVersionTotal > latestVersionTotal ))  { return true; } else { return false; } }    
 
     public static String getCopyright()     { return COPYRIGHT; }
     public static String getLicense()	    { return LICENSE; }

@@ -24,5 +24,5 @@ public class MemStats
     public long freeMem;
     public long usedMem;
     public double usedMemPerc;
-    public String memStatsString;    
+    public String memStatsString;
 }
