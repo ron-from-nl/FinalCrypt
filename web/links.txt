@@ -28,10 +28,7 @@ INSTALL RPM =           https://github.com/ron-from-nl/FinalCrypt/releases/downl
 
 Video Tutorial
 
-<video width="100%" controls>
-  <source src="How_does_FinalCrypt_work.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<video style="border: 1px solid black; overflow: hidden;" width="100%" controls><source src="How_does_FinalCrypt_work.mp4" type="video/mp4">Your browser does not support the video tag.</video>
 
 =======================================================================================================================================
 
