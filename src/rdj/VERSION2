@@ -1,5 +1,5 @@
-[Version] =		{3.5.2}
-[Release Notes] =	{Improved Check Update Online Function}
-[Release Message] =	{Slightly increased fontsize for files}
+[Version] =		{3.6.0}
+[Release Notes] =	{Moved FinalCrypt to a new hosting location}
+[Release Message] =	{Improved Check_Update being more resilient}
 [Alert Subject] =	{}
 [Alert Message] =	{}
