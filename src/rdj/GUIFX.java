@@ -252,6 +252,13 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
 
+    public final String OS_NAME = System.getProperty("os.name");
+    public final String OS_ARCH = System.getProperty("os.arch");
+    public final String OS_VERSION = System.getProperty("os.version");
+    public final String JAVA_VENDER = System.getProperty("java.vendor");
+    public final String JAVA_VERSION = System.getProperty("java.version");
+    public final String CLASS_VERSION = System.getProperty("java.class.version");
+    
     private double load_High_MS_Passed = 0.0d;
     private double load_Low_MS_Passed = 0.0d;
     private double arrowsfadestep = (ARROWS_OPACITY_MAX / (Double.valueOf(1000.0 / MAIN_TIMELINE_INTERVAL_PERIOD).intValue()) * 2); // step = max / FPS
@@ -1175,6 +1182,8 @@ public class GUIFX extends Application implements UI, Initializable
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
 	
+//    public final String CLASS_VERSION = System.getProperty("java.class.version");
+
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
 	env +=    "Interface:          rdj/GUIFX\r\n";
@@ -1184,14 +1193,14 @@ public class GUIFX extends Application implements UI, Initializable
 	env +=    "Command line:       java -cp FinalCrypt.jar rdj/CLUI --help\r\n";
 	env +=    "License:            " + Version.getLicense() + "\r\n";
 	env += "\r\n";
-	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
-	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
-	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
+	env +=    "OS Name:            " + OS_NAME + "\r\n";
+	env +=    "OS Architecture:    " + OS_ARCH + "\r\n";
+	env +=    "OS Version:         " + OS_VERSION + "\r\n";
 	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
 	env += "\r\n";
-	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
-	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
-	env +=    "Class Version:      " + System.getProperty("java.class.version") + "\r\n";
+	env +=    "Java Vendor:        " + JAVA_VENDER + "\r\n";
+	env +=    "Java Version:       " + JAVA_VERSION + "\r\n";
+	env +=    "Class Version:      " + CLASS_VERSION + "\r\n";
 	env += "\r\n";
 	env +=    "User Name:          " + System.getProperty("user.name") + "\r\n";
 	env +=    "User Home:          " + System.getProperty("user.home") + "\r\n";
@@ -3039,16 +3048,17 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void openWebsiteAction(ActionEvent event)
     {
-	Thread updateThread;
-	updateThread = new Thread(() ->
-	{
-	    try { try {  Desktop.getDesktop().browse(new URI(Version.WEBSITEURISTRING)); }
-	    catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
-	    catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
-	});
-	updateThread.setName("updateThread");
-	updateThread.setDaemon(true);
-	updateThread.start();
+	Version.openWebSite(this);
+//	Thread updateThread;
+//	updateThread = new Thread(() ->
+//	{
+//	    try { try {  Desktop.getDesktop().browse(new URI(Version.WEBSITEURISTRING)); }
+//	    catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
+//	    catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
+//	});
+//	updateThread.setName("updateThread");
+//	updateThread.setDaemon(true);
+//	updateThread.start();
     }    
 
 

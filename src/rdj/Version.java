@@ -18,10 +18,10 @@
  */
 package rdj;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import static java.nio.channels.Channels.newChannel;
@@ -31,45 +31,45 @@ import java.util.Calendar;
 public class Version
 {
     private UI ui;
-    private static final String COMPANYNAME = "Private Person";
-    private static final String PRODUCTNAME = "FinalCrypt";
-    private static final String AUTHOR = "Ron de Jong";
-    private static final String AUTHOREMAIL = "ronuitzaandam@gmail.com";
-    private static final String LICENSE = "Creative Commons License: (CC BY-NC-ND 4.0)";
-    private static final String COPYRIGHT = "© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
-    private static String currentOverallVersionString = "";
-    private String latestOverallVersionString = "";
-    private static int currentVersionTotal = 0;
-    private int latestVersionTotal = 0;
-    private InputStream istream = null;
-    private static final String LOCALVERSIONFILEURLSTRING =	    "VERSION2";
-    private static       String localContent =			    "";
+    private static final String COMPANYNAME =				"Private Person";
+    private static final String PRODUCTNAME =				"FinalCrypt";
+    private static final String AUTHOR =				"Ron de Jong";
+    private static final String AUTHOREMAIL =				"ronuitzaandam@gmail.com";
+    private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
+    private static final String COPYRIGHT =				"© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
+    private static String currentOverallVersionString =			"";
+    private String latestOverallVersionString =				"";
+    private static int currentVersionTotal =				0;
+    private int latestVersionTotal =					0;
+    private InputStream istream =					null;
+    private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
+    private static       String localContent =				"";
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
 									    "http://www.finalcrypt.org/VERSION2"
 									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"
 									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"
-									};
+									};    
     
-    private static       String remoteContent =			    "";
+    private static       String remoteContent =				"";
     
 //      public static final String WEBSITEURISTRING =			    "https://sites.google.com/site/ronuitholland/home/finalcrypt";
-    public static final String WEBSITEURISTRING =			    "http://www.finalcrypt.org/";
+    public static final String WEBSITEURISTRING =			"http://www.finalcrypt.org/";
 
-//    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		    "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
-    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		    "http://www.finalcrypt.org/downloads/";
+//    public static final String REMOTEPACKAGEDOWNLOADURISTRING =	  "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
+    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		"http://www.finalcrypt.org/downloads/";
     public static final String[] REMOTEPACKAGEDOWNLOADURISTRINGARRAY =	{
 									    "http://www.finalcrypt.org/downloads/"
 									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"
 									};
     private URL remoteURL = null;
-    private ReadableByteChannel currentVersionByteChannel = null;
-    private ReadableByteChannel latestVersionByteChannel = null;
+    private ReadableByteChannel currentVersionByteChannel =		null;
+    private ReadableByteChannel latestVersionByteChannel =		null;
     private ByteBuffer byteBuffer; 
     
-    private boolean currentVersionIsKnown = false;
-    private boolean latestVersionIsKnown = false;
-    private boolean updateAvailable = false;
+    private boolean currentVersionIsKnown =				false;
+    private boolean latestVersionIsKnown =				false;
+    private boolean updateAvailable =					false;
     private String[] localFields;
     private String[] localValues;
     private String[] remoteFields;
@@ -106,7 +106,7 @@ public class Version
 
 //        localContent.replaceAll("\\p{C}", "?");
 //	String[] lines = localContent.split(System.getProperty("line.separator"));
-	String[] lines = localContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
+	String[] lines = localContent.split("\n"); // VERSION2 file was created on linux with unix newlines \n
 	
 	localFields = new String[lines.length];
 	localValues = new String[lines.length];
@@ -140,14 +140,12 @@ public class Version
     synchronized public String checkLatestOnlineVersion(UI ui)
     {
 //      Read the remote VERSION file
+	
 	latestVersionIsKnown = false;
         latestOverallVersionString = "Unknown";
 	
-	
 	loop: for(String REMOTEVERSIONFILEURLSTRING:REMOTEVERSIONFILEURLSTRINGARRAY)
-	{
-//	    ui.test("\r\nREMOTEVERSIONFILEURLSTRING: " + REMOTEVERSIONFILEURLSTRING + "\r\n");
-	    
+	{	    
 	    boolean failed = false;
 	    byteBuffer = ByteBuffer.allocate(1024); byteBuffer.clear(); remoteContent = "";
 	    ui.log("Checking: " + REMOTEVERSIONFILEURLSTRING + "\r\n", false, false, true, false, false);
@@ -155,8 +153,9 @@ public class Version
 	    try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); }
 	    catch (MalformedURLException ex)	{ ui.log("Error: Version.checkLatestOnlineVersion MalformedURLException: new URL(" + REMOTEVERSIONFILEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
 	    
-	    try { latestVersionByteChannel = Channels.newChannel(remoteURL.openStream()); }
-	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.newChannel(\"" + REMOTEVERSIONFILEURLSTRING +"\".openStream()) (webserver up? file exist?)\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+	    InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.checkLatestOnlineVersion IOException: inputStream = \"" + REMOTEVERSIONFILEURLSTRING +"\".openStream()) (webserver up? file exist?)\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+	    	    
+	    latestVersionByteChannel = Channels.newChannel(inputStream);
 	    
 	    try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } }
 	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); failed = true; continue; }
@@ -167,7 +166,6 @@ public class Version
 //          remoteContent.replaceAll("\\p{C}", "?");
 //	    String[] lines = remoteContent.split(System.getProperty("line.separator"));
 
-//	    ui.test("l: " + remoteContent.length() + "\r\n" + remoteContent);
 	    if (! failed)
 	    {
 		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
@@ -183,7 +181,6 @@ public class Version
 			
 			if ( (line.contains("[")) && (line.contains("]")) && (line.contains("{")) && (line.contains("}")) )
 			{
-//			    ui.test("Found: \"[]{}\" in lines" + "\r\n");
 			    if ((line.substring(line.indexOf("[") + 1, line.indexOf("]")).length() > 0) && line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")).length() > 0)
 			    {
 				remoteFields[c] = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
@@ -191,10 +188,7 @@ public class Version
 				c++;
 			    }			    
 			}
-			else { /*ui.test("no \"[]{}\" in lines" + "\r\n");*/ }
 		    }
-
-//		    ui.test("Total remote fields assigned: " + c + "\r\n");
 		    
 		    if ((remoteFields.length > 4) && (c > 2))
 		    {
@@ -217,15 +211,69 @@ public class Version
 			latestVersionIsKnown = true;
 			
 			if ((latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestVersionIsKnown)) { return latestOverallVersionString; }
-		    } /*ui.test("No requirements");*/ continue;
+		    } continue;
 
-		} /*ui.test("no lines");*/ continue;
-	    } /*ui.test("Network failures\r\n");*/ continue;
+		} continue;
+	    } continue;
 
 	} if (latestVersionIsKnown) { return latestOverallVersionString; }
 	return "Could not check for new updates (Internet?)";
     }
 
+    synchronized public static void openWebSite(UI ui)
+    {
+	String[] WEBSITEURLSTRINGARRAY =	{
+						    ""
+						    ,"http://www.finalcrypt.org/" // tested
+						    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/" // tested
+						    ,"http://finalcrypt.000webhostapp.com/" // tested
+						    ,"http://www.majorgeeks.com/files/details/finalcrypt.html" // tested
+						};
+        String identifierExpected = PRODUCTNAME;
+	
+	loop: for(String WEBSITEURLSTRING:WEBSITEURLSTRINGARRAY)
+	{
+	    if (! WEBSITEURLSTRING.isEmpty())
+	    {
+		boolean failed = false;
+		ByteBuffer byteBuffer = ByteBuffer.allocate(1024); byteBuffer.clear(); String remoteContent = "";
+		ui.log("Checking: " + WEBSITEURLSTRING + "\r\n", false, false, true, false, false);
+
+		URL remoteURL;
+		try { remoteURL = new URL(WEBSITEURLSTRING); }
+		catch (MalformedURLException ex)	{ ui.log("Error: Version.openWebSite MalformedURLException: new URL(" + WEBSITEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
+
+		InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.openWebSite IOException: remoteURL.openStream()) " + ex.getMessage() + "\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+
+		ReadableByteChannel latestVersionByteChannel = Channels.newChannel(inputStream);
+
+		try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } }
+		catch (IOException ex)		{ ui.log("Error: Version.openWebSite IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); failed = true; continue; }
+
+		try { latestVersionByteChannel.close(); }
+		catch (IOException ex)		{ ui.log("Error: Version.openWebSite IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
+
+		if (! failed)
+		{
+		    if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
+		    {
+			Thread openWebSiteThread;
+			openWebSiteThread = new Thread(() ->
+			{
+			    try { try {  Desktop.getDesktop().browse(new URI(WEBSITEURLSTRING)); }
+			    catch (URISyntaxException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }}
+			    catch (IOException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }
+			});
+			openWebSiteThread.setName("openWebSiteThread");
+			openWebSiteThread.setDaemon(true);
+			openWebSiteThread.start();
+			break;
+		    }
+		}
+	    }
+	}
+    }
+    
     public String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
     public String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
     public String getLatestReleaseNotesString()			{ return latestReleaseNotesString; }

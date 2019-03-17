@@ -1,5 +1,5 @@
-[Version] =		{3.6.0}
-[Release Notes] =	{Moved FinalCrypt to a new hosting location}
-[Release Message] =	{Improved Check_Update being more resilient}
+[Version] =		{3.6.1}
+[Release Notes] =	{CheckUpdate from available hosting location}
+[Release Message] =	{OpenWebsite from available hosting location}
 [Alert Subject] =	{}
 [Alert Message] =	{}
