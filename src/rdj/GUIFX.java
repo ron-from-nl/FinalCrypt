@@ -25,8 +25,6 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1305,18 +1303,7 @@ public class GUIFX extends Application implements UI, Initializable
 			alert.setHeaderText("New version " + Version.getProductName() + " available\r\n");
 			alert.showAndWait();
 
-			if (alert.getResult() == ButtonType.YES)
-			{
-			    Thread updateThread;
-			    updateThread = new Thread(() ->
-			    {
-				try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); } catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
-				catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
-			    });
-			    updateThread.setName("updateThread");
-			    updateThread.setDaemon(true);
-			    updateThread.start();
-			}
+			if (alert.getResult() == ButtonType.YES) { Version.openWebSite(this); }
 		    }
 		    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )
 		    {
@@ -1335,18 +1322,7 @@ public class GUIFX extends Application implements UI, Initializable
 					    +"Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") now ?\r\n");
 			alert.showAndWait();
 
-			if (alert.getResult() == ButtonType.YES)
-			{
-			    Thread updateThread;
-			    updateThread = new Thread(() ->
-			    {
-				try { try {  Desktop.getDesktop().browse(new URI(Version.REMOTEPACKAGEDOWNLOADURISTRING)); } catch (URISyntaxException ex) { log(ex.getMessage(), true, true, true, true, false); }}
-				catch (IOException ex) { log(ex.getMessage(), true, true, true, true, false); }
-			    });
-			    updateThread.setName("updateThread");
-			    updateThread.setDaemon(true);
-			    updateThread.start();
-			}
+			if (alert.getResult() == ButtonType.YES) { Version.openWebSite(this); }
 		    }
 		}
 	    }
