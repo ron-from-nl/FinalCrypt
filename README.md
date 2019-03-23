@@ -1,9 +1,10 @@
-FinalCrypt uses symmetric One Time Pad Encryption which	is known as the most unbreakable encryption in existence.
+Why FinalCrypt
 
-FinalCrypt's large true random "One Time Pad" (FIPS140-2 & RFC4086 compliant) Keys are mathematically unbreakable.
-The Shor's algorithm has proven that all asymmetric encryption will instantly be broken by Quantum Computers (or simulators).
-
-Full Disk Encryption doesn't offer real security. A Virus, spying or indexing software can read all your files when you login / unlock your drive.
+1. Most people choose Disk-Encryption. It's easier to unlock a whole drive, but Big-Brother or Malware can then also read all your files. Only use File-Encryption!
+2. Most software uses recently broken AES encryption.
+3. Soon The Shor's algorithm will instantly break all assymmetric encryption with Quantum Computers.
+4. FinalCrypt uses Symmetric One Time Pad Encryption, which is the most unbreakable encryption there is.
+5. FinalCrypt is the only "One Time Pad", OpenSource, Cross-Platform, (Bulk) File Encryption Software available.
 
 Read more http://www.finalcrypt.org/
 
