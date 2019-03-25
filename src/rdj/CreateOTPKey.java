@@ -58,11 +58,31 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class CreateOTPKey extends Application implements Initializable
 {
+    public final Media SND_ALARM =		new Media(getClass().getResource("/rdj/sounds/alarm.mp3").toExternalForm());
+    public final Media SND_ALERT =		new Media(getClass().getResource("/rdj/sounds/alert.mp3").toExternalForm());
+    public final Media SND_BUTTON =		new Media(getClass().getResource("/rdj/sounds/button.mp3").toExternalForm());
+    public final Media SND_CHIMES =		new Media(getClass().getResource("/rdj/sounds/chimes.mp3").toExternalForm());
+    public final Media SND_DECRYPTFILES =	new Media(getClass().getResource("/rdj/sounds/decryptfiles.mp3").toExternalForm());
+    public final Media SND_ENCRYPTFILES =	new Media(getClass().getResource("/rdj/sounds/encryptfiles.mp3").toExternalForm());
+    public final Media SND_ERROR =		new Media(getClass().getResource("/rdj/sounds/error.mp3").toExternalForm());
+    public final Media SND_MESSAGE =		new Media(getClass().getResource("/rdj/sounds/message.mp3").toExternalForm());
+    public final Media SND_OFF =		new Media(getClass().getResource("/rdj/sounds/off.mp3").toExternalForm());
+    public final Media SND_ON =			new Media(getClass().getResource("/rdj/sounds/on.mp3").toExternalForm());
+    public final Media SND_SCANFILES =		new Media(getClass().getResource("/rdj/sounds/scanfiles.mp3").toExternalForm());
+    public final Media SND_SELECT =		new Media(getClass().getResource("/rdj/sounds/select.mp3").toExternalForm());
+    public final Media SND_SELECTFILES =	new Media(getClass().getResource("/rdj/sounds/selectfiles.mp3").toExternalForm());
+    public final Media SND_SELECTKEY =		new Media(getClass().getResource("/rdj/sounds/selectkey.mp3").toExternalForm());
+    public final Media SND_SHUTDOWN =		new Media(getClass().getResource("/rdj/sounds/shutdown.mp3").toExternalForm());
+    public final Media SND_STARTUP =		new Media(getClass().getResource("/rdj/sounds/startup.mp3").toExternalForm());
+    public final Media SND_TYPEWRITER =		new Media(getClass().getResource("/rdj/sounds/typewriter.mp3").toExternalForm());
+    public final Media SND_WRONGPASSWORD =	new Media(getClass().getResource("/rdj/sounds/wrongpassword.mp3").toExternalForm());
+
     private Parent root;
     private Stage stage;
     private Scene scene;
@@ -103,6 +123,8 @@ public class CreateOTPKey extends Application implements Initializable
     private long lastThroughputClock;
     private long realtimeBytesProcessed;
     private double realtimeMiBPS;
+//    private Sound sound;
+    private AudioClip play;
 
 //    public CreateOTPKey(GUIFX guifx)
 //    {
@@ -136,11 +158,16 @@ public class CreateOTPKey extends Application implements Initializable
 	unitChoiceBox.getItems().add("PiB");
 	unitChoiceBox.getItems().add("EiB");
 	unitChoiceBox.getSelectionModel().select(2);
+
+//	play = new Sound();
 	
 //	FileName Listener
 	filenameTextField.textProperty().addListener((obs, oldText, newText) ->
 	{
-	    filenameTextField.setText(filenameTextField.getText().replaceAll("[^a-zA-Z0-9\\-\\_\\.\\ ]", ""));
+	    String regex = "[^a-zA-Z0-9\\\\-\\\\_\\\\.\\\\ ]";
+	    if ( filenameTextField.getText().matches(regex) ) { filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); }
+	    else { play = new AudioClip(this.SND_TYPEWRITER.getSource()); play.play(); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
+
 	    if (( filenameTextField.getText().length() > 0 ))
 	    {
 		if ((Files.exists(Paths.get(currentDirPath.toAbsolutePath().toString(), filenameTextField.getText()), LinkOption.NOFOLLOW_LINKS)))
@@ -221,10 +248,10 @@ public class CreateOTPKey extends Application implements Initializable
     
 
     @FXML
-    private void increaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(1); }
+    private void increaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(1); play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
 
     @FXML
-    private void decreaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(-1); }    
+    private void decreaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(-1); play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
 
     @FXML
     private void increaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
@@ -248,7 +275,7 @@ public class CreateOTPKey extends Application implements Initializable
 	Long num = Long.valueOf(filesizeTextField.getText()); num+=l;
 //	filesizeTextField.setText(num.toString());
 	boolean valid = true; try { Long.valueOf(filesizeTextField.getText()); } catch (NumberFormatException e) { valid = false; }
-	if ( num>0 ) { filesizeTextField.setText(num.toString()); }
+	if ( num > 0 ) { filesizeTextField.setText(num.toString()); } 
     }
 
     private void calculateOTPKeyFileSize()
@@ -284,6 +311,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void createButtonAction(ActionEvent event)
     {
+	play = new AudioClip(this.SND_CHIMES.getSource()); play.play(); 
 	filenameTextField.setDisable(true);
 	filesizeLabel.setDisable(true);
 	filesizeTextField.setDisable(true);
@@ -438,6 +466,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void cancelButtonAction(ActionEvent event)
     {
+	play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); 
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); statusLabel1.setText("Canceled"); } else { statusLabel1.setText("Closing"); }
@@ -471,6 +500,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void complianceLabelOnMouseClicked(MouseEvent event)
     {
+	play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); 
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{

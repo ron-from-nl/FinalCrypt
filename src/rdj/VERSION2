@@ -1,5 +1,5 @@
-[Version] =		{3.6.2}
-[Release Notes] =	{Downloads from available hosting location}
-[Release Message] =	{FinalCrypt now 100% multi hosting location}
+[Version] =		{3.7.0}
+[Release Notes] =	{Added sounds to GUI user actions}
+[Release Message] =	{Sound volume is set fairly modest}
 [Alert Subject] =	{}
 [Alert Message] =	{}

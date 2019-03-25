@@ -670,7 +670,7 @@
                                     </AnchorPane>
                                     <AnchorPane scaleX="0.9" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                        <children>
-                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" prefHeight="21.0" prefWidth="142.0" promptText="Password&lt;Enter&gt;" scaleShape="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" onMouseClicked="#pwdFieldOnMouseClicked" prefHeight="21.0" prefWidth="142.0" promptText="Password&lt;Enter&gt;" scaleShape="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
                                                 <Tooltip text="Extra password encryption protects against lost / stolen keys" textAlignment="JUSTIFY" wrapText="true">
                                                    <font>
