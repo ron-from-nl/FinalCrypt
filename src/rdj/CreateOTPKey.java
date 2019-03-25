@@ -74,14 +74,14 @@ public class CreateOTPKey extends Application implements Initializable
     public final Media SND_MESSAGE =		new Media(getClass().getResource("/rdj/sounds/message.mp3").toExternalForm());
     public final Media SND_OFF =		new Media(getClass().getResource("/rdj/sounds/off.mp3").toExternalForm());
     public final Media SND_ON =			new Media(getClass().getResource("/rdj/sounds/on.mp3").toExternalForm());
-    public final Media SND_SCANFILES =		new Media(getClass().getResource("/rdj/sounds/scanfiles.mp3").toExternalForm());
+    public final Media SND_OPEN =		new Media(getClass().getResource("/rdj/sounds/open.mp3").toExternalForm());
+    public final Media SND_READY =		new Media(getClass().getResource("/rdj/sounds/ready.mp3").toExternalForm());
     public final Media SND_SELECT =		new Media(getClass().getResource("/rdj/sounds/select.mp3").toExternalForm());
-    public final Media SND_SELECTFILES =	new Media(getClass().getResource("/rdj/sounds/selectfiles.mp3").toExternalForm());
+    public final Media SND_SELECTINVALID =	new Media(getClass().getResource("/rdj/sounds/selectinvalid.mp3").toExternalForm());
     public final Media SND_SELECTKEY =		new Media(getClass().getResource("/rdj/sounds/selectkey.mp3").toExternalForm());
     public final Media SND_SHUTDOWN =		new Media(getClass().getResource("/rdj/sounds/shutdown.mp3").toExternalForm());
     public final Media SND_STARTUP =		new Media(getClass().getResource("/rdj/sounds/startup.mp3").toExternalForm());
     public final Media SND_TYPEWRITER =		new Media(getClass().getResource("/rdj/sounds/typewriter.mp3").toExternalForm());
-    public final Media SND_WRONGPASSWORD =	new Media(getClass().getResource("/rdj/sounds/wrongpassword.mp3").toExternalForm());
 
     private Parent root;
     private Stage stage;
@@ -311,7 +311,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void createButtonAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_CHIMES.getSource()); play.play(); 
+	play = new AudioClip(this.SND_ENCRYPTFILES.getSource()); play.play(); 
 	filenameTextField.setDisable(true);
 	filesizeLabel.setDisable(true);
 	filesizeTextField.setDisable(true);
@@ -481,6 +481,7 @@ public class CreateOTPKey extends Application implements Initializable
     
     private void closeWindow()
     {
+	play = new AudioClip(SND_SHUTDOWN.getSource()); play.play();
 	guifx.updateFileChoosers(true, true);
 	Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();
     }
@@ -500,7 +501,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void complianceLabelOnMouseClicked(MouseEvent event)
     {
-	play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); 
+	play = new AudioClip(this.SND_OPEN.getSource()); play.play(); 
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{
