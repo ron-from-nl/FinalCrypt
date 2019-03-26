@@ -64,37 +64,37 @@ import javafx.util.Duration;
 
 public class CreateOTPKey extends Application implements Initializable
 {
-    public final Media SND_ALARM =		    new Media(getClass().getResource("/rdj/sounds/snd_alarm.mp3").toExternalForm());
-    public final Media SND_ALERT =		    new Media(getClass().getResource("/rdj/sounds/snd_alert.mp3").toExternalForm());
-    public final Media SND_BUTTON =		    new Media(getClass().getResource("/rdj/sounds/snd_button.mp3").toExternalForm());
-    public final Media SND_DECRYPTFILES =	    new Media(getClass().getResource("/rdj/sounds/snd_decrypt_files.mp3").toExternalForm());
-    public final Media SND_ENCRYPTFILES =	    new Media(getClass().getResource("/rdj/sounds/snd_encrypt_files.mp3").toExternalForm());
-    public final Media SND_ERROR =		    new Media(getClass().getResource("/rdj/sounds/snd_error.mp3").toExternalForm());
-    public final Media SND_MESSAGE =		    new Media(getClass().getResource("/rdj/sounds/snd_message.mp3").toExternalForm());
-    public final Media SND_OFF =		    new Media(getClass().getResource("/rdj/sounds/snd_off.mp3").toExternalForm());
-    public final Media SND_ON =			    new Media(getClass().getResource("/rdj/sounds/snd_on.mp3").toExternalForm());
-    public final Media SND_OPEN =		    new Media(getClass().getResource("/rdj/sounds/snd_open.mp3").toExternalForm());
-    public final Media SND_READY =		    new Media(getClass().getResource("/rdj/sounds/snd_ready.mp3").toExternalForm());
-    public final Media SND_SELECT =		    new Media(getClass().getResource("/rdj/sounds/snd_select.mp3").toExternalForm());
-    public final Media SND_SELECTINVALID =	    new Media(getClass().getResource("/rdj/sounds/snd_select_invalid.mp3").toExternalForm());
-    public final Media SND_SELECTKEY =		    new Media(getClass().getResource("/rdj/sounds/snd_select_key.mp3").toExternalForm());
-    public final Media SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/sounds/snd_shutdown.mp3").toExternalForm());
-    public final Media SND_STARTUP =		    new Media(getClass().getResource("/rdj/sounds/snd_startup.mp3").toExternalForm());
-    public final Media SND_TYPEWRITER =		    new Media(getClass().getResource("/rdj/sounds/snd_typewriter.mp3").toExternalForm());
+    public final Media SND_ALARM =			new Media(getClass().getResource("/rdj/audio/sounds/snd_alarm.mp3").toExternalForm());
+    public final Media SND_ALERT =		        new Media(getClass().getResource("/rdj/audio/sounds/snd_alert.mp3").toExternalForm());
+    public final Media SND_BUTTON =			new Media(getClass().getResource("/rdj/audio/sounds/snd_button.mp3").toExternalForm());
+    public final Media SND_DECRYPTFILES =	        new Media(getClass().getResource("/rdj/audio/sounds/snd_decrypt_files.mp3").toExternalForm());
+    public final Media SND_ENCRYPTFILES =		new Media(getClass().getResource("/rdj/audio/sounds/snd_encrypt_files.mp3").toExternalForm());
+    public final Media SND_ERROR =			new Media(getClass().getResource("/rdj/audio/sounds/snd_error.mp3").toExternalForm());
+    public final Media SND_MESSAGE =			new Media(getClass().getResource("/rdj/audio/sounds/snd_message.mp3").toExternalForm());
+    public final Media SND_OFF =			new Media(getClass().getResource("/rdj/audio/sounds/snd_off.mp3").toExternalForm());
+    public final Media SND_ON =				new Media(getClass().getResource("/rdj/audio/sounds/snd_on.mp3").toExternalForm());
+    public final Media SND_OPEN =			new Media(getClass().getResource("/rdj/audio/sounds/snd_open.mp3").toExternalForm());
+    public final Media SND_READY =			new Media(getClass().getResource("/rdj/audio/sounds/snd_ready.mp3").toExternalForm());
+    public final Media SND_SELECT =			new Media(getClass().getResource("/rdj/audio/sounds/snd_select.mp3").toExternalForm());
+    public final Media SND_SELECTINVALID =		new Media(getClass().getResource("/rdj/audio/sounds/snd_select_invalid.mp3").toExternalForm());
+    public final Media SND_SELECTKEY =			new Media(getClass().getResource("/rdj/audio/sounds/snd_select_key.mp3").toExternalForm());
+    public final Media SND_SHUTDOWN =			new Media(getClass().getResource("/rdj/audio/sounds/snd_shutdown.mp3").toExternalForm());
+    public final Media SND_STARTUP =			new Media(getClass().getResource("/rdj/audio/sounds/snd_startup.mp3").toExternalForm());
+    public final Media SND_TYPEWRITER =			new Media(getClass().getResource("/rdj/audio/sounds/snd_typewriter.mp3").toExternalForm());
 
-    public final Media VOI_CLONE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/sounds/voi_clone_key_device.mp3").toExternalForm());
-    public final Media VOI_CONFIRM_PASS_WITH_ENTER =	new Media(getClass().getResource("/rdj/sounds/voi_confirm_password_with_enter.mp3").toExternalForm());
-    public final Media VOI_CREATE_KEY =			new Media(getClass().getResource("/rdj/sounds/voi_create_key.mp3").toExternalForm());
-    public final Media VOI_CREATE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/sounds/voi_create_key_device.mp3").toExternalForm());
-    public final Media VOI_DECRYPT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_decrypt_files.mp3").toExternalForm());
-    public final Media VOI_DECRYPTING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_decrypting_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_encrypt_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPTING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_encrypting_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPT_OR_DECRYPT_FILES =	new Media(getClass().getResource("/rdj/sounds/voi_encrypt_or_decrypt_files.mp3").toExternalForm());
-    public final Media VOI_SCANNING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_scanning_files.mp3").toExternalForm());
-    public final Media VOI_SELECT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_select_files.mp3").toExternalForm());
-    public final Media VOI_SELECT_KEY =			new Media(getClass().getResource("/rdj/sounds/voi_select_key.mp3").toExternalForm());
-    public final Media VOI_WRONG_KEY_OR_PASSWORD =	new Media(getClass().getResource("/rdj/sounds/voi_wrong_key_or_password.mp3").toExternalForm());
+    public final Media VOI_CLONE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/audio/voice/voi_clone_key_device.mp3").toExternalForm());
+    public final Media VOI_CONFIRM_PASS_WITH_ENTER =	new Media(getClass().getResource("/rdj/audio/voice/voi_confirm_password_with_enter.mp3").toExternalForm());
+    public final Media VOI_CREATE_KEY =			new Media(getClass().getResource("/rdj/audio/voice/voi_create_key.mp3").toExternalForm());
+    public final Media VOI_CREATE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/audio/voice/voi_create_key_device.mp3").toExternalForm());
+    public final Media VOI_DECRYPT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_decrypt_files.mp3").toExternalForm());
+    public final Media VOI_DECRYPTING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_decrypting_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_encrypt_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPTING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_encrypting_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPT_OR_DECRYPT_FILES =	new Media(getClass().getResource("/rdj/audio/voice/voi_encrypt_or_decrypt_files.mp3").toExternalForm());
+    public final Media VOI_SCANNING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_scanning_files.mp3").toExternalForm());
+    public final Media VOI_SELECT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_select_files.mp3").toExternalForm());
+    public final Media VOI_SELECT_KEY =			new Media(getClass().getResource("/rdj/audio/voice/voi_select_key.mp3").toExternalForm());
+    public final Media VOI_WRONG_KEY_OR_PASSWORD =	new Media(getClass().getResource("/rdj/audio/voice/voi_wrong_key_or_password.mp3").toExternalForm());
 
     private Parent root;
     private Stage stage;
@@ -179,7 +179,7 @@ public class CreateOTPKey extends Application implements Initializable
 	{
 	    String regex = "[^a-zA-Z0-9\\\\-\\\\_\\\\.\\\\ ]";
 	    if ( filenameTextField.getText().matches(regex) ) { filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); }
-	    else { play = new AudioClip(this.SND_TYPEWRITER.getSource()); play.play(); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
+	    else { play(SND_TYPEWRITER); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
 
 	    if (( filenameTextField.getText().length() > 0 ))
 	    {
@@ -261,10 +261,10 @@ public class CreateOTPKey extends Application implements Initializable
     
 
     @FXML
-    private void increaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(1); play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+    private void increaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(1); play(SND_BUTTON); }
 
     @FXML
-    private void decreaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(-1); play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+    private void decreaseButtonOnMousePressed(MouseEvent event) { changeSizeRepeaterOn(-1); play(SND_BUTTON); }
 
     @FXML
     private void increaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
@@ -324,7 +324,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void createButtonAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_ENCRYPTFILES.getSource()); play.play(); 
+	play(SND_ENCRYPTFILES);
 	filenameTextField.setDisable(true);
 	filesizeLabel.setDisable(true);
 	filesizeTextField.setDisable(true);
@@ -479,7 +479,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void cancelButtonAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); 
+	play(SND_BUTTON);
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); statusLabel1.setText("Canceled"); } else { statusLabel1.setText("Closing"); }
@@ -494,7 +494,7 @@ public class CreateOTPKey extends Application implements Initializable
     
     private void closeWindow()
     {
-	play = new AudioClip(SND_SHUTDOWN.getSource()); play.play();
+	play(SND_SHUTDOWN);
 	guifx.updateFileChoosers(true, true);
 	Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();
     }
@@ -514,7 +514,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void complianceLabelOnMouseClicked(MouseEvent event)
     {
-	play = new AudioClip(this.SND_OPEN.getSource()); play.play(); 
+	play(SND_OPEN);
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{
@@ -525,5 +525,14 @@ public class CreateOTPKey extends Application implements Initializable
 	otpKeyURLThread.setName("otpKeyURLThread");
 	otpKeyURLThread.setDaemon(true);
 	otpKeyURLThread.start();
+    }
+
+    public void play(Media media)
+    {
+	if (media != null) 
+	{
+	    if (media.getSource().matches("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
+	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); }
+	}
     }
 }

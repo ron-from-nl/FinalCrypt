@@ -259,37 +259,37 @@ public class GUIFX extends Application implements UI, Initializable
     public final String JAVA_VERSION =			System.getProperty("java.version");
     public final String CLASS_VERSION =			System.getProperty("java.class.version");
     
-    public final Media SND_ALARM =			new Media(getClass().getResource("/rdj/sounds/snd_alarm.mp3").toExternalForm());
-    public final Media SND_ALERT =		        new Media(getClass().getResource("/rdj/sounds/snd_alert.mp3").toExternalForm());
-    public final Media SND_BUTTON =			new Media(getClass().getResource("/rdj/sounds/snd_button.mp3").toExternalForm());
-    public final Media SND_DECRYPTFILES =	        new Media(getClass().getResource("/rdj/sounds/snd_decrypt_files.mp3").toExternalForm());
-    public final Media SND_ENCRYPTFILES =		new Media(getClass().getResource("/rdj/sounds/snd_encrypt_files.mp3").toExternalForm());
-    public final Media SND_ERROR =			new Media(getClass().getResource("/rdj/sounds/snd_error.mp3").toExternalForm());
-    public final Media SND_MESSAGE =			new Media(getClass().getResource("/rdj/sounds/snd_message.mp3").toExternalForm());
-    public final Media SND_OFF =			new Media(getClass().getResource("/rdj/sounds/snd_off.mp3").toExternalForm());
-    public final Media SND_ON =				new Media(getClass().getResource("/rdj/sounds/snd_on.mp3").toExternalForm());
-    public final Media SND_OPEN =			new Media(getClass().getResource("/rdj/sounds/snd_open.mp3").toExternalForm());
-    public final Media SND_READY =			new Media(getClass().getResource("/rdj/sounds/snd_ready.mp3").toExternalForm());
-    public final Media SND_SELECT =			new Media(getClass().getResource("/rdj/sounds/snd_select.mp3").toExternalForm());
-    public final Media SND_SELECTINVALID =		new Media(getClass().getResource("/rdj/sounds/snd_select_invalid.mp3").toExternalForm());
-    public final Media SND_SELECTKEY =			new Media(getClass().getResource("/rdj/sounds/snd_select_key.mp3").toExternalForm());
-    public final Media SND_SHUTDOWN =			new Media(getClass().getResource("/rdj/sounds/snd_shutdown.mp3").toExternalForm());
-    public final Media SND_STARTUP =			new Media(getClass().getResource("/rdj/sounds/snd_startup.mp3").toExternalForm());
-    public final Media SND_TYPEWRITER =			new Media(getClass().getResource("/rdj/sounds/snd_typewriter.mp3").toExternalForm());
+    public final Media SND_ALARM =			new Media(getClass().getResource("/rdj/audio/sounds/snd_alarm.mp3").toExternalForm());
+    public final Media SND_ALERT =		        new Media(getClass().getResource("/rdj/audio/sounds/snd_alert.mp3").toExternalForm());
+    public final Media SND_BUTTON =			new Media(getClass().getResource("/rdj/audio/sounds/snd_button.mp3").toExternalForm());
+    public final Media SND_DECRYPTFILES =	        new Media(getClass().getResource("/rdj/audio/sounds/snd_decrypt_files.mp3").toExternalForm());
+    public final Media SND_ENCRYPTFILES =		new Media(getClass().getResource("/rdj/audio/sounds/snd_encrypt_files.mp3").toExternalForm());
+    public final Media SND_ERROR =			new Media(getClass().getResource("/rdj/audio/sounds/snd_error.mp3").toExternalForm());
+    public final Media SND_MESSAGE =			new Media(getClass().getResource("/rdj/audio/sounds/snd_message.mp3").toExternalForm());
+    public final Media SND_OFF =			new Media(getClass().getResource("/rdj/audio/sounds/snd_off.mp3").toExternalForm());
+    public final Media SND_ON =				new Media(getClass().getResource("/rdj/audio/sounds/snd_on.mp3").toExternalForm());
+    public final Media SND_OPEN =			new Media(getClass().getResource("/rdj/audio/sounds/snd_open.mp3").toExternalForm());
+    public final Media SND_READY =			new Media(getClass().getResource("/rdj/audio/sounds/snd_ready.mp3").toExternalForm());
+    public final Media SND_SELECT =			new Media(getClass().getResource("/rdj/audio/sounds/snd_select.mp3").toExternalForm());
+    public final Media SND_SELECTINVALID =		new Media(getClass().getResource("/rdj/audio/sounds/snd_select_invalid.mp3").toExternalForm());
+    public final Media SND_SELECTKEY =			new Media(getClass().getResource("/rdj/audio/sounds/snd_select_key.mp3").toExternalForm());
+    public final Media SND_SHUTDOWN =			new Media(getClass().getResource("/rdj/audio/sounds/snd_shutdown.mp3").toExternalForm());
+    public final Media SND_STARTUP =			new Media(getClass().getResource("/rdj/audio/sounds/snd_startup.mp3").toExternalForm());
+    public final Media SND_TYPEWRITER =			new Media(getClass().getResource("/rdj/audio/sounds/snd_typewriter.mp3").toExternalForm());
 
-    public final Media VOI_CLONE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/sounds/voi_clone_key_device.mp3").toExternalForm());
-    public final Media VOI_CONFIRM_PASS_WITH_ENTER =	new Media(getClass().getResource("/rdj/sounds/voi_confirm_password_with_enter.mp3").toExternalForm());
-    public final Media VOI_CREATE_KEY =			new Media(getClass().getResource("/rdj/sounds/voi_create_key.mp3").toExternalForm());
-    public final Media VOI_CREATE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/sounds/voi_create_key_device.mp3").toExternalForm());
-    public final Media VOI_DECRYPT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_decrypt_files.mp3").toExternalForm());
-    public final Media VOI_DECRYPTING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_decrypting_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_encrypt_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPTING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_encrypting_files.mp3").toExternalForm());
-    public final Media VOI_ENCRYPT_OR_DECRYPT_FILES =	new Media(getClass().getResource("/rdj/sounds/voi_encrypt_or_decrypt_files.mp3").toExternalForm());
-    public final Media VOI_SCANNING_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_scanning_files.mp3").toExternalForm());
-    public final Media VOI_SELECT_FILES =		new Media(getClass().getResource("/rdj/sounds/voi_select_files.mp3").toExternalForm());
-    public final Media VOI_SELECT_KEY =			new Media(getClass().getResource("/rdj/sounds/voi_select_key.mp3").toExternalForm());
-    public final Media VOI_WRONG_KEY_OR_PASSWORD =	new Media(getClass().getResource("/rdj/sounds/voi_wrong_key_or_password.mp3").toExternalForm());
+    public final Media VOI_CLONE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/audio/voice/voi_clone_key_device.mp3").toExternalForm());
+    public final Media VOI_CONFIRM_PASS_WITH_ENTER =	new Media(getClass().getResource("/rdj/audio/voice/voi_confirm_password_with_enter.mp3").toExternalForm());
+    public final Media VOI_CREATE_KEY =			new Media(getClass().getResource("/rdj/audio/voice/voi_create_key.mp3").toExternalForm());
+    public final Media VOI_CREATE_KEY_DEVICE =		new Media(getClass().getResource("/rdj/audio/voice/voi_create_key_device.mp3").toExternalForm());
+    public final Media VOI_DECRYPT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_decrypt_files.mp3").toExternalForm());
+    public final Media VOI_DECRYPTING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_decrypting_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_encrypt_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPTING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_encrypting_files.mp3").toExternalForm());
+    public final Media VOI_ENCRYPT_OR_DECRYPT_FILES =	new Media(getClass().getResource("/rdj/audio/voice/voi_encrypt_or_decrypt_files.mp3").toExternalForm());
+    public final Media VOI_SCANNING_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_scanning_files.mp3").toExternalForm());
+    public final Media VOI_SELECT_FILES =		new Media(getClass().getResource("/rdj/audio/voice/voi_select_files.mp3").toExternalForm());
+    public final Media VOI_SELECT_KEY =			new Media(getClass().getResource("/rdj/audio/voice/voi_select_key.mp3").toExternalForm());
+    public final Media VOI_WRONG_KEY_OR_PASSWORD =	new Media(getClass().getResource("/rdj/audio/voice/voi_wrong_key_or_password.mp3").toExternalForm());
 
     private double load_High_MS_Passed =		0.0d;
     private double load_Low_MS_Passed =			0.0d;
@@ -486,8 +486,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	this.stage.setOnCloseRequest(e -> Platform.exit());	
 	stage.setOnCloseRequest(new EventHandler<WindowEvent>() { @Override public void handle(WindowEvent e)
 	{
-	    play = new AudioClip(SND_SHUTDOWN.getSource()); play.play();
-//	    play = new AudioClip(SND_MESSAGE.getSource()); play.play();
+	    play(SND_SHUTDOWN);
 	    while ( play.isPlaying() ) { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
 	    
 //	    Platform.runLater(() ->
@@ -502,7 +501,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	{
 //	    Platform.runLater(() ->
 //	    {
-//		play = new AudioClip(this.SND_SHUTDOWN.getSource()); play.play();
+//		play(SND_SHUTDOWN);
 //		userGuidanceLabel.setText("Thank you"); userGuidanceLabel.setOpacity(0.7);
 ////		textLabelFadeMessage("Thank you", 64, false, false, false, false);
 //		while ( play.isPlaying() ) { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
@@ -958,7 +957,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    textLabelTimeline.play();
 
 //	textLabel Introduction Animation ==========================================================
-	    play = new AudioClip(this.SND_STARTUP.getSource()); play.play();
+	    play(SND_STARTUP);
 
 
 	    FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
@@ -1023,7 +1022,7 @@ public class GUIFX extends Application implements UI, Initializable
 		sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
 		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
 		{
-		    play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+		    play(SND_MESSAGE);
 		    
 		    keyButton.setDisable(false);
 		    checkUpdateButton.setDisable(false);
@@ -1156,9 +1155,7 @@ public class GUIFX extends Application implements UI, Initializable
 	labelTimeline.setOnFinished((ActionEvent actionEvent) ->
 	{
 	    //		FADE IN
-	    
-	    if ((play != null) &&(play.isPlaying())) { play.stop(); }
-	    if (media != null) { play = new AudioClip(media.getSource()); play.play(); }
+	    play(media);
 	    
 	    if (textLabelTimeline.getStatus() != Animation.Status.RUNNING)
 	    {
@@ -1201,6 +1198,15 @@ public class GUIFX extends Application implements UI, Initializable
 	} // Do at fade out ready
 	);
 	labelTimeline.play();
+    }
+    
+    public void play(Media media)
+    {
+	if (media != null) 
+	{
+	    if (media.getSource().matches("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
+	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); }
+	}
     }
     
     private String getRuntimeEnvironment()
@@ -1250,7 +1256,7 @@ public class GUIFX extends Application implements UI, Initializable
     
     public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
     {
-	play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+	play(SND_MESSAGE);
         Alert alert = new Alert(type);
         alert.getDialogPane().applyCss();
         Node graphic = alert.getDialogPane().getGraphic();
@@ -1293,7 +1299,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    	    
 	    if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() )) // Only display Alert in VERSION2 file
 	    {
-		play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+		play(SND_MESSAGE);
 		Alert alert = new Alert(AlertType.INFORMATION);
 		
 		//      Style the Alert
@@ -1306,14 +1312,14 @@ public class GUIFX extends Application implements UI, Initializable
 		alert.setResizable(true);
 		alert.setContentText(version.getLatestAlertMessageString());
 		alert.showAndWait();
-		if (alert.getResult() == ButtonType.OK) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+		if (alert.getResult() == ButtonType.OK) { play(SND_BUTTON); }
 	    }
 	    
 	    if (version.latestVersionIsKnown())
 	    {
 		if (( ! version.versionIsDifferent() ) &&( userActivated ))
 		{
-		    play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();		    
+		    play(SND_MESSAGE);		    
 		    Alert alert = new Alert(AlertType.INFORMATION);
 
 		    DialogPane dialogPane = alert.getDialogPane();
@@ -1325,13 +1331,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    alert.setResizable(true);
 		    alert.setContentText("You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n");
 		    alert.showAndWait();
-		    if (alert.getResult() == ButtonType.OK) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+		    if (alert.getResult() == ButtonType.OK) { play(SND_BUTTON);}
 		}
 		else
 		{
 		    if (version.versionCanBeUpdated())
 		    {
-			play = new AudioClip(this.SND_ALERT.getSource()); play.play();
+			play(SND_ALERT);
 										      alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
 										      alertString += "New:\r\n";
 			if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += "   " + version.getLatestReleaseNotesString() + "\r\n"; }
@@ -1347,11 +1353,11 @@ public class GUIFX extends Application implements UI, Initializable
 			alert.setHeaderText("New version " + Version.getProductName() + " available\r\n");
 			alert.showAndWait();
 
-			if (alert.getResult() == ButtonType.YES) { play = new AudioClip(this.SND_OPEN.getSource()); play.play(); Version.openWebSite(this); } else { play = new AudioClip(this.SND_BUTTON.getSource()); play.play();  }
+			if (alert.getResult() == ButtonType.YES) { play(SND_OPEN); Version.openWebSite(this); } else { play(SND_BUTTON); }
 		    }
 		    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )
 		    {
-			play = new AudioClip(this.SND_ALERT.getSource()); play.play();
+			play(SND_ALERT);
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
 
 			DialogPane dialogPane = alert.getDialogPane();
@@ -1366,13 +1372,13 @@ public class GUIFX extends Application implements UI, Initializable
 					    +"Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") now ?\r\n");
 			alert.showAndWait();
 
-			if (alert.getResult() == ButtonType.YES) { play = new AudioClip(this.SND_OPEN.getSource()); play.play(); Version.openWebSite(this); } else { play = new AudioClip(this.SND_BUTTON.getSource()); play.play();  }
+			if (alert.getResult() == ButtonType.YES) { play(SND_OPEN); Version.openWebSite(this); } else { play(SND_BUTTON); }
 		    }
 		}
 	    }
 	    else // latest online version is unknown
 	    {
-		play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+		play(SND_MESSAGE);
 		Alert alert = new Alert(AlertType.INFORMATION);
 
 		DialogPane dialogPane = alert.getDialogPane();
@@ -1384,7 +1390,7 @@ public class GUIFX extends Application implements UI, Initializable
 		alert.setResizable(true);
 		alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
 		alert.showAndWait();
-		if (alert.getResult() == ButtonType.OK) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+		if (alert.getResult() == ButtonType.OK) { play(SND_BUTTON); }
 	    }
 	});
     }
@@ -1394,7 +1400,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(() ->
 	{
-	    play = new AudioClip(this.SND_ALERT.getSource()); play.play();
+	    play(SND_ALERT);
 	    String itemword = "";
 	    if ( targetFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
 	    else if ( targetFileChooser.getSelectedFiles().length > 1 )  { itemword = "items"; }
@@ -1408,7 +1414,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if (targetFileChooser.getSelectedFiles().length > 0)
 		    {
-			play = new AudioClip(this.SND_SELECT.getSource()); play.play();
+			play(SND_SELECT);
 			ArrayList<Path> pathList = finalCrypt.getPathList(targetFileChooser.getSelectedFiles());
 			boolean delete = true;
 			boolean returnpathlist = false;
@@ -1417,7 +1423,7 @@ public class GUIFX extends Application implements UI, Initializable
 			updateFileChoosers(true, true);
 		    }
 		}
-	    } else { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+	    } else { play(SND_BUTTON); }
 	});
     }                                               
 
@@ -1425,7 +1431,7 @@ public class GUIFX extends Application implements UI, Initializable
     {                                                            
         Platform.runLater(() ->
 	{
-	    play = new AudioClip(this.SND_ALERT.getSource()); play.play();
+	    play(SND_ALERT);
 //	    play.play(play.BUTTON_SND);
 	    String itemword = "";
 	    if ( keyFileChooser.getSelectedFiles().length == 1 )      { itemword = "item"; }
@@ -1440,7 +1446,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if (keyFileChooser.getSelectedFiles().length > 0)
 		    {
-			play = new AudioClip(this.SND_SELECT.getSource()); play.play();
+			play(SND_SELECT);
 			ArrayList<Path> pathList = finalCrypt.getPathList(keyFileChooser.getSelectedFiles());
 			boolean delete = true;
 			boolean returnpathlist = false;
@@ -1449,7 +1455,7 @@ public class GUIFX extends Application implements UI, Initializable
 			updateFileChoosers(true, true);
 		    }
 		}
-	    } else { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+	    } else { play(SND_BUTTON); }
 	});
     }                                               
 
@@ -1503,7 +1509,7 @@ public class GUIFX extends Application implements UI, Initializable
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
 	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      1L, true,    false,  true))
 	    {
-		play = new AudioClip(this.SND_OPEN.getSource()); play.play();
+		play(SND_OPEN);
 		try { Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); }
 		catch (IOException ex) { log("Error: Desktop.getDesktop().open(keyFileChooser.getSelectedFile()); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		targetFCPathList = new FCPathList(); this.updateDashboard(targetFCPathList);
@@ -1571,7 +1577,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    }
 		    else // Not decryptable
 		    {
-			play = new AudioClip(this.SND_OPEN.getSource()); play.play();
+			play(SND_OPEN);
 			try { Desktop.getDesktop().open(targetFCPath.path.toFile()); } catch (IOException ex) { log("Error: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		    }
 		    
@@ -1651,7 +1657,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
-			play = new AudioClip(this.SND_SELECTKEY.getSource()); play.play();
+			play(SND_SELECTKEY);
 			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.getFileName().toString());
 			checksumLabel.setTextFill(Color.WHITESMOKE);
 			checksumLabel.setText("");
@@ -1671,7 +1677,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if (keyFCPath.type == FCPath.DIRECTORY)
 			{
-			    play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+			    play(SND_BUTTON);
 			    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText("");
 			    keyTypeLabel.setTextFill(Color.GREY); keyTypeLabel.setText("");
 			    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
@@ -1680,7 +1686,7 @@ public class GUIFX extends Application implements UI, Initializable
 			}
 			else
 			{
-			    play = new AudioClip(this.SND_SELECTINVALID.getSource()); play.play();
+			    play(SND_SELECTINVALID);
 			    keyNameLabel.setTextFill(Color.ORANGE); keyNameLabel.setText(keyFCPath.path.toString());
 			    if (keyFCPath.type != FCPath.FILE)	{ keyTypeLabel.setTextFill(Color.ORANGERED); }
 			    else					{ keyTypeLabel.setTextFill(Color.ORANGE); }
@@ -1828,7 +1834,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if ((keyFCPath != null) && (keyFCPath.isValidKey))
 		{
-		    play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+		    play(SND_BUTTON);
 		    checksumLabel.setTextFill(Color.WHITESMOKE);
 		    checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
 		    Platform.runLater(() ->	{ calculateChecksum(); });
@@ -1838,7 +1844,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if ((keyFCPath != null) && (keyFCPath.isValidKey))
 		{
-		    play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+		    play(SND_BUTTON);
 		    Thread blinkThread = new Thread(() ->
 		    {
 			Paint oldColor = checksumLabel.getTextFill();
@@ -1946,7 +1952,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		Platform.runLater(() -> // Not on FX Thread
 		{
-		    play = new AudioClip(this.SND_READY.getSource()); play.play();
+		    play(SND_READY);
 		    //		    textLabelBlurMessage("Scanning", 500);
 		    userGuideMessage(SCANNING_FILES, 64, false, false, false, false, VOI_SCANNING_FILES, 0);
 		    
@@ -2115,7 +2121,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		    if (targetFCPathList.decryptedFiles > 0)	{ decryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecrypted); } else { decryptedList = null; }
 		    if (targetFCPathList.encryptableFiles > 0) // Encryptables
 		    {
-			play = new AudioClip(this.SND_SELECT.getSource()); play.play();
+			play(SND_SELECT);
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { encryptButton.setDisable(true); encryptableList = null; }
@@ -2130,7 +2136,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		    if (targetFCPathList.encryptedFiles > 0)	{ encryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted); } else { encryptedList = null; }
 		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalCrypt.disabledMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
 		    {
-			play = new AudioClip(this.SND_SELECT.getSource()); play.play();
+			play(SND_SELECT);
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { decryptButton.setDisable(true); decryptableList = null; }
@@ -2180,7 +2186,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			{
 			    if	((targetFCPathList.encryptedFiles > 0) && (targetFCPathList.decryptableFiles == 0))
 			    {
-				if (targetFCPathList.encryptedFiles > 0) { play = new AudioClip(this.SND_SELECTINVALID.getSource()); play.play(); userGuideMessage(WRONG_KEY_PASS, 48, false, false, true, false, VOI_WRONG_KEY_OR_PASSWORD, 0); }
+				if (targetFCPathList.encryptedFiles > 0) { play(SND_SELECTINVALID); userGuideMessage(WRONG_KEY_PASS, 48, false, false, true, false, VOI_WRONG_KEY_OR_PASSWORD, 0); }
 			    }
 			    else
 			    {
@@ -2349,7 +2355,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     @FXML
     private void encryptButtonAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_ENCRYPTFILES.getSource()); play.play();
+	play(SND_ENCRYPTFILES);
         Thread encryptThread = new Thread(new Runnable()
         {
             private DeviceManager deviceManager;
@@ -2389,7 +2395,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     @FXML
     private void decryptButtonAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_DECRYPTFILES.getSource()); play.play();
+	play(SND_DECRYPTFILES);
         Thread encryptThread = new Thread(new Runnable()
         {
             private DeviceManager deviceManager;
@@ -2427,7 +2433,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     }
 
     @FXML
-    private void createKeyLabelOnMouseClicked(MouseEvent event) { play = new AudioClip(this.SND_OPEN.getSource()); play.play(); createOTPKeyFile(); }
+    private void createKeyLabelOnMouseClicked(MouseEvent event) { play(SND_OPEN); createOTPKeyFile(); }
 
     @FXML
     private void keyButtonOnAction(ActionEvent event) { createOTPKeyFile(); }
@@ -2462,7 +2468,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		{
 		    Platform.runLater(() ->
 		    {
-			play = new AudioClip(SND_OPEN.getSource()); play.play(); 
+			play(SND_OPEN); 
 			createOTPKeyStage = new Stage();
 			createOTPKey = new CreateOTPKey();
 			try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
@@ -2471,7 +2477,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		}
 		else if	( keyButton.getText().equals(CREATE_KEYDEV) )
 		{
-		    play = new AudioClip(SND_ENCRYPTFILES.getSource()); play.play(); 
+		    play(SND_ENCRYPTFILES); 
 		    processRunningMode = CREATE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
@@ -2481,14 +2487,14 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		}
 		else if ( keyButton.getText().equals(CLONE_KEYDEV) )
 		{
-		    play = new AudioClip(SND_ENCRYPTFILES.getSource()); play.play(); 
+		    play(SND_ENCRYPTFILES); 
 		    processRunningMode = CLONE_KEYDEV_MODE;
 		    tab.getSelectionModel().select(1);
                     processStarted();
                     deviceManager = new DeviceManager(ui); deviceManager.start();
                     deviceManager.cloneKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
                     processFinished(targetFCPathList, false);
-		    play = new AudioClip(SND_SHUTDOWN.getSource()); play.play();
+		    play(SND_SHUTDOWN);
 		}
 		
             }
@@ -2709,7 +2715,7 @@ keyFileChooser.rescanCurrentDirectory();
 			FCPath openFCPath = (FCPath) fcPathIterator.next();
 			Path newPath = Paths.get(openFCPath.path.toString().substring(0, openFCPath.path.toString().lastIndexOf('.')));
 
-			play = new AudioClip(this.SND_OPEN.getSource()); play.play();
+			play(SND_OPEN);
 			try { Desktop.getDesktop().open(newPath.toFile()); }
 			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
@@ -2794,7 +2800,7 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void keyInfoLabelClicked(MouseEvent event)
     {
-	play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+	play(SND_MESSAGE);
         Alert alert = new Alert(AlertType.INFORMATION);
         
 //      Style the Alert
@@ -2823,13 +2829,13 @@ keyFileChooser.rescanCurrentDirectory();
 //        infotext += "\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
-	if (alert.getResult() == ButtonType.OK) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+	if (alert.getResult() == ButtonType.OK) { play(SND_BUTTON); }
     }
 
     @FXML
     private void targetInfoLabelClicked(MouseEvent event)
     {
-	play = new AudioClip(this.SND_MESSAGE.getSource()); play.play();
+	play(SND_MESSAGE);
         Alert alert = new Alert(AlertType.INFORMATION);
 
 //      Style the Alert
@@ -2851,7 +2857,7 @@ keyFileChooser.rescanCurrentDirectory();
 //        infotext += "\r\n";
         alert.setContentText(infotext);
         alert.showAndWait();
-	if (alert.getResult() == ButtonType.OK) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); }
+	if (alert.getResult() == ButtonType.OK) { play(SND_BUTTON); }
     }
 
     @FXML private void pauseToggleButtonAction(ActionEvent event)
@@ -2861,14 +2867,14 @@ keyFileChooser.rescanCurrentDirectory();
 	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalCrypt.setPausing(pauseToggleButton.isSelected()); } else { DeviceController.setPausing(pauseToggleButton.isSelected()); }
 	    if ( pauseToggleButton.isSelected() )
 	    {
-		play = new AudioClip(this.SND_ON.getSource()); play.play();
+		play(SND_ON);
 		pauseToggleButton.setStyle(" -fx-text-fill: orange; -fx-font-size: 14; ");
 		PAUSE_TIMELINE.play();
 		megaBytesPerSecond = 0d;
 	    }
 	    else
 	    {
-		play = new AudioClip(this.SND_OFF.getSource()); play.play();
+		play(SND_OFF);
 		PAUSE_TIMELINE.stop();
 		pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_SYMBOL);
 		pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
@@ -2877,7 +2883,7 @@ keyFileChooser.rescanCurrentDirectory();
     }
     
     @FXML
-    private void stopButtonAction(ActionEvent event) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); stop(false); }
+    private void stopButtonAction(ActionEvent event) { play(SND_BUTTON); stop(false); }
     
     private void stop(boolean stopAndExit)
     {
@@ -2897,7 +2903,7 @@ keyFileChooser.rescanCurrentDirectory();
     private void copyrightLabelOnMouseClicked(MouseEvent event)	{ /*checkUpdate();*/ }
 
     @FXML
-    private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); checkUpdate( true ); }); }
+    private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { play(SND_BUTTON); checkUpdate( true ); }); }
 
     @FXML
     private void encryptTabSelectionChanged(Event event)
@@ -2924,7 +2930,7 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void logTabSelectionChanged(Event event)
     {
-	play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+	play(SND_BUTTON);
     }
 
 //  Headers
@@ -2932,13 +2938,13 @@ keyFileChooser.rescanCurrentDirectory();
 
     private void emptyFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n", false, true, true, false, false);
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("Empty Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
     private void symlinkFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n", false, true, true, false, false);
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("Symlinks:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false); }
     }
 
@@ -2947,7 +2953,7 @@ keyFileChooser.rescanCurrentDirectory();
     {
 	if ( (unreadableList != null) && (unreadableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
+	    /*tab.getSelectionModel().select(1);*/ play(SND_BUTTON); log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
@@ -2960,7 +2966,7 @@ keyFileChooser.rescanCurrentDirectory();
     {
 	if ( (unwritableList != null) && (unwritableList.size() > 0) )
 	{
-	    /*tab.getSelectionModel().select(1);*/ play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
+	    /*tab.getSelectionModel().select(1);*/ play(SND_BUTTON); log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
@@ -2970,42 +2976,42 @@ keyFileChooser.rescanCurrentDirectory();
 
     private void hiddenFilesHeaderLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n", false, true, true, false, false);
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nHidden Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void emptyFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (emptyList != null) && (emptyList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
+	if ( (emptyList != null) && (emptyList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void symlinkFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n", false, true, true, false, false);
+	if ( (symlinkList != null) && (symlinkList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nSymlinks:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void unreadableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (unreadableList != null) && (unreadableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void unwritableFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (unwritableList != null) && (unwritableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("Unwritable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void hiddenFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n", false, true, true, false, false);
+	if ( (hiddenList != null) && (hiddenList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("Hidden Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
     
@@ -3043,34 +3049,34 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void encryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (encryptableList != null) && (encryptableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void decryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (decryptableList != null) && (decryptableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void decryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
+	if ( (decryptedList != null) && (decryptedList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void encryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n", false, true, true, false, false);
+	if ( (encryptedList != null) && (encryptedList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nEncrypted Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     private void newEncryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n", false, true, true, false, false);
+	if ( (newEncryptedList != null) && (newEncryptedList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nNew Encrypted Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = newEncryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
@@ -3078,13 +3084,13 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void unencryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (unencryptableList != null) && (unencryptableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     private void newDecryptedLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n", false, true, true, false, false);
+	if ( (newDecryptedList != null) && (newDecryptedList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nNew Decrypted Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = newDecryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
@@ -3092,21 +3098,21 @@ keyFileChooser.rescanCurrentDirectory();
     @FXML
     private void undecryptableLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
+	if ( (undecryptableList != null) && (undecryptableList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void invalidFilesLabelOnMouseClicked(MouseEvent event)
     {
-	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { play = new AudioClip(this.SND_BUTTON.getSource()); play.play(); tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n", false, true, true, false, false);
+	if ( (invalidFilesList != null) && (invalidFilesList.size() > 0) ) { play(SND_BUTTON); tab.getSelectionModel().select(1); log("\r\nInvalid Files:\r\n\r\n", false, true, true, false, false);
 	for (Iterator it = invalidFilesList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
     }
 
     @FXML
     private void openWebsiteAction(ActionEvent event)
     {
-	play = new AudioClip(this.SND_OPEN.getSource()); play.play();
+	play(SND_OPEN);
 	Version.openWebSite(this);
     }    
 
@@ -3120,7 +3126,7 @@ keyFileChooser.rescanCurrentDirectory();
 
     private void disarmDisableMACMode()
     {
-	play = new AudioClip(this.SND_OFF.getSource()); play.play();
+	play(SND_OFF);
 	encryptionModeToggleButton.setDisable(true);
 	encryptionModeToggleButton.setSelected(false);
 	encryptionModeToggleButton.setText(MAC_ON);
@@ -3131,7 +3137,7 @@ keyFileChooser.rescanCurrentDirectory();
 //  Enable / Arm Disable-MAC-Mode-Button
     private void armDisableMACMode()
     {
-	play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+	play(SND_BUTTON);
 	encryptionModeToggleButton.setDisable(false);
 	encryptionModeToggleButton.setSelected(false);
 	encryptionModeToggleButton.setText(MAC_OFF_Q);
@@ -3146,7 +3152,7 @@ keyFileChooser.rescanCurrentDirectory();
 //  Default MAC Mode
     private void enableMACMode() // Safe Mode
     {
-	play = new AudioClip(this.SND_SELECT.getSource()); play.play();
+	play(SND_SELECT);
 	if ( FLASH_MAC_MODE_TIMELINE != null ) { FLASH_MAC_MODE_TIMELINE.stop(); }
 	encryptionModeToggleButton.setText(MAC_ON);
 	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
@@ -3163,7 +3169,7 @@ keyFileChooser.rescanCurrentDirectory();
 
     private void disableMACMode() // Dangerous Mode
     {
-	play = new AudioClip(this.SND_ALARM.getSource()); play.play();
+	play(SND_ALARM);
 	if ( AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE != null ) { AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.stop(); }
 
 	encryptionModeToggleButton.setText(MAC_OFF);
@@ -3198,7 +3204,7 @@ keyFileChooser.rescanCurrentDirectory();
 	long now = Calendar.getInstance().getTimeInMillis();
 	if ( ! processRunning)
 	{
-	    play = new AudioClip(this.SND_BUTTON.getSource()); play.play();
+	    play(SND_BUTTON);
 	    if ( now - lastRawModeClicked > 1000) // Anti DoubleClick missery
 	    {
 		Platform.runLater(() ->
@@ -3238,7 +3244,7 @@ keyFileChooser.rescanCurrentDirectory();
     public void status(String message)		    { Platform.runLater(() -> { statusLabel.setText(message.replace("\r\n", "")); }); }
     public void log(String message)		    { Platform.runLater(() -> { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
     public void logfile(String message)		    { Platform.runLater(() -> { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }); }
-    public void errfile(String message)		    { Platform.runLater(() -> { play = new AudioClip(this.SND_ERROR.getSource()); play.play(); try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }); }
+    public void errfile(String message)		    { Platform.runLater(() -> { play(SND_ERROR); try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }); }
     public void print(String message,boolean err)   { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
     
     public static void main(String[] args)  { launch(args); }
@@ -3249,7 +3255,7 @@ keyFileChooser.rescanCurrentDirectory();
 //	log("Pass: " + pwdField.getText() + " length: " + pwdField.getText().length() + event.getCode(), true, true, true, false, false);
 	if (event.getCode() == KeyCode.ENTER)
 	{
-	    play = new AudioClip(this.SND_READY.getSource()); play.play();
+	    play(SND_READY);
 	    passwordHeaderLabel.setText("Password (set)");
 	    settingPassword = false;
 	    targetFileChooserPropertyCheck(true);
@@ -3267,5 +3273,5 @@ keyFileChooser.rescanCurrentDirectory();
 	}
     }
     
-    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event) { play = new AudioClip(this.SND_SELECT.getSource()); play.play(); }
+    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event) { play(SND_SELECT); }
 }
