@@ -1204,7 +1204,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if (media != null) 
 	{
-	    if (media.getSource().matches("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
+	    if (media.getSource().contains("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
 	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); }
 	}
     }

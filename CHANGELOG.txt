@@ -1,3 +1,4 @@
+4.0.1 Added sound and voice mixing and priority control for better audio experience
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 3.6.2 Downloads from available hosting location. FinalCrypt now 100% multi hosting location
 3.6.1 CheckUpdate from available hosting location. OpenWebsite from available hosting location
