@@ -957,8 +957,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    textLabelTimeline.play();
 
 //	textLabel Introduction Animation ==========================================================
-	    play(SND_STARTUP);
-
 
 	    FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
 	    fadeTransition.setFromValue(0.05f);
@@ -1051,15 +1049,16 @@ public class GUIFX extends Application implements UI, Initializable
 		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
 		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 	    });
-	    parallelTransition.play();	    
+	    parallelTransition.play();
+	    play(SND_STARTUP);
 	});
 	
-        Alert alert = new Alert(AlertType.INFORMATION);
-
-//      Style the Alert
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-        dialogPane.getStyleClass().add("myDialog");
+//        Alert alert = new Alert(AlertType.INFORMATION);
+//
+////      Style the Alert
+//        DialogPane dialogPane = alert.getDialogPane();
+//        dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+//        dialogPane.getStyleClass().add("myDialog");
 
 //        alert.setTitle("Info");
 //        alert.setHeaderText("Welcome");
@@ -1195,12 +1194,11 @@ public class GUIFX extends Application implements UI, Initializable
 		userGuidanceLabel.setOpacity(fadevarmax);
 	    });
 	    labelTimeline1.play();
-	} // Do at fade out ready
-	);
+	}); // Do at fade out ready
 	labelTimeline.play();
     }
     
-    public void play(Media media)
+    synchronized public void play(Media media)
     {
 	if (media != null) 
 	{

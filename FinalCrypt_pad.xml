@@ -2,7 +2,7 @@
 <XML_DIZ_INFO>
   <MASTER_PAD_VERSION_INFO>
     <MASTER_PAD_VERSION>4.0</MASTER_PAD_VERSION>
-    <MASTER_PAD_EDITOR>FinalCrypt 4.0.1</MASTER_PAD_EDITOR>
+    <MASTER_PAD_EDITOR>FinalCrypt 4.0.2</MASTER_PAD_EDITOR>
     <MASTER_PAD_EDITOR_URL>http://publisher.appvisor.com</MASTER_PAD_EDITOR_URL>
     <MASTER_PAD_INFO>Portable Application Description, or PAD(TM) 2004 Association of Software Professionals (ASP)http://www.asp-shareware.org/pad is a data set standard and specification that is commercialsoftware publishers to disseminate certified information about their software application. The PAD format is copyright of the ASP and cannot be used without the formal licensing and permission of both the Association of Software Professionals and its agent AppVisor.com.</MASTER_PAD_INFO>
     <CERTIFIED>N</CERTIFIED>
@@ -65,7 +65,7 @@
   <Program_Info>
     <AppID>app-800017a7c458</AppID>
     <Program_Name>FinalCrypt</Program_Name>
-    <Program_Version>4.0.1</Program_Version>
+    <Program_Version>4.0.2</Program_Version>
     <Program_Release_Month>12</Program_Release_Month>
     <Program_Release_Day>18</Program_Release_Day>
     <Program_Release_Year>2018</Program_Release_Year>
@@ -139,7 +139,7 @@
     <Affiliates_Regnow_Product_ID></Affiliates_Regnow_Product_ID>
     <Affiliates_FORM>Y</Affiliates_FORM>
     <Affiliates_FORM_VER></Affiliates_FORM_VER>
-    <Affiliates_VERSION>4.0.1</Affiliates_VERSION>
+    <Affiliates_VERSION>4.0.2</Affiliates_VERSION>
     <Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
     <Affiliates_Information_Page></Affiliates_Information_Page>
     <Affiliates_Avangate_Order_Page></Affiliates_Avangate_Order_Page>
