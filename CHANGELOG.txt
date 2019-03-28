@@ -1,3 +1,4 @@
+4.0.3 Hybrid audio system bypassing libc6 -> libdl.so.2 bug preventing unpredictable startup crashes on Linux.
 4.0.2 Avoiding crash bug in Linux libc6 -> libdl.so.2 by slight load delay first sound at startup (bug reported to Ubuntu / GNU Dev Team)
 4.0.1 Added sound and voice mixing and priority control for better audio experience
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
