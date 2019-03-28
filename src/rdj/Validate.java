@@ -55,7 +55,7 @@ public class Validate
         if ( ! Files.isWritable(targetDirPath) )					    { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(targetDirPath)) )			    { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
 //        if ( validdir ) {  } else { if ( report )					    { ui.error("Warning: Validate.isValidDir: " + targetDirPath.toString() + ": " + conditions + "\r\n"); } }
-        if ( ! validdir )								    { if ( report ) { ui.log("Warning: skipping dir: " + targetDirPath.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }
+        if ( ! validdir )								    { if ( report ) { ui.log("Warning: skipping dir: " + targetDirPath.toString() + ": " + conditions + "\r\n", false, false, true, false, false); } }
         return validdir;
     }
 
