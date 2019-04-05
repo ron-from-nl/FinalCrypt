@@ -537,14 +537,14 @@ public class GUIFX extends Application implements UI, Initializable
 	this.stage.show();
 
 //	this.stage.setOnCloseRequest(e -> Platform.exit());	
-	stage.setOnCloseRequest(new EventHandler<WindowEvent>() { @Override public void handle(WindowEvent e)
+	stage.setOnCloseRequest((WindowEvent e) ->
 	{
 	    play_MP3(MP3_SND_SHUTDOWN);
 	    while (
-			((audioClip != null) && (audioClip.isPlaying()))
+		    ((audioClip != null) && (audioClip.isPlaying()))
 //		    ||	((clipSounds != null) && (clipSounds.isRunning()))
 //		    ||	((clipVoice != null) && (clipVoice.isActive()))
-		  )
+		    )
 	    { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
 //	    Platform.runLater(() ->
 //	    {
@@ -556,7 +556,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    });
 
 //	    if (finalCrypt == null) { System.out.println("fc null"); } else { System.out.println("fc not null"); }
-	}});
+	});
 	
 //	scene.getWindow().addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent window) -> 
 //	{
@@ -1278,7 +1278,6 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if (sound_Is_On)
 		    {
-			    test("sounds " + media.getSource());
 			try { audioInSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
 			catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
 			catch (IOException ex) { log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
@@ -1294,7 +1293,6 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		else if ( media.getSource().contains("voice") )
 		{
-		    test("voice " + media.getSource());
 		    if (voice_Is_On)
 		    {
 			if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
