@@ -118,6 +118,8 @@ import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.Paint;
+//import javafx.scene.shape.;
+
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.FontPosture;
@@ -260,8 +262,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final String JAVA_VERSION =			System.getProperty("java.version");
     private final String CLASS_VERSION =		System.getProperty("java.class.version");
     
-    private  boolean sound_Is_On =			true;
-    private  boolean voice_Is_On =			true;
+    private  boolean sound_Is_Enabled =			true;
+    private  boolean voice_Is_Enabled =			true;
     
     private final String SOUND_ON_SYMBOL =		"🔊";
     private final String SOUND_OFF_SYMBOL =		"🔇";
@@ -289,6 +291,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final Media WAV_SND_SELECTINVALID =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_select_invalid.wav").toExternalForm());
     private final Media WAV_SND_SELECTKEY =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_select_key.wav").toExternalForm());
     private final Media WAV_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_shutdown.wav").toExternalForm());
+    private final Media WAV_SND_SOUND_DISABLED =	    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_sound_disabled.wav").toExternalForm());
+    private final Media WAV_SND_SOUND_ENABLED =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_sound_enabled.wav").toExternalForm());
     private final Media WAV_SND_STARTUP =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_startup.wav").toExternalForm());
 
     private final Media WAV_VOI_CLONE_KEY_DEVICE =	    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_clone_key_device.wav").toExternalForm());
@@ -303,6 +307,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final Media WAV_VOI_SCANNING_FILES =	    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_scanning_files.wav").toExternalForm());
     private final Media WAV_VOI_SELECT_FILES =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_select_files.wav").toExternalForm());
     private final Media WAV_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_select_key.wav").toExternalForm());
+    private final Media WAV_VOI_VOICE_DISABLED =	    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_voice_disabled.wav").toExternalForm());
+    private final Media WAV_VOI_VOICE_ENABLED =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_voice_enabled.wav").toExternalForm());
     private final Media WAV_VOI_WRONG_KEY_OR_PASSWORD =	    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_wrong_key_or_password.wav").toExternalForm());
 
     private final Media MP3_SND_ALARM =			    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_alarm.mp3").toExternalForm());
@@ -322,6 +328,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final Media MP3_SND_SELECT =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_select.mp3").toExternalForm());
     private final Media MP3_SND_SELECTINVALID =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_select_invalid.mp3").toExternalForm());
     private final Media MP3_SND_SELECTKEY =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_select_key.mp3").toExternalForm());
+    private final Media MP3_SND_SOUND_DISABLED =	    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_sound_disabled.mp3").toExternalForm());
+    private final Media MP3_SND_SOUND_ENABLED =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_sound_enabled.mp3").toExternalForm());
     private final Media MP3_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_shutdown.mp3").toExternalForm());
     private final Media MP3_SND_STARTUP =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_startup.mp3").toExternalForm());
 
@@ -337,6 +345,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final Media MP3_VOI_SCANNING_FILES =	    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_scanning_files.mp3").toExternalForm());
     private final Media MP3_VOI_SELECT_FILES =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_select_files.mp3").toExternalForm());
     private final Media MP3_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_select_key.mp3").toExternalForm());
+    private final Media MP3_VOI_VOICE_DISABLED =	    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_voice_disabled.mp3").toExternalForm());
+    private final Media MP3_VOI_VOICE_ENABLED =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_voice_enabled.mp3").toExternalForm());
     private final Media MP3_VOI_WRONG_KEY_OR_PASSWORD =	    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_wrong_key_or_password.mp3").toExternalForm());
 
     private double load_High_MS_Passed =		0.0d;
@@ -505,11 +515,14 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private AnchorPane keyFileSwingPane;
     private Scene scene;
     
-    private AudioClip audioClip;
+    private AudioClip audioClipSounds;
+    private AudioClip audioClipVoice;
     private AudioInputStream audioInSounds;
     private AudioInputStream audioInVoice;
     private Clip clipSounds;
     private Clip clipVoice;
+    @FXML
+    private Label sysMonLabel;
     
     @Override
     public void start(Stage stage) throws Exception
@@ -541,7 +554,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    play_MP3(MP3_SND_SHUTDOWN);
 	    while (
-		    ((audioClip != null) && (audioClip.isPlaying()))
+		    ((audioClipSounds != null) && (audioClipSounds.isPlaying()))
 //		    ||	((clipSounds != null) && (clipSounds.isRunning()))
 //		    ||	((clipVoice != null) && (clipVoice.isActive()))
 		    )
@@ -769,10 +782,15 @@ public class GUIFX extends Application implements UI, Initializable
 //	    I/O
 //	    double throughputPerc = ((throughputPercParam) / (IO_THROUGHPUT_CEILING / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
 
+	    String soundStatusString = "Sound is "; if (sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_OFF_SYMBOL + " to Enable)"; }
+	    String voiceStatusString = "Voice is "; if (sound_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_OFF_SYMBOL + " to Enable)"; }
+
 	    String sysMonString = "";
 	    sysMonString += userLoadString + "\r\n";
 	    sysMonString += usedMemString + "\r\n";
-	    sysMonString += throughputString;
+	    sysMonString += throughputString + "\r\n\r\n";
+	    sysMonString += soundStatusString + "\r\n";
+	    sysMonString += voiceStatusString;
 
 
 //	    Drawing
@@ -785,10 +803,61 @@ public class GUIFX extends Application implements UI, Initializable
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
 	    for (int y = 0; y < (throughputPercParam/ 100) * 20; y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
 
+	    
 	    sysMonTooltip.setText(sysMonString);
 	});
     }
-    
+
+    @FXML  private void sysMonLabelOnMouseClicked(MouseEvent event)
+    {
+	if (( event.getX() >= 10 ) && (event.getX() <= 20))
+	{
+	    if (sound_Is_Enabled) // turn sound off
+	    {
+		play_MP3(MP3_SND_BUTTON);
+		play_MP3(MP3_SND_SOUND_DISABLED);
+		
+		sound_Is_Enabled = false;
+		
+		sysmon.setFill(Color.valueOf("#4A4039"));
+		sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+	    }
+	    else // turn sound on
+	    {
+		sound_Is_Enabled = true;
+
+		play_MP3(MP3_SND_BUTTON);
+		play_MP3(MP3_SND_SOUND_ENABLED);
+
+		sysmon.setFill(Color.valueOf("#58781F"));
+		sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+	    }
+	}
+	else if (( event.getX() >= 130 ) && (event.getX() <= 140))
+	{
+	    if (voice_Is_Enabled) // turn voice off
+	    {
+		play_MP3(MP3_SND_BUTTON);
+		play_MP3(MP3_VOI_VOICE_DISABLED);
+		
+		voice_Is_Enabled = false;
+		
+		sysmon.setFill(Color.valueOf("#4A4039"));
+		sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
+	    }
+	    else // turn voice on
+	    {		
+		voice_Is_Enabled = true;
+		
+		play_MP3(MP3_SND_BUTTON);
+		play_MP3(MP3_VOI_VOICE_ENABLED);
+		
+		sysmon.setFill(Color.valueOf("#58781F"));
+		sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
+	    }
+	}
+    }
+
     private void updateSystemMonitor()
     {
 	double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
@@ -1276,7 +1345,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if ( (media.getSource().toString().contains("sounds")) ) // new sound added to any other audio playing
 		{
-		    if (sound_Is_On)
+		    if (sound_Is_Enabled)
 		    {
 			try { audioInSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
 			catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
@@ -1293,7 +1362,7 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		else if ( media.getSource().contains("voice") )
 		{
-		    if (voice_Is_On)
+		    if (voice_Is_Enabled)
 		    {
 			if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
 			{
@@ -1328,14 +1397,14 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    if ( media.getSource().contains("sounds") )
 	    {
-		if (sound_Is_On) { audioClip = new AudioClip(media.getSource()); audioClip.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+		if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
 	    }
 	    else if ( media.getSource().contains("voice") )
 	    {
-		if ( voice_Is_On)
+		if ( voice_Is_Enabled)
 		{
-		    if ( (audioClip != null) && ( audioClip.isPlaying() )) { audioClip.stop(); }
-		    audioClip = new AudioClip(media.getSource()); audioClip.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
 		}
 	    }
 	    else { log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }

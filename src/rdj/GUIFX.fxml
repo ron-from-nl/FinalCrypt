@@ -760,7 +760,7 @@
                                                    </font>
                                                 </Label>
                                                 <Canvas fx:id="sysMonCanvas" height="20.0" opacity="0.0" width="150.0" StackPane.alignment="BOTTOM_CENTER" />
-                                                <Label maxHeight="20.0" maxWidth="150.0" minHeight="20.0" minWidth="150.0" prefHeight="20.0" prefWidth="150.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
+                                                <Label fx:id="sysMonLabel" maxHeight="20.0" maxWidth="150.0" minHeight="20.0" minWidth="150.0" onMouseClicked="#sysMonLabelOnMouseClicked" prefHeight="20.0" prefWidth="150.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
                                                    <tooltip>
                                                       <Tooltip fx:id="sysMonTooltip" autoHide="true" text="userLoad (X%) I/O (MiB/S)">
                                                          <font>
