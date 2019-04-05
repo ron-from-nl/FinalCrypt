@@ -751,8 +751,8 @@ public class GUIFX extends Application implements UI, Initializable
 	sysmon.setTextAlign(TextAlignment.LEFT);
 	sysmon.setTextBaseline(VPos.BOTTOM);
 	sysmon.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 14));
-	sysmon.setFill(Color.valueOf("#58781F"));
 	
+	sysmon.setFill(Color.valueOf("#58781F"));
 	sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
 	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.fillText(CPU_SYMBOL, sysmonOffSetX + 30, 20);
@@ -782,8 +782,8 @@ public class GUIFX extends Application implements UI, Initializable
 //	    I/O
 //	    double throughputPerc = ((throughputPercParam) / (IO_THROUGHPUT_CEILING / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
 
-	    String soundStatusString = "Sound is "; if (sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_OFF_SYMBOL + " to Enable)"; }
-	    String voiceStatusString = "Voice is "; if (sound_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_OFF_SYMBOL + " to Enable)"; }
+	    String soundStatusString = "Sound is "; if (sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_ON_SYMBOL + " to Enable)"; }
+	    String voiceStatusString = "Voice is "; if (voice_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_ON_SYMBOL + " to Enable)"; }
 
 	    String sysMonString = "";
 	    sysMonString += userLoadString + "\r\n";
@@ -810,54 +810,73 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML  private void sysMonLabelOnMouseClicked(MouseEvent event)
     {
-	if (( event.getX() >= 10 ) && (event.getX() <= 20))
+	if (( event.getX() >= 10 ) && (event.getX() <= 25))
 	{
 	    if (sound_Is_Enabled) // turn sound off
 	    {
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_SND_SOUND_DISABLED);
-		
-		sound_Is_Enabled = false;
-		
-		sysmon.setFill(Color.valueOf("#4A4039"));
-		sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+
+		setSound(false);
 	    }
 	    else // turn sound on
 	    {
-		sound_Is_Enabled = true;
+		setSound(true);
 
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_SND_SOUND_ENABLED);
-
-		sysmon.setFill(Color.valueOf("#58781F"));
-		sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
 	    }
 	}
-	else if (( event.getX() >= 130 ) && (event.getX() <= 140))
+	else if (( event.getX() >= 130 ) && (event.getX() <= 145))
 	{
 	    if (voice_Is_Enabled) // turn voice off
 	    {
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_VOI_VOICE_DISABLED);
-		
-		voice_Is_Enabled = false;
-		
-		sysmon.setFill(Color.valueOf("#4A4039"));
-		sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
+
+		setVoice(false);
 	    }
 	    else // turn voice on
 	    {		
-		voice_Is_Enabled = true;
+		setVoice(true);
 		
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_VOI_VOICE_ENABLED);
-		
-		sysmon.setFill(Color.valueOf("#58781F"));
-		sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
 	    }
 	}
     }
 
+    private void setSound(boolean enableSound)
+    {
+	sound_Is_Enabled = enableSound;
+
+	if (sound_Is_Enabled) // turn sound off
+	{
+	    sysmon.setFill(Color.valueOf("#58781F"));
+	    sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+	}
+	else // turn sound on
+	{
+	    sysmon.setFill(Color.valueOf("#4A4039"));
+	    sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+	}
+    }
+    
+    private void setVoice(boolean enableSound)
+    {
+	voice_Is_Enabled = enableSound;
+	if (voice_Is_Enabled) // turn voice off
+	{
+	    sysmon.setFill(Color.valueOf("#58781F"));
+	    sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
+	}
+	else // turn voice on
+	{		
+	    sysmon.setFill(Color.valueOf("#4A4039"));
+	    sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
+	}
+    }
+    
     private void updateSystemMonitor()
     {
 	double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
