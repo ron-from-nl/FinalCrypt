@@ -262,8 +262,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final String JAVA_VERSION =			System.getProperty("java.version");
     private final String CLASS_VERSION =		System.getProperty("java.class.version");
     
-    private  boolean sound_Is_Enabled =			true;
-    private  boolean voice_Is_Enabled =			true;
+    protected  boolean sound_Is_Enabled =		true;
+    protected  boolean voice_Is_Enabled =		true;
     
     private final String SOUND_ON_SYMBOL =		"🔊";
     private final String SOUND_OFF_SYMBOL =		"🔇";
@@ -480,7 +480,7 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean keySourceChecksumReadCanceled;
     private Stage createOTPKeyStage;
     private CreateOTPKey createOTPKey;
-    private Preferences prefs;
+    private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private long now;
     private boolean isCalculatingCheckSum;
     private long lastRawModeClicked;
@@ -550,7 +550,7 @@ public class GUIFX extends Application implements UI, Initializable
 	this.stage.show();
 
 //	this.stage.setOnCloseRequest(e -> Platform.exit());	
-	stage.setOnCloseRequest((WindowEvent e) ->
+	this.stage.setOnCloseRequest((WindowEvent e) ->
 	{
 	    play_MP3(MP3_SND_SHUTDOWN);
 	    while (
@@ -810,35 +810,35 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML  private void sysMonLabelOnMouseClicked(MouseEvent event)
     {
-	if (( event.getX() >= 10 ) && (event.getX() <= 25))
+	if (( event.getX() >= 10 ) && (event.getX() <= 25)) // Sound
 	{
 	    if (sound_Is_Enabled) // turn sound off
 	    {
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_SND_SOUND_DISABLED);
 
-		setSound(false);
+		setSound(false); prefs.put("Sound", "Disabled");
 	    }
 	    else // turn sound on
 	    {
-		setSound(true);
+		setSound(true); prefs.put("Sound", "Enabled");
 
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_SND_SOUND_ENABLED);
 	    }
 	}
-	else if (( event.getX() >= 130 ) && (event.getX() <= 145))
+	else if (( event.getX() >= 130 ) && (event.getX() <= 145)) // Voice
 	{
 	    if (voice_Is_Enabled) // turn voice off
 	    {
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_VOI_VOICE_DISABLED);
 
-		setVoice(false);
+		setVoice(false); prefs.put("Voice", "Disabled");
 	    }
 	    else // turn voice on
 	    {		
-		setVoice(true);
+		setVoice(true); prefs.put("Voice", "Enabled");
 		
 		play_MP3(MP3_SND_BUTTON);
 		play_MP3(MP3_VOI_VOICE_ENABLED);
@@ -862,9 +862,10 @@ public class GUIFX extends Application implements UI, Initializable
 	}
     }
     
-    private void setVoice(boolean enableSound)
+    private void setVoice(boolean enableVoice)
     {
-	voice_Is_Enabled = enableSound;
+	voice_Is_Enabled = enableVoice;
+	
 	if (voice_Is_Enabled) // turn voice off
 	{
 	    sysmon.setFill(Color.valueOf("#58781F"));
@@ -1152,7 +1153,6 @@ public class GUIFX extends Application implements UI, Initializable
 		JDK 8 all the items in java.util.prefs:
 		*/
 		
-		prefs = Preferences.userRoot().node(Version.getProductName());
 		String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		if (! val.equals("Yes")) // First time
 		{		    
@@ -1163,7 +1163,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 		}
-
+		
 		disableFileChoosers(false);
 		
 		FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
@@ -1205,6 +1205,19 @@ public class GUIFX extends Application implements UI, Initializable
 		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 	    });
 	    parallelTransition.play();
+	    
+	    String val = prefs.get("Sound", "Unknown");
+	    if (val.equals("Unknown")) { setSound(true); prefs.put("Sound", "Enabled"); }
+	    else if (val.equals("Enabled")) { setSound(true); }
+	    else if (val.equals("Disabled")) { setSound(false); }
+	    else { prefs.put("Sound", "Enabled"); setSound(true); }
+
+	    val = prefs.get("Voice", "Unknown");
+	    if (val.equals("Unknown")) { setVoice(true); prefs.put("Voice", "Enabled"); }
+	    else if (val.equals("Enabled")) { setVoice(true); }
+	    else if (val.equals("Disabled")) { setVoice(false); }
+	    else { prefs.put("Sound", "Enabled"); setVoice(true); }
+	    
 	    play_WAV(WAV_SND_STARTUP);
 	});
 	

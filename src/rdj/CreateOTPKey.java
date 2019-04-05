@@ -128,7 +128,8 @@ public class CreateOTPKey extends Application implements Initializable
     private long realtimeBytesProcessed;
     private double realtimeMiBPS;
 //    private Sound sound;
-    private AudioClip play;
+    private AudioClip audioClipSounds;
+    private AudioClip audioClipVoice;
     private AudioInputStream audioInSounds;
     private AudioInputStream audioInVoice;
     private Clip clipSounds;
@@ -570,12 +571,35 @@ public class CreateOTPKey extends Application implements Initializable
 //	playThread.setDaemon(true);
 //	playThread.start();
     }
+
     public void play_MP3(Media media)
     {
+//	test("Invoking play_MP3: " + media.getSource() + " ");
+	
 	if (media != null) 
 	{
-	    if (media.getSource().matches("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
-	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); }
+	    if ( media.getSource().contains("sounds") )
+	    {
+		if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+	    }
+	    else if ( media.getSource().contains("voice") )
+	    {
+		if ( guifx.voice_Is_Enabled)
+		{
+		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		}
+	    }
+	    else { guifx.log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	}
     }
+    
+//    public void play_MP3(Media media)
+//    {
+//	if (media != null) 
+//	{
+//	    if (media.getSource().matches("sounds")) { play = new AudioClip(media.getSource()); play.play(); }
+//	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); }
+//	}
+//    }
 }

@@ -17,13 +17,13 @@ Replace introduction with create / select key guidance
 
 =============================== Don't forget ================================
 
+Test UI.java test(String message) usage and remove / comment any used instances accross the project
 Set version						nbproject/project.properties application.implementation.version=1.2.3
 Set "<Program_Version>2.7.2</Program_Version>" in	FinalCrypt_pad.xml file
 Update file:						CHANGELOG
 Update file:						MANPAGE
 Set version on file:					Version
 Set version on file:					Version2
-Test UI.java test(String message) usage and remove / comment any used instances accross the project
  
 =================================== Done ====================================
 

@@ -1,5 +1,5 @@
-[Version] =		{4.0.3}
-[Release Notes] =	{Improved Star Trek Sound Scheme & Voice User Guidance}
-[Release Message] =	{Optimized UI Sound Interaction & Hybrid Audio System}
+[Version] =		{4.1.0}
+[Release Notes] =	{As requested: Voice Guidance & Sounds User Muted}
+[Release Message] =	{Click the 🔊 / 🗣 icons in user guidance display}
 [Alert Subject] =	{}
 [Alert Message] =	{}
