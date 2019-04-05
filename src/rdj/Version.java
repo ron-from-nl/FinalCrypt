@@ -52,11 +52,9 @@ public class Version
     
     private static       String remoteContent =				"";
     
-//      public static final String WEBSITEURISTRING =			    "https://sites.google.com/site/ronuitholland/home/finalcrypt";
     public static final String WEBSITEURISTRING =			"http://www.finalcrypt.org/";
 
-//    public static final String REMOTEPACKAGEDOWNLOADURISTRING =	  "https://github.com/ron-from-nl/FinalCrypt/releases/tag/latest/";
-    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		"http://www.finalcrypt.org/downloads/";
+    public static final String REMOTEPACKAGEDOWNLOADURISTRING =		"http://www.finalcrypt.org/";
     public static final String[] REMOTEPACKAGEDOWNLOADURISTRINGARRAY =	{
 									    "http://www.finalcrypt.org/downloads/"
 									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"

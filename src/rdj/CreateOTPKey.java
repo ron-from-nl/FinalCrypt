@@ -245,7 +245,7 @@ public class CreateOTPKey extends Application implements Initializable
 	currentDirPath = curDirPath; 
 	statusLabel1.setText("Current directory");
 	statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
-	guifx.userGuideMessage(guifx.CREATE_KEY, 64, false, false, false, true, MP3_VOI_CREATE_KEY, 0);
+	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, MP3_VOI_CREATE_KEY, 0);
     }
         
     @FXML
@@ -452,7 +452,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
 		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
-		guifx.userGuideMessage(guifx.SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+		guifx.userGuidanceMessage(guifx.SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 	    }});
 	    
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));

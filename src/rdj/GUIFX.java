@@ -225,22 +225,22 @@ public class GUIFX extends Application implements UI, Initializable
     private final String MAC_OFF_Q =			"MAC OFF ?";
 
     public final String CREATE_KEY =			"Create Key";
-    public final String CREATE_KEYDEV =			"Create Key Device";
-    public final String CLONE_KEYDEV =			"Clone Key Device";
+    private final String CREATE_KEYDEV =		"Create Key Device";
+    private final String CLONE_KEYDEV =			"Clone Key Device";
 
     public final String SELECT_KEY =			"Select Key";
-    public final String PASSWORD_ENTER =		"Password<Enter>";
-    public final String SELECT_FILES =			"Select Files";
+    private final String PASSWORD_ENTER =		"Password<Enter>";
+    private final String SELECT_FILES =			"Select Files";
 
-    public final String SCANNING_FILES =		"Scanning Files";
-    public final String WRONG_KEY_PASS =		"Wrong Key / Pass ?";
+    private final String SCANNING_FILES =		"Scanning Files";
+    private final String WRONG_KEY_PASS =		"Wrong Key / Pass ?";
 
-    public final String ENCRYPT_FILES =			"Encrypt Files";
-    public final String DECRYPT_FILES =			"Decrypt Files";
-    public final String EN_DECRYPT_FILES =		"Encrypt • Decrypt Files";
+    private final String ENCRYPT_FILES =		"Encrypt Files";
+    private final String DECRYPT_FILES =		"Decrypt Files";
+    private final String EN_DECRYPT_FILES =		"Encrypt • Decrypt Files";
 
-    public final String ENCRYPTING_FILES =		"Encrypting Files";
-    public final String DECRYPTING_FILES =		"Decrypting Files";
+    private final String ENCRYPTING_FILES =		"Encrypting Files";
+    private final String DECRYPTING_FILES =		"Decrypting Files";
 
     private final String USER_GUID_TEXT_FILL_BASE =	"#504030";// #5A2D0C #663B1B
     private final String USER_GUID_TEXT_FILL_HIGH =	"#BBBBBB";
@@ -253,12 +253,23 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
     
-    public final String OS_NAME =			System.getProperty("os.name");
-    public final String OS_ARCH =			System.getProperty("os.arch");
-    public final String OS_VERSION =			System.getProperty("os.version");
-    public final String JAVA_VENDER =			System.getProperty("java.vendor");
-    public final String JAVA_VERSION =			System.getProperty("java.version");
-    public final String CLASS_VERSION =			System.getProperty("java.class.version");
+    private final String OS_NAME =			System.getProperty("os.name");
+    private final String OS_ARCH =			System.getProperty("os.arch");
+    private final String OS_VERSION =			System.getProperty("os.version");
+    private final String JAVA_VENDER =			System.getProperty("java.vendor");
+    private final String JAVA_VERSION =			System.getProperty("java.version");
+    private final String CLASS_VERSION =		System.getProperty("java.class.version");
+    
+    private  boolean sound_Is_On =			true;
+    private  boolean voice_Is_On =			true;
+    
+    private final String SOUND_ON_SYMBOL =		"🔊";
+    private final String SOUND_OFF_SYMBOL =		"🔇";
+    private final String CPU_SYMBOL =			"🖳";
+    private final String RAM_SYMBOL =			"🅼";
+    private final String STORAGE_SYMBOL =		"🖴";
+    private final String VOICE_ON_SYMBOL =		"🗣";
+    private final String VOICE_OFF_SYMBOL =		"🔇";
     
     private final Media WAV_SND_ALARM =			    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_alarm.wav").toExternalForm());
     private final Media WAV_SND_ALERT =			    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_alert.wav").toExternalForm());
@@ -494,7 +505,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private AnchorPane keyFileSwingPane;
     private Scene scene;
     
-    private AudioClip play;
+    private AudioClip audioClip;
     private AudioInputStream audioInSounds;
     private AudioInputStream audioInVoice;
     private Clip clipSounds;
@@ -530,7 +541,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    play_MP3(MP3_SND_SHUTDOWN);
 	    while (
-			((play != null) && (play.isPlaying()))
+			((audioClip != null) && (audioClip.isPlaying()))
 //		    ||	((clipSounds != null) && (clipSounds.isRunning()))
 //		    ||	((clipVoice != null) && (clipVoice.isActive()))
 		  )
@@ -721,15 +732,21 @@ public class GUIFX extends Application implements UI, Initializable
         sysmon.setStroke(Color.RED);
         sysmon.setLineWidth(2);
 	
-	sysmonOffSetX = 25;
+	sysmonOffSetX = 9;
 	
-	sysmon.setFill(Color.valueOf("#4A4039"));
+//	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.setTextAlign(TextAlignment.LEFT);
 	sysmon.setTextBaseline(VPos.BOTTOM);
 	sysmon.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 14));
-	sysmon.fillText("🖳", sysmonOffSetX + 0, 20);
-	sysmon.fillText("🅼", sysmonOffSetX + 30, 20); // 🅼 🂓 🄼 Ⓜ ⓜ ⒨ 🄼 🆓 🅜
-	sysmon.fillText("🖴", sysmonOffSetX + 60, 20);
+	sysmon.setFill(Color.valueOf("#58781F"));
+	
+	sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
+	sysmon.setFill(Color.valueOf("#4A4039"));
+	sysmon.fillText(CPU_SYMBOL, sysmonOffSetX + 30, 20);
+	sysmon.fillText(RAM_SYMBOL, sysmonOffSetX + 60, 20); 
+	sysmon.fillText(STORAGE_SYMBOL, sysmonOffSetX + 90, 20);
+	sysmon.setFill(Color.valueOf("#58781F"));
+	sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
 	
 	welcome();
 	
@@ -743,9 +760,9 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    int width = 2; sysmon.setLineWidth(width);
 	    
-	    int userLoadPosX = sysmonOffSetX + 23;
-	    int memUsePosX = userLoadPosX + 25;
-	    int ioLoadPosX = memUsePosX + 25;
+	    int userLoadPosX = sysmonOffSetX + 53;
+	    int memUsePosX = userLoadPosX + 55;
+	    int ioLoadPosX = memUsePosX + 55;
 	    
 //	    Precalculations
 
@@ -1051,12 +1068,12 @@ public class GUIFX extends Application implements UI, Initializable
 		String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		if (! val.equals("Yes")) // First time
 		{		    
-		    userGuideMessage(CREATE_KEY, 64, false, false, false, true, MP3_VOI_CREATE_KEY, 0);
+		    userGuidanceMessage(CREATE_KEY, 64, false, false, false, true, MP3_VOI_CREATE_KEY, 0);
 		    prefs.put("Initialized", "Yes");
 		}
 		else
 		{
-		    userGuideMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+		    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 		}
 
 		disableFileChoosers(false);
@@ -1166,17 +1183,18 @@ public class GUIFX extends Application implements UI, Initializable
 	}
     }
     
-    synchronized public void userGuideMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright, Media media, int media_Delay)
+    synchronized public void userGuidanceMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright, Media media, int media_Delay)
     {
 	bottomleftLabelEnabled = bottomleft; topleftLabelEnabled = topleft; toprightLabelEnabled = topright; bottomrightLabelEnabled = bottomright;
 	
-	if (textLabelTimeline.getStatus() == Animation.Status.PAUSED)
+	if (textLabelTimeline.getStatus() == Animation.Status.PAUSED) // set arrows opacity when animation is paused due to high user load
 	{
 	    if (bottomleftLabel.getOpacity() == 0.0)	{ bottomleftLabel.setVisible(bottomleftLabelEnabled); }
 	    if (topleftLabel.getOpacity() == 0.0)	{ topleftLabel.setVisible(topleftLabelEnabled); }
 	    if (toprightLabel.getOpacity() == 0.0)	{ toprightLabel.setVisible(toprightLabelEnabled); }
 	    if (bottomrightLabel.getOpacity() == 0.0)	{ bottomrightLabel.setVisible(bottomrightLabelEnabled); }
 	}
+	
 //	FADE OUT
 	
 	final int count = 10;
@@ -1256,38 +1274,47 @@ public class GUIFX extends Application implements UI, Initializable
 //	{
 	    if (media != null) 
 	    {
-		if (media.getSource().contains("sounds")) // new sound added to any other audio playing
+		if ( (media.getSource().toString().contains("sounds")) ) // new sound added to any other audio playing
 		{
-		    try { audioInSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-		    catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    try { clipSounds.open(audioInSounds); } 
-		    catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipSounds.start(); // test(" " + clipSounds.isOpen() + "\r\n");
-		}
-		else
-		{
-		    if ((clipVoice != null) && ( media.getSource().contains("voice") ) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
+		    if (sound_Is_On)
 		    {
-			clipVoice.stop(); try { audioInVoice.close(); } catch (IOException ex) { log("Error: IOException audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			    test("sounds " + media.getSource());
+			try { audioInSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
+			catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			catch (IOException ex) { log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			try { clipSounds.open(audioInSounds); } 
+			catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			catch (IOException ex) { log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			clipSounds.start(); // test(" " + clipSounds.isOpen() + "\r\n");
 		    }
-		    try { audioInVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-		    catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    try { clipVoice.open(audioInVoice); } 
-		    catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipVoice.start(); // test(" " + clipVoice.isOpen() + "\r\n");
 		}
+		else if ( media.getSource().contains("voice") )
+		{
+		    test("voice " + media.getSource());
+		    if (voice_Is_On)
+		    {
+			if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
+			{
+			    clipVoice.stop(); try { audioInVoice.close(); } catch (IOException ex) { log("Error: IOException audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			}
+			try { audioInVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
+			catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			catch (IOException ex) { log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			try { clipVoice.open(audioInVoice); } 
+			catch (LineUnavailableException ex) { log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+			catch (IOException ex) { log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+
+			clipVoice.start(); // test(" " + clipVoice.isOpen() + "\r\n");
+		    }
+		}
+		else { log("Alert: play_WAV(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	    }
 //	});
 //	playThread.setName("playThread");
@@ -1301,8 +1328,19 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	if (media != null) 
 	{
-	    if (media.getSource().contains("sounds")) { play = new AudioClip(media.getSource()); play.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-	    else { if ((play != null) && ( play.getSource().contains("voice") ) && ( play.isPlaying() )) { play.stop(); } play = new AudioClip(media.getSource()); play.play(); /*test(" " + play.isPlaying() + "\r\n");*/ }
+	    if ( media.getSource().contains("sounds") )
+	    {
+		if (sound_Is_On) { audioClip = new AudioClip(media.getSource()); audioClip.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+	    }
+	    else if ( media.getSource().contains("voice") )
+	    {
+		if ( voice_Is_On)
+		{
+		    if ( (audioClip != null) && ( audioClip.isPlaying() )) { audioClip.stop(); }
+		    audioClip = new AudioClip(media.getSource()); audioClip.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		}
+	    }
+	    else { log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	}
     }
     
@@ -1803,7 +1841,7 @@ public class GUIFX extends Application implements UI, Initializable
 			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
 			keyImageView.setOpacity(0.1);
 
-			userGuideMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+			userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 
 			buildReady(targetFCPathList, false);
 		    }
@@ -1848,7 +1886,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    keySizeLabel.setTextFill(Color.GREY); keySizeLabel.setText("");
 //                    keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
 		    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-		    userGuideMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+		    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 		});
 
 		buildReady(targetFCPathList, false);
@@ -2055,7 +2093,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    play_MP3(MP3_SND_READY);
 		    //		    textLabelBlurMessage("Scanning", 500);
-		    userGuideMessage(SCANNING_FILES, 64, false, false, false, false, MP3_VOI_SCANNING_FILES, 0);
+		    userGuidanceMessage(SCANNING_FILES, 64, false, false, false, false, MP3_VOI_SCANNING_FILES, 0);
 		    
 		    Thread scanThread = new Thread(() -> // Relaxed interruptable thread
 		    {
@@ -2073,12 +2111,12 @@ public class GUIFX extends Application implements UI, Initializable
 //		play_MP3(MP3_SND_SELECT);
 		if ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
 		{
-		    userGuideMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0);
+		    userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0);
 		}
 		else
 		{
 		    play_MP3(MP3_SND_SELECTINVALID);
-		    userGuideMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+		    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 		}
 		
 		targetFCPathList = new FCPathList();
@@ -2283,20 +2321,20 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		    {
 			if (! keyFCPath.isValidKey)
 			{
-			    userGuideMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+			    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 			}
 			else
 			{
 			    if	((targetFCPathList.encryptedFiles > 0) && (targetFCPathList.decryptableFiles == 0))
 			    {
-				if (targetFCPathList.encryptedFiles > 0) { play_MP3(MP3_SND_SELECTINVALID); userGuideMessage(WRONG_KEY_PASS, 48, false, false, true, false, MP3_VOI_WRONG_KEY_OR_PASSWORD, 0); }
+				if (targetFCPathList.encryptedFiles > 0) { play_MP3(MP3_SND_SELECTINVALID); userGuidanceMessage(WRONG_KEY_PASS, 48, false, false, true, false, MP3_VOI_WRONG_KEY_OR_PASSWORD, 0); }
 			    }
 			    else
 			    {
-				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuideMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuideMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuideMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuideMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
+				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
+				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
+				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
 			    }
 			}
 		    }
@@ -2645,10 +2683,10 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    
 	    switch (processRunningMode)
 	    {
-	    	case ENCRYPT_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuideMessage(ENCRYPTING_FILES, 64, false, false, false, false, MP3_VOI_ENCRYPTING_FILES, 0); break;
-	    	case DECRYPT_MODE: play_MP3(MP3_SND_DECRYPTFILES); userGuideMessage(DECRYPTING_FILES, 64, false, false, false, false, MP3_VOI_DECRYPTING_FILES, 0); break;
-	    	case CREATE_KEYDEV_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuideMessage(CREATE_KEYDEV, 64, false, false, false, false, MP3_VOI_CREATE_KEY_DEVICE, 0); break;
-	    	case CLONE_KEYDEV_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuideMessage(CLONE_KEYDEV, 64, false, false, false, false, MP3_VOI_CLONE_KEY_DEVICE, 0); break;
+	    	case ENCRYPT_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuidanceMessage(ENCRYPTING_FILES, 64, false, false, false, false, MP3_VOI_ENCRYPTING_FILES, 0); break;
+	    	case DECRYPT_MODE: play_MP3(MP3_SND_DECRYPTFILES); userGuidanceMessage(DECRYPTING_FILES, 64, false, false, false, false, MP3_VOI_DECRYPTING_FILES, 0); break;
+	    	case CREATE_KEYDEV_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuidanceMessage(CREATE_KEYDEV, 64, false, false, false, false, MP3_VOI_CREATE_KEY_DEVICE, 0); break;
+	    	case CLONE_KEYDEV_MODE: play_MP3(MP3_SND_ENCRYPTFILES); userGuidanceMessage(CLONE_KEYDEV, 64, false, false, false, false, MP3_VOI_CLONE_KEY_DEVICE, 0); break;
 	    	default: break;
 	    }
 
@@ -3408,7 +3446,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    finalCrypt.setPwd(pwdField.getText());
 	    finalCrypt.resetPwdPos();
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
-	    if (!settingPassword) { userGuideMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0); }
+	    if (!settingPassword) { userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0); }
 	    settingPassword = true;
 	    targetFCPathList = new FCPathList();
 	    buildReady(targetFCPathList, false);

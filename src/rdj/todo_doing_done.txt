@@ -23,7 +23,8 @@ Update file:						CHANGELOG
 Update file:						MANPAGE
 Set version on file:					Version
 Set version on file:					Version2
-
+Test UI.java test(String message) usage and remove / comment any used instances accross the project
+ 
 =================================== Done ====================================
 
 

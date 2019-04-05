@@ -205,24 +205,24 @@
                            <children>
                               <GridPane fx:id="dashboardGridPane" alignment="TOP_CENTER" layoutX="48.0" layoutY="19.0" prefHeight="140.0" prefWidth="1340.0" style="-fx-font-size: 11;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" percentWidth="6.0" prefWidth="70.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="55.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" prefWidth="60.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" prefWidth="60.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" prefWidth="80.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="NEVER" percentWidth="6.0" prefWidth="70.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="15.0" valignment="CENTER" />
@@ -707,14 +707,10 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.rowSpan="5" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                                        <children>
-                                          <ImageView fx:id="keyImageView" disable="true" layoutY="-20.0" opacity="0.1" pickOnBounds="true" scaleX="0.4" scaleY="0.4">
-                                             <image>
-                                                <Image url="@../../../../../../../../../../../../Downloads/key.png" />
-                                             </image>
-                                          </ImageView>
+                                          <ImageView fx:id="keyImageView" disable="true" layoutY="-20.0" opacity="0.1" pickOnBounds="true" scaleX="0.4" scaleY="0.4" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="root" maxHeight="135.0" maxWidth="600.0" minHeight="135.0" prefHeight="135.0" styleClass="background_dark" GridPane.columnIndex="6" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowSpan="9" GridPane.valignment="CENTER">
+                                    <AnchorPane fx:id="root" maxHeight="135.0" maxWidth="1.7976931348623157E308" minHeight="135.0" prefHeight="135.0" styleClass="background_dark" GridPane.columnIndex="6" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowSpan="9" GridPane.valignment="CENTER">
                                        <children>
                                           <StackPane maxHeight="135.0" minHeight="135.0" prefHeight="135.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
@@ -763,8 +759,8 @@
                                                       <Font name="Monospaced Bold" size="64.0" />
                                                    </font>
                                                 </Label>
-                                                <Canvas fx:id="sysMonCanvas" height="20.0" opacity="0.0" width="100.0" StackPane.alignment="BOTTOM_CENTER" />
-                                                <Label maxHeight="20.0" maxWidth="100.0" minHeight="20.0" minWidth="100.0" prefHeight="20.0" prefWidth="100.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
+                                                <Canvas fx:id="sysMonCanvas" height="20.0" opacity="0.0" width="150.0" StackPane.alignment="BOTTOM_CENTER" />
+                                                <Label maxHeight="20.0" maxWidth="150.0" minHeight="20.0" minWidth="150.0" prefHeight="20.0" prefWidth="150.0" styleClass="userguide" StackPane.alignment="BOTTOM_CENTER">
                                                    <tooltip>
                                                       <Tooltip fx:id="sysMonTooltip" autoHide="true" text="userLoad (X%) I/O (MiB/S)">
                                                          <font>
@@ -784,19 +780,18 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane minHeight="50.0" minWidth="800.0" prefHeight="41.0" prefWidth="800.0">
+                        <AnchorPane minHeight="50.0" minWidth="700.0" prefHeight="41.0" prefWidth="800.0">
                            <children>
                               <GridPane prefHeight="50.0" prefWidth="1140.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="4.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="12.0" />
-                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="125.0" percentWidth="12.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" percentWidth="13.0" />
+                                    <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="125.0" percentWidth="13.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="40.0" valignment="CENTER" vgrow="NEVER" />
@@ -847,23 +842,22 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4" />
-                                    <AnchorPane GridPane.columnIndex="5">
+                                    <AnchorPane GridPane.columnIndex="4">
                                        <children>
                                           <Button fx:id="keyButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyButtonOnAction" prefHeight="50.0" prefWidth="171.0" styleClass="background_bottom" text="Create Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="6">
+                                    <AnchorPane GridPane.columnIndex="5">
                                        <children>
                                           <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="7">
+                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="6">
                                        <children>
                                           <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutY="-6.0" minHeight="40.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="8">
+                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="7">
                                        <children>
                                           <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="50.0" prefWidth="125.0" style="-fx-font-size: 10;" styleClass="background_bottom" text="MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
