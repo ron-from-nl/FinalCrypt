@@ -6,14 +6,8 @@ Progress animation
 =================================== Doing ===================================
 
 Social Media Share buttons?
-Added optional key password to protect key from unauthorized usage
-Backup update locations (properties, daily check / history)
 auto encrypt on exit getDesktop.open(..
 Compare last two encrypt decrypt sessions
-Reproduce pause / stop buildSelection bug maybe?
-Reproduce open decryptable file (hangs sometimes)
-relocate arrows win & mac (embedded font?)
-Replace introduction with create / select key guidance
 
 =============================== Don't forget ================================
 
