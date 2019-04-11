@@ -1179,6 +1179,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    keyButton.setDisable(false);
 		    checkUpdateButton.setDisable(false);
+		    websiteButton.setDisable(false);
 		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
 		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
@@ -1457,7 +1458,8 @@ public class GUIFX extends Application implements UI, Initializable
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	
+	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
+
 //    public final String CLASS_VERSION = System.getProperty("java.class.version");
 
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";

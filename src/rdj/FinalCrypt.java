@@ -73,12 +73,15 @@ public class FinalCrypt extends Thread
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //											❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘ ✔ ⚛
 //											🡔 🡕 🡖 🡗 | 🡤 🡥 🡦 🡧 | 🡬 🡭 🡮 🡯 | 🡴 🡵 🡶 🡷 | 🡼 🡽 🡾 🡿 | 🢄 🢅 🢆 🢇 | ⬈ ⬉ ⬊ ⬋ | ⇖ ⇗ ⇘ ⇙ | ↖ ↗ ↘ ↙
+    public static final String WHEEL_OF_DHARMA_DESC =		    "Wheel of Dharma";
+    public static final String WHEEL_OF_DHARMA_SYMBOL =		    "☸";
+
     public static final String UTF8_ENCRYPT_SYMBOL =		    "🔒";
-    public static final String UTF8_XOR_NOMAC_SYMBOL =	    "🔀";
+    public static final String UTF8_XOR_NOMAC_SYMBOL =		    "🔀";
     public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "⚠";
 
     public static final String UTF8_ENCRYPT_DESC =		    "Encrypt";
-    public static final String UTF8_XOR_NOMAC_DESC =	    "XOR";
+    public static final String UTF8_XOR_NOMAC_DESC =		    "XOR";
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
 
     public static final String UTF8_DECRYPT_SYMBOL =		    "🔓";
