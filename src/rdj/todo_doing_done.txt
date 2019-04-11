@@ -1,7 +1,5 @@
 =================================== Todo ====================================
 
-Change FinalCrypt -> properties -> splash screen -> icon on Windows
-Progress animation
 
 =================================== Doing ===================================
 
