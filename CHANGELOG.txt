@@ -1,4 +1,5 @@
-4.1.1 Fixed bug causing crash when user clicked website-button during startup
+4.1.2 Fixed openwebsite crash-bug at startup. Fixed systemmonitor led meter location
+4.1.1 Fixed bug causing crash when user clicked website-button during early startup
 4.1.0 As requested: Voice Guidance & Sounds User Muted. Click the new icons in the user guidance display
 4.0.3 Hybrid audio system bypassing libc6 -> libdl.so.2 bug preventing unpredictable startup crashes on Linux.
 4.0.2 Avoiding crash bug in Linux libc6 -> libdl.so.2 by slight load delay first sound at startup (bug reported to Ubuntu / GNU Dev Team)

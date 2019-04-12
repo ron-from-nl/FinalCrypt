@@ -765,22 +765,15 @@ public class GUIFX extends Application implements UI, Initializable
 	
     }
     
-//    private void displaySystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double megaBytesPerSecondParam, String throughputString)
-    private void displaySystemMonitor(double userLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double throughputPercParam, String throughputString)
+    private void displaySystemMonitor(double usrLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double throughPercParam, String throughputString)
     {
-//	double megaBytesPerSecond = ((bytesPerMilliSecond) / 1024d);
 	Platform.runLater(() ->
 	{
 	    int width = 2; sysmon.setLineWidth(width);
 	    
-	    int userLoadPosX = sysmonOffSetX + 53;
-	    int memUsePosX = userLoadPosX + 55;
-	    int ioLoadPosX = memUsePosX + 55;
-	    
-//	    Precalculations
-
-//	    I/O
-//	    double throughputPerc = ((throughputPercParam) / (IO_THROUGHPUT_CEILING / 100)); if ( throughputPerc > 20) { throughputPerc = 20; }
+	    int userLdPosX = sysmonOffSetX + 50;
+	    int memUsePosX = userLdPosX + 25;
+	    int ioLoadPosX = memUsePosX + 32;
 
 	    String soundStatusString = "Sound is "; if (sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_ON_SYMBOL + " to Enable)"; }
 	    String voiceStatusString = "Voice is "; if (voice_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_ON_SYMBOL + " to Enable)"; }
@@ -792,17 +785,15 @@ public class GUIFX extends Application implements UI, Initializable
 	    sysMonString += soundStatusString + "\r\n";
 	    sysMonString += voiceStatusString;
 
-
 //	    Drawing
-	    sysmon.clearRect(userLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (userLoadPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(userLoadPosX, 20 - y, userLoadPosX, 20 - y + 0); }
+	    sysmon.clearRect(userLdPosX - 1, 0, width, 20);
+	    for (int y = 0; y < (usrLoadPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        y / 20d, 1.0d - ( y / 20d ), 0)); sysmon.strokeLine(userLdPosX, 20 - y, userLdPosX, 20 - y + 0); }
 	    	    	    
 	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
-	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(y/20d, 1.0d-(y/20d), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
+	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        y / 20d, 1.0d - ( y / 20d ), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
 
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (throughputPercParam/ 100) * 20; y+=4) { sysmon.setStroke(Color.color(1.0-(y/20d), 1.0d-(1.0-(y/20d)), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
-
+	    for (int y = 0; y < (throughPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(1.0 - ( y / 20d ), 1.0d - (1.0 - ( y / 20d )), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
 	    
 	    sysMonTooltip.setText(sysMonString);
 	});
@@ -3511,7 +3502,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 //  End Message Authentication Mode
 //  ==============================================================================================================
 
-    @Override public void test(String message) { log(message, true, true, false, false, false); }
+    @Override public void test(String message) { log(message, true, true, true, false, false); }
 
     @Override
     synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)

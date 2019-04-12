@@ -1,5 +1,5 @@
-[Version] =		{4.1.1}
-[Release Notes] =	{Fixed bug causing crash when user}
-[Release Message] =	{clicked website-button at startup}
+[Version] =		{4.1.2}
+[Release Notes] =	{Fixed openwebsite crash-bug at startup}
+[Release Message] =	{Fixed systemmonitor led meter location}
 [Alert Subject] =	{}
 [Alert Message] =	{}
