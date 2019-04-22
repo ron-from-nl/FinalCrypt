@@ -137,6 +137,7 @@ public class Validate
 	boolean readTargetSourceChannelError = false;
 	boolean keyAuthenticatedTargetSource =   false;
         ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); targetSrcMACBuffer.clear();
+        ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetPlainTextMACBuffer.clear();
         ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.clear();
         ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keySourceBuffer.clear();
         ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keyDecryptedMACBuffer.clear();
@@ -155,8 +156,11 @@ public class Validate
 	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Encrypted MAC Buffer
+	
+	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),								     0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetPlainTextMACBuffer.flip();
 	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.flip();
 	
+//	Read in Key
 	if (( ! readTargetSourceChannelError ) && ( ! Files.isDirectory(keySourcePath)) )
 	{
 	    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
@@ -174,7 +178,8 @@ public class Validate
 //	    ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
 	    
 	    // Authenticate Key MAC against Target MAC
-	    if ( keyDecryptedMACBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
+//	    if ( keyDecryptedMACBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
+	    if ( keyDecryptedMACBufferString.equals(StandardCharsets.UTF_8.decode(targetPlainTextMACBuffer).toString())) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
 	    
 	} else { keyAuthenticatedTargetSource = false; }
 	

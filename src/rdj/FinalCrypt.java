@@ -107,7 +107,7 @@ public class FinalCrypt extends Thread
     public static final String UTF8_PAUSE_DESC =		    "Pause";
     public static final String UTF8_STOP_DESC =			    "Stop";
 
-    public boolean disabledMAC = false; // Disable Message Authentication Mode DANGEROUS
+    public static boolean disabledMAC = false; // Disable Message Authentication Mode DANGEROUS
     
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
@@ -770,9 +770,9 @@ public class FinalCrypt extends Thread
     public static byte encryptByte(final byte targetSourceByte, byte keySourceByte)
     {
 	byte returnByte; // Final result to return
-//	byte keyXORByte;
-	
-        if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } // Inverting / negate key 0 bytes (none encryption not allowed)
+
+	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
+	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
 	if ( pwd.length() == 0 ) // No extra password encryption
 	{
@@ -780,9 +780,15 @@ public class FinalCrypt extends Thread
 	}
 	else
 	{
-	    byte keyXORByte = (byte)(targetSourceByte ^ keySourceByte);
-	    returnByte = (byte)(keyXORByte ^ (byte)pwd.charAt(pwdPos)); pwdPos++;
-	    if ( pwdPos == pwd.length() ) { pwdPos = 0; }
+//	    Old system
+	    byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte); // transitionalByte = databyte XOR keybyte
+	    returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos)); // returnByte = encryptByte XOR passByte
+	    pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
+
+//	    New System
+//	    byte transitionalByte = (byte)(keySourceByte ^ (byte)pwd.charAt(pwdPos)); // transitionalByte = keybyte XOR passwordbyte
+//	    returnByte = (byte)(targetSourceByte ^ (transitionalByte)); // returnByte = dataByte XOR transByte
+//	    pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
 	}
 	
 	return	returnByte;
@@ -795,8 +801,8 @@ public class FinalCrypt extends Thread
         int targetDestinIgnoreBits = 0;
         int targetDestinKeyBits = 0;
         int targetDestinMergedBits = 0; // Merged Ignored & Negated bits)
-	        
-        if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } // Inverting / negate key 0 bytes (none encryption not allowed)
+
+	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 //
 //	The following 4 line are the encrypting heart of FinalCrypt.
 //												    _______________________  _______________________   ________  ___________________________________________

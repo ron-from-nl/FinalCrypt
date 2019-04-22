@@ -292,7 +292,7 @@ public class CLUI implements UI
 	    totalTranfered = 0L;
 
 	    
-	    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) ) { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); System.exit(1); }
+	    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) ) { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); try{ Thread.sleep(3000); } catch (InterruptedException ex) {} System.exit(1); }
 	    else						    { log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false); }
 
 	    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }

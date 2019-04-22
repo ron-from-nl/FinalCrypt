@@ -787,17 +787,20 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    Drawing
 	    sysmon.clearRect(userLdPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (usrLoadPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        y / 20d, 1.0d - ( y / 20d ), 0)); sysmon.strokeLine(userLdPosX, 20 - y, userLdPosX, 20 - y + 0); }
+	    for (int y = 0; y < (usrLoadPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        getValidColor(y / 20d), getValidColor(1.0d - ( y / 20d )), 0)); sysmon.strokeLine(userLdPosX, 20 - y, userLdPosX, 20 - y + 0); }
 	    	    	    
 	    sysmon.clearRect(memUsePosX - 1, 0, width, 20);
-	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        y / 20d, 1.0d - ( y / 20d ), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
+	    for (int y = 0; y < (usedMemPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(        getValidColor(y / 20d), getValidColor(1.0d - ( y / 20d )), 0)); sysmon.strokeLine(memUsePosX, 20 - y, memUsePosX, 20 - y + 0); }
 
 	    sysmon.clearRect(ioLoadPosX - 1, 0, width, 20);
-	    for (int y = 0; y < (throughPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(1.0 - ( y / 20d ), 1.0d - (1.0 - ( y / 20d )), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
+	    for (int y = 0; y < (throughPercParam / 100) * 20; y += 4) { sysmon.setStroke(Color.color(getValidColor(1.0 - ( y / 20d )), getValidColor(1.0d - (1.0 - ( y / 20d ))), 0)); sysmon.strokeLine(ioLoadPosX, 20 - y, ioLoadPosX, 20 - y + 0); }
 	    
 	    sysMonTooltip.setText(sysMonString);
 	});
     }
+
+    private double getValidColor(double value) { if (value < 0.0) { return 0.0; } else if (value > 1.0) { return 1.0; } else return value; }
+
 
     @FXML  private void sysMonLabelOnMouseClicked(MouseEvent event)
     {

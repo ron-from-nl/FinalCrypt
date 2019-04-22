@@ -1,10 +1,10 @@
 Why FinalCrypt
 
-1. Most people choose Disk-Encryption. It's easier to unlock a whole drive, but Big-Brother or Malware can then also read all your files. Only use File-Encryption!
-2. Most software uses recently broken AES encryption.
-3. Soon The Shor's algorithm will instantly break all assymmetric encryption with Quantum Computers.
-4. FinalCrypt uses Symmetric One Time Pad Encryption, which is the most unbreakable encryption there is.
-5. FinalCrypt is the only "One Time Pad", OpenSource, Cross-Platform, (Bulk) File Encryption Software available.
+1. FinalCrypt uses (symmetric) One-Time-Pad File-Encryption, which is the most unbreakable encryption there is.
+2. Disk-Encryption doesn't protect against intruded virusses, spyware, malware or hackers. Only File-Encryption does.
+3. Most encryption software uses recently broken AES.
+4. The Shor's Algorithm will soon instantly break all assymmetric encryption with Quantum Computers.
+5. FinalCrypt is Free, Non-Profit, One-Time Pad File Encryption.
 
 Read more http://www.finalcrypt.org/
 

@@ -1,11 +1,14 @@
 =================================== Todo ====================================
 
+Compare last two encrypt decrypt sessions
+auto encrypt on exit getDesktop.open(..
 
 =================================== Doing ===================================
 
-Social Media Share buttons?
-auto encrypt on exit getDesktop.open(..
-Compare last two encrypt decrypt sessions
+Communicate about non MAC mode "0 non invert" change?
+Rearrange display icons and persistant disable animations
+Force Social Media Share on first exit after 1GB of encryption (white list)
+Multi MAC & New (pass over key) MAC Mode  (switch to plainttext header checking in file)
 
 =============================== Don't forget ================================
 
