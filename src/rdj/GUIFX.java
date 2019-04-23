@@ -232,6 +232,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     public final String SELECT_KEY =			"Select Key";
     private final String PASSWORD_ENTER =		"Password<Enter>";
+    private final String PASSWORD_OPTIONAL =		"Password (optional)";
+    private final String PASSWORD_SET =			"Password (set)";
     private final String SELECT_FILES =			"Select Files";
 
     private final String SCANNING_FILES =		"Scanning Files";
@@ -1900,8 +1902,8 @@ public class GUIFX extends Application implements UI, Initializable
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 //			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
 
-			if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText("Password (optional)"); } else { passwordHeaderLabel.setText("Password (set)"); }
-			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
+			if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
+			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 			keyImageView.setOpacity(0.8);
 
 			targetFileChooserPropertyCheck(true);
@@ -2175,8 +2177,8 @@ public class GUIFX extends Application implements UI, Initializable
 		// Scanning animation on main progressbar
 		Platform.runLater(() ->
 		{
-		    if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText("Password (optional)"); } else { passwordHeaderLabel.setText("Password (set)"); }
-		    pwdField.setDisable(true); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos();
+		    if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
+		    pwdField.setDisable(true); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 		    keyImageView.setOpacity(0.8);
 		    filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 		});
@@ -2627,7 +2629,16 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	processStarted();
 	
 //	finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwdField.getText(), false);
-	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwdField.getText(), false);
+	String pwd = pwdField.getText(); byte[] pwdBytes = new byte[0];
+	if (pwd.length() > 0)
+	{
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+	    messageDigest.update(pwd.getBytes());
+	    byte[] hashBytes = messageDigest.digest();
+	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+	}
+	else { pwd = ""; }
+	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwd, pwdBytes, false);
     }
 
     @FXML
@@ -2669,7 +2680,16 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	processStarted();
 	
 //	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
-	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwdField.getText(), open);
+	String pwd = pwdField.getText(); byte[] pwdBytes = new byte[0];
+	if (pwd.length() > 0)
+	{
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+	    messageDigest.update(pwd.getBytes());
+	    byte[] hashBytes = messageDigest.digest();
+	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+	}
+	else { pwd = ""; }
+	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwd, pwdBytes, open);
     }
 
     @FXML private void createKeyLabelOnMouseClicked(MouseEvent event)	{ play_MP3(MP3_SND_BUTTON); createOTPKeyFile(); }
@@ -2689,8 +2709,8 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    pwdField.setVisible(false);
 	    keyImageView.setOpacity(0.1);
 	    
-	    FinalCrypt.setPwd("");
-	    FinalCrypt.resetPwdPos();
+	    FinalCrypt.setPwd(""); FinalCrypt.setPwdBytes(new byte[0]);
+	    FinalCrypt.resetPwdPos(); FinalCrypt.resetPwdBytesPos();
 	});
 
 	Thread encryptThread = new Thread(new Runnable()
@@ -2919,7 +2939,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    decryptButton.setDisable(true);
 	    if ( keyFCPath.isValidKey )
 	    {
-		if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText("Password (optional)"); } else { passwordHeaderLabel.setText("Password (set)"); }
+		if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
 		pwdField.setDisable(false); /*pwdField.setVisible(true);*/ keyImageView.setOpacity(0.8);
 	    }
 	    pauseToggleButton.setDisable(true);
@@ -3532,14 +3552,14 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	if (event.getCode() == KeyCode.ENTER)
 	{
 	    play_MP3(MP3_SND_INPUT_OK);
-	    passwordHeaderLabel.setText("Password (set)");
+	    passwordHeaderLabel.setText(PASSWORD_SET);
 	    settingPassword = false;
 	    targetFileChooserPropertyCheck(true);
 	}
 	else
 	{
 	    finalCrypt.setPwd(pwdField.getText());
-	    finalCrypt.resetPwdPos();
+	    finalCrypt.resetPwdPos();finalCrypt.resetPwdBytesPos();
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
 	    if (!settingPassword) { userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0); }
 	    settingPassword = true;

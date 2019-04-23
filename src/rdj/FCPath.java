@@ -87,7 +87,7 @@ public class FCPath
 	
 	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
 //	this.hasFCToken = hasFCToken; this.isEncrypted = isEncrypted; this.isAuthenticated = isAuthenticated; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
-  	this.isEncrypted = isEncrypted; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
+  	this.isEncrypted = isEncrypted; this.macVersion = macVersion; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
     }
         
     public FCPath clone(FCPath fcPath) // Used by FCPathList.updateStat(FCPath oldFCPath, FCPath newFCPath) Basically does a proper deep clone

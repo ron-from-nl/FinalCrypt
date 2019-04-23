@@ -136,7 +136,7 @@ public class Validate
     
     synchronized public static boolean targetHasAuthenticatedMACToken(UI ui, Path targetSourcePath, Path keySourcePath, int macVersion) // Tested
     {
-	FinalCrypt.resetPwdPos();
+	if (macVersion == 1) { FinalCrypt.resetPwdPos(); } else { FinalCrypt.resetPwdBytesPos(); }
 	
 	boolean readTargetSourceChannelError = false;
 	boolean keyAuthenticatedTargetSource =   false;
@@ -186,8 +186,8 @@ public class Validate
 	    if ( keyDecryptedMACBufferString.equals(StandardCharsets.UTF_8.decode(targetPlainTextMACBuffer).toString())) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
 	    
 	} else { keyAuthenticatedTargetSource = false; }
-	
-	FinalCrypt.resetPwdPos();
+
+	if (macVersion == 1) { FinalCrypt.resetPwdPos(); } else { FinalCrypt.resetPwdBytesPos(); }
 	return keyAuthenticatedTargetSource;
     }
 
@@ -442,6 +442,7 @@ public class Validate
 	returnString += "\r\n";
 //	returnString += "Has FCToken:		" + fcPath.hasFCToken + "\r\n";
 	returnString += "Encrypted:		" + fcPath.isEncrypted + "\r\n";
+	returnString += "MAC Version:		" + fcPath.macVersion + "\r\n";
 //	returnString += "Authenticated:		" + fcPath.isAuthenticated + "\r\n";
 	returnString += "Decryptable:		" + fcPath.isDecryptable + "\r\n";
 	returnString += "New Decrypted:		" + fcPath.isNewDecrypted + "\r\n";

@@ -140,6 +140,13 @@ public class GPT
 //    Replaced hex2Bytes(String string) because deprecated from java9 up
 //    synchronized public static byte[] hex2Bytes(String string) { byte[] bytes = DatatypeConverter.parseHexBinary(string.replaceAll("[^A-Za-z0-9]","")); return bytes; }
     
+    public static byte hex2Byte(String string)
+    {
+	string = string.replaceAll("[^A-Za-z0-9]","");
+	byte myByte = (byte)((Character.digit(string.charAt(0), 16) << 4)& 0xFF + (Character.digit(string.charAt(1), 16))& 0xFF);
+	return myByte;
+    }
+    
     public static byte[] hex2Bytes(String string)
     {
 	string = string.replaceAll("[^A-Za-z0-9]",""); byte[] data = new byte[string.length() / 2];

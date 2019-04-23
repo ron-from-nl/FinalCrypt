@@ -91,6 +91,7 @@ public class CLUI implements UI
     private ReaderThread readerThread;
     
     private String pwd =		"";
+    private byte[] pwdBytes;
     private boolean pwdPromptNeeded =	false;
     private boolean pwdIsSet =		false;
     
@@ -123,6 +124,7 @@ public class CLUI implements UI
         finalCrypt = new FinalCrypt(this);
         finalCrypt.start();
         finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+	pwdBytes = new byte[0];
         
 ////      SwingWorker version of FinalCrype
 //        finalCrypt.execute();
@@ -141,7 +143,13 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disabledMAC = true; FCPath.KEY_SIZE_MIN = 1; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
-            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--password") ))                     { pwd = args[paramCnt+1]; pwdIsSet = true; paramCnt++; }
+            else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--password") ))                     {
+															MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+															messageDigest.update(pwd.getBytes());
+															byte[] hashBytes = messageDigest.digest();
+															pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+															pwd = args[paramCnt+1]; pwdIsSet = true; paramCnt++;
+														    }
             else if (( args[paramCnt].equals("-pp")) || ( args[paramCnt].equals("--password-prompt") ))             { pwdPromptNeeded = true; }
 
 	    else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createkeydev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createkeydev = true; kfsetneeded = true; tfsetneeded = true; } }
@@ -277,7 +285,16 @@ public class CLUI implements UI
 	    consoleEraser.halt();
 	}
 
-	if ( pwdIsSet ) { FinalCrypt.setPwd(pwd); }
+	if ( pwdIsSet )
+	{
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+	    messageDigest.update(pwd.getBytes());
+	    byte[] hashBytes = messageDigest.digest();
+	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+
+	    FinalCrypt.setPwd(pwd);
+	    FinalCrypt.setPwdBytes(pwdBytes);
+	}
 
 //	====================================================================================================================
 //	 Start writing OTP key file
@@ -503,8 +520,8 @@ public class CLUI implements UI
 			}
 		    }
 		});
-		processStarted(); 
-		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd, false);
+		processStarted();
+		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd, pwdBytes, false);
 //		catch (InterruptedException ex){ log("Encryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
 	    }
 	    else			{ log("No encryptable targets found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
@@ -532,7 +549,7 @@ public class CLUI implements UI
 			}
 		    });
 		    processStarted();
-		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd, false);
+		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd, pwdBytes, false);
 //		    catch (InterruptedException ex) { log("Decryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
 		}
 		else			

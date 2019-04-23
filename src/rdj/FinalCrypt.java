@@ -112,7 +112,11 @@ public class FinalCrypt extends Thread
     
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
-    public static final String HASH_ALGORITHM_NAME =			    "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
+    
+    private static byte[] pwdBytes; // abc = 012
+    private static int pwdBytesPos = 0;
+    
+    public static final String HASH_ALGORITHM_NAME =		    "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
     private static String printString;
 
     public static final double IO_THROUGHPUT_CEILING_DEFAULT =	    10d; // (MiB/S) Dynamic 100% ceiling
@@ -177,13 +181,23 @@ public class FinalCrypt extends Thread
 	    , FCPath keySourceFCPath
 	    , boolean encryptmode
 	    , String pwdParam
+	    , byte[] pwdBytesParam
 	    , boolean open // Opens targets after finishing
     )// throws InterruptedException
     {
 	io_Throughput_Ceiling = IO_THROUGHPUT_CEILING_DEFAULT;
 	
-	if (pwdParam.length() > 0) { pwd = pwdParam; } else { pwd = ""; }
-
+	if (pwdParam.length() > 0)
+	{
+	    pwd = pwdParam;
+	    pwdBytes = pwdBytesParam;
+	}
+	else
+	{
+	    pwd = "";
+	    pwdBytes = new byte[0];
+	}
+	
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 
 	if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
@@ -254,8 +268,9 @@ public class FinalCrypt extends Thread
         // Encrypt Files loop
 	
 	encryptTargetloop: for (Iterator it = filteredTargetSourceFCPathList.iterator(); it.hasNext();)
-	{
+	{	    
 	    pwdPos = 0;
+	    pwdBytesPos = 0;
 	    totalBytesProcessed = 0;
 	    MessageDigest srcMessageDigest = null; try { srcMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
 	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
@@ -393,6 +408,7 @@ public class FinalCrypt extends Thread
 //			Encryptor I/O Block
 
 		pwdPos = 0;
+		pwdBytesPos = 0;
 
 		ByteBuffer targetSourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); targetSourceBuffer.clear();
 		ByteBuffer keySourceBuffer = ByteBuffer.allocate(readTargetSourceBufferSize); keySourceBuffer.clear();
@@ -770,7 +786,7 @@ public class FinalCrypt extends Thread
     
     public static byte encryptByte(final byte targetSourceByte, byte keySourceByte, int macVersion)
     {
-	byte returnByte; // Final result to return
+	byte returnByte = 0; // Final result to return
 
 	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
 	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
@@ -783,16 +799,19 @@ public class FinalCrypt extends Thread
 	{
 	    if (macVersion == 1) // Decrypt MAC_V1 // Pass morphs encrypted data
 	    {
-		byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte); // transitionalByte =	    databyte		XOR keybyte
-		returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos)); // returnByte =	    transitionalByte	XOR passByte
+		byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte);	    // transitionalByte =	    databyte	XOR keybyte
+		returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos));	    // returnByte =	    transitionalByte	XOR passByte
 		pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
-		
 	    }
 	    else // Encrypt MAC_V2 / Decrypt MAC_V2 // Pass morphs key
 	    {
-		byte transitionalByte = (byte)(keySourceByte ^ (byte)pwd.charAt(pwdPos)); // transitionalByte = keybyte	    XOR passwordbyte
-		returnByte = (byte)(targetSourceByte ^ (transitionalByte));		  // returnByte =	dataByte    XOR transitionalByte
-		pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
+//		String hex = String.valueOf(pwdSum.charAt(pwdSumPos)) + String.valueOf(pwdSum.charAt(pwdSumPos + 1));
+//		byte sumByte = GPT.hex2Byte(pwdSum.substring(pwdSumPos, pwdSumPos + 2));
+
+		byte transitionalByte = (byte)(keySourceByte ^ pwdBytes[pwdBytesPos]);		    // transitionalByte =	keybyte		XOR sumByte
+//		byte transitionalByte = (byte)(keySourceByte ^ sumByte);		    // transitionalByte =	keybyte		XOR sumByte
+		returnByte = (byte)(targetSourceByte ^ (transitionalByte));		    // returnByte =		dataByte	XOR transitionalByte
+		pwdBytesPos++; if ( pwdBytesPos >= pwdBytes.length ) { pwdBytesPos = 0; }
 	    }
 	}
 	
@@ -873,18 +892,20 @@ public class FinalCrypt extends Thread
     }
     
 
-    private static String getBinaryString(Byte myByte) { return String.format("%8s", Integer.toBinaryString(myByte & 0xFF)).replace(' ', '0'); }
-    private static String getDecString(Byte myByte) { return String.format("%3d", (myByte & 0xFF)).replace(" ", "0"); }
-    private static String getHexString(Byte myByte, String digits) { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
-    private static String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
+    private static String getBinaryString(Byte myByte)		    { return String.format("%8s", Integer.toBinaryString(myByte & 0xFF)).replace(' ', '0'); }
+    private static String getDecString(Byte myByte)		    { return String.format("%3d", (myByte & 0xFF)).replace(" ", "0"); }
+    private static String getHexString(Byte myByte, String digits)  { return String.format("%0" + digits + "X", (myByte & 0xFF)); }
+    private static String getChar(Byte myByte)			    { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
-    public boolean getPausing()             { return pausing; }
-    public boolean getStopPending()         { return stopPending; }
-    public void setPausing(boolean val)     { pausing = val; if (pausing) {filesBytesPerMilliSecond = 0;}}
-    public void setStopPending(boolean val) { stopPending = val; }
+    public boolean getPausing()					    { return pausing; }
+    public boolean getStopPending()				    { return stopPending; }
+    public void setPausing(boolean val)				    { pausing = val; if (pausing) {filesBytesPerMilliSecond = 0;}}
+    public void setStopPending(boolean val)			    { stopPending = val; }
     
-    public static void setPwd(String pwdParam)	    { pwd = pwdParam; }
-    public static void resetPwdPos()		    { pwdPos = 0; }
+    public static void setPwd(String pwdParam)			    { pwd = pwdParam; }
+    public static void setPwdBytes(byte[] pwdBytesParam)	    { pwdBytes = pwdBytesParam; }
+    public static void resetPwdPos()				    { pwdPos = 0; }
+    public static void resetPwdBytesPos()			    { pwdBytesPos = 0; }
 
     private static void logByteBuffer(String preFix, ByteBuffer byteBuffer)
     {
