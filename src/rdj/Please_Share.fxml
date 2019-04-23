@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="210.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Please_Share">
+   <children>
+      <StackPane prefHeight="338.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="202.0" prefWidth="600.0">
+               <children>
+                  <Pane prefHeight="338.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="600.0" style="-fx-background-color: #000000;" text="Please help us share ONE time" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                           <effect>
+                              <Glow level="1.0" />
+                           </effect>
+                        </Label>
+                        <Label alignment="CENTER" layoutY="70.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" text="We don't want your money - FinalCrypt remains free of charge" textAlignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutY="100.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" text="We only ask 1 mouse-click helping us spreading good software" textAlignment="CENTER">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutY="180.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" text="Help share on social media and we won't ask you again" textAlignment="CENTER" textFill="#727272">
+                           <font>
+                              <Font name="System Italic" size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER" layoutY="126.0" maxHeight="55.0" maxWidth="600.0" minHeight="55.0" minWidth="600.0" prefHeight="55.0" prefWidth="600.0">
+                           <children>
+                              <ImageView fx:id="facebookImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#facebookImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/facebook.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                                 <effect>
+                                    <Reflection topOpacity="0.2" />
+                                 </effect>
+                              </ImageView>
+                              <ImageView fx:id="twitterImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#twitterImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/twitter.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                                 <effect>
+                                    <Reflection topOpacity="0.2" />
+                                 </effect>
+                              </ImageView>
+                              <ImageView fx:id="linkedInImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#linkedInImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/linkedin.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                                 <effect>
+                                    <Reflection topOpacity="0.2" />
+                                 </effect>
+                              </ImageView>
+                              <ImageView fx:id="pinterestImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#pinterestImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/pinterest.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                                 <effect>
+                                    <Reflection topOpacity="0.2" />
+                                 </effect>
+                              </ImageView>
+                              <ImageView fx:id="instagramImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#instagramImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/instagram.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                                 <effect>
+                                    <Reflection topOpacity="0.2" />
+                                 </effect>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                  </Pane>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>
