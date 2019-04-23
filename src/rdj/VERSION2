@@ -1,5 +1,5 @@
-[Version] =		{4.1.2}
-[Release Notes] =	{Fixed openwebsite crash-bug at startup}
-[Release Message] =	{Fixed systemmonitor led meter location}
+[Version] =		{4.2.0}
+[Release Notes] =	{Security key-password encryption hardened with MAC_V2}
+[Release Message] =	{Please decrypt & encrypt all password encrypted files}
 [Alert Subject] =	{}
 [Alert Message] =	{}
