@@ -8,7 +8,7 @@ auto encrypt on exit getDesktop.open(..
 Communicate about non MAC mode "0 non invert" change?
 Rearrange display icons and persistant disable animations
 Force Social Media Share on first exit after 1GB of encryption (white list)
-Multi MAC & New (pass over key) MAC Mode  (switch to plainttext header checking in file)
+Multi MAC & New (pass over key) MAC Mode
 
 =============================== Don't forget ================================
 
