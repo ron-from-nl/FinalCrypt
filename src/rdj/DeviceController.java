@@ -226,7 +226,7 @@ public class DeviceController
 //          Randomize raw key or write raw key straight to partition
 	    SecureRandom random = new SecureRandom();
 //	    if (encryptkey)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = encryptBuffer(keyFileBuffer, randomizedBuffer); }
-	    if (encryptkey)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = FinalCrypt.encryptBuffer(keyFileBuffer, randomizedBuffer, false); }
+	    if (encryptkey)	{ random.nextBytes(randomizedBytes); randomizedBuffer.put(randomizedBytes); randomizedBuffer.flip();outputDeviceBuffer = FinalCrypt.encryptBuffer(keyFileBuffer, randomizedBuffer, 0, false); }
 	    else		{ outputDeviceBuffer.put(keyFileBuffer); outputDeviceBuffer.flip(); }
             
 //          Write Device

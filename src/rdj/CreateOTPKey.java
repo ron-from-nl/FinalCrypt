@@ -424,7 +424,7 @@ public class CreateOTPKey extends Application implements Initializable
 		random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
 		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
 
-		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, false); // Encrypt
+		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, 0, false); // Encrypt
 
     //          Write Device
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))

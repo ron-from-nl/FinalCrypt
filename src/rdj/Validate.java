@@ -103,12 +103,13 @@ public class Validate
 //			🔓!  Decrypt Legacy  (Key can't be checked! No Token present in old format)
 //			⛔   Decrypt Abort   (Key Failed)
 
-    synchronized public static boolean targetSourceHasMAC(UI ui, Path targetSourcePath) // Tested
+    synchronized public static int targetSourceHasMAC(UI ui, Path targetSourcePath) // Tested
     {
 	boolean targetSourceHasMAC = false;
+	int macVersion = 0;
 	
-        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); plainTextMACBuffer.clear();
-        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); encryptedMACBuffer.clear();
+        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); plainTextMACBuffer.clear();
+        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); encryptedMACBuffer.clear();
 	
 	long readTargetSourceChannelTransfered = 0;
 	
@@ -117,7 +118,7 @@ public class Validate
 	{
 	    // Fill up inputFileBuffer
 	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextMACBuffer); plainTextMACBuffer.flip();
-	    if ( readTargetSourceChannelTransfered != plainTextMACBuffer.capacity() ) { return false; }
+	    if ( readTargetSourceChannelTransfered != plainTextMACBuffer.capacity() ) { return 0; }
 	    readTargetSourceChannel.close(); 
 	} catch (IOException ex) { ui.log("Error: targetSourceHasMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
@@ -125,25 +126,28 @@ public class Validate
 	String plainTextMACString = new String(plainTextMACBuffer.array(), StandardCharsets.UTF_8);
 //	ui.status("targetSourceHasMAC plainTextMACString: " +plainTextMACString + "\r\n", true);
 
-	if ( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE) ) { targetSourceHasMAC = true; }
+	if	( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V1) )	{ macVersion = 1; targetSourceHasMAC = true; }
+	else if ( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2) )	{ macVersion = 2; targetSourceHasMAC = true; }
+	else													{ macVersion = 0; targetSourceHasMAC = false; }
 
-	return targetSourceHasMAC;
+//	return targetSourceHasMAC;
+	return macVersion;
     }
     
-    synchronized public static boolean targetHasAuthenticatedMACToken(UI ui, Path targetSourcePath, Path keySourcePath) // Tested
+    synchronized public static boolean targetHasAuthenticatedMACToken(UI ui, Path targetSourcePath, Path keySourcePath, int macVersion) // Tested
     {
 	FinalCrypt.resetPwdPos();
 	
 	boolean readTargetSourceChannelError = false;
 	boolean keyAuthenticatedTargetSource =   false;
-        ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length() * 2); targetSrcMACBuffer.clear();
-        ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetPlainTextMACBuffer.clear();
-        ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.clear();
-        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keySourceBuffer.clear();
-        ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); keyDecryptedMACBuffer.clear();
+        ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); targetSrcMACBuffer.clear();
+        ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.clear();
+        ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.clear();
+        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); keySourceBuffer.clear();
+        ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); keyDecryptedMACBuffer.clear();
 	
-	long readTargetSourceChannelPosition = 0;	long readTargetSourceChannelTransfered = 0;
-	long readKeySourceChannelPosition = 0;	long readKeySourceChannelTransfered = 0;                
+	long readTargetSourceChannelPosition = 0;   long readTargetSourceChannelTransfered = 0;
+	long readKeySourceChannelPosition = 0;	    long readKeySourceChannelTransfered = 0;                
 	
 	// Create Target Source MAC Buffer
 	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
@@ -157,8 +161,8 @@ public class Validate
 	
 	// Encrypted MAC Buffer
 	
-	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),								     0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetPlainTextMACBuffer.flip();
-	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE.length()); targetEncryptedMACBuffer.flip();
+	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),									0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.flip();
+	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.flip();
 	
 //	Read in Key
 	if (( ! readTargetSourceChannelError ) && ( ! Files.isDirectory(keySourcePath)) )
@@ -173,7 +177,7 @@ public class Validate
 	    } catch (IOException ex) { ui.log("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    
 	    // Create Encrypted Token Buffer
-	    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, false);
+	    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, macVersion, false);
 	    String keyDecryptedMACBufferString = new String(keyDecryptedMACBuffer.array(), StandardCharsets.UTF_8);
 //	    ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
 	    
@@ -305,6 +309,7 @@ public class Validate
 	
 //	boolean hasFCToken =		    false;
 	boolean isEncrypted =		    false;
+	int	macVersion =		    0;
 //	boolean isAuthenticated =	    false;
 	boolean isDecryptable =		    false;
 	boolean isNewDecrypted =	    false;	
@@ -361,8 +366,10 @@ public class Validate
 	    
 	    if (( isValidFile ))
 	    {
-		isEncrypted = targetSourceHasMAC(ui, path);
-		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath); } // Encrypted files must by MAC_SIZE at least
+		macVersion = targetSourceHasMAC(ui, path);
+		if ( macVersion == 0 ) { isEncrypted = false; } else { isEncrypted = true; }
+		
+		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath, macVersion); } // Encrypted files must by MAC_SIZE at least
 	    }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
@@ -402,8 +409,8 @@ public class Validate
 
 // Return FCPath =============================================================================================================================================================================================
 
-//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
-	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isKey,         isValidKey,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,         isDecryptable,	 isNewDecrypted,         isUnDecryptable);
+//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
+	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isKey,         isValidKey,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,    macVersion,     isDecryptable,	 isNewDecrypted,         isUnDecryptable);
 	return fcPath;
     }
 
