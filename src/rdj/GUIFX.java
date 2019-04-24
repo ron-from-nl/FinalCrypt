@@ -1923,7 +1923,7 @@ public class GUIFX extends Application implements UI, Initializable
 //			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
 
 			if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 			keyImageView.setOpacity(0.8);
 
 			targetFileChooserPropertyCheck(true);
@@ -2198,7 +2198,7 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-		    pwdField.setDisable(true); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    pwdField.setDisable(true); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 		    keyImageView.setOpacity(0.8);
 		    filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 		});
@@ -2729,8 +2729,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    pwdField.setVisible(false);
 	    keyImageView.setOpacity(0.1);
 	    
-	    FinalCrypt.setPwd(""); FinalCrypt.setPwdBytes(new byte[0]);
-	    FinalCrypt.resetPwdPos(); FinalCrypt.resetPwdBytesPos();
+	    finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	});
 
 	Thread encryptThread = new Thread(new Runnable()
@@ -3604,8 +3603,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	}
 	else
 	{
-	    finalCrypt.setPwd(pwdField.getText());
-	    finalCrypt.resetPwdPos();finalCrypt.resetPwdBytesPos();
+	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos();finalCrypt.resetPwdBytesPos();
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
 	    if (!settingPassword) { userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0); }
 	    settingPassword = true;

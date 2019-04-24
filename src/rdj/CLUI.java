@@ -292,8 +292,8 @@ public class CLUI implements UI
 	    byte[] hashBytes = messageDigest.digest();
 	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
 
-	    FinalCrypt.setPwd(pwd);
-	    FinalCrypt.setPwdBytes(pwdBytes);
+	    finalCrypt.setPwd(pwd);
+	    finalCrypt.setPwdBytes(pwd);
 	}
 
 //	====================================================================================================================

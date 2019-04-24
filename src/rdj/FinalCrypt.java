@@ -902,8 +902,23 @@ public class FinalCrypt extends Thread
     public void setPausing(boolean val)				    { pausing = val; if (pausing) {filesBytesPerMilliSecond = 0;}}
     public void setStopPending(boolean val)			    { stopPending = val; }
     
-    public static void setPwd(String pwdParam)			    { pwd = pwdParam; }
-    public static void setPwdBytes(byte[] pwdBytesParam)	    { pwdBytes = pwdBytesParam; }
+    public void setPwd(String pwdParam)				    { pwd = pwdParam; }
+//    public static void setPwdBytes(byte[] pwdBytesParam)
+    public void setPwdBytes(String pwdBytesParam)
+    {
+	if ( pwdBytesParam.isEmpty() )
+	{
+	    pwdBytes = new byte[0];
+	}
+	else
+	{
+	    MessageDigest messageDigest = null;
+	    try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+	    messageDigest.update(pwd.getBytes());
+	    byte[] hashBytes = messageDigest.digest();
+	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+	}
+    }
     public static void resetPwdPos()				    { pwdPos = 0; }
     public static void resetPwdBytesPos()			    { pwdBytesPos = 0; }
 
