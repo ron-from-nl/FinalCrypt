@@ -510,8 +510,7 @@ public class CreateOTPKey extends Application implements Initializable
         launch(args);
     }
 
-    @FXML
-    private void complianceLabelOnMouseClicked(MouseEvent event)
+    @FXML private void complianceLabelOnMouseClicked(MouseEvent event)
     {
 	play_MP3(MP3_SND_BUTTON);
 	play_MP3(MP3_SND_OPEN);

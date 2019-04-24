@@ -714,7 +714,7 @@
                                        <children>
                                           <StackPane maxHeight="135.0" minHeight="135.0" prefHeight="135.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" maxHeight="135.0" minHeight="135.0" opacity="0.05" prefHeight="135.0" prefWidth="580.0" styleClass="userguide" text="FinalCrypt" textAlignment="CENTER" StackPane.alignment="CENTER">
+                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" maxHeight="135.0" minHeight="135.0" onMouseClicked="#userGuidanceLabelOnMouseClicked" opacity="0.5" prefHeight="135.0" prefWidth="580.0" text="FinalCrypt" textAlignment="CENTER" StackPane.alignment="CENTER">
                                                    <font>
                                                       <Font size="64.0" />
                                                    </font>
@@ -722,7 +722,7 @@
                                                       <RadialGradient centerX="0.5" centerY="0.5" focusAngle="156.8" radius="0.5476190476190477">
                                                          <stops>
                                                             <Stop color="#f5f4f4" />
-                                                            <Stop color="#b54103fa" offset="1.0" />
+                                                            <Stop color="#8a6b5bfa" offset="1.0" />
                                                          </stops>
                                                       </RadialGradient>
                                                    </textFill>
@@ -854,7 +854,7 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="6">
                                        <children>
-                                          <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutY="-6.0" minHeight="40.0" mnemonicParsing="false" onAction="#openWebsiteAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Website" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="websiteButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-3.0" minHeight="40.0" mnemonicParsing="false" onAction="#websiteButtonOnAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Web / Share" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="7">

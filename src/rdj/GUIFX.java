@@ -253,9 +253,10 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOAD_MONITOR_MS_INTERVAL =	250d;
     private final double LOAD_MANAGER_MS_INTERVAL =	250d;
     private final double ARROWS_OPACITY_MAX =		0.7d;
-    private final double LOADHIGH_THRESHOLD =		0.95d; // 0.0 - 1.0
+    private final double LOADHIGH_THRESHOLD =		0.90d; // 0.0 - 1.0
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
+    private boolean	 animated =			true;
     
     private final String OS_NAME =			System.getProperty("os.name");
     private final String OS_ARCH =			System.getProperty("os.arch");
@@ -267,6 +268,7 @@ public class GUIFX extends Application implements UI, Initializable
     protected  boolean sound_Is_Enabled =		true;
     protected  boolean voice_Is_Enabled =		true;
     
+    private final String ANIMATED_SYMBOL =		"📽";
     private final String SOUND_ON_SYMBOL =		"🔊";
     private final String SOUND_OFF_SYMBOL =		"🔇";
     private final String CPU_SYMBOL =			"🖳";
@@ -481,7 +483,9 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean keySourceChecksumReadEnded;
     private boolean keySourceChecksumReadCanceled;
     private Stage createOTPKeyStage;
+    private Stage pleaseShareStage;
     private CreateOTPKey createOTPKey;
+    private Please_Share pleaseShare;
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private long now;
     private boolean isCalculatingCheckSum;
@@ -523,9 +527,8 @@ public class GUIFX extends Application implements UI, Initializable
     private AudioInputStream audioInVoice;
     private Clip clipSounds;
     private Clip clipVoice;
-    @FXML
-    private Label sysMonLabel;
-    
+    @FXML   private Label sysMonLabel;
+
     @Override
     public void start(Stage stage) throws Exception
     {
@@ -561,6 +564,14 @@ public class GUIFX extends Application implements UI, Initializable
 //		    ||	((clipVoice != null) && (clipVoice.isActive()))
 		    )
 	    { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+	    	    
+//	    Shared
+	    String val = prefs.get("Shared", "Unknown");
+	    if (val.equals("Unknown"))		{ prefs.put("Shared", "No"); pleaseShare(); }
+	    else if (val.equals("No"))		{ pleaseShare(); }
+	    else if (val.equals("Yes"))		{  }
+	    else				{ prefs.put("Shared", "No"); pleaseShare(); }
+	    
 //	    Platform.runLater(() ->
 //	    {
 //	    });
@@ -1022,12 +1033,12 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    WORKLOAD MANAGER
 //	    ==================================================================================================================================================================	    
-	    if ( load_Manager_MS_Passed >= LOAD_MANAGER_MS_INTERVAL )
+	    if ((! animated) || ( load_Manager_MS_Passed >= LOAD_MANAGER_MS_INTERVAL ))
 	    {
-		if (userLoadPerc >= LOADHIGH_THRESHOLD) // High load detected
+		if ((! animated) || (userLoadPerc >= LOADHIGH_THRESHOLD)) // High load detected
 		{
 		    load_High_MS_Passed += load_Manager_MS_Passed; load_Low_MS_Passed = 0.0d; // High load period register
-		    if ( (textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (load_High_MS_Passed >= LOAD_HIGH_MS_TIMEOUT) ) // High Load period exceeded
+		    if ( (! animated) || ((textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (load_High_MS_Passed >= LOAD_HIGH_MS_TIMEOUT)) ) // High Load period exceeded
 		    {
 			textLabelTimeline.pause();
 			
@@ -1202,18 +1213,27 @@ public class GUIFX extends Application implements UI, Initializable
 		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 	    });
 	    parallelTransition.play();
-	    
-	    String val = prefs.get("Sound", "Unknown");
-	    if (val.equals("Unknown")) { setSound(true); prefs.put("Sound", "Enabled"); }
-	    else if (val.equals("Enabled")) { setSound(true); }
-	    else if (val.equals("Disabled")) { setSound(false); }
-	    else { prefs.put("Sound", "Enabled"); setSound(true); }
 
+//	    Sound
+	    String val = prefs.get("Sound", "Unknown");
+	    if (val.equals("Unknown"))		{ setSound(true); prefs.put("Sound", "Enabled"); }
+	    else if (val.equals("Enabled"))	{ setSound(true); }
+	    else if (val.equals("Disabled"))	{ setSound(false); }
+	    else				{ prefs.put("Sound", "Enabled"); setSound(true); }
+
+//	    Voice
 	    val = prefs.get("Voice", "Unknown");
-	    if (val.equals("Unknown")) { setVoice(true); prefs.put("Voice", "Enabled"); }
-	    else if (val.equals("Enabled")) { setVoice(true); }
-	    else if (val.equals("Disabled")) { setVoice(false); }
-	    else { prefs.put("Sound", "Enabled"); setVoice(true); }
+	    if (val.equals("Unknown"))		{ setVoice(true); prefs.put("Voice", "Enabled"); }
+	    else if (val.equals("Enabled"))	{ setVoice(true); }
+	    else if (val.equals("Disabled"))	{ setVoice(false); }
+	    else				{ prefs.put("Sound", "Enabled"); setVoice(true); }
+	    
+//	    Animated
+	    val = prefs.get("Animated", "Unknown");
+	    if (val.equals("Unknown"))		{  prefs.put("Animated", "Enabled"); animated = true; }
+	    else if (val.equals("Enabled"))	{  animated = true;}
+	    else if (val.equals("Disabled"))	{  animated = false; }
+	    else				{ prefs.put("Animated", "Enabled"); animated = true; }
 	    
 	    play_WAV(WAV_SND_STARTUP);
 	});
@@ -2758,6 +2778,33 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
         encryptThread.start();
     }
     
+    synchronized private void pleaseShare()
+    {
+        // Needs Threading to early split off from the UI Event Dispatch Thread
+        final GUIFX guifx = this;
+        final UI ui = this;
+
+	Thread pleaseShareThread = new Thread(new Runnable()
+        {
+            @Override
+            @SuppressWarnings({"static-access"})
+            public void run()
+            {
+		Platform.runLater(() ->
+		{
+		    play_MP3(MP3_SND_OPEN); 
+		    pleaseShareStage = new Stage();
+		    pleaseShare = new Please_Share();
+		    try { pleaseShare.start(pleaseShareStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+		    pleaseShare.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		});
+            }
+        });
+        pleaseShareThread.setName("pleaseShareThread");
+        pleaseShareThread.setDaemon(true);
+        pleaseShareThread.start();
+    }
+    
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
 //    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
 
@@ -3370,14 +3417,13 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	else { play_MP3(MP3_SND_INPUT_FAIL); }
     }
 
-    @FXML
-    private void openWebsiteAction(ActionEvent event)
+    @FXML private void websiteButtonOnAction(ActionEvent event)
     {
 	play_MP3(MP3_SND_BUTTON);
 	play_MP3(MP3_SND_OPEN);
-	Version.openWebSite(this);
-    }    
-
+	pleaseShare();
+//	Version.openWebSite(this);
+    }
 
     private void setAttribute(FCPath fcPath, boolean read, boolean write)
     {
@@ -3569,4 +3615,11 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     }
     
     @FXML  private void pwdFieldOnMouseClicked(MouseEvent event) { play_MP3(MP3_SND_SELECT); }
+
+    @FXML  private void userGuidanceLabelOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_BUTTON);
+	animated = ! animated;
+	if (animated) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
+    }
 }

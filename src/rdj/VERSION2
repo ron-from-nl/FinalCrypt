@@ -1,5 +1,5 @@
 [Version] =		{4.2.0}
-[Release Notes] =	{Security key-password encryption hardened with MAC_V2}
-[Release Message] =	{Please decrypt & encrypt all password encrypted files}
+[Release Notes] =	{Increased security Password / Key Encryption}
+[Release Message] =	{Please Decrypt & Encrypt files after install}
 [Alert Subject] =	{}
 [Alert Message] =	{}

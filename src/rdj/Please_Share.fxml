@@ -38,7 +38,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" layoutY="180.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" text="Help share on social media and we won't ask you again" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="180.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="600.0" text="Help share on social media and we won't ask you again" textAlignment="CENTER" textFill="#727272">
                            <font>
                               <Font name="System Italic" size="14.0" />
                            </font>
@@ -89,16 +89,13 @@
                                     <Reflection topOpacity="0.2" />
                                  </effect>
                               </ImageView>
-                              <ImageView fx:id="instagramImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#instagramImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/instagram.png" />
-                                 </image>
-                                 <HBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                 </HBox.margin>
+                              <ImageView fx:id="finalcryptImageView" fitHeight="42.0" fitWidth="120.0" onMouseClicked="#finalcryptImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
                                  <effect>
                                     <Reflection topOpacity="0.2" />
                                  </effect>
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt/src/rdj/images/finalcrypt.png" />
+                                 </image>
                               </ImageView>
                            </children>
                         </HBox>
