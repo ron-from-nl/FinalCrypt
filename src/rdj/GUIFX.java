@@ -256,7 +256,7 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOADHIGH_THRESHOLD =		0.90d; // 0.0 - 1.0
     private final double LOAD_HIGH_MS_TIMEOUT =		1000.0d;
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
-    private boolean	 animated =			true;
+    private boolean	 animation_Is_Enabled =		true;
     
     private final String OS_NAME =			System.getProperty("os.name");
     private final String OS_ARCH =			System.getProperty("os.arch");
@@ -790,13 +790,15 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    String soundStatusString = "Sound is "; if (sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_ON_SYMBOL + " to Enable)"; }
 	    String voiceStatusString = "Voice is "; if (voice_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_ON_SYMBOL + " to Enable)"; }
+	    String animationStatusString = "Animation is "; if (animation_Is_Enabled) { animationStatusString += "Enabled (Click display to Disable)"; } else { animationStatusString += "Disabled (Click display to Enable)"; }
 
 	    String sysMonString = "";
 	    sysMonString += userLoadString + "\r\n";
 	    sysMonString += usedMemString + "\r\n";
 	    sysMonString += throughputString + "\r\n\r\n";
 	    sysMonString += soundStatusString + "\r\n";
-	    sysMonString += voiceStatusString;
+	    sysMonString += voiceStatusString + "\r\n";
+	    sysMonString += animationStatusString;
 
 //	    Drawing
 	    sysmon.clearRect(userLdPosX - 1, 0, width, 20);
@@ -1033,12 +1035,12 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    WORKLOAD MANAGER
 //	    ==================================================================================================================================================================	    
-	    if ((! animated) || ( load_Manager_MS_Passed >= LOAD_MANAGER_MS_INTERVAL ))
+	    if ((! animation_Is_Enabled) || ( load_Manager_MS_Passed >= LOAD_MANAGER_MS_INTERVAL ))
 	    {
-		if ((! animated) || (userLoadPerc >= LOADHIGH_THRESHOLD)) // High load detected
+		if ((! animation_Is_Enabled) || (userLoadPerc >= LOADHIGH_THRESHOLD)) // High load detected
 		{
 		    load_High_MS_Passed += load_Manager_MS_Passed; load_Low_MS_Passed = 0.0d; // High load period register
-		    if ( (! animated) || ((textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (load_High_MS_Passed >= LOAD_HIGH_MS_TIMEOUT)) ) // High Load period exceeded
+		    if ( (! animation_Is_Enabled) || ((textLabelTimeline.getStatus() == Animation.Status.RUNNING) & (load_High_MS_Passed >= LOAD_HIGH_MS_TIMEOUT)) ) // High Load period exceeded
 		    {
 			textLabelTimeline.pause();
 			
@@ -1230,10 +1232,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    Animated
 	    val = prefs.get("Animated", "Unknown");
-	    if (val.equals("Unknown"))		{  prefs.put("Animated", "Enabled"); animated = true; }
-	    else if (val.equals("Enabled"))	{  animated = true;}
-	    else if (val.equals("Disabled"))	{  animated = false; }
-	    else				{ prefs.put("Animated", "Enabled"); animated = true; }
+	    if (val.equals("Unknown"))		{  prefs.put("Animated", "Enabled"); animation_Is_Enabled = true; }
+	    else if (val.equals("Enabled"))	{  animation_Is_Enabled = true;}
+	    else if (val.equals("Disabled"))	{  animation_Is_Enabled = false; }
+	    else				{ prefs.put("Animated", "Enabled"); animation_Is_Enabled = true; }
 	    
 	    play_WAV(WAV_SND_STARTUP);
 	});
@@ -1549,41 +1551,46 @@ public class GUIFX extends Application implements UI, Initializable
 	    String[] lines = version.getUpdateStatus().split("\r\n");
 	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
 	    	    
-	    if (( ! version.getLatestAlertSubjectString().isEmpty()) && ( ! version.getLatestAlertMessageString().isEmpty() )) // Only display Alert in VERSION2 file
-	    {
-		play_MP3(MP3_SND_MESSAGE);
-		Alert alert = new Alert(AlertType.INFORMATION);
-		
-		//      Style the Alert
-		DialogPane dialogPane = alert.getDialogPane();
-		dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-		dialogPane.getStyleClass().add("myDialog");
-		
-		alert.setTitle("Information Dialog");
-		alert.setHeaderText(version.getLatestAlertSubjectString() + "\r\n");
-		alert.setResizable(true);
-		alert.setContentText(version.getLatestAlertMessageString());
-		alert.showAndWait();
-		if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
-	    }
-	    
 	    if (version.latestVersionIsKnown())
 	    {
-		if (( ! version.versionIsDifferent() ) &&( userActivated ))
+		if (( ! version.versionIsDifferent() ) && ( userActivated ))
 		{
-		    play_MP3(MP3_SND_MESSAGE);		    
-		    Alert alert = new Alert(AlertType.INFORMATION);
+		    boolean test = false; // Set this to true if testing update available on same version
+		    
+		    if (test)
+		    {
+			play_MP3(MP3_SND_ALERT);
+										alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
+			if (! version.getLatestReleaseString().isEmpty())   {   alertString += version.getLatestReleaseString() + "\r\n"; }
+										alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 
-		    DialogPane dialogPane = alert.getDialogPane();
-		    dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-		    dialogPane.getStyleClass().add("myDialog");
+			Alert testalert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
 
-		    alert.setTitle("Information Dialog");
-		    alert.setHeaderText("Your current version is up to date\r\n");
-		    alert.setResizable(true);
-		    alert.setContentText("You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n");
-		    alert.showAndWait();
-		    if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON);}
+			DialogPane testdialogPane = testalert.getDialogPane();
+			testdialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+			testdialogPane.getStyleClass().add("myDialog");
+
+			testalert.setHeaderText("New version " + Version.getProductName() + " available");
+			testalert.showAndWait();
+
+			if (testalert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
+		    }
+		    else
+		    {
+			play_MP3(MP3_SND_MESSAGE);		    
+			Alert alert = new Alert(AlertType.INFORMATION);
+
+			DialogPane dialogPane = alert.getDialogPane();
+			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+			dialogPane.getStyleClass().add("myDialog");
+
+			alert.setTitle("Information Dialog");
+			alert.setHeaderText("Your current version is up to date");
+			alert.setResizable(true);
+			alert.setContentText("You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n");
+			alert.showAndWait();
+			if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON);}
+		    }		    
 		}
 		else
 		{
@@ -1591,9 +1598,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			play_MP3(MP3_SND_ALERT);
 										      alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
-										      alertString += "New:\r\n";
-			if (! version.getLatestReleaseNotesString().isEmpty())	    { alertString += "   " + version.getLatestReleaseNotesString() + "\r\n"; }
-			if (! version.getLatestVersionMessageString().isEmpty())    { alertString += "   " + version.getLatestVersionMessageString() + "\r\n\r\n"; }
+			if (! version.getLatestReleaseString().isEmpty())	    { alertString += "   " + version.getLatestReleaseString() + "\r\n"; }
 										      alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
@@ -1602,7 +1607,7 @@ public class GUIFX extends Application implements UI, Initializable
 			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 			dialogPane.getStyleClass().add("myDialog");
 
-			alert.setHeaderText("New version " + Version.getProductName() + " available\r\n");
+			alert.setHeaderText("New version " + Version.getProductName() + " available");
 			alert.showAndWait();
 
 			if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
@@ -1617,7 +1622,7 @@ public class GUIFX extends Application implements UI, Initializable
 			dialogPane.getStyleClass().add("myDialog");
 
 			alert.setTitle("Information Dialog");
-			alert.setHeaderText("You are using a development version\r\n");
+			alert.setHeaderText("You are using a development version");
 			alert.setResizable(true);
 			alert.setContentText("This is a development version:    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n"
 					    +"The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n\r\n"
@@ -1638,12 +1643,33 @@ public class GUIFX extends Application implements UI, Initializable
 		dialogPane.getStyleClass().add("myDialog");
 
 		alert.setTitle("Information Dialog");
-		alert.setHeaderText("Online version could not be checked\r\n");
+		alert.setHeaderText("Online version could not be checked");
 		alert.setResizable(true);
 		alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
 		alert.showAndWait();
 		if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
 	    }
+
+//	    After all check update processing comes an optional alert	    
+    	    if (( version.getLatestAlertSubjectString() != null) && ( ! version.getLatestAlertSubjectString().isEmpty()) && ( version.getLatestAlertString() != null) && ( ! version.getLatestAlertString().isEmpty())) // Only display Alert in VERSION2 file
+	    {
+		play_MP3(MP3_SND_MESSAGE);
+		Alert alert = new Alert(AlertType.INFORMATION);
+		
+		//      Style the Alert
+		DialogPane dialogPane = alert.getDialogPane();
+		dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+		dialogPane.getStyleClass().add("myDialog");
+		
+		alert.setTitle("Information Dialog");
+		alert.setHeaderText(version.getLatestAlertSubjectString());
+		alert.setResizable(true);
+		alert.setContentText(version.getLatestAlertString());
+		alert.showAndWait();
+		if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
+	    }
+	    
+
 	});
     }
 
@@ -3617,7 +3643,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     @FXML  private void userGuidanceLabelOnMouseClicked(MouseEvent event)
     {
 	play_MP3(MP3_SND_BUTTON);
-	animated = ! animated;
-	if (animated) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
+	animation_Is_Enabled = ! animation_Is_Enabled;
+	if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
     }
 }

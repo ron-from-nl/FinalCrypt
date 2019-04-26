@@ -1,5 +1,30 @@
-[Version] =		{4.2.1}
-[Release Notes] =	{Increased security Password / Key Encryption}
-[Release Message] =	{Please Decrypt & Encrypt files after install}
+[Version] =		{4.3.0}
+[] = {} ================================================================
+[Release Notes] =	{Added improved check update release notes}
+[Release Message] =	{Informing about Version, Upgrade and Update}
+[] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
+[] = {} ================================================================
+[Version Notes] =	{Version 4}
+[Version Notes] =	{}
+[Version Notes] =	{   Visual & Voice User Guidance}
+[Version Notes] =	{   GUI Star Trek Sound Scheme}
+[Version Notes] =	{}
+[] = {} ----------------------------------------------------------------
+[Upgrade Notes] =	{Upgrade 3}
+[Upgrade Notes] =	{}
+[Upgrade Notes] =	{   Added improved check update release notes}
+[Upgrade Notes] =	{   Informing about Version, Upgrade and Update}
+[Upgrade Notes] =	{}
+[] = {} ----------------------------------------------------------------
+[Update Notes] =	{Update 0}
+[Update Notes] =	{}
+[Update Notes] =	{   No bugs}
+[] = {} ----------------------------------------------------------------
+[Alert Subject] =	{}
+[Alert Notes] =		{}
+[Alert Notes] =		{}
+[Alert Notes] =		{}
+[Alert Notes] =		{}
+[] = {} ================================================================
