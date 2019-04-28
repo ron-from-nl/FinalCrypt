@@ -134,12 +134,12 @@ public class Validate
 	return macVersion;
     }
     
-    synchronized public static boolean targetHasAuthenticatedMACToken(UI ui, Path targetSourcePath, Path keySourcePath, int macVersion) // Tested
+    synchronized public static boolean targetHasAuthenticatedMAC(UI ui, Path targetSourcePath, Path keySourcePath, int macVersion) // Tested
     {
 	if (macVersion == 1) { FinalCrypt.resetPwdPos(); } else { FinalCrypt.resetPwdBytesPos(); }
 	
-	boolean readTargetSourceChannelError = false;
-	boolean keyAuthenticatedTargetSource =   false;
+	boolean readTargetSourceChannelError =	    false;
+	boolean keyAuthenticatedTargetSource =	    false;
         ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); targetSrcMACBuffer.clear();
         ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.clear();
         ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.clear();
@@ -157,7 +157,7 @@ public class Validate
 //	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(targetSrcMACBuffer); targetSrcMACBuffer.flip();
 	    readTargetSourceChannel.read(targetSrcMACBuffer); targetSrcMACBuffer.flip();
 	    readTargetSourceChannel.close(); 
-	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	} catch (IOException ex) { readTargetSourceChannelError = true; ui.log("Error: targetHasAuthenticatedMAC: readTargetSourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	
 	// Encrypted MAC Buffer
 	
@@ -174,7 +174,7 @@ public class Validate
 //		readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer);
 		readKeySourceChannel.read(keySourceBuffer);
 		keySourceBuffer.flip(); readKeySourceChannel.close();
-	    } catch (IOException ex) { ui.log("Error: keyAuthenticatedTargetSource readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    } catch (IOException ex) { ui.log("Error: targetHasAuthenticatedMAC readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    
 	    // Create Encrypted Token Buffer
 	    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, macVersion, false);
@@ -369,7 +369,7 @@ public class Validate
 		macVersion = targetSourceHasMAC(ui, path);
 		if ( macVersion == 0 ) { isEncrypted = false; } else { isEncrypted = true; }
 		
-		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMACToken(ui, path, keyPath, macVersion); } // Encrypted files must by MAC_SIZE at least
+		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMAC(ui, path, keyPath, macVersion); } // Encrypted files must by MAC_SIZE at least
 	    }
 	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
 	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }

@@ -1,4 +1,4 @@
-[Version] =		{4.3.0}
+[Version] =		{4.3.1}
 [] = {} ================================================================
 [Release Notes] =	{Added improved check update release notes}
 [Release Message] =	{Informing about Version, Upgrade and Update}
@@ -18,13 +18,13 @@
 [Upgrade Notes] =	{   Informing about Version, Upgrade and Update}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   No bugs}
+[Update Notes] =	{   Performance of encryption increased 2-10%}
+[Update Notes] =	{   More extensive check update release notes}
+[Update Notes] =	{   Removed indent release notes Version line}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
-[Alert Notes] =		{}
-[Alert Notes] =		{}
 [Alert Notes] =		{}
 [Alert Notes] =		{}
 [] = {} ================================================================

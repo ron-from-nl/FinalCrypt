@@ -1543,136 +1543,156 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(() ->
 	{
-	    String alertString = "";
 	    version = new Version(ui);
 	    version.checkCurrentlyInstalledVersion(GUIFX.this);
 	    version.checkLatestOnlineVersion(GUIFX.this);
 	    prefs.putLong("Update Checked", now);
 	    String[] lines = version.getUpdateStatus().split("\r\n");
 	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
-	    	    
+
+//	    Just for testing purposes (uncomment)
+//	    alertCurrentVersionIsUp2Date();
+//	    alertCurrentVersionCanBeUpdated();
+//	    alertCurrentVersionIsDevelopement();
+//	    alertlatestVersionUnknown();
+//	    latestAlertMessage();
+////	    currentAlertMessage(); // Should never be tested and used in production
+	    
 	    if (version.latestVersionIsKnown())
 	    {
-		if (( ! version.versionIsDifferent() ) && ( userActivated ))
-		{
-		    boolean test = false; // Set this to true if testing update available on same version
-		    
-		    if (test)
-		    {
-			play_MP3(MP3_SND_ALERT);
-										alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
-			if (! version.getLatestReleaseString().isEmpty())   {   alertString += version.getLatestReleaseString() + "\r\n"; }
-										alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
-
-			Alert testalert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
-
-			DialogPane testdialogPane = testalert.getDialogPane();
-			testdialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-			testdialogPane.getStyleClass().add("myDialog");
-
-			testalert.setHeaderText("New version " + Version.getProductName() + " available");
-			testalert.showAndWait();
-
-			if (testalert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
-		    }
-		    else
-		    {
-			play_MP3(MP3_SND_MESSAGE);		    
-			Alert alert = new Alert(AlertType.INFORMATION);
-
-			DialogPane dialogPane = alert.getDialogPane();
-			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-			dialogPane.getStyleClass().add("myDialog");
-
-			alert.setTitle("Information Dialog");
-			alert.setHeaderText("Your current version is up to date");
-			alert.setResizable(true);
-			alert.setContentText("You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n");
-			alert.showAndWait();
-			if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON);}
-		    }		    
-		}
-		else
-		{
-		    if (version.versionCanBeUpdated())
-		    {
-			play_MP3(MP3_SND_ALERT);
-										      alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated\r\n\r\n";
-			if (! version.getLatestReleaseString().isEmpty())	    { alertString += "   " + version.getLatestReleaseString() + "\r\n"; }
-										      alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
-
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
-
-			DialogPane dialogPane = alert.getDialogPane();
-			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-			dialogPane.getStyleClass().add("myDialog");
-
-			alert.setHeaderText("New version " + Version.getProductName() + " available");
-			alert.showAndWait();
-
-			if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
-		    }
-		    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )
-		    {
-			play_MP3(MP3_SND_ALERT);
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
-
-			DialogPane dialogPane = alert.getDialogPane();
-			dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-			dialogPane.getStyleClass().add("myDialog");
-
-			alert.setTitle("Information Dialog");
-			alert.setHeaderText("You are using a development version");
-			alert.setResizable(true);
-			alert.setContentText("This is a development version:    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n"
-					    +"The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n\r\n"
-					    +"Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") now ?\r\n");
-			alert.showAndWait();
-
-			if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
-		    }
-		}
+		if (( ! version.versionIsDifferent() ) && ( userActivated ))		    { alertCurrentVersionIsUp2Date(); }
+		else { if (version.versionCanBeUpdated())				    { alertCurrentVersionCanBeUpdated(); }
+		       else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
 	    }
-	    else // latest online version is unknown
-	    {
-		play_MP3(MP3_SND_MESSAGE);
-		Alert alert = new Alert(AlertType.INFORMATION);
+	    else									    { alertlatestVersionUnknown(); }
 
-		DialogPane dialogPane = alert.getDialogPane();
-		dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-		dialogPane.getStyleClass().add("myDialog");
-
-		alert.setTitle("Information Dialog");
-		alert.setHeaderText("Online version could not be checked");
-		alert.setResizable(true);
-		alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
-		alert.showAndWait();
-		if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
-	    }
-
-//	    After all check update processing comes an optional alert	    
-    	    if (( version.getLatestAlertSubjectString() != null) && ( ! version.getLatestAlertSubjectString().isEmpty()) && ( version.getLatestAlertString() != null) && ( ! version.getLatestAlertString().isEmpty())) // Only display Alert in VERSION2 file
-	    {
-		play_MP3(MP3_SND_MESSAGE);
-		Alert alert = new Alert(AlertType.INFORMATION);
-		
-		//      Style the Alert
-		DialogPane dialogPane = alert.getDialogPane();
-		dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-		dialogPane.getStyleClass().add("myDialog");
-		
-		alert.setTitle("Information Dialog");
-		alert.setHeaderText(version.getLatestAlertSubjectString());
-		alert.setResizable(true);
-		alert.setContentText(version.getLatestAlertString());
-		alert.showAndWait();
-		if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
-	    }
-	    
-
+//		After all check update processing comes an optional alert	    
+	    if (
+			( version.getLatestAlertSubjectString() != null)
+		    &&  ( ! version.getLatestAlertSubjectString().isEmpty())
+		    &&  ( version.getLatestAlertString() != null)
+		    &&  ( ! version.getLatestAlertString().isEmpty())
+		)   // Only display Alert in VERSION2 file
+	    { latestAlertMessage(); }
 	});
     }
+    
+    private void alertCurrentVersionIsUp2Date()
+    {
+	play_MP3(MP3_SND_MESSAGE);		    
+	Alert alert = new Alert(AlertType.INFORMATION);
 
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Information Dialog");
+	alert.setHeaderText("Your current version is up to date");
+	alert.setResizable(true);
+	String	content = "You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
+		content += version.getCurrentReleaseString();
+	alert.setContentText(content);
+	alert.showAndWait();
+	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON);}
+    }
+    
+    private void alertCurrentVersionCanBeUpdated()
+    {
+	play_MP3(MP3_SND_ALERT);
+							       String alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " can be updated to version: " + version.getLatestOnlineOverallVersionString() + "\r\n\r\n";
+	if (! version.getLatestReleaseString().isEmpty())	    { alertString += version.getLatestReleaseString() + "\r\n"; }
+								      alertString += "Would you like to download (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
+
+	Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setHeaderText("New version " + Version.getProductName() + " available");
+	alert.showAndWait();
+
+	if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
+    }
+    
+    private void alertCurrentVersionIsDevelopement()
+    {
+	play_MP3(MP3_SND_ALERT); String alertString = "";
+	Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Information Dialog");
+	alert.setHeaderText("You are using a development version");
+	alert.setResizable(true);
+	
+	String	content = "";
+	content += "This is a development version:    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
+	content += version.getCurrentReleaseString() + "\r\n";
+	content += "=====================================================\r\n\r\n";
+	content += "The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n";
+	content += "Would you like to download        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
+	alert.setContentText(content);
+	alert.showAndWait();
+
+	if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
+    }
+    
+    private void alertlatestVersionUnknown()
+    {
+	play_MP3(MP3_SND_MESSAGE);
+	Alert alert = new Alert(AlertType.INFORMATION);
+
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Information Dialog");
+	alert.setHeaderText("Online version could not be checked");
+	alert.setResizable(true);
+	alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
+	alert.showAndWait();
+	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
+    }
+    
+    private void latestAlertMessage()
+    {
+	play_MP3(MP3_SND_MESSAGE);
+	Alert alert = new Alert(AlertType.INFORMATION);
+
+	//      Style the Alert
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Information Dialog");
+	alert.setHeaderText(version.getLatestAlertSubjectString());
+	alert.setResizable(true);
+	alert.setContentText(version.getLatestAlertString());
+	alert.showAndWait();
+	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
+    }
+    
+    private void currentAlertMessage()
+    {
+	play_MP3(MP3_SND_MESSAGE);
+	Alert alert = new Alert(AlertType.INFORMATION);
+
+	//      Style the Alert
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Information Dialog");
+	alert.setHeaderText(version.getCurrentAlertSubjectString());
+	alert.setResizable(true);
+	alert.setContentText(version.getCurrentAlertString());
+	alert.showAndWait();
+	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
+    }
+    
 //  Custom FileChooserDelete Listener methods
     private void targetFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
     {

@@ -1,3 +1,4 @@
+4.3.1 Performance of encryption increased 2-10%. More extensive check update release notes. Removed indent release notes Version line
 4.3.0 Added improved check update release notes. Informing about Version, Upgrade and Update
 4.2.1 BugFix hang on scanning bug
 4.2.0 Increased security Password / Key Encryption. Please Decrypt & Encrypt files after install. Further: Added Multi MAC System, Anti Layer Peeling Attack Encryption, Persistant User-Paused Animations

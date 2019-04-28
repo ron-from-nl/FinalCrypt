@@ -87,6 +87,8 @@ public class Version
 
     private String latestAlertSubjectString;
     private String latestAlertString;
+    private String currentAlertSubjectString;
+    private String currentAlertString;
 //    private String latestAlertMessageString;
     public int currentInstalledVersion;
     public int latestRemoteVersion;
@@ -94,11 +96,15 @@ public class Version
     public Version(UI ui)
     {
         this.ui = ui;
+	currentReleaseString = ""; // Replacing below 2 lines
 	latestReleaseString = ""; // Replacing below 2 lines
 //	latestReleaseNotesString = "";
 //	latestReleaseMessageString = "";
+
 	latestAlertSubjectString = "";
 	latestAlertString = "";
+	currentAlertSubjectString = "";
+	currentAlertString = "";
 //	latestAlertMessageString = "";
     }
     
@@ -132,6 +138,11 @@ public class Version
 		String localField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	    if (! localField.isEmpty()) { localFields[c] = localField; validLine = true; }
 		String localValue = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));   if (! localValue.isEmpty()) { localValues[c] = localValue; validLine = true; }
 		if (validLine) { c++; }
+
+//		boolean validLine = false;
+//		String remoteField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	    if (! remoteField.isEmpty()) { remoteFields[c] = remoteField; validLine = true; }
+//		String remoteValue = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));  if (! remoteValue.isEmpty()) { remoteValues[c] = remoteValue; validLine = true; }
+//		if (validLine) { c++; }
 	    }
 	}
 	
@@ -139,8 +150,10 @@ public class Version
 	{
 	    for (int x = 0; x < (localFields.length); x++)
 	    {
-		if ((localFields[x] != null) && (localValues[x] != null))
+//		if ((localFields[x] != null) && (localValues[x] != null))
+		if ((localFields[x] != null))
 		{
+		    if (localValues[x] == null) { localValues[x] = ""; }
 //		    ui.test("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
 		    if (localFields[x].toLowerCase().equals("Version".toLowerCase()))
 		    {
@@ -158,8 +171,8 @@ public class Version
 		    if (localFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
 		    if (localFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
 		    
-//		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ latestAlertSubjectString =	localFields[x]; }
-//		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ latestAlertString +=		localFields[x] + "\r\n"; }
+//		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ currentAlertSubjectString =	localValues[x]; }
+//		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ currentAlertString +=		localValues[x] + "\r\n"; }
 		}
 	    }
 	    if ((currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentVersionIsKnown)) { return currentOverallVersionString; }
@@ -219,19 +232,6 @@ public class Version
 			}
 		    }
 
-//		    int c = 0; for (String line:lines)
-//		    {
-//			if ( (line.contains("[")) && (line.contains("]")) && (line.contains("{")) && (line.contains("}")) )
-//			{
-//			    if ((line.substring(line.indexOf("[") + 1, line.indexOf("]")).length() > 0) && line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")).length() > 0)
-//			    {
-//				remoteFields[c] = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
-//				remoteValues[c] = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));
-//				c++;
-//			    }			    
-//			}
-//		    }
-
 //		    New Release System
 		    if (remoteFields.length > 0)
 		    {
@@ -262,33 +262,7 @@ public class Version
 			    }
 			}
 			if ((latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestVersionIsKnown)) { return latestOverallVersionString; }
-			
 		    } continue;
-
-////		    Old Release System
-//		    if ((remoteFields.length > 4) && (c > 2))
-//		    {
-//			for (int x = 0; x < (c); x++)
-//			{
-////			    ui.test("RField: " + remoteFields[x] + " RValue: " + remoteValues[x] + "\r\n");
-//			    if (remoteFields[x].toLowerCase().equals("Version".toLowerCase()))		{ latestOverallVersionString =	remoteValues[x]; }
-//			    if (remoteFields[x].toLowerCase().equals("Release Notes".toLowerCase()))	{ latestReleaseNotesString =	remoteValues[x]; }
-//			    if (remoteFields[x].toLowerCase().equals("Release Message".toLowerCase()))	{ latestReleaseMessageString =	remoteValues[x]; }
-//			    if (remoteFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ latestAlertSubjectString =	remoteValues[x]; }
-//			    if (remoteFields[x].toLowerCase().equals("Alert Message".toLowerCase()))	{ latestAlertMessageString =	remoteValues[x]; }
-//			}
-//
-//			String latestVersionString = latestOverallVersionString.substring(0, latestOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
-//			String latestUpgradeString = latestOverallVersionString.substring(latestOverallVersionString.indexOf("."), latestOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
-//			String latestUpdateString = latestOverallVersionString.substring(latestOverallVersionString.lastIndexOf("."), latestOverallVersionString.length()).replaceAll("[^\\d]", "");
-//			latestRemoteVersion = Integer.parseInt(latestVersionString); int latestUpgrade = Integer.parseInt(latestUpgradeString); int latestUpdate = Integer.parseInt(latestUpdateString);
-//			latestVersionTotal = (latestRemoteVersion * 100) + (latestUpgrade * 10) + (latestUpdate * 1);
-//			latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
-//			latestVersionIsKnown = true;
-//			
-//			if ((latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestVersionIsKnown)) { return latestOverallVersionString; }
-//		    } continue;
-
 		} continue;
 	    } continue;
 
@@ -298,12 +272,16 @@ public class Version
 
     public String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
     public String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
+    public String getCurrentReleaseString()			{ return currentReleaseString; }
     public String getLatestReleaseString()			{ return latestReleaseString; }
 //    public String getLatestReleaseNotesString()		{ return latestReleaseNotesString; }
 //    public String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
 
     public String getLatestAlertSubjectString()			{ return latestAlertSubjectString; }
     public String getLatestAlertString()			{ return latestAlertString; }
+    
+    public String getCurrentAlertSubjectString()		{ return currentAlertSubjectString; }
+    public String getCurrentAlertString()			{ return currentAlertString; }
 //    public String getLatestAlertMessageString()		{ return latestAlertMessageString; }
 
     public String getUpdateStatus() 
@@ -315,8 +293,6 @@ public class Version
             {
                 returnString += getProductName() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
 		if (! getLatestReleaseString().isEmpty())	    { returnString += getLatestReleaseString() + "\r\n"; }
-//		if (! getLatestReleaseNotesString().isEmpty())	    { returnString += getLatestReleaseNotesString() + "\r\n"; }
-//		if (! getLatestVersionMessageString().isEmpty())    { returnString += getLatestVersionMessageString() + "\r\n"; }
             } 
             else if (currentVersionTotal > latestVersionTotal)
             {
@@ -351,7 +327,7 @@ public class Version
 		try { remoteURL = new URL(WEBSITEURLSTRING); }
 		catch (MalformedURLException ex)	{ ui.log("Error: Version.openWebSite MalformedURLException: new URL(" + WEBSITEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
 
-		InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.openWebSite IOException: remoteURL.openStream()) " + ex.getMessage() + "\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+		InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.openWebSite IOException: remoteURL.openStream()) \"" + remoteURL.toString() + "\" " + ex.getMessage() + "\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
 
 		ReadableByteChannel latestVersionByteChannel = Channels.newChannel(inputStream);
 

@@ -776,7 +776,15 @@ public class FinalCrypt extends Thread
         {
 	    byte targetSourceByte = targetSourceBuffer.get(targetSourceBufferCount);
 	    byte keySourceByte = keySourceBuffer.get(targetSourceBufferCount);
-	    targetDestinByte = encryptByte(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte);
+	    
+	    if (pwd.length() == 0)	{ targetDestinByte = encryptByte(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); }   // no pwd used
+	    else
+	    {
+		if ( macVersion == 1 )  { targetDestinByte = encryptBytePassV1(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V1 (only at decrypt)
+		else			{ targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V2 (default encrypt & decrypt)
+	    }
+		
+	    
 	    if ((printEnabled) && ( print )) { printString += getByteString(targetSourceByte, keySourceByte, targetDestinByte); }
 	}
         targetDestinBuffer.flip();
@@ -791,29 +799,34 @@ public class FinalCrypt extends Thread
 	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
 	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
-	if ( pwd.length() == 0 ) // No extra password encryption
-	{
-	    returnByte = (byte)(targetSourceByte ^ keySourceByte);
-	}
-	else
-	{
-	    if (macVersion == 1) // Decrypt MAC_V1 // Pass morphs encrypted data
-	    {
-		byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte);	    // transitionalByte =	    databyte	XOR keybyte
-		returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos));	    // returnByte =	    transitionalByte	XOR passByte
-		pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
-	    }
-	    else // Encrypt MAC_V2 / Decrypt MAC_V2 // Pass morphs key
-	    {
-//		String hex = String.valueOf(pwdSum.charAt(pwdSumPos)) + String.valueOf(pwdSum.charAt(pwdSumPos + 1));
-//		byte sumByte = GPT.hex2Byte(pwdSum.substring(pwdSumPos, pwdSumPos + 2));
+	returnByte = (byte)(targetSourceByte ^ keySourceByte);
+	return	returnByte;
+    }
 
-		byte transitionalByte = (byte)(keySourceByte ^ pwdBytes[pwdBytesPos]);		    // transitionalByte =	keybyte		XOR sumByte
-//		byte transitionalByte = (byte)(keySourceByte ^ sumByte);		    // transitionalByte =	keybyte		XOR sumByte
-		returnByte = (byte)(targetSourceByte ^ (transitionalByte));		    // returnByte =		dataByte	XOR transitionalByte
-		pwdBytesPos++; if ( pwdBytesPos >= pwdBytes.length ) { pwdBytesPos = 0; }
-	    }
-	}
+    public static byte encryptBytePassV1(final byte targetSourceByte, byte keySourceByte, int macVersion)
+    {
+	byte returnByte = 0; // Final result to return
+
+	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
+	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
+	
+	byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte);	    // transitionalByte =	    databyte	XOR keybyte
+	returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos));	    // returnByte =	    transitionalByte	XOR passByte
+	pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
+	
+	return	returnByte;
+    }
+
+    public static byte encryptBytePassV2(final byte targetSourceByte, byte keySourceByte, int macVersion)
+    {
+	byte returnByte = 0; // Final result to return
+
+	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
+	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
+	
+	byte transitionalByte = (byte)(keySourceByte ^ pwdBytes[pwdBytesPos]);	// transitionalByte =	keybyte		XOR sumByte
+	returnByte = (byte)(targetSourceByte ^ (transitionalByte));			// returnByte =		dataByte	XOR transitionalByte
+	pwdBytesPos++; if ( pwdBytesPos == pwdBytes.length ) { pwdBytesPos = 0; }
 	
 	return	returnByte;
     }
