@@ -12,7 +12,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Please_Share">
+<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="670.0" styleClass="text_color_standard" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Please_Share">
    <children>
       <StackPane prefHeight="338.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -20,7 +20,7 @@
                <children>
                   <Pane prefHeight="338.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="670.0" minHeight="70.0" minWidth="670.0" prefHeight="70.0" prefWidth="670.0" style="-fx-background-color: #222222;" text="Please help us share only one time" textAlignment="CENTER" textFill="WHITE">
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="670.0" minHeight="70.0" minWidth="670.0" prefHeight="70.0" prefWidth="670.0" style="-fx-background-color: #222222; -fx-font-family: Liberation Sans; -fx-font-size: 36;" text="Please help us share only one time" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="36.0" />
                            </font>
@@ -28,23 +28,37 @@
                               <Glow level="1.0" />
                            </effect>
                         </Label>
-                        <Label alignment="CENTER" layoutY="70.0" maxHeight="0.0" maxWidth="670.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="670.0" text="FinalCrypt is non-profit and completely free of charge" textAlignment="CENTER" textFill="#222222">
+                        <Label alignment="CENTER" layoutY="70.0" maxHeight="0.0" maxWidth="670.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="670.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="FinalCrypt is non-profit and completely free of charge" textAlignment="CENTER" textFill="#222222">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" layoutY="105.0" maxHeight="0.0" maxWidth="670.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="670.0" text="We only ask 1 mouse-click to help sharing with others" textAlignment="CENTER" textFill="#222222">
+                        <Label alignment="CENTER" layoutY="105.0" maxHeight="0.0" maxWidth="670.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="670.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="We only ask 1 mouse-click to help sharing with others" textAlignment="CENTER" textFill="#222222">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="210.0" maxHeight="25.0" maxWidth="670.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="670.0" text="Thank you so much for sharing on social media we won't ask you again" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="210.0" maxHeight="25.0" maxWidth="670.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="670.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Thank you so much for sharing on social media we won't ask you again" textAlignment="CENTER" textFill="#727272">
                            <font>
                               <Font name="System Italic" size="18.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER" layoutY="145.0" maxHeight="60.0" maxWidth="670.0" minHeight="60.0" minWidth="670.0" prefHeight="60.0" prefWidth="670.0">
                            <children>
+                              <ImageView fx:id="finalcryptImageView" fitHeight="45.0" fitWidth="120.0" onMouseClicked="#finalcryptImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../../../../../../../../FinalCrypt/src/rdj/images/finalcrypt.png" />
+                                 </image>
+                                 <effect>
+                                    <DropShadow offsetX="2.0" offsetY="2.0" />
+                                 </effect>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="6.0" right="6.0" top="2.0" />
+                                 </HBox.margin>
+                              </ImageView>
                               <ImageView fx:id="facebookImageView" fitHeight="45.0" fitWidth="120.0" onMouseClicked="#facebookImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../../../../../../../../../../FinalCrypt_Production/Media/Resources/Share%20Icons/120x45/facebook.png" />
@@ -100,20 +114,6 @@
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
-                              </ImageView>
-                              <ImageView fx:id="finalcryptImageView" fitHeight="45.0" fitWidth="120.0" onMouseClicked="#finalcryptImageViewOnMouseClicked" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../../../../../../../../../FinalCrypt/src/rdj/images/finalcrypt.png" />
-                                 </image>
-                                 <effect>
-                                    <DropShadow offsetX="2.0" offsetY="2.0" />
-                                 </effect>
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <HBox.margin>
-                                    <Insets bottom="2.0" left="6.0" right="6.0" top="2.0" />
-                                 </HBox.margin>
                               </ImageView>
                            </children>
                         </HBox>

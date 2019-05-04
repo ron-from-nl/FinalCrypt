@@ -171,8 +171,8 @@ public class Version
 		    if (localFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
 		    if (localFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
 		    
-//		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ currentAlertSubjectString =	localValues[x]; }
-//		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ currentAlertString +=		localValues[x] + "\r\n"; }
+		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ currentAlertSubjectString =	localValues[x]; }
+		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ currentAlertString +=		localValues[x] + "\r\n"; }
 		}
 	    }
 	    if ((currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentVersionIsKnown)) { return currentOverallVersionString; }

@@ -23,8 +23,17 @@
 [Update Notes] =	{   Performance of encryption increased 2-10%}
 [Update Notes] =	{   More extensive check update release notes}
 [Update Notes] =	{   Removed indent release notes Version line}
-[] = {} ----------------------------------------------------------------
-[Alert Subject] =	{}
+[] = {} --------------------------------------------------------------------------------------------------------
+[Alert Subject] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
+[Alert Notes] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
+[Alert Notes] =		{then it is adviced to update or upgrade to the latest stable release en re-encrypt}
 [Alert Notes] =		{}
+[Alert Notes] =		{FinalCrypt v4.2.0 and higher performs more secure password over key encryption}
 [Alert Notes] =		{}
-[] = {} ================================================================
+[Alert Notes] =		{The type of encryption on your encrypted files can be recognized by the first 70 bytes}
+[Alert Notes] =		{}
+[Alert Notes] =		{                        1         2         3         4         5         6         7}
+[Alert Notes] =		{               1234567890123456789012345678901234567890123456789012345678901234567890}
+[Alert Notes] =		{Prior v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Authentication Token"}
+[Alert Notes] =		{From  v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Auth Token Version 2"}
+[] = {} ========================================================================================================

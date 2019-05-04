@@ -1566,14 +1566,24 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	    else									    { alertlatestVersionUnknown(); }
 
-//		After all check update processing comes an optional alert	    
+//	    After all check update processing comes an optional alert	    
 	    if (
-			( version.getLatestAlertSubjectString() != null)
-		    &&  ( ! version.getLatestAlertSubjectString().isEmpty())
-		    &&  ( version.getLatestAlertString() != null)
-		    &&  ( ! version.getLatestAlertString().isEmpty())
+		    ( true ) // Leave to "true" to enable online alerts
+		    && ( version.getLatestAlertSubjectString() != null)
+		    && ( ! version.getLatestAlertSubjectString().isEmpty())
+		    && ( version.getLatestAlertString() != null)
+		    && ( ! version.getLatestAlertString().isEmpty())
 		)   // Only display Alert in VERSION2 file
 	    { latestAlertMessage(); }
+	    
+	    if (
+		    ( false ) // Leave to "false" Only set to true to test an alert
+		    && ( version.getCurrentAlertSubjectString() != null)
+		    && ( ! version.getCurrentAlertSubjectString().isEmpty())
+		    && ( version.getCurrentAlertString() != null)
+		    && ( ! version.getCurrentAlertString().isEmpty())
+		)   // Only display Alert in VERSION2 file
+	    { currentAlertMessage(); }
 	});
     }
     
