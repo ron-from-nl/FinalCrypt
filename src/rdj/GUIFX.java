@@ -2990,7 +2990,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
 	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 	    
-	    updateFileChoosers(true, false);
+	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) { updateFileChoosers(true, false); } // Due to Mac OSX
 	    
 	    processRunningMode = NONE;
 	    processRunning = false;
