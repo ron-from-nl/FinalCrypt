@@ -1,7 +1,7 @@
-[Version] =		{4.4.0}
+[Version] =		{4.4.1}
 [] = {} ================================================================
-[Release Notes] =	{Fixed filemanager autoresize column-width}
-[Release Message] =	{Fixed Apple OSX hanging after encryption}
+[Release Notes] =	{Fixed filemanager autoresize column-width at startup}
+[Release Message] =	{Fixed Apple OSX hanging after encryption finished}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -18,9 +18,9 @@
 [Upgrade Notes] =	{   Fixed Apple OSX hanging after encryption}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   Nothing to update}
+[Update Notes] =	{   Fixed filemanager autoresize column-width at startup}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}

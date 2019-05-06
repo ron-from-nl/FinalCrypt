@@ -660,7 +660,7 @@ public class GUIFX extends Application implements UI, Initializable
         targetFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { targetFileChooserPropertyChange(evt); });
         targetFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { targetFileChooserActionPerformed(evt); });
 	lastTargetDir = new File(targetFileChooser.getCurrentDirectory().getAbsoluteFile().toString());
-        targetFileChooserComponentAlteration(targetFileChooser, true);
+//        targetFileChooserComponentAlteration(targetFileChooser, true);
         targetFileSwingNode.setContent(targetFileChooser);
 
 //        keyFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
@@ -678,7 +678,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	keyFileChooser.add
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
 	lastKeyDir = new File(keyFileChooser.getCurrentDirectory().getAbsoluteFile().toString());
-        keyFileChooserComponentAlteration(keyFileChooser, true);
+//        keyFileChooserComponentAlteration(keyFileChooser, true);
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
@@ -1122,6 +1122,9 @@ public class GUIFX extends Application implements UI, Initializable
 	    userGuidanceLabel.setText(fadeInMessage);
 	    textLabelTimeline.play();
 
+	    keyFileChooserComponentAlteration(keyFileChooser, true);
+	    targetFileChooserComponentAlteration(targetFileChooser, true);
+	    
 //	textLabel Introduction Animation ==========================================================
 
 	    FadeTransition fadeTransition = new FadeTransition(Duration.millis(3000), userGuidanceLabel);
