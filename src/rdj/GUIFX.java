@@ -2063,7 +2063,7 @@ public class GUIFX extends Application implements UI, Initializable
 		});
 
 		buildReady(targetFCPathList, false);
-		if (keyFileChooser.getCurrentDirectory().compareTo(lastKeyDir) != 0)
+		if ((keyFileChooser.getCurrentDirectory().compareTo(lastKeyDir) != 0) && (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 		{
 		    keyFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); keyFileChooser.updateUI(); keyFileChooserComponentAlteration(keyFileChooser, false);
 		}
