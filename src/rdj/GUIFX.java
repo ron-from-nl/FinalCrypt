@@ -1558,11 +1558,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
 
 //	    Just for testing purposes (uncomment)
-	    alertCurrentVersionIsUp2Date();
-	    alertCurrentVersionCanBeUpdated();
-	    alertCurrentVersionIsDevelopement();
-	    alertlatestVersionUnknown();
-	    latestAlertMessage();
+//	    alertCurrentVersionIsUp2Date();
+//	    alertCurrentVersionCanBeUpdated();
+//	    alertCurrentVersionIsDevelopement();
+//	    alertlatestVersionUnknown();
+//	    latestAlertMessage();
 ////	    currentAlertMessage(); // Should never be tested and used in production
 	    
 	    if (version.latestVersionIsKnown())
