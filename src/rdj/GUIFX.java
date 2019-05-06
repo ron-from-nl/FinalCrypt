@@ -2015,13 +2015,13 @@ public class GUIFX extends Application implements UI, Initializable
 //			MySimpleFCFileVisitor.running = false;
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
-			targetFCPathList = new FCPathList();
 
 			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
 			keyImageView.setOpacity(0.1);
 
 			userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 
+			targetFCPathList = new FCPathList();
 			buildReady(targetFCPathList, false);
 		    }
 		});
@@ -2527,6 +2527,13 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			    }
 			}
 		    }
+		    else
+		    {
+			if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
+			else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
+			else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
+			else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
+		    }
 		}
 		else
 		{
@@ -3001,7 +3008,10 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    
 	    processRunningMode = NONE;
 	    processRunning = false;
-	    	    
+
+	    targetFCPathList = new FCPathList();
+	    buildReady(targetFCPathList, false);
+
 //	    The Open selected file when finished section
 
 	    Thread openThread;
