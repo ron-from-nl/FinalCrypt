@@ -1604,7 +1604,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStyleClass().add("myDialog");
 
 	alert.setTitle("Information");
-	alert.setHeaderText("Your current version is up to date");
+	alert.setHeaderText("Your current FinalCrypt version is up to date");
 	alert.setResizable(true);
 	String	content = "You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
 		content += version.getCurrentReleaseString();
