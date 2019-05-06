@@ -1122,8 +1122,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    userGuidanceLabel.setText(fadeInMessage);
 	    textLabelTimeline.play();
 
-	    keyFileChooserComponentAlteration(keyFileChooser, true);
-	    targetFileChooserComponentAlteration(targetFileChooser, true);
+	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
+	    {
+		keyFileChooserComponentAlteration(keyFileChooser, true);
+		targetFileChooserComponentAlteration(targetFileChooser, true);
+	    }
 	    
 //	textLabel Introduction Animation ==========================================================
 
