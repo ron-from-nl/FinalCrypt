@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.beans.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -68,7 +69,6 @@ import javax.management.ObjectName;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
@@ -131,6 +131,7 @@ import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 import javax.sound.sampled.*;
+import javax.swing.filechooser.*;
 
 public class GUIFX extends Application implements UI, Initializable
 {
@@ -147,7 +148,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private ToggleButton pauseToggleButton;
     @FXML   private Button stopButton;
     @FXML   private Label copyrightLabel;
-//    @FXML   private ProgressIndicator cpuIndicator;
     @FXML   private SwingNode targetFileSwingNode;
     @FXML   private Button decryptButton;
     @FXML   private Label keyNameLabel;
@@ -528,6 +528,11 @@ public class GUIFX extends Application implements UI, Initializable
     private Clip clipSounds;
     private Clip clipVoice;
     @FXML   private Label sysMonLabel;
+    private File lastTargetDir;
+    private File lastKeyDir;
+    private PropertyChangeListener[] keyListener;
+    private JToggleButton targetDetailViewButton;
+    private JToggleButton keyDetailViewButton;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -623,13 +628,15 @@ public class GUIFX extends Application implements UI, Initializable
         targetFileDeleteButton.setEnabled(false);
         targetFileDeleteButton.setToolTipText("Delete selected item(s)");
         targetFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { targetFileDeleteButtonActionPerformed(evt); });
-
+	targetDetailViewButton = new JToggleButton();
+	
         keyFileDeleteButton = new javax.swing.JButton();
         keyFileDeleteButton.setFont(new java.awt.Font("Arimo", 0, 11)); // NOI18N
         keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
         keyFileDeleteButton.setEnabled(false);
         keyFileDeleteButton.setToolTipText("Delete selected item");
         keyFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { keyFileDeleteButtonActionPerformed(evt); });
+	keyDetailViewButton = new JToggleButton();
         
 //      Create filefilters        
         finalCryptFilter = new FileNameExtensionFilter("FinalCrypt *.bit", "bit");
@@ -640,24 +647,20 @@ public class GUIFX extends Application implements UI, Initializable
         };
         
 //        targetFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-//        UIManager.put("FileChooser.readOnly", Boolean.TRUE);
+//        UIManager.put("FileChooser.readOnly", Boolean.TRUE); // Also disables Create Directory
         targetFileChooser = new JFileChooser();
-	
         targetFileChooser.setControlButtonsAreShown(false);
         targetFileChooser.setToolTipText("Right mousclick for Refresh");
         targetFileChooser.setMultiSelectionEnabled(true);
         targetFileChooser.setFocusable(true);
-//        targetFileChooser.setFocusCycleRoot(true);
-//        targetFileChooser.setFocusTraversalKeysEnabled(true);
-//        targetFileChooser.setFocusTraversalPolicyProvider(true);
-//        targetFileChooser.setFont(new Font("Liberation Sans", Font.PLAIN, 10));
         targetFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-        targetFileChooser.addChoosableFileFilter(finalCryptFilter);
-        targetFileChooser.addChoosableFileFilter(nonFinalCryptFilter);
+//        targetFileChooser.addChoosableFileFilter(finalCryptFilter);
+//        targetFileChooser.addChoosableFileFilter(nonFinalCryptFilter);
         targetFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { targetFileChooserPropertyChange(evt); });
         targetFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { targetFileChooserActionPerformed(evt); });
-        targetFileChooserComponentAlteration(targetFileChooser);
+	lastTargetDir = new File(targetFileChooser.getCurrentDirectory().getAbsoluteFile().toString());
+        targetFileChooserComponentAlteration(targetFileChooser, true);
         targetFileSwingNode.setContent(targetFileChooser);
 
 //        keyFileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
@@ -667,17 +670,15 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.setToolTipText("Right mousclick for Refresh");
         keyFileChooser.setMultiSelectionEnabled(true);
         keyFileChooser.setFocusable(true);
-//        keyFileChooser.setFocusCycleRoot(true);
-//        keyFileChooser.setFocusTraversalKeysEnabled(true);
-//        keyFileChooser.setFocusTraversalPolicyProvider(true);
         keyFileChooser.setFont(new Font("Liberation Sans", Font.PLAIN, 10));
         keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+	
         keyFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { keyFileChooserPropertyChange(evt); });
+	keyListener = keyFileChooser.getPropertyChangeListeners();
 //	keyFileChooser.add
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
-        
-        keyFileChooserComponentAlteration(keyFileChooser);
-	
+	lastKeyDir = new File(keyFileChooser.getCurrentDirectory().getAbsoluteFile().toString());
+        keyFileChooserComponentAlteration(keyFileChooser, true);
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
         finalCrypt = new FinalCrypt(this); finalCrypt.start();
@@ -1596,7 +1597,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle("Information Dialog");
+	alert.setTitle("Information");
 	alert.setHeaderText("Your current version is up to date");
 	alert.setResizable(true);
 	String	content = "You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
@@ -1619,6 +1620,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
+	alert.setTitle("Confirmation");
 	alert.setHeaderText("New version " + Version.getProductName() + " available");
 	alert.showAndWait();
 
@@ -1634,7 +1636,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle("Information Dialog");
+	alert.setTitle("Confirmation");
 	alert.setHeaderText("You are using a development version");
 	alert.setResizable(true);
 	
@@ -1653,13 +1655,13 @@ public class GUIFX extends Application implements UI, Initializable
     private void alertlatestVersionUnknown()
     {
 	play_MP3(MP3_SND_MESSAGE);
-	Alert alert = new Alert(AlertType.INFORMATION);
+	Alert alert = new Alert(AlertType.ERROR);
 
 	DialogPane dialogPane = alert.getDialogPane();
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle("Information Dialog");
+	alert.setTitle("Error");
 	alert.setHeaderText("Online version could not be checked");
 	alert.setResizable(true);
 	alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
@@ -1677,7 +1679,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle("Information Dialog");
+	alert.setTitle("Information");
 	alert.setHeaderText(version.getLatestAlertSubjectString());
 	alert.setResizable(true);
 	alert.setContentText(version.getLatestAlertString());
@@ -1695,7 +1697,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
 	dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle("Information Dialog");
+	alert.setTitle("Information");
 	alert.setHeaderText(version.getCurrentAlertSubjectString());
 	alert.setResizable(true);
 	alert.setContentText(version.getCurrentAlertString());
@@ -1831,16 +1833,13 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
 	    keyButton.setDisable(false); keyButton.setText(CREATE_KEY);
-	}
-	
-        keyFileChooser.setFileFilter(this.nonFinalCryptFilter);
-        keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
-        keyFileChooser.removeChoosableFileFilter(this.nonFinalCryptFilter);
+	}	
+        keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
     }
 
 //  Doubleclicked item
     synchronized private void targetFileChooserActionPerformed(java.awt.event.ActionEvent evt)                                                 
-    {
+    {	
         this.fileProgressBar.setProgress(0);
         this.filesProgressBar.setProgress(0);
         if ((targetFileChooser != null)  && (targetFileChooser.getSelectedFiles() != null) && ( targetFileChooser.getSelectedFiles().length == 1 ))
@@ -1896,8 +1895,9 @@ public class GUIFX extends Application implements UI, Initializable
 		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 		} // Not a device / file or symlink
 	    }
-        } else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
-        targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+        }
+	else { encryptButton.setDisable(true); decryptButton.setDisable(true); }
+	targetFileChooser.setFileFilter(nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file		
     }                                                
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1909,7 +1909,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
 //	    elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
 //	    totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
-	    play_MP3(MP3_SND_BUTTON);
+	    play_MP3(MP3_SND_BUTTON);	    
 	    keyFileChooserPropertyCheck();
 	}
     }
@@ -2063,6 +2063,11 @@ public class GUIFX extends Application implements UI, Initializable
 		});
 
 		buildReady(targetFCPathList, false);
+		if (keyFileChooser.getCurrentDirectory().compareTo(lastKeyDir) != 0)
+		{
+		    keyFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); keyFileChooser.updateUI(); keyFileChooserComponentAlteration(keyFileChooser, false);
+		}
+		lastKeyDir = keyFileChooser.getCurrentDirectory();
 	    }
 	}
     }
@@ -2244,7 +2249,7 @@ public class GUIFX extends Application implements UI, Initializable
 		
 
     //		Get Globbing Pattern String
-		pattern = "glob:*"; try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
+		pattern = "glob:*"; // try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
 		// UPdate Dashboard during buildSelection
 
@@ -2294,6 +2299,11 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		targetFCPathList = new FCPathList();
 		buildReady(targetFCPathList, false);
+		if (targetFileChooser.getCurrentDirectory().compareTo(lastTargetDir) != 0)
+		{
+		    targetFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); targetFileChooser.updateUI(); targetFileChooserComponentAlteration(targetFileChooser, false);
+		}
+		lastTargetDir = targetFileChooser.getCurrentDirectory();
 	    }
 	}
     }
@@ -2535,133 +2545,58 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	return list.stream().filter(criteria).collect(Collectors.<FCPath>toList());
     }
         
-    public boolean targetFileChooserComponentAlteration(Container container)
+    public boolean targetFileChooserComponentAlteration(Container container, boolean firsttime)
     {
         Component[] components = container.getComponents();
         for (Component component : components)
         {
 	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,FILE_CHOOSER_FONT_SIZE)); }
 	    
-//            // Click "details view" ToggleButton
+            // Add Delete button
+            if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.targetFileDeleteButton); } }
+            
+//          Click "details view" ToggleButton
             if (component instanceof JToggleButton)
             {
-                if (   ! ((JToggleButton)component).isSelected()   )
+                if ( ! ((JToggleButton)component).isSelected()   )
                 {
-                    // Needs a delay for proper column width 
-                    TimerTask targetFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
-                    {
-                        ((JToggleButton)component).doClick();
-                    }};
-                    Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(targetFileChoosershowDetailsTask, 2000L);
+		    if ( firsttime )
+		    {
+			TimerTask targetFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { ((JToggleButton)component).doClick(); }};
+			Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(targetFileChoosershowDetailsTask, 2000L); // Needs a delay for proper column width
+		    }
+		    else { ((JToggleButton)component).doClick(); }
                 }
             }
-            
-            // Add Delete button
-            if (component instanceof JButton)
-            {
-                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
-                {
-                    component.getParent().add(this.targetFileDeleteButton);
-                }
-            }
-            
-//            // Remove the path textfield
-//            if (component instanceof JTextField)
-//            {
-//                ((JTextField)component).setEnabled(false);
-//                ((JTextField)component).setVisible(false);                
-////                return true;
-//            }
-//            
-//            // Remove the lower filefilter box
-//            if (component instanceof JComboBox)
-//            {
-//                if ( ((JComboBox)component).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
-//                {
-//                    ((JComboBox)component).setEnabled(false);
-//                    ((JComboBox)component).setVisible(false);                
-//                }
-////                return true;
-//            }
-//            
-//            // Remove the lower labels
-//            if (component instanceof JLabel)
-//            {
-//                ((JLabel)component).setEnabled(false);
-//                ((JLabel)component).setVisible(false);                
-////                return true;
-//            }
-            
-            if (component instanceof Container)
-            {
-                if( targetFileChooserComponentAlteration((Container) component) ) return false;
-            }
+            if (component instanceof Container) { if( targetFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
         }
         return false;
     }
 
-    public boolean keyFileChooserComponentAlteration(Container container)
+    public boolean keyFileChooserComponentAlteration(Container container, boolean firsttime)
     {
         Component[] components = container.getComponents();
         for (Component component : components)
         {
 	    if(component instanceof Container) { component.setFont(new Font("System",Font.PLAIN,FILE_CHOOSER_FONT_SIZE)); }
 	    
+            // Add Delete button
+            if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } }
+            
 //            // Click "details view" ToggleButton
             if (component instanceof JToggleButton)
             {
-                if (   ! ((JToggleButton)component).isSelected()   )
+                if ( ! ((JToggleButton)component).isSelected()   )
                 {
-                    TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
-                    {
-                        ((JToggleButton)component).doClick();
-                    }};
-                    Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 1500L);
+		    if ( firsttime )
+		    {
+			TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { ((JToggleButton)component).doClick(); }};
+			Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 1500L); // Needs a delay for proper column width
+		    }
+		    else { ((JToggleButton)component).doClick(); }
                 }
             }
-            
-            // Add Delete button
-            if (component instanceof JButton)
-            {
-                if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder"))
-                {
-//                    component.getParent().add(this.targetFileDeleteButton);
-//                    if (targetFileChooserContainer) { component.getParent().add(this.targetFileDeleteButton); } else { component.getParent().add(this.keyFileDeleteButton); }
-                    component.getParent().add(this.keyFileDeleteButton);
-                }
-            }
-            
-//            // Remove the path textfield
-//            if (component instanceof JTextField)
-//            {
-//                ((JTextField)component).setEnabled(false);
-//                ((JTextField)component).setVisible(false);                
-////                return true;
-//            }
-//            
-//            // Remove the lower filefilter box
-//            if (component instanceof JComboBox)
-//            {
-//                if ( ((JComboBox)component).getSelectedItem().toString().toLowerCase().contains("BasicFileChooserUI".toLowerCase()) )
-//                {
-//                    ((JComboBox)component).setEnabled(false);
-//                    ((JComboBox)component).setVisible(false);                
-//                }
-////                return true;
-//            }
-//            
-//            // Remove the lower labels
-//            if (component instanceof JLabel)
-//            {
-//                ((JLabel)component).setEnabled(false);
-//                ((JLabel)component).setVisible(false);                
-////                return true;
-//            }
-            
-            if (component instanceof Container)
-            {
-                if( keyFileChooserComponentAlteration((Container) component) ) return true;
-            }
+            if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
         }
         return false;
     }
@@ -3109,7 +3044,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		catch (java.lang.IndexOutOfBoundsException ex) {  }
 		finally { targetFileChooser.setCurrentDirectory(curTargetDir); }
 
-		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+//		targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		targetFileChooser.rescanCurrentDirectory(); targetFileChooser.validate();
 		targetFileChooser.setVisible(false); targetFileChooser.setVisible(true);
 		targetFileChooserPropertyCheck(false);
@@ -3126,7 +3061,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		catch (java.lang.IndexOutOfBoundsException ex) {  }
 		finally { keyFileChooser.setCurrentDirectory(curKeyDir); }
 
-		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
+//		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 		keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
 		keyFileChooserPropertyCheck();
@@ -3320,7 +3255,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
-	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+//	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { play_MP3(MP3_SND_INPUT_FAIL); }
     }
@@ -3335,7 +3270,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList(); updateDashboard(targetFCPathList);
 	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
-	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
+//	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { play_MP3(MP3_SND_INPUT_FAIL); }
     }

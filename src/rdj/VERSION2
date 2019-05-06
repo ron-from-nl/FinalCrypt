@@ -1,7 +1,7 @@
-[Version] =		{4.3.1}
+[Version] =		{4.4.0}
 [] = {} ================================================================
-[Release Notes] =	{Added improved check update release notes}
-[Release Message] =	{Informing about Version, Upgrade and Update}
+[Release Notes] =	{Fixed filemanager autoresize column-width}
+[Release Message] =	{Many users have asked for this to be fixed}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -12,17 +12,15 @@
 [Version Notes] =	{   GUI Star Trek Sound Scheme}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 3}
+[Upgrade Notes] =	{Upgrade 4}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   Added improved check update release notes}
-[Upgrade Notes] =	{   Informing about Version, Upgrade and Update}
+[Upgrade Notes] =	{   Fixed filemanager autoresize column-width}
+[Upgrade Notes] =	{   Many users have asked for this to be fixed}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{   Performance of encryption increased 2-10%}
-[Update Notes] =	{   More extensive check update release notes}
-[Update Notes] =	{   Removed indent release notes Version line}
+[Update Notes] =	{   Nothing to update}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
