@@ -2530,6 +2530,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		}
 		else
 		{
+		    userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0);
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
 		    keyButton.setDisable(false); keyButton.setText(CREATE_KEY); // Default enabler
 		}
