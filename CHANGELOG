@@ -1,4 +1,4 @@
-4.4.0 Fixed filemanager autoresize column-width. Many users have asked for this to be fixed. 
+4.4.0 Fixed filemanager autoresize column-width. Fixed Apple OSX hanging after encryption.
 4.3.1 Performance of encryption increased 2-10%. More extensive check update release notes. Removed indent release notes Version line
 4.3.0 Added improved check update release notes. Informing about Version, Upgrade and Update
 4.2.1 BugFix hang on scanning bug

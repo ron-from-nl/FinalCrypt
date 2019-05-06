@@ -1,7 +1,7 @@
 [Version] =		{4.4.0}
 [] = {} ================================================================
 [Release Notes] =	{Fixed filemanager autoresize column-width}
-[Release Message] =	{Many users have asked for this to be fixed}
+[Release Message] =	{Fixed Apple OSX hanging after encryption}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -15,7 +15,7 @@
 [Upgrade Notes] =	{Upgrade 4}
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{   Fixed filemanager autoresize column-width}
-[Upgrade Notes] =	{   Many users have asked for this to be fixed}
+[Upgrade Notes] =	{   Fixed Apple OSX hanging after encryption}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 0}
