@@ -1558,11 +1558,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
 
 //	    Just for testing purposes (uncomment)
-//	    alertCurrentVersionIsUp2Date();
-//	    alertCurrentVersionCanBeUpdated();
-//	    alertCurrentVersionIsDevelopement();
-//	    alertlatestVersionUnknown();
-//	    latestAlertMessage();
+	    alertCurrentVersionIsUp2Date();
+	    alertCurrentVersionCanBeUpdated();
+	    alertCurrentVersionIsDevelopement();
+	    alertlatestVersionUnknown();
+	    latestAlertMessage();
 ////	    currentAlertMessage(); // Should never be tested and used in production
 	    
 	    if (version.latestVersionIsKnown())
@@ -1627,7 +1627,7 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStyleClass().add("myDialog");
 
 	alert.setTitle("Confirmation");
-	alert.setHeaderText("New version " + Version.getProductName() + " available");
+	alert.setHeaderText("New version of " + Version.getProductName() + " available");
 	alert.showAndWait();
 
 	if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
@@ -2551,7 +2551,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		}
 		else
 		{
-		    if (! keyFCPath.isValidKey)
+		    if ((keyFCPath != null) && (! keyFCPath.isValidKey))
 		    {
 			userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 		    }
@@ -2563,10 +2563,10 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			}
 			else
 			{
-			    if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
-			    else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
-			    else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
-			    else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
+			    if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	    { userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
+			    else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))   { userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
+			    else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))   { userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
+			    else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))    { userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
 			}
 		    }
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
@@ -3112,19 +3112,27 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 //		keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Prevents users to scare about disappearing files as they might forget the selected filefilter
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 		keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+
+		if ((System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+		{
+		    keyFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); keyFileChooser.updateUI(); keyFileChooserComponentAlteration(keyFileChooser, false);
+		}
 		keyFileChooserPropertyCheck();
 	    }
 
 	    if (updateTargetFC) //	    Target FileChooser
 	    {
-		String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
-		if ( platform.indexOf("mac") != -1 )
+		if ((System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)) // Again due to Mac OSX
 		{
 		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
 			targetFileSwingNode.setContent(targetFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
 		    }
 		    )); timeline.play();
+		}
+		else
+		{
+		    targetFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); targetFileChooser.updateUI(); targetFileChooserComponentAlteration(targetFileChooser, false);
 		}
 	    }
 
@@ -3133,6 +3141,12 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
 		targetFileChooserPropertyCheck(false);
 		keyFileChooser.rescanCurrentDirectory(); keyFileChooser.validate();
+		
+		if ((System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+		{
+		    targetFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); targetFileChooser.updateUI(); targetFileChooserComponentAlteration(targetFileChooser, false);
+		}
+		
 		keyFileChooserPropertyCheck();
 	    }
 	});

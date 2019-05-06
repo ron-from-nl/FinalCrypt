@@ -1,7 +1,7 @@
-[Version] =		{4.4.1}
+[Version] =		{4.4.2}
 [] = {} ================================================================
 [Release Notes] =	{Fixed additional filemanager autoresize columns issues}
-[Release Message] =	{Fixed several filemanager stability issues on OSX}
+[Release Message] =	{Added extra filemanager autoresize columns detailsview}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -18,10 +18,9 @@
 [Upgrade Notes] =	{   Fixed Apple OSX hanging after encryption}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 2}
 [Update Notes] =	{}
-[Update Notes] =	{   Fixed additional filemanager autoresize columns issues}
-[Update Notes] =	{   Fixed several filemanager stability issues on OSX}
+[Update Notes] =	{   Added extra filemanager autoresize columns detailsview}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
