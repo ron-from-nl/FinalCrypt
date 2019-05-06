@@ -2305,7 +2305,7 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		targetFCPathList = new FCPathList();
 		buildReady(targetFCPathList, false);
-		if (targetFileChooser.getCurrentDirectory().compareTo(lastTargetDir) != 0)
+		if ((targetFileChooser.getCurrentDirectory().compareTo(lastTargetDir) != 0) && (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 		{
 		    targetFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); targetFileChooser.updateUI(); targetFileChooserComponentAlteration(targetFileChooser, false);
 		}
