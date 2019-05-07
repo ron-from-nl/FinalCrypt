@@ -1451,22 +1451,28 @@ public class GUIFX extends Application implements UI, Initializable
     {
 //	test("Invoking play_MP3: " + media.getSource() + " ");
 	
-	if (media != null) 
+	Thread playThread = new Thread(() ->
 	{
-	    if ( media.getSource().contains("sounds") )
+	    if (media != null) 
 	    {
-		if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-	    }
-	    else if ( media.getSource().contains("voice") )
-	    {
-		if ( voice_Is_Enabled)
+		if ( media.getSource().contains("sounds") )
 		{
-		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		    if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
 		}
+		else if ( media.getSource().contains("voice") )
+		{
+		    if ( voice_Is_Enabled)
+		    {
+			if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+			audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		    }
+		}
+		else { log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	    }
-	    else { log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-	}
+	});
+	playThread.setName("playThread");
+	playThread.setDaemon(true);
+	playThread.start();
     }
     
     private String getRuntimeEnvironment()
@@ -2607,7 +2613,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
                 {
 		    if ( firsttime )
 		    {
-			TimerTask targetFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { ((JToggleButton)component).doClick(); }};
+			TimerTask targetFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { targetFileChooser.setVisible(false); ((JToggleButton)component).doClick(); targetFileChooser.setVisible(true); }};
 			Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(targetFileChoosershowDetailsTask, 2000L); // Needs a delay for proper column width
 		    }
 		    else { ((JToggleButton)component).doClick(); }
@@ -2635,7 +2641,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
                 {
 		    if ( firsttime )
 		    {
-			TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { ((JToggleButton)component).doClick(); }};
+			TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { keyFileChooser.setVisible(false); ((JToggleButton)component).doClick(); keyFileChooser.setVisible(true); }};
 			Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 1500L); // Needs a delay for proper column width
 		    }
 		    else { ((JToggleButton)component).doClick(); }
