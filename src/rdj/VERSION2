@@ -1,7 +1,7 @@
-[Version] =		{4.4.3}
+[Version] =		{4.5.0}
 [] = {} ================================================================
-[Release Notes] =	{Improved sound stability enclosing sound-player in Thread}
-[Release Message] =	{Improved sound stability enclosing sound-player in Thread}
+[Release Notes] =	{More clear instructions on password usage}
+[Release Message] =	{Improved Sound interaction & Voice Guidance}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -12,15 +12,15 @@
 [Version Notes] =	{   GUI Star Trek Sound Scheme}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 4}
+[Upgrade Notes] =	{Upgrade 5}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   Fixed filemanager autoresize column-width}
-[Upgrade Notes] =	{   Fixed Apple OSX hanging after encryption}
+[Upgrade Notes] =	{   More clear instructions on password usage}
+[Upgrade Notes] =	{   Removed parallel Voice Guidance / Speech}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{   Improved sound stability enclosing sound-player in Thread}
+[Update Notes] =	{   Separated Voice & Sound threading}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}

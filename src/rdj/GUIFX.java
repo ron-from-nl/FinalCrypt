@@ -1451,13 +1451,19 @@ public class GUIFX extends Application implements UI, Initializable
     {
 //	test("Invoking play_MP3: " + media.getSource() + " ");
 	
-	Thread playThread = new Thread(() ->
-	{
+//	Thread playThread = new Thread(() ->
+//	{
 	    if (media != null) 
 	    {
 		if ( media.getSource().contains("sounds") )
 		{
-		    if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+		    Thread playThread = new Thread(() ->
+		    {
+			if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+		    });
+		    playThread.setName("playThread");
+		    playThread.setDaemon(true);
+		    playThread.start();
 		}
 		else if ( media.getSource().contains("voice") )
 		{
@@ -1469,10 +1475,10 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 		else { log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	    }
-	});
-	playThread.setName("playThread");
-	playThread.setDaemon(true);
-	playThread.start();
+//	});
+//	playThread.setName("playThread");
+//	playThread.setDaemon(true);
+//	playThread.start();
     }
     
     private String getRuntimeEnvironment()
@@ -2539,20 +2545,20 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 			{
 			    userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 			}
-			else
-			{
-			    if	((targetFCPathList.encryptedFiles > 0) && (targetFCPathList.decryptableFiles == 0))
-			    {
-				if (targetFCPathList.encryptedFiles > 0) { play_MP3(MP3_SND_SELECTINVALID); userGuidanceMessage(WRONG_KEY_PASS, 48, false, false, true, false, MP3_VOI_WRONG_KEY_OR_PASSWORD, 0); }
-			    }
-			    else
-			    {
-				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
-				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
-			    }
-			}
+//			else
+//			{
+//			    if	((targetFCPathList.encryptedFiles > 0) && (targetFCPathList.decryptableFiles == 0))
+//			    {
+//				if (targetFCPathList.encryptedFiles > 0) { play_MP3(MP3_SND_SELECTINVALID); userGuidanceMessage(WRONG_KEY_PASS, 48, false, false, true, false, MP3_VOI_WRONG_KEY_OR_PASSWORD, 0); }
+//			    }
+//			    else
+//			    {
+//				if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(SELECT_FILES, 64, false, true, false, false, MP3_VOI_SELECT_FILES, 0); }
+//				else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_DECRYPT_FILES, 0); }
+//				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ userGuidanceMessage(ENCRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_FILES, 0); }
+//				else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
+//			    }
+//			}
 		    }
 		}
 		else
@@ -3662,16 +3668,22 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	}
 	else
 	{
-	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos();finalCrypt.resetPwdBytesPos();
+	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
-	    if (!settingPassword) { userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0); }
+	    if (!settingPassword)
+	    {
+		targetFCPathList = new FCPathList();
+		buildReady(targetFCPathList, false);
+	    }
 	    settingPassword = true;
-	    targetFCPathList = new FCPathList();
-	    buildReady(targetFCPathList, false);
 	}
     }
     
-    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event) { play_MP3(MP3_SND_SELECT); }
+    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_SELECT);
+	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
+    }
 
     @FXML  private void userGuidanceLabelOnMouseClicked(MouseEvent event)
     {

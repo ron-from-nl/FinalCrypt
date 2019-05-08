@@ -1,3 +1,4 @@
+4.5.0 More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
 4.4.3 Improved sound stability enclosing sound-player in Thread
 4.4.2 Added extra filemanager autoresize columns detailsview.
 4.4.1 Fixed additional filemanager autoresize columns issues. Fixed several filemanager stability issues on OSX.
