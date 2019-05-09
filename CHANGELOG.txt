@@ -1,3 +1,4 @@
+4.6.0 Added show / mask password checkbox. Improved mouse-focus password field.
 4.5.0 More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
 4.4.3 Improved sound stability enclosing sound-player in Thread
 4.4.2 Added extra filemanager autoresize columns detailsview.

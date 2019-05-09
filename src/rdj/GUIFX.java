@@ -100,8 +100,7 @@ import javafx.event.*;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.*;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -533,6 +532,11 @@ public class GUIFX extends Application implements UI, Initializable
     private PropertyChangeListener[] keyListener;
     private JToggleButton targetDetailViewButton;
     private JToggleButton keyDetailViewButton;
+    private String pwd;
+    @FXML
+    private TextField pwdtxtField;
+    @FXML
+    private CheckBox showPasswordCheckBox;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -1942,7 +1946,7 @@ public class GUIFX extends Application implements UI, Initializable
 //            keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
 	    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
 	    if ( checksumTooltip != null ) { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
-	    pwdField.setDisable(true); pwdField.setVisible(false);
+	    pwdField.setDisable(true); pwdField.setVisible(false); pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 	    keyImageView.setOpacity(0.1);
 	});
 
@@ -1997,7 +2001,14 @@ public class GUIFX extends Application implements UI, Initializable
 //			keyValidLabel.setTextFill(Color.GREENYELLOW); keyValidLabel.setText(Boolean.toString(keyFCPath.isValidKey));
 
 			if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-			pwdField.setVisible(true); pwdField.setDisable(false); finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+			
+			showPasswordCheckBox.setVisible(true);
+			pwdField.setVisible(! showPasswordCheckBox.isSelected());
+			pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+			pwdField.setDisable(false);
+			pwdtxtField.setDisable(false);
+			
+			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 			keyImageView.setOpacity(0.8);
 
 			targetFileChooserPropertyCheck(true);
@@ -2028,7 +2039,7 @@ public class GUIFX extends Application implements UI, Initializable
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 
-			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false);
+			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false); pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 			keyImageView.setOpacity(0.1);
 
 			userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
@@ -2277,7 +2288,13 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-		    pwdField.setDisable(true); pwdField.setVisible(true); finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    
+		    showPasswordCheckBox.setVisible(true);
+		    pwdField.setDisable(true); pwdField.setVisible(! showPasswordCheckBox.isSelected());
+		    pwdtxtField.setDisable(true); pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+		    
+		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    
 		    keyImageView.setOpacity(0.8);
 		    filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 		});
@@ -2330,7 +2347,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() ->
 	{
-	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false); pwdField.setDisable(false);
+	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false); pwdField.setDisable(false); pwdtxtField.setDisable(false);
 	});
 	if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
 	MySimpleFCFileVisitor.running = false;
@@ -2775,6 +2792,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    pwdField.setText("");
 	    pwdField.setDisable(true);
 	    pwdField.setVisible(false);
+	     pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 	    keyImageView.setOpacity(0.1);
 	    
 	    finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
@@ -2907,6 +2925,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    decryptButton.setDisable(true);
 	    pwdField.setDisable(true);
 //		pwdField.setVisible(false);
+//	        pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 //		keyImageView.setOpacity(0.1);
 
 	    pauseToggleButton.setDisable(false);
@@ -3034,7 +3053,11 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    if ( keyFCPath.isValidKey )
 	    {
 		if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-		pwdField.setDisable(false); /*pwdField.setVisible(true);*/ keyImageView.setOpacity(0.8);
+		
+		pwdField.setDisable(false);
+		pwdtxtField.setDisable(false);
+		
+		keyImageView.setOpacity(0.8);
 	    }
 	    pauseToggleButton.setDisable(true);
 	    stopButton.setDisable(true);
@@ -3655,6 +3678,19 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     
     public static void main(String[] args)  { launch(args); }
 
+    @FXML  private void userGuidanceLabelOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_BUTTON);
+	animation_Is_Enabled = ! animation_Is_Enabled;
+	if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
+    }
+
+    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_SELECT);
+	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
+    }
+
     @FXML
     private void pwdFieldOnKeyReleased(KeyEvent event)
     {
@@ -3669,26 +3705,53 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	else
 	{
 	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+	    pwdtxtField.setText(pwdField.getText());
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
-	    if (!settingPassword)
-	    {
+//	    if (!settingPassword)
+//	    {
 		targetFCPathList = new FCPathList();
 		buildReady(targetFCPathList, false);
-	    }
+//	    }
 	    settingPassword = true;
 	}
     }
     
-    @FXML  private void pwdFieldOnMouseClicked(MouseEvent event)
+    @FXML
+    private void pwdtxtFieldOnKeyReleased(KeyEvent event)
+    {
+	if (event.getCode() == KeyCode.ENTER)
+	{
+	    play_MP3(MP3_SND_INPUT_OK);
+	    passwordHeaderLabel.setText(PASSWORD_SET);
+	    settingPassword = false;
+	    targetFileChooserPropertyCheck(true);
+	}
+	else
+	{
+	    finalCrypt.setPwd(pwdtxtField.getText()); finalCrypt.setPwdBytes(pwdtxtField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+	    pwdField.setText(pwdtxtField.getText());
+	    passwordHeaderLabel.setText(PASSWORD_ENTER);
+//	    if (!settingPassword)
+//	    {
+		targetFCPathList = new FCPathList();
+		buildReady(targetFCPathList, false);
+//	    }
+	    settingPassword = true;
+	}
+    }
+
+    @FXML
+    private void showPasswordCheckBoxOnAction(ActionEvent event)
+    {
+	if (showPasswordCheckBox.isSelected()) { pwdtxtField.setText(pwdField.getText()); } else { pwdField.setText(pwdtxtField.getText()); }
+	pwdField.setVisible(! showPasswordCheckBox.isSelected());
+	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+    }
+
+    @FXML
+    private void pwdtxtFieldOnMouseClicked(MouseEvent event)
     {
 	play_MP3(MP3_SND_SELECT);
 	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
-    }
-
-    @FXML  private void userGuidanceLabelOnMouseClicked(MouseEvent event)
-    {
-	play_MP3(MP3_SND_BUTTON);
-	animation_Is_Enabled = ! animation_Is_Enabled;
-	if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
     }
 }

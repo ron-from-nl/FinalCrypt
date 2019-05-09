@@ -668,20 +668,10 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane scaleX="0.9" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
-                                       <children>
-                                          <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" onMouseClicked="#pwdFieldOnMouseClicked" prefHeight="21.0" prefWidth="142.0" promptText="Password&lt;Enter&gt;" scaleShape="false" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip text="Extra password encryption protects against lost / stolen keys" textAlignment="JUSTIFY" wrapText="true">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font></Tooltip>
-                                             </tooltip>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </PasswordField>
-                                       </children>
+                                    <AnchorPane GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" />
+                                       </padding>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="5">
                                        <children>
@@ -773,6 +763,51 @@
                                           </StackPane>
                                        </children>
                                     </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                       <children>
+                                          <HBox alignment="CENTER" prefHeight="30.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <StackPane HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <TextField fx:id="pwdtxtField" alignment="CENTER" onKeyReleased="#pwdtxtFieldOnKeyReleased" onMouseClicked="#pwdtxtFieldOnMouseClicked" prefWidth="200.0" visible="false">
+                                                         <font>
+                                                            <Font name="Monospaced Regular" size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" onMouseClicked="#pwdFieldOnMouseClicked" prefWidth="200.0" promptText="Password&lt;Enter&gt;" visible="false">
+                                                         <tooltip>
+                                                            <Tooltip text="Extra password encryption protects against lost / stolen keys" textAlignment="JUSTIFY" wrapText="true">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Tooltip>
+                                                         </tooltip>
+                                                         <font>
+                                                            <Font name="Monospaced Regular" size="14.0" />
+                                                         </font>
+                                                      </PasswordField>
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </StackPane>
+                                                <CheckBox fx:id="showPasswordCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showPasswordCheckBoxOnAction" text="CheckBox" textAlignment="CENTER" visible="false" HBox.hgrow="NEVER">
+                                                   <tooltip>
+                                                      <Tooltip text="Show / Mask Password" />
+                                                   </tooltip>
+                                                   <HBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </HBox.margin>
+                                                </CheckBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <GridPane.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </GridPane.margin></AnchorPane>
                                  </children>
                                  <effect>
                                     <Glow level="0.5" />
