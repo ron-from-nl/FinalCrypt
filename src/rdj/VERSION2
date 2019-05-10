@@ -20,9 +20,8 @@
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   Disabled unmasked password during encryption
-[Update Notes] =	{   Decreased password font size from px 14 to 12
-}
+[Update Notes] =	{   Disabled unmasked password during encryption}
+[Update Notes] =	{   Decreased password font size from px 14 to 12}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
