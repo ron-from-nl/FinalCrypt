@@ -1946,7 +1946,7 @@ public class GUIFX extends Application implements UI, Initializable
 //            keyValidLabel.setTextFill(Color.GREY); keyValidLabel.setText("");
 	    checksumLabel.setTextFill(Color.GREY); checksumLabel.setText("");
 	    if ( checksumTooltip != null ) { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
-	    pwdField.setDisable(true); pwdField.setVisible(false); pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
+	    pwdField.setDisable(true); pwdtxtField.setDisable(true); pwdField.setVisible(false); pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 	    keyImageView.setOpacity(0.1);
 	});
 
@@ -2039,7 +2039,12 @@ public class GUIFX extends Application implements UI, Initializable
 //		        try { Thread.sleep(100); } catch (InterruptedException ex) {  }
 			if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 
-			pwdField.setDisable(true); passwordHeaderLabel.setText("Password"); pwdField.setVisible(false); pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
+			pwdField.setDisable(true);
+			pwdField.setVisible(false);
+			pwdtxtField.setDisable(true);			
+			pwdtxtField.setVisible(pwdField.isVisible());
+			passwordHeaderLabel.setText("Password");
+			showPasswordCheckBox.setVisible(pwdField.isVisible());
 			keyImageView.setOpacity(0.1);
 
 			userGuidanceMessage(SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
@@ -2290,8 +2295,10 @@ public class GUIFX extends Application implements UI, Initializable
 		    if (pwdField.getText().length() == 0) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
 		    
 		    showPasswordCheckBox.setVisible(true);
-		    pwdField.setDisable(true); pwdField.setVisible(! showPasswordCheckBox.isSelected());
-		    pwdtxtField.setDisable(true); pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+		    pwdField.setDisable(true);
+		    pwdtxtField.setDisable(true);
+		    pwdField.setVisible(! showPasswordCheckBox.isSelected());
+		    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
 		    
 		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 		    
@@ -2789,10 +2796,16 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	Platform.runLater(() ->
 	{
 	    passwordHeaderLabel.setText("Password"); 
+	    
 	    pwdField.setText("");
 	    pwdField.setDisable(true);
 	    pwdField.setVisible(false);
-	     pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
+
+	    pwdtxtField.setText("");
+	    pwdtxtField.setDisable(true);
+	    pwdtxtField.setVisible(false);
+	    	    
+	    showPasswordCheckBox.setVisible(pwdField.isVisible());
 	    keyImageView.setOpacity(0.1);
 	    
 	    finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
@@ -2923,7 +2936,10 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
+	    
 	    pwdField.setDisable(true);
+	    pwdtxtField.setDisable(true);
+	    
 //		pwdField.setVisible(false);
 //	        pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
 //		keyImageView.setOpacity(0.1);

@@ -1,3 +1,4 @@
+4.6.1 Disabled unmasked password during encryption. Decreased password font size from px 14 to 12.
 4.6.0 Added show / mask password checkbox. Improved mouse-focus password field.
 4.5.0 More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
 4.4.3 Improved sound stability enclosing sound-player in Thread

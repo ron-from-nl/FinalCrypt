@@ -1,7 +1,7 @@
-[Version] =		{4.6.0}
+[Version] =		{4.6.1}
 [] = {} ================================================================
-[Release Notes] =	{Added show / mask password checkbox}
-[Release Message] =	{Improved mouse-focus password field}
+[Release Notes] =	{Disabled unmasked password during encryption}
+[Release Message] =	{Decreased password font size from px 14 to 12}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -18,9 +18,11 @@
 [Upgrade Notes] =	{   Improved mouse-focus password field}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   No update}
+[Update Notes] =	{   Disabled unmasked password during encryption
+[Update Notes] =	{   Decreased password font size from px 14 to 12
+}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}

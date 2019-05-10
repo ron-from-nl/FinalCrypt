@@ -771,7 +771,7 @@
                                                    <children>
                                                       <TextField fx:id="pwdtxtField" alignment="CENTER" onKeyReleased="#pwdtxtFieldOnKeyReleased" onMouseClicked="#pwdtxtFieldOnMouseClicked" prefWidth="200.0" visible="false">
                                                          <font>
-                                                            <Font name="Monospaced Regular" size="14.0" />
+                                                            <Font name="Monospaced Regular" size="12.0" />
                                                          </font>
                                                       </TextField>
                                                       <PasswordField fx:id="pwdField" alignment="CENTER" cache="true" focusTraversable="false" onKeyReleased="#pwdFieldOnKeyReleased" onMouseClicked="#pwdFieldOnMouseClicked" prefWidth="200.0" promptText="Password&lt;Enter&gt;" visible="false">
@@ -783,7 +783,7 @@
                                                             </Tooltip>
                                                          </tooltip>
                                                          <font>
-                                                            <Font name="Monospaced Regular" size="14.0" />
+                                                            <Font name="Monospaced Regular" size="12.0" />
                                                          </font>
                                                       </PasswordField>
                                                    </children>
