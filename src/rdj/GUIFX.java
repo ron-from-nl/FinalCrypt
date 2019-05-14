@@ -492,7 +492,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private boolean settingPassword;
 
-    private double fontsizefactor;
+//    private double fontsizefactor;
     private String fadeInMessage;
     private boolean bottomleftLabelEnabled;
     private boolean topleftLabelEnabled;
@@ -1118,11 +1118,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    infotext += "\r\n";
 	    infotext += "Live to love - Enjoy your privacy.\r\n\r\n";
 	    
-	    fontsizefactor = 1.3;
+//	    fontsizefactor = 1.3;
 	    
 	    Version ver = new Version(ui); ver.checkCurrentlyInstalledVersion(ui);
 	    fadeInMessage = Version.getProductName();
-	    userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / fadeInMessage.length() * fontsizefactor) + "px;");
+	    userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / fadeInMessage.length() * 1.3) + "px;");
 	    userGuidanceLabel.setText(fadeInMessage);
 	    textLabelTimeline.play();
 
@@ -1363,7 +1363,7 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0); bottomrightLabel.setVisible(bottomrightLabelEnabled);
 	    }
 	    userGuidanceLabel.setOpacity(0);
-	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * fontsizefactor) + "px;");
+	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * 1.3) + "px;");
 	    userGuidanceLabel.setText(message);
 	    fadevar = 0.0;
 	    Timeline labelTimeline1 = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae -> // Begin fade in
@@ -2153,6 +2153,7 @@ public class GUIFX extends Application implements UI, Initializable
 				String hashString = getHexString(hashBytes,2);
 				Platform.runLater(() ->
 				{
+				    play_MP3(MP3_SND_SELECT);
 				    checksumLabel.setTextFill(Color.GREENYELLOW);
 				    checksumLabel.setText(hashString);
 				    if ( checksumTooltip != null ) { checksumTooltip.setText(hashString + "\r\n\r\ncalculate checksum: left-click\r\ncopy to clipboard:  right-click"); }
@@ -2184,7 +2185,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if ((keyFCPath != null) && (keyFCPath.isValidKey))
 		{
-		    play_MP3(MP3_SND_INPUT_OK);
+		    play_MP3(MP3_SND_SELECT);
 		    checksumLabel.setTextFill(Color.WHITESMOKE);
 		    checksumLabel.setText("Calculating..."); checksumTooltip.setText("");
 		    Platform.runLater(() ->	{ calculateChecksum(); });
@@ -2390,29 +2391,29 @@ public class GUIFX extends Application implements UI, Initializable
 	    if ( targetFCPathList.symlinkFiles > 0 )	    { symlinkFilesLabel.setTextFill(Color.ORANGE); } else { symlinkFilesLabel.setTextFill(Color.GRAY); }
 	    if ( targetFCPathList.unreadableFiles > 0 )	    { unreadableFilesLabel.setTextFill(Color.ORANGE); } else { unreadableFilesLabel.setTextFill(Color.GRAY); }
 //	    if ( targetFCPathList.unreadableFilesSize > 0 ) { unreadableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unreadableFilesSizeLabel.setTextFill(Color.GRAY); }
-if ( targetFCPathList.unwritableFiles > 0 )	    { unwritableFilesLabel.setTextFill(Color.ORANGE); } else { unwritableFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.unwritableFiles > 0 )	    { unwritableFilesLabel.setTextFill(Color.ORANGE); } else { unwritableFilesLabel.setTextFill(Color.GRAY); }
 //	    if ( targetFCPathList.unwritableFilesSize > 0 ) { unwritableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unwritableFilesSizeLabel.setTextFill(Color.GRAY); }
-if ( targetFCPathList.hiddenFiles > 0 )	    { hiddenFilesLabel.setTextFill(Color.YELLOW); } else { hiddenFilesLabel.setTextFill(Color.GRAY); }
+	    if ( targetFCPathList.hiddenFiles > 0 )	    { hiddenFilesLabel.setTextFill(Color.YELLOW); } else { hiddenFilesLabel.setTextFill(Color.GRAY); }
 //	    if ( targetFCPathList.hiddenFilesSize > 0 )	    { hiddenFilesSizeLabel.setTextFill(Color.YELLOW); } else { hiddenFilesSizeLabel.setTextFill(Color.GRAY); }
 
-emptyFilesLabel.setText(Long.toString(targetFCPathList.emptyFiles));
-symlinkFilesLabel.setText(Long.toString(targetFCPathList.symlinkFiles));
-unreadableFilesLabel.setText(Long.toString(targetFCPathList.unreadableFiles));
-unreadableFilesLabel.getTooltip().setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1) + ")");
+	    emptyFilesLabel.setText(Long.toString(targetFCPathList.emptyFiles));
+	    symlinkFilesLabel.setText(Long.toString(targetFCPathList.symlinkFiles));
+	    unreadableFilesLabel.setText(Long.toString(targetFCPathList.unreadableFiles));
+	    unreadableFilesLabel.getTooltip().setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1) + ")");
 //	    unreadableFilesSizeLabel.setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1) + ")");
-unwritableFilesLabel.setText(Long.toString(targetFCPathList.unwritableFiles));
-unwritableFilesLabel.getTooltip().setText("Click to list unwritable files (" + Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1) + ")");
+	    unwritableFilesLabel.setText(Long.toString(targetFCPathList.unwritableFiles));
+	    unwritableFilesLabel.getTooltip().setText("Click to list unwritable files (" + Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1) + ")");
 //	    unwritableFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1));
-hiddenFilesLabel.setText(Long.toString(targetFCPathList.hiddenFiles));
-hiddenFilesLabel.getTooltip().setText("Click to list hidden files (" + Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1) + ")");
+	    hiddenFilesLabel.setText(Long.toString(targetFCPathList.hiddenFiles));
+	    hiddenFilesLabel.getTooltip().setText("Click to list hidden files (" + Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1) + ")");
 //	    hiddenFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1));
 
-// Decrypted Column
-decryptedLabel.setText(Long.toString(targetFCPathList.decryptedFiles));
-decryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptedFilesSize,1));
+//	    Decrypted Column
+	    decryptedLabel.setText(Long.toString(targetFCPathList.decryptedFiles));
+	    decryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptedFilesSize,1));
 
-encryptableLabel.setText(Long.toString(targetFCPathList.encryptableFiles));
-encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableFilesSize,1));
+	    encryptableLabel.setText(Long.toString(targetFCPathList.encryptableFiles));
+	    encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableFilesSize,1));
 
 //	    newEncryptedLabel.setText(Long.toString(targetFCPathList.newEncryptedFiles));
 //	    newEncryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newEncryptedFilesSize,1));
@@ -2420,15 +2421,15 @@ encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableF
 //	    encryptRemainingLabel.setText(Long.toString(targetFCPathList.encryptRemainingFiles));
 //	    encryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptRemainingFilesSize,1));
 
-unencryptableLabel.setText(Long.toString(targetFCPathList.unEncryptableFiles));
-unencryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unEncryptableFilesSize,1));
+	    unencryptableLabel.setText(Long.toString(targetFCPathList.unEncryptableFiles));
+	    unencryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unEncryptableFilesSize,1));
 
-// Encrypted Column
-encryptedLabel.setText(Long.toString(targetFCPathList.encryptedFiles));
-encryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptedFilesSize,1));
+//	    Encrypted Column
+	    encryptedLabel.setText(Long.toString(targetFCPathList.encryptedFiles));
+	    encryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptedFilesSize,1));
 
-decryptableLabel.setText(Long.toString(targetFCPathList.decryptableFiles));
-decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableFilesSize,1));
+	    decryptableLabel.setText(Long.toString(targetFCPathList.decryptableFiles));
+	    decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableFilesSize,1));
 
 //	    newDecryptedLabel.setText(Long.toString(targetFCPathList.newDecryptedFiles));
 //	    newDecryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newDecryptedFilesSize,1));
@@ -2436,24 +2437,24 @@ decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableF
 //	    decryptRemainingLabel.setText(Long.toString(targetFCPathList.decryptRemainingFiles));
 //	    decryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptRemainingFilesSize,1));
 
-undecryptableLabel.setText(Long.toString(targetFCPathList.unDecryptableFiles));
-undecryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unDecryptableFilesSize,1));
+	    undecryptableLabel.setText(Long.toString(targetFCPathList.unDecryptableFiles));
+	    undecryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unDecryptableFilesSize,1));
 
-// Totals Column
-validFilesLabel.setText(Long.toString(targetFCPathList.validFiles));
-validFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validFilesSize,1));
+//	    Totals Column
+	    validFilesLabel.setText(Long.toString(targetFCPathList.validFiles));
+	    validFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validFilesSize,1));
 
-validDevicesLabel.setText(Long.toString(targetFCPathList.validDevices));
-validDevicesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validDevicesSize,1));
+	    validDevicesLabel.setText(Long.toString(targetFCPathList.validDevices));
+	    validDevicesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validDevicesSize,1));
 
-validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
-validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1));
+	    validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
+	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1));
 
-invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
-invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1));
+	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
+	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1));
 
-totalFilesLabel.setText(Long.toString(targetFCPathList.files));
-filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
+	    totalFilesLabel.setText(Long.toString(targetFCPathList.files));
+	    filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	});
     }
     
@@ -2887,10 +2888,8 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 //    @Override public void buildProgress(FCPathList targetFCPathList) { updateDashboard(targetFCPathList); }
 
 //    public void setStageTitle(String title) { PlatformImpl.runAndWait(new Runnable() { @Override public void run() { guifx.stage.setTitle(title); } });}
-    public void setStageTitle(String title) { Platform.runLater(() ->
-    {
-	guifx.stage.setTitle(title);
-    });}
+    public void setStageTitle(String title) { Platform.runLater(() -> { guifx.stage.setTitle(title); });}
+    
     public void statusDirect(String status) { statusLabel.setText(status); }
 
     @Override public void processStarted()
@@ -3698,17 +3697,25 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
     {
 	play_MP3(MP3_SND_BUTTON);
 	animation_Is_Enabled = ! animation_Is_Enabled;
-	if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
+	if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); play_MP3(MP3_SND_INPUT_OK); load_High_MS_Passed = 0.0; load_Low_MS_Passed = LOAD_LOW_MS_TIMEOUT; } else { prefs.put("Animated", "Disabled"); play_MP3(MP3_SND_INPUT_FAIL); }
+    }
+
+    @FXML private void showPasswordCheckBoxOnAction(ActionEvent event)
+    {
+	if (showPasswordCheckBox.isSelected()) { pwdtxtField.setText(pwdField.getText()); } else { pwdField.setText(pwdtxtField.getText()); }
+	setFont(pwdField);setFont(pwdtxtField);
+	pwdField.setVisible(! showPasswordCheckBox.isSelected());
+	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
     }
 
     @FXML  private void pwdFieldOnMouseClicked(MouseEvent event)
     {
 	play_MP3(MP3_SND_SELECT);
 	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
+	setFont(pwdField);setFont(pwdtxtField);
     }
 
-    @FXML
-    private void pwdFieldOnKeyReleased(KeyEvent event)
+    @FXML private void pwdFieldOnKeyReleased(KeyEvent event)
     {
 //	log("Pass: " + pwdField.getText() + " length: " + pwdField.getText().length() + event.getCode(), true, true, true, false, false);
 	if (event.getCode() == KeyCode.ENTER)
@@ -3722,18 +3729,22 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	{
 	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    pwdtxtField.setText(pwdField.getText());
+	    setFont(pwdField);setFont(pwdtxtField);
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
-//	    if (!settingPassword)
-//	    {
-		targetFCPathList = new FCPathList();
-		buildReady(targetFCPathList, false);
-//	    }
+	    targetFCPathList = new FCPathList();
+	    buildReady(targetFCPathList, false);
 	    settingPassword = true;
 	}
     }
     
-    @FXML
-    private void pwdtxtFieldOnKeyReleased(KeyEvent event)
+    @FXML private void pwdtxtFieldOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_SELECT);
+	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
+	setFont(pwdField);setFont(pwdtxtField);
+    }
+
+    @FXML private void pwdtxtFieldOnKeyReleased(KeyEvent event)
     {
 	if (event.getCode() == KeyCode.ENTER)
 	{
@@ -3746,6 +3757,7 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	{
 	    finalCrypt.setPwd(pwdtxtField.getText()); finalCrypt.setPwdBytes(pwdtxtField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    pwdField.setText(pwdtxtField.getText());
+	    setFont(pwdField);setFont(pwdtxtField);
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
 //	    if (!settingPassword)
 //	    {
@@ -3755,19 +3767,10 @@ filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
 	    settingPassword = true;
 	}
     }
-
-    @FXML
-    private void showPasswordCheckBoxOnAction(ActionEvent event)
+    
+    private void setFont(TextField field)
     {
-	if (showPasswordCheckBox.isSelected()) { pwdtxtField.setText(pwdField.getText()); } else { pwdField.setText(pwdtxtField.getText()); }
-	pwdField.setVisible(! showPasswordCheckBox.isSelected());
-	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-    }
-
-    @FXML
-    private void pwdtxtFieldOnMouseClicked(MouseEvent event)
-    {
-	play_MP3(MP3_SND_SELECT);
-	userGuidanceMessage(PASSWORD_ENTER, 48, false, false, true, false, MP3_VOI_CONFIRM_PASS_WITH_ENTER, 0);
+	long fontsize = Math.round(field.getWidth() / field.getText().length() * 1.3); if (fontsize > 14) {fontsize =14;} else if (fontsize < 8) {fontsize =8;}
+	field.setStyle("-fx-font-family: monospace; -fx-font-size: " + fontsize + "px;");
     }
 }

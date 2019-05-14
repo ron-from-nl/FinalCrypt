@@ -1,7 +1,7 @@
-[Version] =		{4.6.1}
+[Version] =		{4.7.0}
 [] = {} ================================================================
-[Release Notes] =	{Disabled unmasked password during encryption}
-[Release Message] =	{Decreased password font size from px 14 to 12}
+[Release Notes] =	{Autoscaled password font-size}
+[Release Message] =	{Quick user-reenabled animations}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -12,16 +12,15 @@
 [Version Notes] =	{   GUI Star Trek Sound Scheme}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 6}
+[Upgrade Notes] =	{Upgrade 7}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   Added show / mask password checkbox}
-[Upgrade Notes] =	{   Improved mouse-focus password field}
+[Upgrade Notes] =	{   Autoscaled password font-size}
+[Upgrade Notes] =	{   Quick user-reenabled animations}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{   Disabled unmasked password during encryption}
-[Update Notes] =	{   Decreased password font size from px 14 to 12}
+[Update Notes] =	{   No update}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
