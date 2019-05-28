@@ -2,7 +2,7 @@
 <XML_DIZ_INFO>
   <MASTER_PAD_VERSION_INFO>
     <MASTER_PAD_VERSION>4.0</MASTER_PAD_VERSION>
-    <MASTER_PAD_EDITOR>FinalCrypt 4.7.0</MASTER_PAD_EDITOR>
+    <MASTER_PAD_EDITOR>FinalCrypt 4.7.1</MASTER_PAD_EDITOR>
     <MASTER_PAD_EDITOR_URL>http://publisher.appvisor.com</MASTER_PAD_EDITOR_URL>
     <MASTER_PAD_INFO>Portable Application Description, or PAD(TM) 2004 Association of Software Professionals (ASP)http://www.asp-shareware.org/pad is a data set standard and specification that is commercialsoftware publishers to disseminate certified information about their software application. The PAD format is copyright of the ASP and cannot be used without the formal licensing and permission of both the Association of Software Professionals and its agent AppVisor.com.</MASTER_PAD_INFO>
     <CERTIFIED>N</CERTIFIED>
@@ -14,11 +14,11 @@
     <Product_UIN>APP-0210AE718AAE</Product_UIN>
     <Publish_on_CD>FALSE</Publish_on_CD>
     <NewsFeed_Search_String></NewsFeed_Search_String>
-    <Search_String>FinalCrypt - Free File Encryption</Search_String>
+    <Search_String>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Search_String>
     <Press_Release_Search_String></Press_Release_Search_String>
     <Backlink></Backlink>
     <Comments_For_Reviewer></Comments_For_Reviewer>
-    <Search_String_Unique>FinalCrypt - Free File Encryption</Search_String_Unique>
+    <Search_String_Unique>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Search_String_Unique>
     <Search_Engine_Search_String></Search_Engine_Search_String>
     <Web_Directories_Search_String></Web_Directories_Search_String>
     <Company_Description></Company_Description>
@@ -33,20 +33,20 @@
     <Zip_Postal_Code>1544</Zip_Postal_Code>
     <Address_1>Discreet</Address_1>
     <Address_2></Address_2>
-    <Company_WebSite_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Company_WebSite_URL>
+    <Company_WebSite_URL>http://www.finalcrypt.org/</Company_WebSite_URL>
     <Contact_Info>
       <Contact_First_Name>Ron</Contact_First_Name>
       <Contact_Last_Name>de Jong</Contact_Last_Name>
-      <Contact_Email>ronuitzaandam@gmail.com</Contact_Email>
+      <Contact_Email>info@finalcrypt.org</Contact_Email>
       <Author_First_Name>Ron</Author_First_Name>
       <Author_Last_Name>de Jong</Author_Last_Name>
-      <Author_Email>ronuitzaandam@gmail.com</Author_Email>
+      <Author_Email>info@finalcrypt.org</Author_Email>
       <Contact_Phone></Contact_Phone>
     </Contact_Info>
     <Support_Info>
-      <Sales_Email>ronuitzaandam@gmail.com</Sales_Email>
-      <Support_Email>ronuitzaandam@gmail.com</Support_Email>
-      <General_Email>ronuitzaandam@gmail.com</General_Email>
+      <Sales_Email>info@finalcrypt.org</Sales_Email>
+      <Support_Email>support@finalcrypt.org</Support_Email>
+      <General_Email>info@finalcrypt.org</General_Email>
       <Sales_Phone></Sales_Phone>
       <Support_Phone></Support_Phone>
       <General_Phone></General_Phone>
@@ -65,7 +65,7 @@
   <Program_Info>
     <AppID>app-800017a7c458</AppID>
     <Program_Name>FinalCrypt</Program_Name>
-    <Program_Version>4.7.0</Program_Version>
+    <Program_Version>4.7.1</Program_Version>
     <Program_Release_Month>12</Program_Release_Month>
     <Program_Release_Day>18</Program_Release_Day>
     <Program_Release_Year>2018</Program_Release_Year>
@@ -103,8 +103,8 @@
   </Program_Info>
   <Web_Info>
     <Application_URLs>
-      <Application_Info_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Application_Info_URL>
-      <Application_Order_URL>http://sites.google.com/site/ronuitholland/home/finalcrypt</Application_Order_URL>
+      <Application_Info_URL>http://www.finalcrypt.org/</Application_Info_URL>
+      <Application_Order_URL>http://www.finalcrypt.org/</Application_Order_URL>
       <Application_Screenshot_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Encrypt_800x600.png</Application_Screenshot_URL>
       <Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon_32x32.png</Application_Icon_URL>
       <Application_XML_File_URL>https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/FinalCrypt_pad.xml</Application_XML_File_URL>
@@ -119,11 +119,11 @@
   <Program_Descriptions>
     <English>
       <Keywords>Encrypt, Decrypt, file encryption, one-time pad, folder encryption</Keywords>
-      <Char_Desc_45>FinalCrypt - Free File Encryption</Char_Desc_45>
-      <Char_Desc_80>Encrypt files with an OTP key or  personal photo or video file</Char_Desc_80>
-      <Char_Desc_250>FinalCrypt is an easy, multi-platform and powerful tool to enc/////rypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_250>
-      <Char_Desc_450>FinalCrypt is an easy, multi-platform and powerful tool to encrypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_450>
-      <Char_Desc_2000>FinalCrypt is an easy, multi-platform and powerful tool to encrypt your data for free in an original way. It can encrypt any file by using a personal image or video file as your encryption key, a method that combines security, speed and simplicity</Char_Desc_2000>
+      <Char_Desc_45>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Char_Desc_45>
+      <Char_Desc_80>  Encrypt files with an OTP key or  personal photo or video file</Char_Desc_80>
+      <Char_Desc_250> FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_250>
+      <Char_Desc_450> FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_450>
+      <Char_Desc_2000>FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_2000>
     </English>
   </Program_Descriptions>
   <Permissions>
@@ -139,7 +139,7 @@
     <Affiliates_Regnow_Product_ID></Affiliates_Regnow_Product_ID>
     <Affiliates_FORM>Y</Affiliates_FORM>
     <Affiliates_FORM_VER></Affiliates_FORM_VER>
-    <Affiliates_VERSION>4.7.0</Affiliates_VERSION>
+    <Affiliates_VERSION>4.7.1</Affiliates_VERSION>
     <Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
     <Affiliates_Information_Page></Affiliates_Information_Page>
     <Affiliates_Avangate_Order_Page></Affiliates_Avangate_Order_Page>
@@ -216,7 +216,7 @@ There are no obvious drawbacks to complain about.
 </Press_Release>
     <Headline>Encrypt files with a personal photo or video</Headline>
     <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.7.2 can encrypt your files with a personal photo or video</Summary>
-    <Press_Release_Plain>FinalCrypt - Free File Encryption
+    <Press_Release_Plain>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION
  There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
 
 FinalCrypt is offered completely free of charge and it can be used on any modern Windows platform. It doesn't take long to install it and you don't have to go through a complex procedure. The hardware requirements are modest and there is no need to meet any special requirements. 
@@ -238,16 +238,16 @@ There are no obvious drawbacks to complain about.</Press_Release_Plain>
   <Site>
     <Site_FORM></Site_FORM>
     <Site_VERSION></Site_VERSION>
-    <Site_DESCRIPTION>Encrypt your personal files with a personal photo or video file</Site_DESCRIPTION>
+    <Site_DESCRIPTION>Encrypt your personal files with One-Time Pad encryption</Site_DESCRIPTION>
     <Site_Site_Title>FinalCrypt - File Encryption Program</Site_Site_Title>
     <Site_Site_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/</Site_Site_URL>
     <Site_Keywords>encrypt, decrypt, one-time pad, file encryption</Site_Keywords>
-    <Site_Description_100>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_100>
-    <Site_Description_250>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_250>
-    <Site_Description_450>FinalCrypt - Free File Encryption - Encrypt with an OTP key,photo or video file</Site_Description_450>
+    <Site_Description_100>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt with One-Time Pad</Site_Description_100>
+    <Site_Description_250>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt your personal files with One-Time Pad encryption</Site_Description_250>
+    <Site_Description_450>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt your personal files with One-Time Pad encryption</Site_Description_450>
     <Site_Contact_First_Name>Ron</Site_Contact_First_Name>
     <Site_Contact_Last_Name>de Jong</Site_Contact_Last_Name>
-    <Site_Contact_Email>ronuitzaandam@gmail.com</Site_Contact_Email>
+    <Site_Contact_Email>info@finalcrypt.org</Site_Contact_Email>
   </Site>
   <Dynamic_PAD>
     <Dynamic_Distributive>N</Dynamic_Distributive>

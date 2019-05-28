@@ -1,7 +1,7 @@
-[Version] =		{4.7.0}
+[Version] =		{4.7.1}
 [] = {} ================================================================
-[Release Notes] =	{Autoscaled password font-size}
-[Release Message] =	{Quick user-reenabled animations}
+[Release Notes] =	{Added: Entitle for Free Support}
+[Release Message] =	{Click Share to get Free Support}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -18,9 +18,11 @@
 [Upgrade Notes] =	{   Quick user-reenabled animations}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   No update}
+[Update Notes] =	{   Share on Social Media entitles Free Support}
+[Update Notes] =	{   Free Support is based on a fair time share}
+[Update Notes] =	{   Click the Share button to get Free Support}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
 [Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}

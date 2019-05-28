@@ -42,9 +42,9 @@ import static rdj.GUIFX.getHexString;
 
 /* commandline test routine
 
-clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -jar FinalCrypt.jar
-clear; echo -n -e \\x05 > 1; echo -n -e \\x03 > 2; java -cp FinalCrypt.jar rdj/CLUI --encrypt --print -k 2 -t 1
-clear; echo -n ZYXVWUTSRQPONMLKJIHGFEDCBA098765 > a; echo -n abcdefghijklstuvwxyz > b; java -cp FinalCrypt.jar rdj/CLUI --print -k b -t a
+echo -n -e \\x05 > myfile # 00000101
+echo -n -e \\x03 > mykey  # 00000011
+java -cp FinalCrypt.jar rdj/CLUI --encrypt --print --no-key-size --disable-MAC -k mykey -t myfile
 
 */
 
