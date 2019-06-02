@@ -1560,7 +1560,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    alertCurrentVersionIsDevelopement();
 //	    alertlatestVersionUnknown();
 //	    latestAlertMessage();
-	    currentAlertMessage(); // Should never be tested and used in production
+////	    currentAlertMessage(); // Should never be tested and used in production
 	    
 	    if (version.latestVersionIsKnown())
 	    {

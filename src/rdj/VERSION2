@@ -24,7 +24,9 @@
 [Update Notes] =	{   Free Support is based on a fair time share}
 [Update Notes] =	{   Click the Share button to get Free Support}
 [] = {} --------------------------------------------------------------------------------------------------------
-[Alert Subject] =	{What is your opinion? ("Auto Key" Mode for 100% One-Time Pad)}
+[Alert Subject] =	{Please read carefully ("Auto Key" Mode for 100% One-Time Pad)}
+[Alert Notes] =		{A major change is about to be introduced, but before that I would like to hear your opinion}
+[Alert Notes] =		{}
 [Alert Notes] =		{Currently FinalCrypt does not automatically generate a separate key for every file you encrypt}
 [Alert Notes] =		{Re-using keys (One key encrypting more files) breaks the One-Time Pad rules compromising security}
 [Alert Notes] =		{}
