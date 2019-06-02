@@ -364,11 +364,11 @@ public class CreateOTPKey extends Application implements Initializable
 
     //      Write the keyfile to 1st partition
 	    byte[]      randomBytes1 =	    new byte[bufferSize];
-	    byte[]      randomBytes2 =	    new byte[bufferSize];
-	    byte[]      randomBytes3 =	    new byte[bufferSize];
+//	    byte[]      randomBytes2 =	    new byte[bufferSize];
+//	    byte[]      randomBytes3 =	    new byte[bufferSize];
 	    ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-	    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-	    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+//	    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+//	    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
 
 	    throughputClock = 0L;
 	    lastThroughputClock = 0L;
@@ -404,33 +404,33 @@ public class CreateOTPKey extends Application implements Initializable
 		if	    ( remainder >= bufferSize )				
 		{
 		    randomBytes1 =	    new byte[bufferSize];
-		    randomBytes2 =	    new byte[bufferSize];
-		    randomBytes3 =	    new byte[bufferSize];
+//		    randomBytes2 =	    new byte[bufferSize];
+//		    randomBytes3 =	    new byte[bufferSize];
 		    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+//		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+//		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
 		}
 		else if (( remainder > 0 ) && ( remainder < bufferSize ))
 		{
 		    randomBytes1 =	    new byte[remainder.intValue()];
-		    randomBytes2 =	    new byte[remainder.intValue()];
-		    randomBytes3 =	    new byte[remainder.intValue()];
+//		    randomBytes2 =	    new byte[remainder.intValue()];
+//		    randomBytes3 =	    new byte[remainder.intValue()];
 		    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
-		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
-		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
+//		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
+//		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
 		}
 		else							{ inputEnded = true; }
-    //          Randomize raw key or write raw key straight to partition
+		
+//		Randomize raw key or write raw key straight to partition
 		random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
-		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
+//		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
+//		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, 0, false); // Encrypt
 
-		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, 0, false); // Encrypt
-
-    //          Write Device
+    //          Write Device (randomBuffer3 became randomBuffer1)
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
-		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
+		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer1); randomBuffer1.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
 		    totalTranfered += writeKeyFileChannelTransfered; 
 //		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
 
@@ -438,7 +438,7 @@ public class CreateOTPKey extends Application implements Initializable
 
 		    writeKeyFileChannel.close();
 		} catch (IOException ex) { statusLabel1.setText("Error: " + ex.getMessage()); inputEnded = true; break; }
-		randomBuffer1.clear(); randomBuffer2.clear(); randomBuffer3.clear();
+		randomBuffer1.clear(); randomBuffer1.clear(); randomBuffer1.clear();
 	    }
 	    writeKeyFileChannelPosition = 0;                
 	    writeKeyFileChannelTransfered = 0;                
