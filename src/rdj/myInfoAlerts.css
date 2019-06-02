@@ -48,3 +48,4 @@
 {
     -fx-background-color: #cccccc;
 }
+.text-area .scroll-bar:vertical:disabled {-fx-opacity: 0;}

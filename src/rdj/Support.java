@@ -39,7 +39,7 @@ import javafx.scene.media.*;
 import javafx.stage.Stage;
 import javax.sound.sampled.*;
 
-public class Please_Share extends Application implements Initializable
+public class Support extends Application implements Initializable
 {
     private final Media WAV_SND_BUTTON =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_button.wav").toExternalForm());
     private final Media WAV_SND_ENCRYPTFILES =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_encrypt_files.wav").toExternalForm());
@@ -69,7 +69,7 @@ public class Please_Share extends Application implements Initializable
     private FXMLLoader loader;
     private GUIFX guifx;
     
-    public Please_Share controller;
+    public Support controller;
     
     @FXML private ImageView facebookImageView;
     @FXML private ImageView twitterImageView;
@@ -92,13 +92,13 @@ public class Please_Share extends Application implements Initializable
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        loader = new FXMLLoader(getClass().getResource("Please_Share.fxml"));
+        loader = new FXMLLoader(getClass().getResource("Support.fxml"));
 	root = loader.load();
         controller = loader.getController();
         scene = new Scene((Parent)loader.getRoot());        
         stage = primaryStage;
         stage.setScene(scene);
-        stage.setTitle("Please Share " + Version.getProductName());
+        stage.setTitle("Activate " + Version.getProductName() + " Support");
 	stage.setResizable(false);
         stage.show();
     }

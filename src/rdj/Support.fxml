@@ -12,7 +12,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="690.0" styleClass="text_color_standard" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Please_Share">
+<AnchorPane id="AnchorPane" prefHeight="228.0" prefWidth="690.0" styleClass="text_color_standard" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Support">
    <children>
       <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -38,7 +38,7 @@
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="210.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Free Support is given after we verified that you shared a fair amount of time on Social Media" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="202.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Free Support is given after verifying that you shared a fair amount of time on Social Media" textAlignment="CENTER" textFill="#727272">
                            <font>
                               <Font name="System Italic" size="14.0" />
                            </font>

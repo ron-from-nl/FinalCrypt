@@ -110,9 +110,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.media.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -189,7 +187,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Label unreadableFilesHeaderLabel;
     @FXML   private Label unwritableFilesHeaderLabel;
     @FXML   private Label hiddenFilesHeaderLabel;
-    @FXML   private Button websiteButton;
+    @FXML   private Button supportButton;
     @FXML   private Label checksumLabel;
     @FXML   private GridPane dashboardGridPane;
     @FXML   private ToggleButton encryptionModeToggleButton;
@@ -484,7 +482,7 @@ public class GUIFX extends Application implements UI, Initializable
     private Stage createOTPKeyStage;
     private Stage pleaseShareStage;
     private CreateOTPKey createOTPKey;
-    private Please_Share pleaseShare;
+    private Support pleaseShare;
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private long now;
     private boolean isCalculatingCheckSum;
@@ -585,27 +583,8 @@ public class GUIFX extends Application implements UI, Initializable
 //	    {
 //	    });
 	    
-//	    Platform.runLater(() ->
-//	    {
-////		userGuidanceLabel.setText("Thank you"); userGuidanceLabel.setOpacity(0.7);
-//	    });
-
-//	    if (finalCrypt == null) { System.out.println("fc null"); } else { System.out.println("fc not null"); }
 	});
 	
-//	scene.getWindow().addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, (WindowEvent window) -> 
-//	{
-//	    Platform.runLater(() ->
-//	    {
-//		play(SND_SHUTDOWN);
-//		userGuidanceLabel.setText("Thank you"); userGuidanceLabel.setOpacity(0.7);
-////		textLabelFadeMessage("Thank you", 64, false, false, false, false);
-//		while ( play.isPlaying() ) { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
-////		if (finalCrypt == null) { System.out.println("fc null"); } else { System.out.println("fc not null"); }
-//		System.exit(0);
-//	    });
-//	});
-
 	version = new Version(ui);
 	version.checkCurrentlyInstalledVersion(ui);
         this.stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
@@ -1199,7 +1178,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    keyButton.setDisable(false);
 		    checkUpdateButton.setDisable(false);
-		    websiteButton.setDisable(false);
+		    supportButton.setDisable(false);
 		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
 		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
@@ -1264,6 +1243,7 @@ public class GUIFX extends Application implements UI, Initializable
 //        String infotext = new String();
 //        infotext  = "Welcome.\r\n";
 //        alert.setContentText(infotext);
+//	  alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 //        alert.setOnShowing(new EventHandler<DialogEvent>()
 //        {
 //            @Override
@@ -1559,7 +1539,8 @@ public class GUIFX extends Application implements UI, Initializable
         alert.getDialogPane().setGraphic(graphic);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
-        return alert;
+       	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	return alert;
     }
 
     private void checkUpdate(boolean userActivated)
@@ -1579,7 +1560,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    alertCurrentVersionIsDevelopement();
 //	    alertlatestVersionUnknown();
 //	    latestAlertMessage();
-////	    currentAlertMessage(); // Should never be tested and used in production
+	    currentAlertMessage(); // Should never be tested and used in production
 	    
 	    if (version.latestVersionIsKnown())
 	    {
@@ -1625,6 +1606,7 @@ public class GUIFX extends Application implements UI, Initializable
 	String	content = "You have the latest version: (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
 		content += version.getCurrentReleaseString();
 	alert.setContentText(content);
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON);}
     }
@@ -1644,6 +1626,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 	alert.setTitle("Confirmation");
 	alert.setHeaderText("New version of " + Version.getProductName() + " available");
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
 	if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
@@ -1669,6 +1652,7 @@ public class GUIFX extends Application implements UI, Initializable
 	content += "The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n";
 	content += "Would you like to download        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 	alert.setContentText(content);
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
 	if (alert.getResult() == ButtonType.YES) { play_MP3(MP3_SND_OPEN); Version.openWebSite(this); } else { play_MP3(MP3_SND_BUTTON); }
@@ -1687,6 +1671,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.setHeaderText("Online version could not be checked");
 	alert.setResizable(true);
 	alert.setContentText(version.getUpdateStatus() + "\r\nNetwork connection issues perhaps ?\r\nPlease check your log for more info\r\n");
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
     }
@@ -1705,6 +1690,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.setHeaderText(version.getLatestAlertSubjectString());
 	alert.setResizable(true);
 	alert.setContentText(version.getLatestAlertString());
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
     }
@@ -1723,7 +1709,9 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.setHeaderText(version.getCurrentAlertSubjectString());
 	alert.setResizable(true);
 	alert.setContentText(version.getCurrentAlertString());
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
+
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
     }
     
@@ -1740,6 +1728,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    String selection = "Delete " + targetFileChooser.getSelectedFiles().length + " selected " + itemword + "?";
 	    Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);
 	    alert.setHeaderText("Confirm Deletion?");
+	    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	    alert.showAndWait();
 	    if (alert.getResult() == ButtonType.YES)
 	    {
@@ -1773,6 +1762,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    String selection = "Delete " + keyFileChooser.getSelectedFiles().length + " selected " + itemword + "?";
 	    Alert alert = new Alert(AlertType.CONFIRMATION, selection, ButtonType.YES, ButtonType.NO);
 	    alert.setHeaderText("Confirm Deletion?");
+	    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	    alert.showAndWait();
 	    if (alert.getResult() == ButtonType.YES)
 	    {
@@ -2873,7 +2863,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    play_MP3(MP3_SND_OPEN); 
 		    pleaseShareStage = new Stage();
-		    pleaseShare = new Please_Share();
+		    pleaseShare = new Support();
 		    try { pleaseShare.start(pleaseShareStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
 		    pleaseShare.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
 		});
@@ -3127,10 +3117,10 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() ->
 	{
-	    curTargetDir = targetFileChooser.getCurrentDirectory(); // log("curTargetDir " + curTargetDir.getAbsolutePath() + "\r\n");
-	    curKeyDir = keyFileChooser.getCurrentDirectory(); // log("curKeyDir " + curKeyDir.getAbsolutePath() + "\r\n");
-	    upTargetDir = curTargetDir.getParentFile().getAbsoluteFile();
-    	    upKeyDir = curKeyDir.getParentFile().getAbsoluteFile();
+	    curTargetDir = targetFileChooser.getCurrentDirectory(); if ( curTargetDir == null ) { curTargetDir = targetFileChooser.getCurrentDirectory(); } // log("curTargetDir " + curTargetDir.getAbsolutePath() + "\r\n");
+	    curKeyDir = keyFileChooser.getCurrentDirectory();	    if ( curKeyDir == null ) { curKeyDir = keyFileChooser.getCurrentDirectory(); } // log("curKeyDir " + curKeyDir.getAbsolutePath() + "\r\n");
+	    upTargetDir = curTargetDir.getParentFile().getAbsoluteFile();   if ( upTargetDir == null ) { upTargetDir = curTargetDir.getParentFile().getAbsoluteFile(); }
+    	    upKeyDir = curKeyDir.getParentFile().getAbsoluteFile();	    if ( upKeyDir == null ) { upKeyDir = curKeyDir.getParentFile().getAbsoluteFile(); }
 
 	    if (updateTargetFC) //	    Target FileChooser
 	    {
@@ -3234,7 +3224,8 @@ public class GUIFX extends Application implements UI, Initializable
 //        infotext += "\r\n";
         alert.setContentText(infotext);
 	play_MP3(MP3_SND_MESSAGE);
-        alert.showAndWait();
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	alert.showAndWait();
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
     }
 
@@ -3263,7 +3254,8 @@ public class GUIFX extends Application implements UI, Initializable
 //        infotext += "\r\n";
         alert.setContentText(infotext);
 	play_MP3(MP3_SND_MESSAGE);
-        alert.showAndWait();
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	alert.showAndWait();
 	if (alert.getResult() == ButtonType.OK) { play_MP3(MP3_SND_BUTTON); }
     }
 
@@ -3519,7 +3511,7 @@ public class GUIFX extends Application implements UI, Initializable
 	else { play_MP3(MP3_SND_INPUT_FAIL); }
     }
 
-    @FXML private void websiteButtonOnAction(ActionEvent event)
+    @FXML private void supportButtonOnAction(ActionEvent event)
     {
 	play_MP3(MP3_SND_BUTTON);
 	play_MP3(MP3_SND_OPEN);

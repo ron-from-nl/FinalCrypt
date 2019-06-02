@@ -38,3 +38,20 @@ Set version on file:					Version2
 ================================= Comments =================================
 
 ~/jdk1.8.0_121/bin/javapackager -deploy -native exe -BsystemWide=true -BjvmOptions=-Xmx128m -BjvmOptions=-Xms128m -outdir packages -outfile FinalCrypt -srcdir dist -srcfiles FinalCrypt.jar -appclass rdj.GUIFX -name FinalCrypt -title "FinalCrypt Demo"
+
+[Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
+[Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
+[Alert Notes_] =		{then it is adviced to (if needed update to the latest stable release and) RE-ENCRYPT}
+[Alert Notes_] =		{}
+[Alert Notes_] =		{FinalCrypt v4.2.0 and higher performs more secure password over key encryption}
+[Alert Notes_] =		{}
+[Alert Notes_] =		{Technical notes:}
+[Alert Notes_] =		{}
+[Alert Notes_] =		{The type of encryption on your encrypted files can be recognized by the first 70 bytes}
+[Alert Notes_] =		{}
+[Alert Notes_] =		{                        1         2         3         4         5         6         7}
+[Alert Notes_] =		{               1234567890123456789012345678901234567890123456789012345678901234567890}
+[Alert Notes_] =		{Prior v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Authentication Token"}
+[Alert Notes_] =		{From  v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Auth Token Version 2"}
+[Alert Notes_] =		{}
+[Alert Notes_] =		{File-headers can be viewed with a HexEditor: http://www.disk-editor.org/index.html}
