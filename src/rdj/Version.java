@@ -115,7 +115,7 @@ public class Version
 //      Read the local VERSION file
         currentOverallVersionString = "Unknown";
         currentVersionByteChannel = newChannel(istream);
-        byteBuffer = ByteBuffer.allocate(1000000); byteBuffer.clear(); localContent = "";
+        byteBuffer = ByteBuffer.allocate(100000); byteBuffer.clear(); localContent = "";
         
 	try { while(currentVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()){localContent += (char) byteBuffer.get();}}}
 	catch (IOException ex) { ui.log("Error: Version.checkCurrentlyInstalledVersion IOException: Channel.read(..) " + ex.getMessage()+"\r\n", true, true, true, true, false); }
@@ -191,7 +191,7 @@ public class Version
 	loop: for(String REMOTEVERSIONFILEURLSTRING:REMOTEVERSIONFILEURLSTRINGARRAY)
 	{	    
 	    boolean failed = false;
-	    byteBuffer = ByteBuffer.allocate(1000000); byteBuffer.clear(); remoteContent = "";
+	    byteBuffer = ByteBuffer.allocate(100000); byteBuffer.clear(); remoteContent = "";
 	    ui.log("Checking: " + REMOTEVERSIONFILEURLSTRING + "\r\n", false, false, true, false, false);
 
 	    try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); }
