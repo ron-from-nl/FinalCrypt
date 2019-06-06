@@ -24,10 +24,7 @@ Set version on file:					Version2
  
 =================================== Done ====================================
 
-Removed a minor bug refreshing and setting directories in file managers
-Improved auto resizing all alert information and dialog windows
-Anouncing major change asking user opinion adding "Auto Key" for 100% OTP
-Doubled the Key create write performance.
+
 
 ============================= Source Committed ==============================
 
