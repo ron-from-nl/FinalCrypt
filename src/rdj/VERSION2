@@ -18,7 +18,7 @@
 [Upgrade Notes] =	{   Please UN-Install FinalCrypt before installing v4.8.0}
 [Upgrade Notes] =	{   The FinalCrypt Windows Portable upgraded to Java8-u201}
 [Upgrade Notes] =	{   Right click FinalCrypt WinStartMenu remove FinalCrypt}
-[Upgrade Notes] =	{   Almost doubled the "Create Key" Write Performance}
+[Upgrade Notes] =	{   Nearly doubled the "Create Key" Write Throughput Perf}
 [Upgrade Notes] =	{   Bugfix refreshing directories in both file managers}
 [Upgrade Notes] =	{   Improved auto resize Info & Dialog Alert Windows}
 [Upgrade Notes] =	{}
