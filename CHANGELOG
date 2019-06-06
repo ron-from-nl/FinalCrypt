@@ -1,7 +1,10 @@
-4.8.0 Upgraded Java8-u201 to Java8-u212 security & stability updates. Please uninstall FinalCrypt first!
-      Doubled the Key create write performance preparing for Auto Key Mode (not yet included)
-      Fixed a bug refreshing and setting directories in file managers
-      Improved auto resizing all alert (information and dialog) windows
+4.8.0 Major Upgrade Java8-u212 security & stability updates
+      Please UN-Install FinalCrypt before installing v4.8.0
+      The FinalCrypt Windows Portable upgraded to Java8-u201
+      Right click FinalCrypt WinStartMenu remove FinalCrypt
+      Nearly doubled the "Create Key" Write Throughput Perf 
+      Bugfix refreshing directories in both file managers
+      Improved auto resize Info & Dialog Alert Windows
 4.7.1 Added: Click Share on Social Media to Entitle for Free Support.
 4.7.0 Autoscaled password font-size. Quick user-reenabled animations.
 4.6.1 Disabled unmasked password during encryption. Decreased password font size from px 14 to 12.
