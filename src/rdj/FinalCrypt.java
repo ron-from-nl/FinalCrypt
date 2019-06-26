@@ -290,7 +290,7 @@ public class FinalCrypt extends Thread
 //	    Just make sure file and key aren't the same
 //	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 	    FCPath dynamicKeyFCPath = keySourceFCPath.clone(keySourceFCPath);
-	    Path autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString());
+	    Path autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString().replace(":", ""));
 	    
 	    if	(
 			(( keySourceFCPath.type != FCPath.DIRECTORY) && (newTargetSourceFCPath.path.compareTo(keySourceFCPath.path) != 0))
@@ -379,7 +379,7 @@ public class FinalCrypt extends Thread
 			if (encryptMode) // During encryption keys have to be created when non existing
 			{
 //			    ui.test("\r\n Encrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
-			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), targetDestinPath.toAbsolutePath().toString());
+			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), targetDestinPath.toAbsolutePath().toString().replace(":", ""));
 //							getFCPath(UI ui, String caller,   Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
 			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	disabledMAC,           true);
 //			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
@@ -456,7 +456,7 @@ public class FinalCrypt extends Thread
 			else // Decryptmode
 			{
 //			    ui.test("\r\n Decrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
-			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString());
+			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString().replace(":", ""));
 						    //  getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
 			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	 disabledMAC,          true);
 //			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");

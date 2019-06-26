@@ -177,7 +177,7 @@ public class Validate
 	    }
 	    else // Switch to dynamic Auto Key Mode
 	    {
-		Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString());
+		Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", ""));
 		if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 		{
 		    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(autoKeyPath, EnumSet.of(StandardOpenOption.READ)))
@@ -214,7 +214,7 @@ public class Validate
 	if ( ! Files.isDirectory(keySourcePath)) { return 0L; } // Manual Key Mode
 	else // Auto Key Mode
 	{
-	    Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString() + ".bit");
+	    Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", "") + ".bit");
 	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 	    {
 		try { existingAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
