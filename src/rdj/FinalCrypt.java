@@ -31,8 +31,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributes;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
@@ -98,6 +97,15 @@ public class FinalCrypt extends Thread
     public static final String UTF8_CLONE_DESC =		    "Clone";
     public static final String UTF8_DELETE_DESC =		    "Delete";
 
+    public static final String UTF8_KEY_DESC =			    "Create Key";
+    public static final String UTF8_KEY_SYMBOL =		    "🗝";
+    
+    public static final String UTF8_MAC_READ_DESC =		    "MAC Read";
+    public static final String UTF8_MAC_READ_SYMBOL =		    "🖃";
+    
+    public static final String UTF8_MAC_WRTE_DESC =		    "MAC Write";
+    public static final String UTF8_MAC_WRTE_SYMBOL =		    "🖆";
+    
     public static final String UTF8_FINISHED_SYMBOL =		    "✔";
 
     public static final String UTF8_FINISHED_DESC =		    "Finished";
@@ -179,7 +187,7 @@ public class FinalCrypt extends Thread
 	    FCPathList targetSourceFCPathList
 	    , FCPathList filteredTargetSourceFCPathList // encryptableList / decryptableList
 	    , FCPath keySourceFCPath
-	    , boolean encryptmode
+	    , boolean encryptMode
 	    , String pwdParam
 	    , byte[] pwdBytesParam
 	    , boolean open // Opens targets after finishing
@@ -199,11 +207,10 @@ public class FinalCrypt extends Thread
 	}
 	
 	startCalendar = Calendar.getInstance(Locale.ROOT);
-
-	if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
 	
         Stats allDataStats = new Stats(); allDataStats.reset();
         
+        Stat wrteKeyStat = new Stat(); wrteKeyStat.reset();
         Stat readTargetSourceStat = new Stat(); readTargetSourceStat.reset();
 //        Stat readKeySourceStat = new Stat(); readKeySourceStat.reset();
 //        Stat wrteTargetDestinStat = new Stat(); wrteTargetDestinStat.reset();
@@ -216,9 +223,9 @@ public class FinalCrypt extends Thread
 
         // Get TOTALS
         allDataStats.setFilesTotal(filteredTargetSourceFCPathList.encryptableFiles + filteredTargetSourceFCPathList.decryptableFiles);
-        allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize);
+        allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize + filteredTargetSourceFCPathList.needsCreateKeyFilesSize);
 	String modeDesc = "";
-	if (encryptmode)
+	if (encryptMode)
 	{
 	    if ( ! disabledMAC ) { modeDesc = "encrypting"; } else { modeDesc = "encrypting (legacy)"; }
 	}
@@ -234,11 +241,9 @@ public class FinalCrypt extends Thread
 	{
 	    private long filesBytesTotal;
 
-    //	private long fileBytesProcessed;
-
 	    @Override public void run()
 	    {
-		long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed());
+		long fileBytesProcessed =	(readTargetSourceStat.getFileBytesProcessed() + wrteTargetSourceStat.getFileBytesProcessed() + wrteKeyStat.getFileBytesTotal());
 		double fileBytesPercent =	((readTargetSourceStat.getFileBytesTotal()) / 100.0); //  1000 / 100 = (long)10     10 > 0.1 (10*0.01)
 		int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesPercent); // 600 / 10 = 60 - 600 * (10*0.01)
 
@@ -248,7 +253,7 @@ public class FinalCrypt extends Thread
 
 		processProgressCalendar =	Calendar.getInstance(Locale.ROOT);
 		filesBytesTotal =		allDataStats.getFilesBytesTotal();
-		fileBytesProcessed =	allDataStats.getFileBytesProcessed();
+		fileBytesProcessed =		allDataStats.getFileBytesProcessed();
 		filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 
     //	    System Monitor
@@ -279,8 +284,20 @@ public class FinalCrypt extends Thread
 	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
 	    Path targetDestinPath = null;
 	    String fileStatusLine = "";
-            if (stopPending) { targetSourceEnded = true; break encryptTargetloop; }
-	    if ((newTargetSourceFCPath.path.compareTo(keySourceFCPath.path) != 0))
+            if (stopPending) { targetSourceEnded = true; break; }
+
+	    
+//	    Just make sure file and key aren't the same
+//	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
+	    FCPath dynamicKeyFCPath = keySourceFCPath.clone(keySourceFCPath);
+	    Path autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString());
+	    
+	    if	(
+			(( keySourceFCPath.type != FCPath.DIRECTORY) && (newTargetSourceFCPath.path.compareTo(keySourceFCPath.path) != 0))
+		    ||	(( keySourceFCPath.type == FCPath.DIRECTORY) && (newTargetSourceFCPath.path.compareTo(autoKeyPath) != 0))
+		)
+	    
+//	    if ((oldTargetSourceFCPath.path.compareTo(keySourceFCPath.path) != 0) && (newTargetSourceFCPath.path.compareTo(keySourceFCPath.path) != 0))
 	    {
 //		Determine extension ===========================================================================================================================================================================
 		
@@ -293,21 +310,21 @@ public class FinalCrypt extends Thread
 
 		if ( ! disabledMAC)
 		{
-		    if	(encryptmode)				{ UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_SYMBOL; targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
+		    if	(encryptMode)				{ UTF8_PROCESS_SYMBOL = UTF8_ENCRYPT_SYMBOL; targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		    else // (decryptmode)
 		    {
 			UTF8_PROCESS_SYMBOL = UTF8_DECRYPT_SYMBOL;
-			if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
+			if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toAbsolutePath().toString().substring(0, newTargetSourceFCPath.path.toAbsolutePath().toString().lastIndexOf('.'))); }
 			else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		    }
 		}
 		else // Disable Message Authentication Mode
 		{
 		    UTF8_PROCESS_SYMBOL = UTF8_XOR_NOMAC_SYMBOL;
-		    if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toString().substring(0, newTargetSourceFCPath.path.toString().lastIndexOf('.'))); }
+		    if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toAbsolutePath().toString().substring(0, newTargetSourceFCPath.path.toAbsolutePath().toString().lastIndexOf('.'))); }
 		    else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
-//		ui.log("newTargetSourceFCPath: " + newTargetSourceFCPath.path.toString() + "\r\n", true, true, true, false, false);
+//		ui.log("newTargetSourceFCPath: " + newTargetSourceFCPath.path.toAbsolutePath().toString() + "\r\n", true, true, true, false, false);
 //		ui.log("targetDestinPath:      " + targetDestinPath.toAbsolutePath().toString() + "\r\n", true, true, true, false, false);
 		
 //		End of enxtension codeblock ===================================================================================================================================================================
@@ -315,6 +332,15 @@ public class FinalCrypt extends Thread
 //		At the start of the encryption process
 		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
+		// Get and set the stats
+//		    allDataStats.setFileBytesTotal(targetSourceSize);
+		allDataStats.setFileBytesTotal(newTargetSourceFCPath.size + dynamicKeyFCPath.size);
+		wrteKeyStat.setFileBytesProcessed(0);			    wrteKeyStat.setFileBytesTotal(dynamicKeyFCPath.size);
+		readTargetSourceStat.setFileBytesProcessed(0);		    readTargetSourceStat.setFileBytesTotal(newTargetSourceFCPath.size);
+//                        readKeySourceStat.setFileBytesProcessed(0);	    readKeySourceStat.setFileBytesTotal(filesize);
+//                        wrteTargetDestinStat.setFileBytesProcessed(0);    wrteTargetDestinStat.setFileBytesTotal(filesize);
+//                        readTargetDestinStat.setFileBytesProcessed(0);    readTargetDestinStat.setFileBytesTotal(filesize);
+		wrteTargetSourceStat.setFileBytesProcessed(0);		    wrteTargetSourceStat.setFileBytesTotal(newTargetSourceFCPath.size);
 		// Prints printByte Header ones
 		if ( print )
 		{		    
@@ -332,33 +358,143 @@ public class FinalCrypt extends Thread
 //			🔓   Decrypt	    (Key Authenticated)
 //			🔓!  Decrypt Legacy  (Key can't be checked! No Token present in old format)
 //			⛔   Decrypt Abort   (Key Failed)
+//___________________________________________________________________________________________________________________________________________________________
+
+// ==================================================================================================================================================================================
+
+		if	((keySourceFCPath.type != FCPath.DIRECTORY) && ( keySourceFCPath.size < bufferSize ))					{ setBufferSize((int)keySourceFCPath.size); }
+		else if ((keySourceFCPath.type == FCPath.DIRECTORY) && ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize ))	{ setBufferSize((int)( newTargetSourceFCPath.size + FCPath.MAC_SIZE )); }
+		
+		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
+
+		// =================================================================================================================================================================
+		// Auto Key Mode
+		// =================================================================================================================================================================
+
+		if (! dry)
+		{
+		    if ( (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Detects Auto Key Mode
+		    {		    
+			if (encryptMode) // During encryption keys have to be created when non existing
+			{
+//			    ui.test("\r\n Encrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
+			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), targetDestinPath.toAbsolutePath().toString());
+//							getFCPath(UI ui, String caller,   Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
+			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	disabledMAC,           true);
+//			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
+//			    ui.test("\r\n dynamicKeyFCPath: " + dynamicKeyFCPath.getString() + "\r\n");
+
+			    // Create non existing directory structure for key
+			    try { Files.createDirectories(autoKeyPath.getParent()); } catch (IOException ex) { ui.log("Error: Files.createDirectories(..): " + ex.getMessage() + "\r\n", true, true, true, true, false); break; }
+
+			    if ( dynamicKeyFCPath.size < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) ) // Only append extra key data when key is smaller than data file
+			    {
+				if ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize) { bufferSize =  (int) ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ); }
+
+				boolean inputEnded = false;
+				long writeKeyFileChannelPosition = 0L;
+				long writeKeyFileChannelTransfered = 0L;
+				Long totalTranfered = 0L;
+				Long remainder = 0L;
+
+				byte[]      randomBytes1 =	    new byte[bufferSize];
+				ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+
+				SecureRandom random = new SecureRandom();
+
+				ui.log(UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_KEY_SYMBOL + " ", false, true, true, false, false);
+
+				write1loop: while ( (totalTranfered < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE )) && (! inputEnded ))
+				{
+				    remainder = (( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) - totalTranfered);
+
+				    if	    ( remainder >= bufferSize )				
+				    {
+					randomBytes1 =	    new byte[bufferSize];
+					randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
+				    }
+				    else if (( remainder > 0 ) && ( remainder < bufferSize ))
+				    {
+					randomBytes1 =	    new byte[remainder.intValue()];
+					randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
+				    }
+				    else							{ inputEnded = true; }
+
+				    // Randomize raw key or write raw key straight to partition
+				    random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
+
+				    // Write Device (randomBuffer3 became randomBuffer1)
+				    wrteKeyStat.setFileStartEpoch();
+				    try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(dynamicKeyFCPath.path, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+				    {
+					writeKeyFileChannel.position(writeKeyFileChannelPosition);
+					writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer1); randomBuffer1.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
+					totalTranfered += writeKeyFileChannelTransfered; 
+					// System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
+					writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
+					writeKeyFileChannel.close();
+					
+					wrteKeyStat.setFileEndEpoch(); wrteKeyStat.clock();
+					wrteKeyStat.addFileBytesProcessed(writeKeyFileChannelTransfered); // /2
+					allDataStats.addAllDataBytesProcessed("wr key", writeKeyFileChannelTransfered); // 2
+				    } catch (IOException ex) { ui.log("Error: Files.newByteChannel(dynamicKeyFCPath.path: " + ex.getMessage() + "\r\n", true, true, true, true, false); inputEnded = true; break; }
+				    randomBuffer1.clear(); randomBuffer1.clear(); randomBuffer1.clear();
+				}
+				writeKeyFileChannelPosition = 0;                
+				writeKeyFileChannelTransfered = 0;                
+				inputEnded = false;
+				
+//				ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+			    }
+			}
+			else // Decryptmode
+			{
+//			    ui.test("\r\n Decrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
+			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), newTargetSourceFCPath.path.toAbsolutePath().toString());
+						    //  getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
+			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	 disabledMAC,          true);
+//			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
+//			    ui.test("\r\n dynamicKeyFCPath: " + dynamicKeyFCPath.getString() + "\r\n");
+			}
+		    }
+		    else // Manual Key Mode
+		    {
+			dynamicKeyFCPath = keySourceFCPath.clone(keySourceFCPath); // Makes sure that the validKey KeySourceFCPath is copied to dynamicKeyFCPath
+		    }
+		}
+
+		// =================================================================================================================================================================
+		// Auto Key Mode End
+		// =================================================================================================================================================================
 
 		long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
-		
+
 		if (! disabledMAC) // Be carefull: TRUE value is highly dangerous
 		{
-		    if (encryptmode)
+		    if (encryptMode) // During encryption keys have to be created when non existing
 		    {
 			if ( newTargetSourceFCPath.isDecrypted) // Target has NO Token, Decrypted
 			{
 			    if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			    {				
-				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_PROCESS_SYMBOL, false, true, true, false, false);
-
 				if ( ! dry )
 				{
+				    ui.log(UTF8_MAC_WRTE_SYMBOL + " ", false, true, true, false, false);
 				    // Add MAC to targetDestinPath
 				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 				    {
-					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(keySourceFCPath.path, newTargetSourceFCPath.macVersion);
+					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(dynamicKeyFCPath.path, newTargetSourceFCPath.macVersion);
 					writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinMACBuffer); targetDestinMACBuffer.flip();
 					writeTargetDestinChannel.close();
 					dstMessageDigest.update(targetDestinMACBuffer); // Build up checksum
 
 					// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
 				    } catch (IOException ex) { ui.log("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+				    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 				}
 			    }
 			    else // Decrypted but NOT Encryptable (should not be in the list anyway)
@@ -368,25 +504,26 @@ public class FinalCrypt extends Thread
 			    }
 			}
 		    }
-		    else // decrypt
+		    else // decrypt (Just to buildup checksum and decrypt skipping the MAC in the encrypted file )
 		    {
 			if (newTargetSourceFCPath.isEncrypted) // Target has MAC, Decrypt New Format
 			{
 			    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated MAC (Decryptable)
 			    {
-				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toString() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toString() + "\" " + UTF8_PROCESS_SYMBOL, false, true, true, false, false);
-				
-				ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2))); targetSourceBuffer.clear();
-				try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+				if (! dry)
 				{
-				    // Fill up inputFileBuffer
-				    readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip();
-				    readTargetSourceChannel.close();
-				    srcMessageDigest.update(targetSourceBuffer); // Build up checksum
-				} catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-
-				readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); // Decrypt skipping MAC bytes at beginning
+				    ui.log(UTF8_MAC_READ_SYMBOL + " ", false, true, true, false, false);
+				    ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2))); targetSourceBuffer.clear();
+				    try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+				    {
+					// Fill up inputFileBuffer
+					readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip();
+					readTargetSourceChannel.close();
+					srcMessageDigest.update(targetSourceBuffer); // Build up checksum
+				    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+				    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); // Decrypt skipping MAC bytes at beginning
+				    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				}
 			    }
 			    else
 			    {
@@ -398,8 +535,8 @@ public class FinalCrypt extends Thread
 		}
 		else
 		{
-		    fileStatusLine =    UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_PROCESS_SYMBOL;
-		    ui.log(fileStatusLine, true, true, true, false, false);
+//		    fileStatusLine =    UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + UTF8_PROCESS_SYMBOL;
+//		    ui.log(fileStatusLine, true, true, true, false, false);
 		}
 		
 		
@@ -421,17 +558,12 @@ public class FinalCrypt extends Thread
 		long readTargetDestChannelPosition = 0;	    long    readTargetDestChannelTransfered =    0;
 		long writeTargetSourceChannelPosition = 0;  long    writeTargetSourceChannelTransfered = 0;
 
-		// Get and set the stats
-//		    allDataStats.setFileBytesTotal(targetSourceSize);
-		allDataStats.setFileBytesTotal(newTargetSourceFCPath.size);
-
-		readTargetSourceStat.setFileBytesProcessed(0);	    readTargetSourceStat.setFileBytesTotal(newTargetSourceFCPath.size);
-//                        readKeySourceStat.setFileBytesProcessed(0);      readKeySourceStat.setFileBytesTotal(filesize);
-//                        wrteTargetDestinStat.setFileBytesProcessed(0);      wrteTargetDestinStat.setFileBytesTotal(filesize);
-//                        readTargetDestinStat.setFileBytesProcessed(0);      readTargetDestinStat.setFileBytesTotal(filesize);
-		wrteTargetSourceStat.setFileBytesProcessed(0);	    wrteTargetSourceStat.setFileBytesTotal(newTargetSourceFCPath.size);
 
 		// Open and close files after every bufferrun. Interrupted file I/O works much faster than uninterrupted I/O encryption
+		
+		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL, false, true, true, false, false);
+		
 		while (( ! targetSourceEnded ) && ( ! dry ))
 		{
 //                  Delete broken outputFile and keep original
@@ -467,7 +599,7 @@ public class FinalCrypt extends Thread
 		    if ( readTargetSourceChannelTransfered != -1 )
 		    {
 //                                readKeySourceStat.setFileStartEpoch();
-			try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourceFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+			try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(dynamicKeyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
 			{
 			    // Fill up keyFileBuffer
 			    readKeySourceChannel.position(readKeySourceChannelPosition);
@@ -499,6 +631,8 @@ public class FinalCrypt extends Thread
 		    }
 		    targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();		    
 		} // targetSourceEnded
+
+		ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 
 //    ==================================================================================================================================================================
 //                      Copy inputFilePath attributes to outputFilePath
@@ -585,14 +719,14 @@ public class FinalCrypt extends Thread
 //                      Counting encrypting and shredding for the average throughtput performance
 
 //                      Shredding process
-		
-		ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
-		ui.log(UTF8_FINISHED_SYMBOL + " " + UTF8_CLONE_SYMBOL, false, true, true, false, false);
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 
 		if ( ! dry)
 		{
+		    ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+		    ui.log(UTF8_CLONE_SYMBOL, false, true, true, false, false);
+		    
 //				     isValidFile(UI ui, String caller,    Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1L,           false,            false,	    true)) // newly created targetdest file has to be tested
 		    { try { targetDestinSize = Files.size(targetDestinPath); targetDiffFactor = newTargetSourceFCPath.size / targetDestinSize;} catch (IOException ex) { ui.log("Error: Files.size(targetDestinPath); " + ex.getMessage() + "\r\n", true, true, true, true, false); } } else 
@@ -617,8 +751,8 @@ public class FinalCrypt extends Thread
 			if (stopPending)
 			{
 			    boolean deleted = false;
-			    try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			    if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+			    try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			    if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " " + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 			    targetSourceEnded = true;
 //			    ui.log("\r\n", true, true, true, false, false);
 			    targetDestinEnded = true;
@@ -674,7 +808,6 @@ public class FinalCrypt extends Thread
 			targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
 		    }
 
-		    ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false); // 🌊🗑
 		    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 
 //                  FILE STATUS 
@@ -701,14 +834,14 @@ public class FinalCrypt extends Thread
 		{
 		    if
 		    (
-			( newTargetSourceFCPath.size != 0 ) && ( targetDestinSize != 0 ) &&
-			( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()) * 2 ) ||
-			( newTargetSourceFCPath.size == targetDestinSize)
+			    ( newTargetSourceFCPath.size != 0 ) && ( targetDestinSize != 0 )
+			&&  ( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()) * 2 )
+			||  ( newTargetSourceFCPath.size == targetDestinSize)
 		    )
 		    {
 //			After the shredding stage of the process
 			boolean deleted = false;
-			try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+			try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 		    }
 		}
@@ -745,10 +878,10 @@ public class FinalCrypt extends Thread
 
 
 //					     getFCPath(UI ui, String caller,	    Path path, boolean isKey,		 Path keyPath, boolean disabledMAC, boolean report)
-	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, keySourceFCPath.path,		disabledMAC,	   verbose);
+	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, dynamicKeyFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
@@ -895,7 +1028,6 @@ public class FinalCrypt extends Thread
     public void deleteSelection(ArrayList<Path> targetSourcePathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-//							  MySimpleFileVisitor(UI ui, boolean verbose, boolean delete, long minSize, boolean symlink, boolean writable, boolean returnpathlist, ArrayList<FCPath>(),    String pattern, boolean negatePattern)
 //							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
         MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,            null,		   new FCPathList(),        pattern,	     negatePattern,	    disabledMAC);
         for (Path path:targetSourcePathList)

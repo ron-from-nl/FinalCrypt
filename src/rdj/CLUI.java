@@ -209,7 +209,7 @@ public class CLUI implements UI
 	// Key Validation
 	if ( (kfsetneeded) )
 	{
-	    if ( ! keyFCPath.isValidKey)
+	    if (( ! keyFCPath.isValidKey ) && ( ! keyFCPath.isValidKeyDir))
 	    {
 		String exist ="";
 		String size ="";
@@ -223,21 +223,25 @@ public class CLUI implements UI
 		}
 		else
 		{
-		    if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
+//		    if (keyFCPath.type == FCPath.DIRECTORY) { dir += " [is dir] "; } 
 		    if (keyFCPath.type == FCPath.SYMLINK) { sym += " [is symlink] "; } // finalCrypt.disabledMAC = true
 
 		    if (! finalCrypt.disabledMAC)
 		    {
-			if (( keyFCPath.size < FCPath.KEY_SIZE_MIN )) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] try: \"--no-key-size\" option "; }
-			if (( keyFCPath.size < FCPath.MAC_SIZE ) ) { size += " [size < " + FCPath.MAC_SIZE + "] try: \"--disable-MAC\" option if you know what you are doing !!! "; }
+			if (( keyFCPath.size < FCPath.KEY_SIZE_MIN ))	{ size += " [size < " + FCPath.KEY_SIZE_MIN + "] try: \"--no-key-size\" option "; }
+			if (( keyFCPath.size < FCPath.MAC_SIZE ) )	{ size += " [size < " + FCPath.MAC_SIZE + "] try: \"--disable-MAC\" option if you know what you are doing !!! "; }
 		    }
 		    else { if (( keyFCPath.size < FCPath.KEY_SIZE_MIN )) { size += " [size < " + FCPath.KEY_SIZE_MIN + "] try: \"--no-key-size\" option "; } }
 		}
 
-		all = exist + dir + sym + size ;
+		all = exist + /*dir +*/ sym + size ;
 
 		log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
 		log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
+	    }
+	    else
+	    {
+//		test("Key: " + keyFCPath.getString() + "\r\n");
 	    }
 	}
 	else
@@ -259,7 +263,7 @@ public class CLUI implements UI
 			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid dir\r\n", false, true, true, false, false); }
 		    }
 //				       isValidFile(UI ui, String caller, Path targetSourcePath,  isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-		    else if ( Validate.isValidFile(this, "CLUI.CLUI() ",            targetPath,	false,          false,	         1L,         symlink,             true,        verbose))
+		    else if ( Validate.isValidFile( this,"CLUI.CLUI() ",            targetPath,	 false,          false,	          1L,         symlink,             true,        verbose))
 		    {
 			if (verbose) { log("Info: Target parameter: " + targetPath + " is a valid file\r\n", false, true, true, false, false); }
 		    }
@@ -297,17 +301,14 @@ public class CLUI implements UI
 	}
 
 //	====================================================================================================================
-//	 Start writing OTP key file
+//	 Start writing Manual OTP key file
 //	====================================================================================================================
-
-
 
 	if (createkeyfile)
 	{
 	    Long factor = 0L;
 	    bufferSize = 1048576;
 	    totalTranfered = 0L;
-
 	    
 	    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) ) { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); try{ Thread.sleep(3000); } catch (InterruptedException ex) {} System.exit(1); }
 	    else						    { log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false); }
@@ -339,25 +340,25 @@ public class CLUI implements UI
 		if	    ( remainder >= bufferSize )				
 		{
 		    randomBytes1 =	    new byte[bufferSize];
-		    randomBytes2 =	    new byte[bufferSize];
-		    randomBytes3 =	    new byte[bufferSize];
+//		    randomBytes2 =	    new byte[bufferSize];
+//		    randomBytes3 =	    new byte[bufferSize];
 		    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+//		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
+//		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
 		}
 		else if (( remainder > 0 ) && ( remainder < bufferSize ))
 		{
 		    randomBytes1 =	    new byte[remainder.intValue()];
-		    randomBytes2 =	    new byte[remainder.intValue()];
-		    randomBytes3 =	    new byte[remainder.intValue()];
+//		    randomBytes2 =	    new byte[remainder.intValue()];
+//		    randomBytes3 =	    new byte[remainder.intValue()];
 		    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
-		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
-		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
+//		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
+//		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
 		}
 		else							{ inputEnded = true; }
 //              Randomize raw key or write raw key straight to partition
 		random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
-		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
+//		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
 
 		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, 0, false); // Encrypt
 
@@ -365,7 +366,8 @@ public class CLUI implements UI
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
-		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
+//		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer3); randomBuffer3.rewind();
+		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer1); randomBuffer1.rewind();
 		    totalTranfered += writeKeyFileChannelTransfered; 
 //		    log("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n", false, true, false, false, false);
 		    
@@ -430,14 +432,18 @@ public class CLUI implements UI
 	if (!kfsetneeded) 
 	{
 //    					  getFCPath(UI ui, String caller,	      Path path, boolean isKey,          Path keyPath, boolean disabledMAC,    boolean report)
-		     keyFCPath = Validate.getFCPath(ui,            "", targetPathList.get(0),         false, targetPathList.get(0), finalCrypt.disabledMAC,          true);
+		     keyFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),          true, targetPathList.get(0), finalCrypt.disabledMAC,          true);
 	}
 //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
 	Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
-	if ((keyFCPath != null) && (keyFCPath.isValidKey))
+//	if ((keyFCPath != null) && ((keyFCPath.isValidKey) || (keyFCPath.isValidKeyDir)))
+		if  (
+			    ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
+			||  ((keyFCPath != null) && (keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+		    )
 	{
 //	    log(targetFCPathList.getStats());
 	    // Encryptables
@@ -662,6 +668,8 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_file -t target_file\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_dir -t target_file # Auto Key Mode\r\n", false, true, false, false, false);
+        log("            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_dir -t target_file # Auto Key Mode\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_dir\r\n", false, true, false, false, false);
         log("            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file -t target_dir\r\n", false, true, false, false, false);
@@ -812,6 +820,9 @@ public class CLUI implements UI
 	
 	String symbols = "";
 	symbols += "Symbols:            ";
+	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_MAC_READ_DESC + ": " + FinalCrypt.UTF8_MAC_READ_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_MAC_WRTE_DESC + ": " + FinalCrypt.UTF8_MAC_WRTE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
@@ -820,7 +831,7 @@ public class CLUI implements UI
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
+//	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
 	
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
 	env += "\r\n";

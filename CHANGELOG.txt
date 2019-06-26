@@ -1,3 +1,5 @@
+5.0.0 GAME-CHANGING One-Time Pad "Auto Key Mode"
+      Also added many user-interface improvements
 4.8.0 Major Upgrade Java8-u212 security & stability updates
       Please UN-Install FinalCrypt before installing v4.8.0
       The FinalCrypt Windows Portable upgraded to Java8-u201

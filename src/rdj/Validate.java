@@ -22,15 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +57,7 @@ public class Validate
 //        boolean validfile = true; String conditions = "";				    String key = "";
 //	validfile = isValidFile(ui, caller, path, false, device, minSize, symlink, writable, report);
 //	if ((keyPath != null) && validfile) { if (path.compareTo(keyPath) == 0) { validfile = false; key = "[is key] "; conditions += key; }}	
-//        if ( ! validfile ) { if ( report )						    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }                    
+//        if ( ! validfile ) { if ( report )						    { ui.log("Warning: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n", true, true, false, false, false); } }                    
 //        return validfile;
 //    }
 //
@@ -78,8 +70,8 @@ public class Validate
         {
             if ( Files.isDirectory(path))						    { validfile = false; dir = "[is directory] "; conditions += dir; }
 	    long fileSize = 0; if ( device )						    { fileSize = 0; fileSize = DeviceController.getDeviceSize(ui, path, isKey); } // Specifically done for OSX
-	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.log("Error: Validate: IOException: Files.size(" + path.toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n", true, true, true, true, false); } }
-            if ( fileSize < minSize )							    { validfile = false; size = path.toString() + " smaller than " + minSize + " byte "; conditions += size; }
+	    else									    { fileSize = 0; try { fileSize = Files.size(path); } catch (IOException ex)  { ui.log("Error: Validate: IOException: Files.size(" + path.toAbsolutePath().toString() + ") Size: " + fileSize + "<" + minSize + " "+ ex.getMessage() + "\r\n", true, true, true, true, false); } }
+            if ( fileSize < minSize )							    { validfile = false; size = path.toAbsolutePath().toString() + " smaller than " + minSize + " byte "; conditions += size; }
             if ( ! Files.isReadable(path) )						    { validfile = false; read = "[not readable] "; conditions += read; }
             if ((! isKey) && (writable) && ( ! Files.isWritable(path)))			    { validfile = false; write = "[not writable] "; conditions += write; }
             if ( (! symlink) && (Files.isSymbolicLink(path)) )				    { validfile = false; symbolic = "[symlink] "; conditions += symbolic; }
@@ -89,8 +81,8 @@ public class Validate
 	{ 
 	    if ( report )
 //	    { ui.error("Warning: Validate.isValidFile(...): " + caller + " Invalid File: " + targetSourcePath.toAbsolutePath().toString() + ": " + conditions + "\r\n"); } 
-//	    { ui.status("Warning: " + caller + " " + path.toString() + ": " + conditions + "\r\n", true); } 
-	    { ui.log("Warning: " + path.toString() + ": " + conditions + "\r\n", true, true, false, false, false); } 
+//	    { ui.status("Warning: " + caller + " " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n", true); } 
+	    { ui.log("Warning: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n", true, true, false, false, false); } 
 	}                    
         return validfile;
     }
@@ -164,38 +156,82 @@ public class Validate
 	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),									0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.flip();
 	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.flip();
 	
-//	Read in Key
-	if (( ! readTargetSourceChannelError ) && ( ! Files.isDirectory(keySourcePath)) )
+	if ( ! readTargetSourceChannelError )
 	{
-	    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
+	    if ( ! Files.isDirectory(keySourcePath)) // Manual Key Mode
 	    {
-		// Fill up keyFileBuffer
-//		readKeySourceChannel.position(readKeySourceChannelPosition);
-//		readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer);
-		readKeySourceChannel.read(keySourceBuffer);
-		keySourceBuffer.flip(); readKeySourceChannel.close();
-	    } catch (IOException ex) { ui.log("Error: targetHasAuthenticatedMAC readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    
-	    // Create Encrypted Token Buffer
-	    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, macVersion, false);
-	    String keyDecryptedMACBufferString = new String(keyDecryptedMACBuffer.array(), StandardCharsets.UTF_8);
-//	    ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
-	    
-	    // Authenticate Key MAC against Target MAC
-//	    if ( keyDecryptedMACBufferString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE)) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
-	    if ( keyDecryptedMACBufferString.equals(StandardCharsets.UTF_8.decode(targetPlainTextMACBuffer).toString())) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
-	    
+		try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
+		{
+		    // Fill up keyFileBuffer
+		    readKeySourceChannel.read(keySourceBuffer);
+		    keySourceBuffer.flip(); readKeySourceChannel.close();
+		} catch (IOException ex) { ui.log("Error: targetHasAuthenticatedMAC readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+
+		// Create Encrypted Token Buffer
+		keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, macVersion, false);
+		String keyDecryptedMACBufferString = new String(keyDecryptedMACBuffer.array(), StandardCharsets.UTF_8);
+		// ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
+
+		// Authenticate Key MAC against Target MAC
+		if ( keyDecryptedMACBufferString.equals(StandardCharsets.UTF_8.decode(targetPlainTextMACBuffer).toString())) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
+	    }
+	    else // Switch to dynamic Auto Key Mode
+	    {
+		Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString());
+		if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
+		{
+		    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(autoKeyPath, EnumSet.of(StandardOpenOption.READ)))
+		    {
+			// Fill up keyFileBuffer
+			readKeySourceChannel.read(keySourceBuffer);
+			keySourceBuffer.flip(); readKeySourceChannel.close();
+		    } catch (IOException ex) { ui.log("Error: targetHasAuthenticatedMAC readKeySourceChannel " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+
+		    // Create Encrypted Token Buffer
+		    keyDecryptedMACBuffer = FinalCrypt.encryptBuffer(targetEncryptedMACBuffer, keySourceBuffer, macVersion, false);
+		    String keyDecryptedMACBufferString = new String(keyDecryptedMACBuffer.array(), StandardCharsets.UTF_8);
+		    // ui.status("targetHasAuthenticatedMAC.keyDecryptedMACBufferString: " + keyDecryptedMACBufferString + "\r\n", true);
+
+		    // Authenticate Key MAC against Target MAC
+		    if ( keyDecryptedMACBufferString.equals(StandardCharsets.UTF_8.decode(targetPlainTextMACBuffer).toString())) { keyAuthenticatedTargetSource = true; } else { keyAuthenticatedTargetSource = false; }
+		} else { keyAuthenticatedTargetSource = false; }
+	    }
 	} else { keyAuthenticatedTargetSource = false; }
+
+	
+//	Read in Key
 
 	if (macVersion == 1) { FinalCrypt.resetPwdPos(); } else { FinalCrypt.resetPwdBytesPos(); }
 	return keyAuthenticatedTargetSource;
+    }
+
+    synchronized public static long getTargetKeySizeRequired(UI ui, Path targetSourcePath, long targetSourceSize, Path keySourcePath)
+    {
+	long existingAutoKeySize = 0L;
+	long createAutoKeySize = 0L;
+	
+	if ( keySourcePath == null ) { return 0L; }
+	if ( ! Files.isDirectory(keySourcePath)) { return 0L; } // Manual Key Mode
+	else // Auto Key Mode
+	{
+	    Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString() + ".bit");
+	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
+	    {
+		try { existingAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
+		createAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) - existingAutoKeySize);
+	    }
+	    else
+	    {
+		createAutoKeySize = ( targetSourceSize + FCPath.MAC_SIZE );
+	    }
+	}
+	return createAutoKeySize;
     }
 
 
     // Synchronized removes multifile target inconsistency, but also smooth busy animation
     public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean disabledMAC, boolean status)
     {
-//	if (mySimpleFCFileVisitor != null) {mySimpleFCFileVisitor.running = false;} else {mySimpleFCFileVisitor.running = false;} // Being set within MySimpleFCFileVisitor instantiation
 //				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern,  boolean disabledMAC)
 	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	   false,          false,         symlink,                  true,    keyFCPath,                   targetFCPathList,	   pattern,         negatePattern,	    disabledMAC);
 	
@@ -204,17 +240,7 @@ public class Validate
 	    try{ Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS,FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: Validate.buildSelection: Files.walkFileTree(path, EnumSet.of(..) " + e.getMessage() + "\r\n", true, true, true, true, false); }
 	}
 	mySimpleFCFileVisitor.running = false;
-	ui.buildReady(targetFCPathList, true);
-	
-//	if ( (targetFCPathList.size() > 0) && (mySimpleFCFileVisitor.running) )
-//	if ( (targetFCPathList.size() > 0) )
-//	{ 
-//	    ui.buildReady(targetFCPathList);
-//	}
-//	else
-//	{
-//	    targetFCPathList = new FCPathList(); ui.buildReady(targetFCPathList);
-//	}	
+	ui.buildReady(targetFCPathList, true);	
     }
 
     synchronized public static String getHumanSize(double value,int decimals)
@@ -297,13 +323,18 @@ public class Validate
 	boolean matchKey =		    false;
 	
 	boolean isValid =		    false;
+	boolean isValidPath =		    false;
 	boolean isValidFile =		    false;
 	boolean isValidDevice =		    false;
 	boolean isValidDeviceProtected =    false;
 	boolean isValidPartition =	    false;
 
 	boolean isDecrypted =		    false;
+	
 	boolean isEncryptable =		    false;
+	boolean needsCreateKey =	    false;
+	long	needsCreateKeySize =	    0;
+	
 	boolean isNewEncrypted =	    false;
 	boolean isUnEncryptable =	    false;
 	
@@ -316,6 +347,7 @@ public class Validate
 	boolean isUnDecryptable =	    false;	
 	
 	boolean isValidKey =		    false;	
+	boolean isValidKeyDir =		    false;	
 
         if ( Files.exists(path, LinkOption.NOFOLLOW_LINKS) ) // Does not check if symbolic link target file exist
 //        if ( Files.exists(path) )
@@ -341,12 +373,16 @@ public class Validate
 	    // isValid in general
 	    if ( isKey )
 	    {
-		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) ) { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
-		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) ) { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; }}
+		if ((exist) && (type == FCPath.DIRECTORY) && (readable) && (writable) )							    { isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true; } else { isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true; }
+		
+		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    }
 	    else	    { if (( exist ) && ( size >  0 ) && ( readable )   && ( writable ))	    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    
 	    // File validity
+	    if (( isValid ) && ( type == FCPath.FILE ))								{ isValidFile = true; } else { isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
+	    
 	    if (( isValid ) && ( type == FCPath.FILE ))								{ isValidFile = true; } else { isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
 	    
 	    //DeviceProtected validity
@@ -358,22 +394,23 @@ public class Validate
 	    //Partition validity
 	    if (( isValid ) &&	( type == FCPath.PARTITION ) && ( size >= FCPath.KEY_SIZE_MIN ) )		{ isValidPartition = true;  isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
 
-	    // Decrypted File State
-	    
-	    if (( isValidFile )	    && ( ! isEncrypted ))   { isDecrypted = true; isUnEncryptable = false; isDecryptable = false; isEncryptable = true; isUnDecryptable = true; }
-	    
 	    // Encrypted File State
-	    
 	    if (( isValidFile ))
 	    {
 		macVersion = targetSourceHasMAC(ui, path);
 		if ( macVersion == 0 ) { isEncrypted = false; } else { isEncrypted = true; }
 		
-		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) isDecryptable = targetHasAuthenticatedMAC(ui, path, keyPath, macVersion); } // Encrypted files must by MAC_SIZE at least
+		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) { isDecryptable = targetHasAuthenticatedMAC(ui, path, keyPath, macVersion); } } // Encrypted files must by MAC_SIZE at least
 	    }
-	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))								{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
-	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))								{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
+	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))					{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
+	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))					{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
 	    
+	    // Decrypted File State	    
+	    if (( isValidFile ) && ( ! isEncrypted ))								{ 
+														    isDecrypted = true; isUnEncryptable = false; isDecryptable = false; isEncryptable = true; isUnDecryptable = true;
+														    if ((isEncryptable) && (! isKey)) { needsCreateKeySize = getTargetKeySizeRequired(ui, path, size, keyPath); if (needsCreateKeySize > 0L) { needsCreateKey = true; } }
+														}
+
 	    // Key =============================================================================================================================================================================================
 	    
 	    if ( keyPath != null )							{ if (path.compareTo(keyPath) == 0)   { matchKey = true; isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true;} }
@@ -405,12 +442,9 @@ public class Validate
 		}
 	    }	    
 	}
-	else { }
 
-// Return FCPath =============================================================================================================================================================================================
-
-//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnEncryptable
-	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition, isKey,         isValidKey,         isDecrypted,         isEncryptable,         isNewEncrypted,	    isUnEncryptable,                 isEncrypted,    macVersion,     isDecryptable,	 isNewDecrypted,         isUnDecryptable);
+//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir, boolean isDecrypted, boolean isEncryptable, boolean needsCreateKey, long needsCreateKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
+	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsCreateKey,      needsCreateKeySize,	  isNewEncrypted,	  isUnEncryptable,          isEncrypted,     macVersion,	 isDecryptable,		isNewDecrypted,         isUnDecryptable);
 	return fcPath;
     }
 
@@ -419,13 +453,13 @@ public class Validate
 	String returnString = "";
 	returnString += "FCPath:\r\n";
 	returnString += "\r\n";
-	returnString += "Path:			" + fcPath.path.toString() + "\r\n";
+	returnString += "Path:			" + fcPath.path.toAbsolutePath().toString() + "\r\n";
 	returnString += "Exist:			" + fcPath.exist + "\r\n";
 	returnString += "Type:			" + fcPath.getTypeString(fcPath.type) + "\r\n";
 	returnString += "Size:			" + Validate.getHumanSize(fcPath.size, 1) + "\r\n";
 	returnString += "Readable:		" + fcPath.isReadable + "\r\n";
 	returnString += "Writable:		" + fcPath.isWritable + "\r\n";
-	returnString += "Hidden:			" + fcPath.isHidden + "\r\n";
+	returnString += "Hidden:		" + fcPath.isHidden + "\r\n";
 	returnString += "Match Key:		" + fcPath.matchKey + "\r\n";
 	returnString += "\r\n";
 	returnString += "Valid Path:		" + fcPath.isValidPath + "\r\n";
@@ -457,13 +491,13 @@ public class Validate
 	String returnString = "";
 
 //	String[] columnNames = { "Path", "Exist ", "Type ", "Size ", "Readable "};
-//	Object[][] data = {{path.toString(), exist, getTypeString(type), size, readable, isValidKey}};
+//	Object[][] data = {{path.toAbsolutePath().toString(), exist, getTypeString(type), size, readable, isValidKey}};
 
 	
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", "Path",					" | ", "Exist ", " | ", "Type",		       " | ", "Size",		" | ", "Readable ",	" | ", "Valid ",		" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
-        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.isReadable), " | ", b(fcPath.isValidKey),	" |"));
+        returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "| ", fcPath.path.toAbsolutePath().toString(),			" | ", b(fcPath.exist), " | ", t(fcPath.type), " | ", s(fcPath.size),	" | ", b(fcPath.isReadable), " | ", b(fcPath.isValidKey),	" |"));
         returnString += (String.format("%-2s%-40s%-3s%-6s%-3s%-17s%-3s%-12s%-3s%-9s%-3s%-6s%-2s\r\n", "|-", "----------------------------------------",	"-|-", "------", "-|-", "-----------------",   "-|-", "------------",	"-|-", "---------",	"-|-", "------",		"-|"));
 
 	return returnString;
@@ -528,7 +562,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	{
 	    if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
 	    {            
-		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
+		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 		else if (setFCPathlist)    
 		{
 //    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean disabledMAC, boolean report)
@@ -556,7 +590,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
+	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 	    else if (setFCPathlist) {     }
 	    else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    

@@ -351,8 +351,7 @@ public class CreateOTPKey extends Application implements Initializable
 //	Start writing key file
 //	====================================================================================================================
 
-	Thread createKeyThread;
-	createKeyThread = new Thread(() ->
+	Thread createKeyThread; createKeyThread = new Thread(() ->
 	{
 	    if ( filesizeInBytes < bufferSize) { bufferSize =  filesizeInBytes.intValue(); }
 
@@ -453,7 +452,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
 		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
-		guifx.userGuidanceMessage(guifx.SELECT_KEY, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+		guifx.userGuidanceMessage(guifx.SELECT_KEY_MAP, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
 	    }});
 	    
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));
@@ -493,9 +492,12 @@ public class CreateOTPKey extends Application implements Initializable
     
     private void closeWindow()
     {
-	play_MP3(MP3_SND_SHUTDOWN);
-	guifx.updateFileChoosers(true, true);
-	Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();
+	Platform.runLater(new Runnable(){ @Override public void run()
+	{
+	    play_MP3(MP3_SND_SHUTDOWN);
+	    guifx.updateFileChoosers2(true, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
+	    Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();		
+	}});
     }
 
     private void blinkStatusLabel1()
@@ -575,23 +577,60 @@ public class CreateOTPKey extends Application implements Initializable
     {
 //	test("Invoking play_MP3: " + media.getSource() + " ");
 	
-	if (media != null) 
+//	Thread playThread = new Thread(() ->
+//	{
+	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    if ( media.getSource().contains("sounds") )
+	    if (media != null) 
 	    {
-		if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-	    }
-	    else if ( media.getSource().contains("voice") )
-	    {
-		if ( guifx.voice_Is_Enabled)
+		if ( media.getSource().contains("sounds") )
 		{
-		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		    Thread playThread = new Thread(() ->
+		    {
+			if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+		    });
+		    playThread.setName("playThread");
+		    playThread.setDaemon(true);
+		    playThread.start();
 		}
+		else if ( media.getSource().contains("voice") )
+		{
+		    if ( guifx.voice_Is_Enabled)
+		    {
+			if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+			audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+		    }
+		}
+		else { guifx.log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
 	    }
-	    else { guifx.log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-	}
+	}});
+//	});
+//	playThread.setName("playThread");
+//	playThread.setDaemon(true);
+//	playThread.start();
     }
+
+//    public void play_MP3(Media media)
+//    {
+////	test("Invoking play_MP3: " + media.getSource() + " ");
+//	
+//	if (media != null) 
+//	{
+//	    if ( media.getSource().contains("sounds") )
+//	    {
+//		if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+//	    }
+//	    else if ( media.getSource().contains("voice") )
+//	    {
+//		if ( guifx.voice_Is_Enabled)
+//		{
+//		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+//		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+//		}
+//	    }
+//	    else { guifx.log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
+//	}
+//    }
     
 //    public void play_MP3(Media media)
 //    {

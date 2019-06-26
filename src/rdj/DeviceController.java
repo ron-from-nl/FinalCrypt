@@ -615,7 +615,7 @@ public class DeviceController
         if ( ! Files.isReadable(path) )                         { validdir = false; read = "[not readable] "; conditions += read;  }
         if ( ! Files.isWritable(path) )                         { validdir = false; write = "[not writable] "; conditions += write;  }
         if ( (! symlink) && (Files.isSymbolicLink(path)) )      { validdir = false; symbolic = "[symlink]"; conditions += symbolic;  }
-        if ( validdir ) {  } else { if ( report )               { ui.log("Warning: Invalid Dir: " + path.toString() + ": " + conditions + "\r\n", true, true, true, true, false); } }
+        if ( validdir ) {  } else { if ( report )               { ui.log("Warning: Invalid Dir: " + path.toAbsolutePath().toString() + ": " + conditions + "\r\n", true, true, true, true, false); } }
         return validdir;
     }
 

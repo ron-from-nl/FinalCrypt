@@ -22,9 +22,9 @@ import java.nio.file.Path;
 
 public class FCPath
 {
-    public static	   int	    KEY_SIZE_MIN_DEFAULT = 1024;
-    public static	   int	    KEY_SIZE_MIN =	   KEY_SIZE_MIN_DEFAULT;
     public static	   int	    MAC_SIZE =		   (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2);
+    public static	   int	    KEY_SIZE_MIN_DEFAULT = MAC_SIZE;
+    public static	   int	    KEY_SIZE_MIN =	   KEY_SIZE_MIN_DEFAULT;
 
     public static final    int	    INVALID =		   0;
     public static final    int	    FILE =		   1;
@@ -55,11 +55,15 @@ public class FCPath
     
     public	    boolean isKey =		    false;
     public	    boolean isValidKey =	    false;
+    public	    boolean isValidKeyDir =	    false;
 
 //  Decrypted
     
     public	    boolean isDecrypted =	    false;
     public	    boolean isEncryptable =	    false;
+    public	    boolean needsCreateKey =	    false;  // Validate.getFCPath will check if encryptable requires key creation
+    public	    long    needsCreateKeySize =    0;	    // Validate.getFCPath will check if encryptable requires size of key creation for progress stats & ETA
+    
     public	    boolean isNewEncrypted =	    false;
     public	    boolean isUnEncryptable =	    false;
 
@@ -77,15 +81,15 @@ public class FCPath
     
     public FCPath
     (
-	Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchKey,boolean isValidPath, boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey
+	Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchKey,boolean isValidPath, boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir
 //	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean hasFCToken, boolean isEncrypted, boolean isAuthenticated,boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
-	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
+	, boolean isDecrypted, boolean isEncryptable, boolean needsCreateKey, long needsCreateKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
     )
     {
 	this.path = path; this.exist = exist; this.type = type; this.size = size; this.isReadable = readable; this.isWritable = writable; this.isHidden = isHidden;	this.matchKey = matchKey;
-	this.isValidPath = isValidPath; this.isValidFile = isValidFile; this.isValidDeviceProtected = isValidDeviceProtected; this.isValidDevice = isValidDevice; this.isValidPartition = isValidPartition; this.isKey = isKey; this.isValidKey = isValidKey;
+	this.isValidPath = isValidPath; this.isValidFile = isValidFile; this.isValidDeviceProtected = isValidDeviceProtected; this.isValidDevice = isValidDevice; this.isValidPartition = isValidPartition; this.isKey = isKey; this.isValidKey = isValidKey; this.isValidKeyDir = isValidKeyDir;
 	
-	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
+	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.needsCreateKey = needsCreateKey; this.needsCreateKeySize = needsCreateKeySize; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
 //	this.hasFCToken = hasFCToken; this.isEncrypted = isEncrypted; this.isAuthenticated = isAuthenticated; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
   	this.isEncrypted = isEncrypted; this.macVersion = macVersion; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
     }
@@ -95,8 +99,8 @@ public class FCPath
 	FCPath newFCPath = new FCPath(fcPath.path);
 	newFCPath.path = fcPath.path; newFCPath.exist = fcPath.exist; newFCPath.type =fcPath. type; newFCPath.size = fcPath.size; newFCPath.isReadable = fcPath.isReadable; newFCPath.isWritable = fcPath.isWritable;
 	newFCPath.isHidden = fcPath.isHidden; newFCPath.matchKey = fcPath.matchKey;
-	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isKey = fcPath.isKey; newFCPath.isValidKey = fcPath.isValidKey;
-	newFCPath.isDecrypted = fcPath.isDecrypted; newFCPath.isEncryptable = fcPath.isEncryptable; newFCPath.isNewEncrypted = fcPath.isNewEncrypted; newFCPath.isUnEncryptable = fcPath.isUnEncryptable; 
+	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isKey = fcPath.isKey; newFCPath.isValidKey = fcPath.isValidKey; newFCPath.isValidKeyDir = fcPath.isValidKeyDir;
+	newFCPath.isDecrypted = fcPath.isDecrypted; newFCPath.isEncryptable = fcPath.isEncryptable; newFCPath.needsCreateKey = fcPath.needsCreateKey; newFCPath.needsCreateKeySize = fcPath.needsCreateKeySize; newFCPath.isNewEncrypted = fcPath.isNewEncrypted; newFCPath.isUnEncryptable = fcPath.isUnEncryptable; 
 //	newFCPath.hasFCToken = fcPath.hasFCToken; newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.isAuthenticated = fcPath.isAuthenticated; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
 	newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.macVersion = fcPath.macVersion; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
 	return newFCPath;
