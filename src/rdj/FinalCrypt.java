@@ -385,6 +385,9 @@ public class FinalCrypt extends Thread
 //			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
 //			    ui.test("\r\n dynamicKeyFCPath: " + dynamicKeyFCPath.getString() + "\r\n");
 
+			    if (targetDestinPath.compareTo(dynamicKeyFCPath.path) == 0)		    { ui.log("Error: Aborting: " + targetDestinPath.toAbsolutePath().toString() +		" matches: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + " (is key!)\r\n", true, true, true, true, false); break; }
+			    if (newTargetSourceFCPath.path.compareTo(dynamicKeyFCPath.path) == 0)   { ui.log("Error: Aborting: " + newTargetSourceFCPath.path.toAbsolutePath().toString() +	" matches: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + " (is key!)\r\n", true, true, true, true, false); break; }
+
 			    // Create non existing directory structure for key
 			    try { Files.createDirectories(autoKeyPath.getParent()); } catch (IOException ex) { ui.log("Error: Files.createDirectories(..): " + ex.getMessage() + "\r\n", true, true, true, true, false); break; }
 
@@ -458,6 +461,9 @@ public class FinalCrypt extends Thread
 			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	 disabledMAC,          true);
 //			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
 //			    ui.test("\r\n dynamicKeyFCPath: " + dynamicKeyFCPath.getString() + "\r\n");
+
+			    if (targetDestinPath.compareTo(dynamicKeyFCPath.path) == 0)		    { ui.log("Error: Aborting: " + targetDestinPath.toAbsolutePath().toString() +		" matches: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + " (is key!)\r\n", true, true, true, true, false); break; }
+			    if (newTargetSourceFCPath.path.compareTo(dynamicKeyFCPath.path) == 0)   { ui.log("Error: Aborting: " + newTargetSourceFCPath.path.toAbsolutePath().toString() +	" matches: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + " (is key!)\r\n", true, true, true, true, false); break; }
 			}
 		    }
 		    else // Manual Key Mode
