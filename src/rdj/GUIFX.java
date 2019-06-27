@@ -3324,7 +3324,7 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "Click on the \"Key Create\" [num] field in the dashboard\r\n";
         infotext += "(lowleft) to list Key files that FinalCrypt will create.\r\n";
         infotext += "\r\n";
-        infotext += "It takes long to create a One-Time Pad key-file for every\r\n";
+        infotext += "It takes longer to create a One-Time Pad key-file for every\r\n";
         infotext += "file you encrypt, but keys only need to be created once.\r\n";
         infotext += "Once keys are created, decryption & re-encryption is fast.\r\n";
         infotext += "\r\n";
