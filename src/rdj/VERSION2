@@ -1,4 +1,4 @@
-[Version] =		{5.0.1}
+[Version] =		{5.0.2}
 [] = {} ================================================================
 [Release Notes] =	{GAME-CHANGING One-Time Pad "Auto Key Mode"}
 [Release Message] =	{Also added many user-interface improvements}
@@ -32,9 +32,9 @@
 [Upgrade Notes] =	{   No upgrade}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 2}
 [Update Notes] =	{}
-[Update Notes] =	{   Added Pause & Stop during Auto-Key Creation}
+[Update Notes] =	{   Fixed major Auto-Key I/O Buffer Performance Issue}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

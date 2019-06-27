@@ -2844,8 +2844,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	});
 	
-	processRunningMode = DECRYPT_MODE; filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0);
+	processRunningMode = DECRYPT_MODE;
 	
+	Platform.runLater(() -> { filesProgressBar.setProgress(0.0); fileProgressBar.setProgress(0.0); });
+		
 	processStarted();
 	
 //	finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwdField.getText(), open);
