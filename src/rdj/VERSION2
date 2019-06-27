@@ -32,9 +32,9 @@
 [Upgrade Notes] =	{   No upgrade}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   No bugs}
+[Update Notes] =	{   Added Pause & Stop during Auto-Key Creation}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

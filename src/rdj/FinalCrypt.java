@@ -411,6 +411,15 @@ public class FinalCrypt extends Thread
 
 				write1loop: while ( (totalTranfered < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE )) && (! inputEnded ))
 				{
+				    while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
+				    
+				    if (stopPending)
+				    {
+					targetSourceEnded = true;
+					filesBytesPerMilliSecond = 0d;
+					break encryptTargetloop;
+				    }
+				    
 				    remainder = (( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) - totalTranfered);
 
 				    if	    ( remainder >= bufferSize )				
