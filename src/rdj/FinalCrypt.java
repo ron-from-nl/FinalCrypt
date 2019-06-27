@@ -364,16 +364,13 @@ public class FinalCrypt extends Thread
 
 		if (keySourceFCPath.type == FCPath.DIRECTORY)
 		{
-		    bufferSize = BUFFERSIZEDEFAULT;
+		    setBufferSize(BUFFERSIZEDEFAULT);
 		    if ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize ) { setBufferSize((int)( newTargetSourceFCPath.size + FCPath.MAC_SIZE )); }
 		}
 		else
 		{
 		    if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
 		}
-		
-//		if	((keySourceFCPath.type != FCPath.DIRECTORY) && ( keySourceFCPath.size < bufferSize ))					{ setBufferSize((int)keySourceFCPath.size); }
-//		else if ((keySourceFCPath.type == FCPath.DIRECTORY) && ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize ))	{ setBufferSize((int)( newTargetSourceFCPath.size + FCPath.MAC_SIZE )); }
 		
 		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
