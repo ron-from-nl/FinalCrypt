@@ -95,8 +95,9 @@ public class CreateOTPKey extends Application implements Initializable
     public Path currentDirPath;
     private Path keyPath;
     private Timeline repeaterTimeline;
-    public static final String OTPKEYURLSTRING = "https://en.wikipedia.org/wiki/One-time_pad";
-    private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
+    public static final String FIP140_2_URL_STRING =	    "https://en.wikipedia.org/wiki/FIPS_140";
+    public static final String ONE_TIME_PAD_URL_STRING =    "https://en.wikipedia.org/wiki/One-time_pad";//https://en.wikipedia.org/wiki/FIPS_140
+    private final long UPDATE_PROGRESS_TIMERTASK_PERIOD =   100L;
     
     @FXML private ImageView bgImageView;
     @FXML private TextField filenameTextField;
@@ -134,6 +135,8 @@ public class CreateOTPKey extends Application implements Initializable
     private AudioInputStream audioInVoice;
     private Clip clipSounds;
     private Clip clipVoice;
+    @FXML
+    private Label otpRulesLabel;
 
 //    public CreateOTPKey(GUIFX guifx)
 //    {
@@ -519,7 +522,24 @@ public class CreateOTPKey extends Application implements Initializable
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI(OTPKEYURLSTRING)); }
+	    try {  Desktop.getDesktop().browse(new URI(FIP140_2_URL_STRING)); }
+	    catch (URISyntaxException ex) { statusLabel1.setText(ex.getMessage()); }
+	    catch (IOException ex) { statusLabel1.setText(ex.getMessage()); }
+	});
+	otpKeyURLThread.setName("otpKeyURLThread");
+	otpKeyURLThread.setDaemon(true);
+	otpKeyURLThread.start();
+    }
+
+    @FXML
+    private void otpRulesOnMouseClicked(MouseEvent event)
+    {
+	play_MP3(MP3_SND_BUTTON);
+	play_MP3(MP3_SND_OPEN);
+	Thread otpKeyURLThread;
+	otpKeyURLThread = new Thread(() ->
+	{
+	    try {  Desktop.getDesktop().browse(new URI(ONE_TIME_PAD_URL_STRING)); }
 	    catch (URISyntaxException ex) { statusLabel1.setText(ex.getMessage()); }
 	    catch (IOException ex) { statusLabel1.setText(ex.getMessage()); }
 	});

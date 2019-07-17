@@ -2869,72 +2869,96 @@ public class GUIFX extends Application implements UI, Initializable
     synchronized private void createOTPKeyFile()
     {
         // Needs Threading to early split off from the UI Event Dispatch Thread
-        final GUIFX guifx = this;
-        final UI ui = this;
+	play_MP3(MP3_SND_ALERT); String alertString = "";
+	Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
 
-	Platform.runLater(() ->
+	DialogPane dialogPane = alert.getDialogPane();
+	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	dialogPane.getStyleClass().add("myDialog");
+
+	alert.setTitle("Confirmation");
+	alert.setHeaderText("Create a Manual One-Time Pad Key?");
+	alert.setResizable(true);
+	
+	String	content = "";
+	content += "FinalCrypt automatically creates One-Time Pad Keys Files\r\n";
+	content += "Creating Manual OTP keys is supported but not recommended\r\n\r\n";
+	content += "Do you still want to create a Manual One-Time Pad Key File?\r\n";
+	alert.setContentText(content);
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	alert.showAndWait();
+
+	if (alert.getResult() == ButtonType.YES)
 	{
-//	    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-	    passwordHeaderLabel.setText(""); 
-	    
-//	    pwdField.setText("");
-	    pwdField.setDisable(true);
-	    pwdField.setVisible(false);
+	    play_MP3(MP3_SND_OPEN);
+	    final GUIFX guifx = this;
+	    final UI ui = this;
 
-//	    pwdtxtField.setText("");
-	    pwdtxtField.setDisable(true);
-	    pwdtxtField.setVisible(false);
-	    	    
-	    showPasswordCheckBox.setVisible(pwdField.isVisible());
-//	    keyImageView.setImage(KEY_FILE_IMAGE);
-	    keyImageView.setOpacity(0.8);
-	    
-	    finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
-	});
+	    Platform.runLater(() ->
+	    {
+    //	    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
+		passwordHeaderLabel.setText(""); 
 
-	Thread encryptThread = new Thread(new Runnable()
-        {
-            private DeviceManager deviceManager;
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-		
-		if ( keyButton.getText().equals(CREATE_KEY) )
+    //	    pwdField.setText("");
+		pwdField.setDisable(true);
+		pwdField.setVisible(false);
+
+    //	    pwdtxtField.setText("");
+		pwdtxtField.setDisable(true);
+		pwdtxtField.setVisible(false);
+
+		showPasswordCheckBox.setVisible(pwdField.isVisible());
+    //	    keyImageView.setImage(KEY_FILE_IMAGE);
+		keyImageView.setOpacity(0.8);
+
+		finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+	    });
+
+	    Thread encryptThread = new Thread(new Runnable()
+	    {
+		private DeviceManager deviceManager;
+		@Override
+		@SuppressWarnings({"static-access"})
+		public void run()
 		{
-		    Platform.runLater(() ->
+
+		    if ( keyButton.getText().equals(CREATE_KEY) )
 		    {
-			play_MP3(MP3_SND_OPEN); 
-			createOTPKeyStage = new Stage();
-			createOTPKey = new CreateOTPKey();
-			try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
-			createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
-		    });
+			Platform.runLater(() ->
+			{
+			    play_MP3(MP3_SND_OPEN); 
+			    createOTPKeyStage = new Stage();
+			    createOTPKey = new CreateOTPKey();
+			    try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+			    createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
+			});
+		    }
+		    else if	( keyButton.getText().equals(CREATE_KEYDEV) )
+		    {
+			processRunningMode = CREATE_KEYDEV_MODE;
+			tab.getSelectionModel().select(1);
+			processStarted();
+			deviceManager = new DeviceManager(guifx); deviceManager.start();
+			deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
+			processFinished(targetFCPathList, false);
+		    }
+		    else if ( keyButton.getText().equals(CLONE_KEYDEV) )
+		    {
+			processRunningMode = CLONE_KEYDEV_MODE;
+			tab.getSelectionModel().select(1);
+			processStarted();
+			deviceManager = new DeviceManager(ui); deviceManager.start();
+			deviceManager.cloneKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
+			processFinished(targetFCPathList, false);
+		    } else { play_MP3(MP3_SND_INPUT_FAIL); }
+
 		}
-		else if	( keyButton.getText().equals(CREATE_KEYDEV) )
-		{
-		    processRunningMode = CREATE_KEYDEV_MODE;
-		    tab.getSelectionModel().select(1);
-                    processStarted();
-                    deviceManager = new DeviceManager(guifx); deviceManager.start();
-                    deviceManager.createKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-                    processFinished(targetFCPathList, false);
-		}
-		else if ( keyButton.getText().equals(CLONE_KEYDEV) )
-		{
-		    processRunningMode = CLONE_KEYDEV_MODE;
-		    tab.getSelectionModel().select(1);
-                    processStarted();
-                    deviceManager = new DeviceManager(ui); deviceManager.start();
-                    deviceManager.cloneKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-                    processFinished(targetFCPathList, false);
-		} else { play_MP3(MP3_SND_INPUT_FAIL); }
-		
-            }
-        });
-        encryptThread.setName("keyDeviceThread");
-        encryptThread.setDaemon(true);
-        encryptThread.start();
+	    });
+	    encryptThread.setName("keyDeviceThread");
+	    encryptThread.setDaemon(true);
+	    encryptThread.start();
+	}
+	else { play_MP3(MP3_SND_BUTTON); }
     }
     
     synchronized private void pleaseShare()
@@ -3564,8 +3588,16 @@ public class GUIFX extends Application implements UI, Initializable
     private void keyCreateLabelOnMouseClicked(MouseEvent event)
     {
 	play_MP3(MP3_SND_BUTTON);
-	if ( (createKeyList != null) && (createKeyList.size() > 0) ) { play_MP3(MP3_SND_INPUT_OK);  tab.getSelectionModel().select(1); log("\r\nCreate Auto Key Files:\r\n\r\n", false, true, true, false, false);
-	for (Iterator it = createKeyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); log(keyFCPath.path.toAbsolutePath().toString() + fcPath.path.toAbsolutePath().toString() + ".bit\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false); }
+	if ( (createKeyList != null) && (createKeyList.size() > 0) )
+	{
+	    play_MP3(MP3_SND_INPUT_OK);  tab.getSelectionModel().select(1); log("\r\nCreate Auto Key Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = createKeyList.iterator(); it.hasNext();)
+	    {
+		FCPath fcPath = (FCPath) it.next();
+		Path autoKeyPath = Paths.get(keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString() + ".bit".replace(":", ""));
+		log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
+	    } log("\r\n", false, true, true, false, false);
+	}
 	else { play_MP3(MP3_SND_INPUT_FAIL); }
     }
 

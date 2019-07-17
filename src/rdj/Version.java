@@ -54,8 +54,8 @@ public class Version
 
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
 									    "http://www.finalcrypt.org/VERSION2"
-									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"
-									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"
+									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/version2"
+									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/version2?format=raw"
 									};    
     
     private static       String remoteContent =				"";

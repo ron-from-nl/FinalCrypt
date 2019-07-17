@@ -1,0 +1,58 @@
+Usage:	    java -cp FinalCrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
+
+Examples:
+
+            java -cp FinalCrypt.jar rdj/CLUI --examples   Print commandline examples.
+
+            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_file -t target_file # Manual Key Mode
+            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_dir -t target_dir   # Auto Key Mode (if key = dir)
+            java -cp FinalCrypt.jar rdj/CLUI --encrypt -k key_dir -t target_file -t target_dir
+
+            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_file -t target_file # Manual Key Mode
+            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_dir -t target_dir   # Auto Key Mode (if key = dir)
+            java -cp FinalCrypt.jar rdj/CLUI --decrypt -k key_dir -t target_file -t target_dir
+
+            java -cp FinalCrypt.jar rdj.CLUI --create-keyfile -K mykeyfile -S 268435456 # Manual Key Mode not recommended
+
+Mode:
+            <--encrypt>           -k "key_file"   -t "target"	    Encrypt Targets.
+            <--decrypt>           -k "key_file"   -t "target"	    Decrypt Targets.
+            <--create-keydev>     -k "key_file"   -t "target"	    Create Key Device (only unix).
+            <--create-keyfile>    -K "key_file"   -S "Size (bytes)"	    Create OTP Key File.
+            <--clone-keydev>      -k "source_device" -t "target_device"     Clone Key Device (only unix).
+            [--print-gpt]         -t "target_device"			    Print GUID Partition Table.
+            [--delete-gpt]        -t "target_device"			    Delete GUID Partition Table (DATA LOSS!).
+
+Options:
+            [-h] [--help]	  Shows this help page.
+            [--password]          -p 'password'			    Additional password (non-interactive).
+            [--password-prompt]   -pp				    Additional password (interactive prompt).
+            [--key-chksum]        -k "key_file"			    Calculate key checksum.
+            [--no-key-size]       Allow key-size less than the default minimum of 1024 bytes.
+            [-d] [--debug]        Enables debugging mode.
+            [-v] [--verbose]      Enables verbose mode.
+            [--print]		  Print all encrypted bytes binary, hexdec & char (slows encryption severely).
+            [-l] [--symlink]      Include symlinks (can cause double encryption! Not recommended!).
+            [--disable-MAC]       Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).
+            [--version]           Print FinalCrypt version.
+            [--license]           Print FinalCrypt license.
+            [--check-update]      Check for online updates.
+            [-s size]             Changes default I/O buffer size (size = KiB) (default 1024 KiB).
+            [-S size]             OTP Key File Size (size = bytes). See --create-keyfile 
+
+Filtering Options:
+
+            [--dry]               Dry run without encrypting files for safe testing purposes.
+            [-w 'wildcard']       File wildcard INCLUDE filter. Uses: "Globbing Patterns Syntax".
+            [-W 'wildcard']       File wildcard EXCLUDE filter. Uses: "Globbing Patterns Syntax".
+            [-r 'regex']          File regular expression filter. Advanced filename filter!
+
+Parameters:
+
+            <-k "keyfile">        The file that encrypts your file(s). Keep keyfile SECRET!
+
+            <-t / -b>             The target items you want to encrypt. Individual (-t) or by batch (-b).
+            <[-t "file/dir"]>     Target file or dir you want to encrypt (encrypts dirs recursively).
+            <[-b "batchfile"]>    Batchfile with targetfiles you want to encrypt (only files).
+
+FinalCrypt 5.1.0 - Author: Ron de Jong - Copyright: © 2017-2019

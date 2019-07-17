@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML_DIZ_INFO>
+  <MASTER_PAD_VERSION_INFO>
+    <MASTER_PAD_VERSION>4.0</MASTER_PAD_VERSION>
+    <MASTER_PAD_EDITOR>FinalCrypt 5.1.0</MASTER_PAD_EDITOR>
+    <MASTER_PAD_EDITOR_URL>http://publisher.appvisor.com</MASTER_PAD_EDITOR_URL>
+    <MASTER_PAD_INFO>Portable Application Description, or PAD(TM) 2004 Association of Software Professionals (ASP)http://www.asp-shareware.org/pad is a data set standard and specification that is commercialsoftware publishers to disseminate certified information about their software application. The PAD format is copyright of the ASP and cannot be used without the formal licensing and permission of both the Association of Software Professionals and its agent AppVisor.com.</MASTER_PAD_INFO>
+    <CERTIFIED>N</CERTIFIED>
+    <CERTIFICATE_ID></CERTIFICATE_ID>
+    <CERTIFICATE_LICENSE></CERTIFICATE_LICENSE>
+  </MASTER_PAD_VERSION_INFO>
+  <RoboSoft>
+    <Company_UIN>CMP-F110AE718AAE</Company_UIN>
+    <Product_UIN>APP-0210AE718AAE</Product_UIN>
+    <Publish_on_CD>FALSE</Publish_on_CD>
+    <NewsFeed_Search_String></NewsFeed_Search_String>
+    <Search_String>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Search_String>
+    <Press_Release_Search_String></Press_Release_Search_String>
+    <Backlink></Backlink>
+    <Comments_For_Reviewer></Comments_For_Reviewer>
+    <Search_String_Unique>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Search_String_Unique>
+    <Search_Engine_Search_String></Search_Engine_Search_String>
+    <Web_Directories_Search_String></Web_Directories_Search_String>
+    <Company_Description></Company_Description>
+  </RoboSoft>
+  <Company_Info>
+    <PublisherID>pid-5000708b9458</PublisherID>
+    <BrandID>pid-5000708b9458</BrandID>
+    <Company_Name>Ron de Jong</Company_Name>
+    <Country>The Netherlands</Country>
+    <State_Province>---------</State_Province>
+    <City_Town>Zaandijk</City_Town>
+    <Zip_Postal_Code>1544</Zip_Postal_Code>
+    <Address_1>Discreet</Address_1>
+    <Address_2></Address_2>
+    <Company_WebSite_URL>http://www.finalcrypt.org/</Company_WebSite_URL>
+    <Contact_Info>
+      <Contact_First_Name>Ron</Contact_First_Name>
+      <Contact_Last_Name>de Jong</Contact_Last_Name>
+      <Contact_Email>info@finalcrypt.org</Contact_Email>
+      <Author_First_Name>Ron</Author_First_Name>
+      <Author_Last_Name>de Jong</Author_Last_Name>
+      <Author_Email>info@finalcrypt.org</Author_Email>
+      <Contact_Phone></Contact_Phone>
+    </Contact_Info>
+    <Support_Info>
+      <Sales_Email>info@finalcrypt.org</Sales_Email>
+      <Support_Email>support@finalcrypt.org</Support_Email>
+      <General_Email>info@finalcrypt.org</General_Email>
+      <Sales_Phone></Sales_Phone>
+      <Support_Phone></Support_Phone>
+      <General_Phone></General_Phone>
+      <Fax_Phone></Fax_Phone>
+    </Support_Info>
+    <GooglePlusPage></GooglePlusPage>
+    <LinkedinPage></LinkedinPage>
+    <TwitterCompanyPage></TwitterCompanyPage>
+    <FacebookCompanyPage></FacebookCompanyPage>
+  </Company_Info>
+  <ASP>
+    <ASP_FORM>Y</ASP_FORM>
+    <ASP_Member>N</ASP_Member>
+    <ASP_Member_Number></ASP_Member_Number>
+  </ASP>
+  <Program_Info>
+    <AppID>app-800017a7c458</AppID>
+    <Program_Name>FinalCrypt</Program_Name>
+    <Program_Version>5.1.0</Program_Version>
+    <Program_Release_Month>12</Program_Release_Month>
+    <Program_Release_Day>18</Program_Release_Day>
+    <Program_Release_Year>2018</Program_Release_Year>
+    <Program_Cost_Dollars>0</Program_Cost_Dollars>
+    <Program_Type>Freeware</Program_Type>
+    <Program_Category_Class>Security &amp; Privacy::Encryption Tools</Program_Category_Class>
+    <Program_Specific_Category>Utilities</Program_Specific_Category>
+    <Program_Categories>Security Tools :: File Security,Utilities :: Security &amp; Encryption</Program_Categories>
+    <Program_Release_Status>Major Update</Program_Release_Status>
+    <Program_Install_Support>Install and Uninstall</Program_Install_Support>
+    <Program_Target_Platform>Windows</Program_Target_Platform>
+    <Program_OS_Support>Win2000,WinXP,Win7 x32,Win7 x64,Windows 8,Windows 10,WinServer,WinOther,WinVista,WinVista x64</Program_OS_Support>
+    <Program_Language>English</Program_Language>
+    <Program_Change_Info>- Update</Program_Change_Info>
+    <Program_System_Requirements>100 MB disk space; x86-64 architecture; 512MB RAM</Program_System_Requirements>
+    <Limitations>No limitations</Limitations>
+    <Awards></Awards>
+    <File_Info>
+      <File_Size_Bytes>72613889</File_Size_Bytes>
+      <File_Size_K>72614</File_Size_K>
+      <File_Size_MB>72.62</File_Size_MB>
+    </File_Info>
+    <Expire_Info>
+      <Has_Expire_Info>N</Has_Expire_Info>
+      <Expire_Count></Expire_Count>
+      <Expire_Based_On></Expire_Based_On>
+      <Expire_Year></Expire_Year>
+      <Expire_Other_Info></Expire_Other_Info>
+      <Expire_Month></Expire_Month>
+      <Expire_Day></Expire_Day>
+    </Expire_Info>
+    <Includes_JAVA_VM></Includes_JAVA_VM>
+    <Includes_DirectX></Includes_DirectX>
+    <Includes_VB_Runtime></Includes_VB_Runtime>
+  </Program_Info>
+  <Web_Info>
+    <Application_URLs>
+      <Application_Info_URL>http://www.finalcrypt.org/</Application_Info_URL>
+      <Application_Order_URL>http://www.finalcrypt.org/</Application_Order_URL>
+      <Application_Screenshot_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Encrypt_800x600.png</Application_Screenshot_URL>
+      <Application_Icon_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/FinalCrypt_Icon_32x32.png</Application_Icon_URL>
+      <Application_XML_File_URL>https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/FinalCrypt_pad.xml</Application_XML_File_URL>
+    </Application_URLs>
+    <Download_URLs>
+      <Primary_Download_URL>https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt_Windows_Installer.msi</Primary_Download_URL>
+      <Secondary_Download_URL>https://p-ams2.pcloud.com/cBZ9dUuSpZqIP2aFZUa7AZ7ZHO7cU7Z2ZZ2K4ZkZPPG40ZTVZ9XZ9kZm7Zn0ZnXZGkZg0ZO7ZHZYXZgZM7Z4kZGtoD7Z6v3alc9O7t4HPmUEr2K5K8od0k9k/FinalCrypt_Windows_Installer.msi</Secondary_Download_URL>
+      <Additional_Download_URL_1></Additional_Download_URL_1>
+      <Additional_Download_URL_2></Additional_Download_URL_2>
+    </Download_URLs>
+  </Web_Info>
+  <Program_Descriptions>
+    <English>
+      <Keywords>Encrypt, Decrypt, file encryption, one-time pad, folder encryption</Keywords>
+      <Char_Desc_45>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION</Char_Desc_45>
+      <Char_Desc_80>  Encrypt files with an OTP key or  personal photo or video file</Char_Desc_80>
+      <Char_Desc_250> FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_250>
+      <Char_Desc_450> FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_450>
+      <Char_Desc_2000>FinalCrypt is an easy, multi-platform and powerful tool to One-Time Pad encrypt your data for free</Char_Desc_2000>
+    </English>
+  </Program_Descriptions>
+  <Permissions>
+    <Distribution_Permissions>This is free software; you can redistribute it under the terms of the Creative Commons License: (CC BY-NC-ND 4.0)</Distribution_Permissions>
+    <EULA>This is free software; you can redistribute it under the terms of the Creative Commons License: (CC BY-NC-ND 4.0)</EULA>
+  </Permissions>
+  <Affiliates>
+    <Affiliates_Regsoft_Order_Page></Affiliates_Regsoft_Order_Page>
+    <Affiliates_Regnow_Order_Page></Affiliates_Regnow_Order_Page>
+    <Affiliates_Regsoft_Vendor_ID></Affiliates_Regsoft_Vendor_ID>
+    <Affiliates_Regnow_Vendor_ID></Affiliates_Regnow_Vendor_ID>
+    <Affiliates_Regsoft_Product_ID></Affiliates_Regsoft_Product_ID>
+    <Affiliates_Regnow_Product_ID></Affiliates_Regnow_Product_ID>
+    <Affiliates_FORM>Y</Affiliates_FORM>
+    <Affiliates_FORM_VER></Affiliates_FORM_VER>
+    <Affiliates_VERSION>5.1.0</Affiliates_VERSION>
+    <Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
+    <Affiliates_Information_Page></Affiliates_Information_Page>
+    <Affiliates_Avangate_Order_Page></Affiliates_Avangate_Order_Page>
+    <Affiliates_Avangate_Vendor_ID></Affiliates_Avangate_Vendor_ID>
+    <Affiliates_Avangate_Product_ID></Affiliates_Avangate_Product_ID>
+    <Affiliates_Avangate_Maximum_Commission_Rate></Affiliates_Avangate_Maximum_Commission_Rate>
+    <Affiliates_BMTMicro_Order_Page></Affiliates_BMTMicro_Order_Page>
+    <Affiliates_BMTMicro_Vendor_ID></Affiliates_BMTMicro_Vendor_ID>
+    <Affiliates_BMTMicro_Product_ID></Affiliates_BMTMicro_Product_ID>
+    <Affiliates_BMTMicro_Maximum_Commission_Rate></Affiliates_BMTMicro_Maximum_Commission_Rate>
+    <Affiliates_eSellerate_Order_Page></Affiliates_eSellerate_Order_Page>
+    <Affiliates_eSellerate_Vendor_ID></Affiliates_eSellerate_Vendor_ID>
+    <Affiliates_eSellerate_Product_ID></Affiliates_eSellerate_Product_ID>
+    <Affiliates_eSellerate_Maximum_Commission_Rate></Affiliates_eSellerate_Maximum_Commission_Rate>
+    <Affiliates_Kagi_Order_Page></Affiliates_Kagi_Order_Page>
+    <Affiliates_Kagi_Vendor_ID></Affiliates_Kagi_Vendor_ID>
+    <Affiliates_Kagi_Product_ID></Affiliates_Kagi_Product_ID>
+    <Affiliates_Kagi_Maximum_Commission_Rate></Affiliates_Kagi_Maximum_Commission_Rate>
+    <Affiliates_Order1_Order_Page></Affiliates_Order1_Order_Page>
+    <Affiliates_Order1_Vendor_ID></Affiliates_Order1_Vendor_ID>
+    <Affiliates_Order1_Product_ID></Affiliates_Order1_Product_ID>
+    <Affiliates_Order1_Maximum_Commission_Rate></Affiliates_Order1_Maximum_Commission_Rate>
+    <Affiliates_Regnet_Order_Page></Affiliates_Regnet_Order_Page>
+    <Affiliates_Regnet_Vendor_ID></Affiliates_Regnet_Vendor_ID>
+    <Affiliates_Regnet_Product_ID></Affiliates_Regnet_Product_ID>
+    <Affiliates_Regnet_Maximum_Commission_Rate></Affiliates_Regnet_Maximum_Commission_Rate>
+    <Affiliates_Regnow_Maximum_Commission_Rate></Affiliates_Regnow_Maximum_Commission_Rate>
+    <Affiliates_Regsoft_Maximum_Commission_Rate></Affiliates_Regsoft_Maximum_Commission_Rate>
+    <Affiliates_ShareIt_Order_Page></Affiliates_ShareIt_Order_Page>
+    <Affiliates_ShareIt_Vendor_ID></Affiliates_ShareIt_Vendor_ID>
+    <Affiliates_ShareIt_Product_ID></Affiliates_ShareIt_Product_ID>
+    <Affiliates_ShareIt_Maximum_Commission_Rate></Affiliates_ShareIt_Maximum_Commission_Rate>
+    <Affiliates_SWReg_Order_Page></Affiliates_SWReg_Order_Page>
+    <Affiliates_SWReg_Vendor_ID></Affiliates_SWReg_Vendor_ID>
+    <Affiliates_SWReg_Product_ID></Affiliates_SWReg_Product_ID>
+    <Affiliates_SWReg_Maximum_Commission_Rate></Affiliates_SWReg_Maximum_Commission_Rate>
+  </Affiliates>
+  <NewsFeed>
+    <NewsFeed_FORM></NewsFeed_FORM>
+    <NewsFeed_VERSION></NewsFeed_VERSION>
+    <NewsFeed_URL></NewsFeed_URL>
+    <NewsFeed_DESCRIPTION></NewsFeed_DESCRIPTION>
+    <NewsFeed_Feed_URL></NewsFeed_Feed_URL>
+    <NewsFeed_Type></NewsFeed_Type>
+    <NewsFeed_Site_URL></NewsFeed_Site_URL>
+    <NewsFeed_Author_First_Name></NewsFeed_Author_First_Name>
+    <NewsFeed_Author_Last_Name></NewsFeed_Author_Last_Name>
+    <NewsFeed_Author_Email></NewsFeed_Author_Email>
+    <NewsFeed_Language></NewsFeed_Language>
+    <NewsFeed_Title></NewsFeed_Title>
+    <NewsFeed_Description_70></NewsFeed_Description_70>
+    <NewsFeed_Description_250></NewsFeed_Description_250>
+    <NewsFeed_Purpose></NewsFeed_Purpose>
+    <NewsFeed_Site_Name></NewsFeed_Site_Name>
+  </NewsFeed>
+  <Press_Release>
+    <Press_Release><h1>FinalCrypt - Powerful file encryption utility</h1> There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
+
+FinalCrypt is offered completely free of charge and it can be used on any modern Windows platform. It doesn't take long to install it and you don't have to go through a complex procedure. The hardware requirements are modest and there is no need to meet any special requirements. 
+
+In terms of appearance, FinalCrypt can be confused with a simple file manager. It features a twin-panel file browser, with all the controls you need to navigate comfortably through your folders. Encrypting a file is an effortless task. All you have to do is select the file you wish to encrypt on the left panel and the image or video you want to use as a key on the right panel and hit the "Encrypt" button, in the lower region of the interface, where you will also find options for pausing and stopping the process. Decrypting files is done exactly the same. Just select the encrypted file and its key, click the same button and the software will take care of the rest. 
+
+The software is capable of encrypting huge amounts of data, so you can protect any important files, regardless of their size. The encrypted file will be given a .bit extension, which are impossible to access. If you attempt to open such a file, the operating system won't know what application to use for that particular file.
+
+Because it uses images or videos to generate encryption keys, your file's protection will be impossible to break. No system in the world can truly replicate a picture. Even the slightest shift in color or tone can make all the difference between the correct key file and a fake. For example, drawing a pixel-sized dot in an image will make it a unique key file. 
+
+When it comes to protecting private files, you can expect nothing less than ironclad encryption capabilities from FinalCrypt. 
+
+Pros:
+The software uses personal image and videofiles to encryption personal files. The smallest modification in an image can make all the difference between correct and incorrect key files. The application is free, it doesn't use too many resources and it is quite easy to use.
+
+Cons:
+There are no obvious drawbacks to complain about.
+</Press_Release>
+    <Headline>Encrypt files with a personal photo or video</Headline>
+    <Summary>FinalCrypt new file encryption released! FinalCrypt v.2.7.2 can encrypt your files with a personal photo or video</Summary>
+    <Press_Release_Plain>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION
+ There is no shortage of file encryption utilities, so you can't say there is no reasonable way of protecting your data. However, if you are looking for an airtight protection solution, then you should definitely turn to FinalCrypt. It encrypts your files as you would expect from any similar application, but this one comes with a unique twist. Rather than using passwords and phrases to generate keys, which can be cracked eventually, the software uses unique bit data from your photos and videos. This means that your files will be virtually uncrackable, since replicating a photo perfectly is impossible. 
+
+FinalCrypt is offered completely free of charge and it can be used on any modern Windows platform. It doesn't take long to install it and you don't have to go through a complex procedure. The hardware requirements are modest and there is no need to meet any special requirements. 
+
+In terms of appearance, FinalCrypt can be confused with a simple file manager. It features a twin-panel file browser, with all the controls you need to navigate comfortably through your folders. Encrypting a file is an effortless task. All you have to do is select the file you wish to encrypt on the left panel and the image or video you want to use as a key on the right panel and hit the "Encrypt" button, in the lower region of the interface, where you will also find options for pausing and stopping the process. Decrypting files is done exactly the same. Just select the encrypted file and its key, click the same button and the software will take care of the rest. 
+
+The software is capable of encrypting huge amounts of data, so you can protect any important files, regardless of their size. The encrypted file will be given a .bit extension, which are impossible to access. If you attempt to open such a file, the operating system won't know what application to use for that particular file.
+
+Because it uses images or videos to generate encryption keys, your file's protection will be impossible to break. No system in the world can truly replicate a picture. Even the slightest shift in color or tone can make all the difference between the correct key file and a fake. For example, drawing a pixel-sized dot in an image will make it a unique key file. 
+
+When it comes to protecting private files, you can expect nothing less than ironclad encryption capabilities from FinalCrypt. 
+
+Pros:
+The software uses personal image and videofiles to encryption personal files. The smallest modification in an image can make all the difference between correct and incorrect key files. The application is free, it doesn't use too many resources and it is quite easy to use. 
+
+Cons:
+There are no obvious drawbacks to complain about.</Press_Release_Plain>
+  </Press_Release>
+  <Site>
+    <Site_FORM></Site_FORM>
+    <Site_VERSION></Site_VERSION>
+    <Site_DESCRIPTION>Encrypt your personal files with One-Time Pad encryption</Site_DESCRIPTION>
+    <Site_Site_Title>FinalCrypt - File Encryption Program</Site_Site_Title>
+    <Site_Site_URL>https://sites.google.com/site/ronuitholland/home/finalcrypt/</Site_Site_URL>
+    <Site_Keywords>encrypt, decrypt, one-time pad, file encryption</Site_Keywords>
+    <Site_Description_100>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt with One-Time Pad</Site_Description_100>
+    <Site_Description_250>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt your personal files with One-Time Pad encryption</Site_Description_250>
+    <Site_Description_450>FinalCrypt - THE WORLD'S MOST UNBREAKABLE ENCRYPTION - Encrypt your personal files with One-Time Pad encryption</Site_Description_450>
+    <Site_Contact_First_Name>Ron</Site_Contact_First_Name>
+    <Site_Contact_Last_Name>de Jong</Site_Contact_Last_Name>
+    <Site_Contact_Email>info@finalcrypt.org</Site_Contact_Email>
+  </Site>
+  <Dynamic_PAD>
+    <Dynamic_Distributive>N</Dynamic_Distributive>
+    <General>
+      <DP_Pad_Enabled>TRUE</DP_Pad_Enabled>
+      <DP_AtFormFill_Enabled>TRUE</DP_AtFormFill_Enabled>
+      <DP_Distributive_Enabled>FALSE</DP_Distributive_Enabled>
+      <DP_Script_Base_URL>http://repository.appvisor.com/</DP_Script_Base_URL>
+      <DP_Pad_Mask>FinalCrypt_pad.xml</DP_Pad_Mask>
+      <DP_Distributive_Primary_URL>https://github.com/ron-from-nl/FinalCrypt/releases/download/latest/FinalCrypt_Windows_Installer.msi</DP_Distributive_Primary_URL>
+      <DP_Distributive_Mask>FinalCrypt_Windows_Installer.msi</DP_Distributive_Mask>
+    </General>
+  </Dynamic_PAD>
+</XML_DIZ_INFO>

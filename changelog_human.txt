@@ -1,0 +1,115 @@
+5.0.0 GAME-CHANGING One-Time Pad "Auto Key Mode"
+      One-Time Pad Encryption never became popular
+      because of its demanding Manual Key Management
+
+      Introducing "Auto Key Mode" keys are now auto-
+      matically created and selected from any directory
+      preferably on detachable external (USB) drives
+      Manual Key Mode remains included and supported
+
+      Auto Key Mode easily encrypts large batches of
+      files 100% One-Time Pad Security Guaranteed
+
+      Additionally many user-interface improvements
+      were added for an even better user experience
+5.0.1 Added Pause & Stop during Auto-Key Creation
+5.0.2 Fixed major Auto-Key I/O Buffer Performance Issue
+5.1.0 Added manual create key discouragement dialog
+      Fixed incorrect printing of "Create Key" path
+      "Create Key" path only prints on user request
+
+4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
+4.0.1 Added sound and voice mixing and priority control for better audio experience
+4.0.2 Avoiding crash bug in Linux libc6 -> libdl.so.2 by slight load delay first sound at startup (bug reported to Ubuntu / GNU Dev Team)
+4.0.3 Hybrid audio system bypassing libc6 -> libdl.so.2 bug preventing unpredictable startup crashes on Linux.
+4.1.0 As requested: Voice Guidance & Sounds User Muted. Click the new icons in the user guidance display
+4.1.1 Fixed bug causing crash when user clicked website-button during early startup
+4.1.2 Fixed openwebsite crash-bug at startup. Fixed systemmonitor led meter location
+4.2.0 Increased security Password / Key Encryption. Please Decrypt & Encrypt files after install.
+      Further: Added Multi MAC System, Anti Layer Peeling Attack Encryption, Persistant User-Paused Animations
+4.2.1 BugFix hang on scanning bug
+4.3.0 Added improved check update release notes. Informing about Version, Upgrade and Update
+4.3.1 Performance of encryption increased 2-10%. More extensive check update release notes. Removed indent release notes Version line
+4.4.0 Fixed filemanager autoresize column-width. Fixed Apple OSX hanging after encryption.
+4.4.1 Fixed additional filemanager autoresize columns issues. Fixed several filemanager stability issues on OSX.
+4.4.2 Added extra filemanager autoresize columns detailsview.
+4.4.3 Improved sound stability enclosing sound-player in Thread
+4.5.0 More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
+4.6.0 Added show / mask password checkbox. Improved mouse-focus password field.
+4.6.1 Disabled unmasked password during encryption. Decreased password font size from px 14 to 12.
+4.7.0 Autoscaled password font-size. Quick user-reenabled animations.
+4.7.1 Added: Click Share on Social Media to Entitle for Free Support.
+      Improved auto resize Info & Dialog Alert Windows
+      Bugfix refreshing directories in both file managers
+      Nearly doubled the "Create Key" Write Throughput Perf
+      Right click FinalCrypt WinStartMenu remove FinalCrypt
+      The FinalCrypt Windows Portable upgraded to Java8-u201
+      Please UN-Install FinalCrypt before installing v4.8.0
+4.8.0 Major Upgrade Java8-u212 security & stability updates
+      Also added many user-interface improvements
+
+3.0.0 An Appealing Modern Design. Easy & Clear User Guidance
+3.0.1 New Interface & User Guidance. Improved layout & performance
+3.0.2 New Interface & User Guidance. Improved user guidance layout for Mac OSX
+3.1.0 Build JRE8-u201 & Better Fonts. Please remove FinalCrypt first
+3.2.0 A new Beautiful Look & Feel. Safe and Smooth Transitions
+3.2.1 Minor cosmetic update
+3.2.2 Guide Users Attention to User Action. User Guidance Arrows softly flashing
+3.3.0 Replaced the Process Usage Indicator with. Led Level Meters for CPU, Mem & I/O Usage
+3.3.1 Removed a heavily logging memory logarea print statement
+3.3.2 Corrected throughput calculations and improved cosmetics
+3.4.0 Added I/O throughput stats for all WRITE channels. Fixed NON-MAC Mode fileselection bugs (GUI & CLI)
+3.4.1 Fixed Total Elapsed & Remaining-Time Clocks. Fixed the FileChooser refresh directory bug
+3.5.0 Added System Monitor startup Testing. Added Dynamic I/O Throughput Ceiling
+3.5.1 Fixed short GUI freeze putting CheckUpdate into the background
+3.5.2 Improved Check Update Online Function. Slightly increased fontsize for files
+3.6.0 Moved FinalCrypt to a new hosting location. Improved Check_Update being more resilient
+3.6.1 CheckUpdate from available hosting location. OpenWebsite from available hosting location
+3.6.2 Downloads from available hosting location. FinalCrypt now 100% multi hosting location
+
+2.0.0 Better Looks & Feel. Modernized Interface
+2.1.0 Change Target Response
+2.1.1 Auto decrypt open file. Fixed desktop open bug
+2.1.2 Auto decrypt open file. Fixed desktop open bug
+2.2.0 New: Cipher Device Types. Better: Printing, Clocks
+2.2.1 Fixed print un-rd/wr files. Minor update for printing
+2.3.0 Added Cipher Checksum SHA-1. Standardized encrypt method
+2.3.1 Improved Cipher validation. Fixed MacOSX Update Stats
+2.4.0 Major Cosmetic GUI Change. Minor fixes filter stats
+2.4.2 Fixed MultiOS GUI bug. Fixed MacOSX busy-bug
+2.4.3 FileChooser Refresh Update
+2.6.0 Added Create OTP Key. Cipher now called Key
+2.6.1 Added Create OTP Key. Fix OTP Key Size Bug
+2.6.2 Added Create OTP Key. Automat Update Check
+2.6.3 Fixed unselect key. Added Create OTP Key
+2.7.0 Added Legacy / Non-MAC Mode. Disables Message Auth. Code
+2.7.1 Removed GUI(FX) component from rdj.CLUI.Removed deprecated javax.xml dependency
+2.7.2 Bugfix: Falsely armed delete buttons. Please update as soon as possible
+2.8.0 Improved filemanager usage. Minor logging improvements
+2.8.1 Refined progress logging. Encrypt & Shred Progress
+2.8.2 JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !
+2.9.0 Added Key + Password Encryption. Added SHA-1 Checksum logentries
+2.9.1 Command Line Interrupt Signal Handler. Delete unfinished file on termination. Switched to SHA-256 Hashing Checksums
+2.9.2 Improved Cmd-Line logging & param validation. Added right-click copy checksum to clipboard
+2.9.3 Fixed Create Keyfile from Command Line Interface. No cmd-line checksum logs on --dry opt
+2.9.4 Improved --print option in command line interface. Added --no-key-size option to command line interface
+2.9.5 Password usage more intuitive and visible. Command line: Add --print & --no-key-size
+
+1.0.0 FinalCrypt first release1.1.0 Added recursive delete selected targets
+1.2.0 Added Check Update function
+1.3.0 Added in/excluding *.bit extension filter
+1.4.0 Added Globbing Pattern & RegEx file filters
+1.5.0 Added Secure Delete Files (Shredding)
+1.6.0 Added raw Cipher Devices including GUID Partition Table Manager (GPT Tooling)
+1.7.0 Added DryRun mode to CLI. Excluded symlinks
+1.7.1 Added Cross Platform FileSystem Attributes. Added batchfiles to CLI. Added file logging
+1.7.2 Removed JavaFX components from CLI. Test r/w permissions on cipher devices
+1.7.3 Optimized GPT Manager Object
+1.8.0 Release: Added Hybrid Message Authentication Code
+1.8.1 Release: Minor update
+1.8.2 Release: Minor update2
+1.8.3 Improved: Updates, Validation
+1.8.4 Better validation & GUI performance
+1.9.0 Added Full Message Authentication Code
+1.9.1 Bugfix Full Message Authentication Code
+1.9.9 Added seperate buttons [Encrypt] & [Decrypt]
