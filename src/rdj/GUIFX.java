@@ -2881,7 +2881,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.setResizable(true);
 	
 	String	content = "";
-	content += "FinalCrypt automatically creates One-Time Pad Keys Files\r\n";
+	content += "FinalCrypt automatically creates One-Time Pad Key Files\r\n";
 	content += "Creating Manual OTP keys is supported but not recommended\r\n\r\n";
 	content += "Do you still want to create a Manual One-Time Pad Key File?\r\n";
 	alert.setContentText(content);
