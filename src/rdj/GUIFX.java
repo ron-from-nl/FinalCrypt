@@ -3594,7 +3594,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    for (Iterator it = createKeyList.iterator(); it.hasNext();)
 	    {
 		FCPath fcPath = (FCPath) it.next();
-		Path autoKeyPath = Paths.get(keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString() + ".bit".replace(":", ""));
+		Path autoKeyPath = Paths.get(keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit");
 		log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
 	    } log("\r\n", false, true, true, false, false);
 	}

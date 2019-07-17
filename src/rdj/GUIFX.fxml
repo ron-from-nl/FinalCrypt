@@ -924,7 +924,10 @@
                                        <children>
                                           <Label fx:id="keyCreateLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" layoutY="1.0" onMouseClicked="#keyCreateLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list create keys" />
+                                                <Tooltip text="Click to list create keys">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font></Tooltip>
                                              </tooltip>
                                              <font>
                                                 <Font size="10.0" />
