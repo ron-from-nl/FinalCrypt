@@ -8,20 +8,7 @@
 [] = {} ================================================================
 [Version Notes] =	{Version 5}
 [Version Notes] =	{}
-[Version Notes] =	{   ##############################################}
-[Version Notes] =	{   # Game changing One-Time Pad "Auto Key Mode" #}
-[Version Notes] =	{   ##############################################}
-[Version Notes] =	{}
-[Version Notes] =	{   One-Time Pad Encryption never became popular}
-[Version Notes] =	{   because of its demanding Manual Key Management}
-[Version Notes] =	{}
-[Version Notes] =	{   Introducing "Auto Key Mode" keys are now auto-}
-[Version Notes] =	{   matically created and selected from any directory}
-[Version Notes] =	{   preferably on detachable external (USB) drives}
-[Version Notes] =	{   Manual Key Mode remains included and supported}
-[Version Notes] =	{}
-[Version Notes] =	{   Auto Key Mode easily encrypts large batches of}
-[Version Notes] =	{   files 100% One-Time Pad Security Guaranteed}
+[Version Notes] =	{   Game changing One-Time Pad "Auto Key Mode"}
 [Version Notes] =	{}
 [Version Notes] =	{   Additionally many user-interface improvements}
 [Version Notes] =	{   were added for an even better user experience}
