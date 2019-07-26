@@ -1,3 +1,5 @@
+5.1.1 New Audio System for better (audio) stability
+      Update is tested & supported on Free/GhostBSD
 5.1.0 Added manual create key discouragement dialog
       Fixed incorrect printing of "Create Key" path
       "Create Key" path only prints on user request

@@ -1,7 +1,7 @@
-[Version] =		{5.1.0}
+[Version] =		{5.1.1}
 [] = {} ================================================================
-[Release Notes] =	{Added manual create key discouragement dialog}
-[Release Message] =	{Fixed incorrect printing of "Create Key" path}
+[Release Notes] =	{New Audio System for better (audio) stability}
+[Release Message] =	{Update is tested & supported on Free/GhostBSD}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -9,7 +9,7 @@
 [Version Notes] =	{Version 5}
 [Version Notes] =	{}
 [Version Notes] =	{   ##############################################}
-[Version Notes] =	{   # GAME-CHANGING One-Time Pad "Auto Key Mode" #}
+[Version Notes] =	{   # Game changing One-Time Pad "Auto Key Mode" #}
 [Version Notes] =	{   ##############################################}
 [Version Notes] =	{}
 [Version Notes] =	{   One-Time Pad Encryption never became popular}
@@ -34,9 +34,10 @@
 [Upgrade Notes] =	{   "Create Key" path only prints on user request}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   No updates}
+[Update Notes] =	{   New Audio System for better (audio) stability}
+[Update Notes] =	{   Update is tested & supported on Free/GhostBSD}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
