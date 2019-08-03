@@ -3093,7 +3093,7 @@ public class GUIFX extends Application implements UI, Initializable
         dialogPane.getStyleClass().add("myDialog");
         
         alert.setTitle("Information Dialog");
-        alert.setHeaderText("What is your Key Directory?");
+        alert.setHeaderText("What is your Auto Key Directory?");
         alert.setResizable(true);
         String infotext = new String();
         infotext =  "";
