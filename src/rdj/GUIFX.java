@@ -3106,7 +3106,6 @@ public class GUIFX extends Application implements UI, Initializable
         infotext += "\r\n";
         infotext += "=================================================\r\n";
         infotext += "\r\n";
-        infotext += "Keep your Key Directory on an external (USB) drive\r\n";
         infotext += "Backup your encrypted files AND keys together as pairs\r\n";
         infotext += "Keep your backups offline on external (USB) drives too!\r\n";
         infotext += "\r\n";
