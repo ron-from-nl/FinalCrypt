@@ -55,8 +55,8 @@ public class GPT_Entries
 
     public void		write(FCPath targetFCPath)						    { new DeviceController(ui).writeLBA(getDesc(), getBytes(), targetFCPath, ABSTRACT_LBA); }
 
-    public void		createKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].writeKeyPartitions(keyFCPath, targetFCPath); }
-    public void		cloneKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].cloneKeyPartition(keyFCPath, targetFCPath); gpt_entry[1].cloneKeyPartition(keyFCPath, targetFCPath); ui.processFinished(new FCPathList(), false);
+    public void		createManualKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].writeKeyPartitions(keyFCPath, targetFCPath); }
+    public void		cloneManualKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)		    { gpt_entry[0].cloneKeyPartition(keyFCPath, targetFCPath); gpt_entry[1].cloneKeyPartition(keyFCPath, targetFCPath); ui.processFinished(new FCPathList(), false);
 }
     
     private int		getTotalEntries()							    { return gpt_entry.length; }

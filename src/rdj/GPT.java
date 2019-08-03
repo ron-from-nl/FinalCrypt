@@ -107,10 +107,10 @@ public class GPT
         gpt_Header2.write(targetFCPath);
     }
     
-//    synchronized public void writeKey(Path keyFilePath, Device targetDevice)  { gpt_Entries1.writeKeyPartitions(keyFilePath, targetDevice); }
-    synchronized public void createKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.createKeyPartitions(keyFCPath, targetFCPath); }
-//    synchronized public void cloneKey(Device keyDevice, Device targetDevice)  { gpt_Entries1.cloneKeyPartitions(keyDevice, targetDevice); }
-    synchronized public void cloneKeypartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.cloneKeyPartitions(keyFCPath, targetFCPath); }
+//    synchronized public void writeManualKey(Path keyFilePath, Device targetDevice)  { gpt_Entries1.writeManualKeyPartitions(keyFilePath, targetDevice); }
+    synchronized public void createManualKeyPartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.createManualKeyPartitions(keyFCPath, targetFCPath); }
+//    synchronized public void cloneManualKey(Device keyDevice, Device targetDevice)  { gpt_Entries1.cloneManualKeyPartitions(keyDevice, targetDevice); }
+    synchronized public void cloneManualKeypartitions(FCPath keyFCPath, FCPath targetFCPath)  { gpt_Entries1.cloneManualKeyPartitions(keyFCPath, targetFCPath); }
     
     public GPT_PMBR	get_GPT_PMBR()	    { return gpt_PMBR; }
     public GPT_Header	get_GPT_Header1()   { return gpt_Header1; }

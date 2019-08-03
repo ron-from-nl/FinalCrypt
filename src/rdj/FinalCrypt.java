@@ -44,7 +44,7 @@ public class FinalCrypt extends Thread
     public static boolean verbose = false;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
     private boolean symlink = false, txt = false, dry = false;
-    private static boolean print = false, bin = false, dec = false, hex = false, chr = false;
+    protected static boolean print = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int BUFFERSIZEDEFAULT = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
     private int bufferSize = BUFFERSIZEDEFAULT; // Default 1MB
@@ -59,7 +59,7 @@ public class FinalCrypt extends Thread
     private java.util.Timer updateProgressTaskTimer;
 
     private boolean stopPending = false;
-    private static boolean pausing = false;
+    public static boolean pausing = false;
     public boolean processRunning = false;
 
     private boolean targetSourceEnded;
@@ -223,7 +223,7 @@ public class FinalCrypt extends Thread
 
         // Get TOTALS
         allDataStats.setFilesTotal(filteredTargetSourceFCPathList.encryptableFiles + filteredTargetSourceFCPathList.decryptableFiles);
-        allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize + filteredTargetSourceFCPathList.needsCreateKeyFilesSize);
+        allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize + filteredTargetSourceFCPathList.writeAutoKeyFilesSize);
 	String modeDesc = "";
 	if (encryptMode)
 	{
@@ -277,8 +277,8 @@ public class FinalCrypt extends Thread
 	    pwdPos = 0;
 	    pwdBytesPos = 0;
 	    totalBytesProcessed = 0;
-	    MessageDigest srcMessageDigest = null; try { srcMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
-	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-2\")\r\n", false, true, true, true, false);}
+	    MessageDigest srcMessageDigest = null; try { srcMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", false, true, true, true, false);}
+	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", false, true, true, true, false);}
 	    
 	    FCPath newTargetSourceFCPath = (FCPath) it.next();
 	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
@@ -388,7 +388,7 @@ public class FinalCrypt extends Thread
 //			    ui.test("\r\n Encrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
 			    autoKeyPath = Paths.get(keySourceFCPath.path.toAbsolutePath().toString(), targetDestinPath.toAbsolutePath().toString().replace(":", ""));
 //							getFCPath(UI ui, String caller,   Path path, boolean isKey, Path keyPath, boolean disabledMAC, boolean report)
-			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "",autoKeyPath,          true,  autoKeyPath,	disabledMAC,           true);
+			    dynamicKeyFCPath = Validate.getFCPath(   ui,	    "", autoKeyPath,          true,  autoKeyPath,	  disabledMAC,           true);
 //			    ui.test("\r\n autoKeyPath: " + autoKeyPath + "\r\n");
 //			    ui.test("\r\n dynamicKeyFCPath: " + dynamicKeyFCPath.getString() + "\r\n");
 
@@ -408,10 +408,7 @@ public class FinalCrypt extends Thread
 				Long totalTranfered = 0L;
 				Long remainder = 0L;
 
-				byte[]      randomBytes1 =	    new byte[bufferSize];
-				ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-
-				SecureRandom random = new SecureRandom();
+				ByteBuffer  randomBuffer =	    ByteBuffer.allocate(bufferSize); randomBuffer.clear();
 
 				ui.log(UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_KEY_SYMBOL + " ", false, true, true, false, false);
@@ -429,27 +426,20 @@ public class FinalCrypt extends Thread
 				    
 				    remainder = (( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) - totalTranfered);
 
-				    if	    ( remainder >= bufferSize )				
-				    {
-					randomBytes1 =	    new byte[bufferSize];
-					randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-				    }
-				    else if (( remainder > 0 ) && ( remainder < bufferSize ))
-				    {
-					randomBytes1 =	    new byte[remainder.intValue()];
-					randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
-				    }
+				    if ( remainder >= bufferSize )				{ randomBuffer = ByteBuffer.allocate(bufferSize); randomBuffer.clear(); }
+				    else if (( remainder > 0 ) && ( remainder < bufferSize ))	{ randomBuffer = ByteBuffer.allocate(remainder.intValue()); randomBuffer.clear(); }
 				    else							{ inputEnded = true; }
 
 				    // Randomize raw key or write raw key straight to partition
-				    random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
+				    //			getFCRandomBuffer(UI ui,			int size, boolean extraSeed, boolean encrypt, boolean print)
+				    randomBuffer = TRNG.getFCRandomBuffer(   ui, randomBuffer.capacity(),	       true,		true,	      print);
 
 				    // Write Device (randomBuffer3 became randomBuffer1)
 				    wrteKeyStat.setFileStartEpoch();
 				    try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(dynamicKeyFCPath.path, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
 				    {
 					writeKeyFileChannel.position(writeKeyFileChannelPosition);
-					writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer1); randomBuffer1.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
+					writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer); randomBuffer.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
 					totalTranfered += writeKeyFileChannelTransfered; 
 					// System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
 					writeKeyFileChannelPosition += writeKeyFileChannelTransfered;
@@ -459,7 +449,7 @@ public class FinalCrypt extends Thread
 					wrteKeyStat.addFileBytesProcessed(writeKeyFileChannelTransfered); // /2
 					allDataStats.addAllDataBytesProcessed("wr key", writeKeyFileChannelTransfered); // 2
 				    } catch (IOException ex) { ui.log("Error: Files.newByteChannel(dynamicKeyFCPath.path: " + ex.getMessage() + "\r\n", true, true, true, true, false); inputEnded = true; break; }
-				    randomBuffer1.clear(); randomBuffer1.clear(); randomBuffer1.clear();
+				    randomBuffer.clear();
 				}
 				writeKeyFileChannelPosition = 0;                
 				writeKeyFileChannelTransfered = 0;                
@@ -1047,14 +1037,14 @@ public class FinalCrypt extends Thread
     }
     
 //  Recursive Deletion of PathList
-    public void deleteSelection(ArrayList<Path> targetSourcePathList, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
+    public void deleteSelection(ArrayList<Path> targetSourcePathList, FCPath keyFCPath, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
 //							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
-        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,            null,		   new FCPathList(),        pattern,	     negatePattern,	    disabledMAC);
+        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,       keyFCPath,		   new FCPathList(),        pattern,	     negatePattern,	    disabledMAC);
         for (Path path:targetSourcePathList)
         {
-            try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e){System.err.println(e);}
+            try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: IOException: deleteSelection() Files.walkFileTree(" + path.toAbsolutePath().toString() + "): " + e.getMessage() + "\r\n", true, true, true, true, false); }
         }
     }
     
@@ -1080,7 +1070,7 @@ public class FinalCrypt extends Thread
 	else
 	{
 	    MessageDigest messageDigest = null;
-	    try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\"SHA-256\")\r\n", true, true, true, true, false);}
+	    try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false); }
 	    messageDigest.update(pwd.getBytes());
 	    byte[] hashBytes = messageDigest.digest();
 	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));

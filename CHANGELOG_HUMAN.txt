@@ -1,17 +1,5 @@
-5.0.0 GAME-CHANGING One-Time Pad "Auto Key Mode"
-      One-Time Pad Encryption never became popular
-      because of its demanding Manual Key Management
-
-      Introducing "Auto Key Mode" keys are now auto-
-      matically created and selected from any directory
-      preferably on detachable external (USB) drives
-      Manual Key Mode remains included and supported
-
-      Auto Key Mode easily encrypts large batches of
-      files 100% One-Time Pad Security Guaranteed
-
-      Additionally many user-interface improvements
-      were added for an even better user experience
+5.0.0 Game changing One-Time Pad "Auto Key Mode"
+      encrypt files with 100% One-Time Pad Security
 5.0.1 Added Pause & Stop during Auto-Key Creation
 5.0.2 Fixed major Auto-Key I/O Buffer Performance Issue
 5.1.0 Added manual create key discouragement dialog
@@ -19,6 +7,12 @@
       "Create Key" path only prints on user request
 5.1.1 New Audio System for better (audio) stability
       Update is tested & supported on Free/GhostBSD
+5.2.0 SecureRandom Number Generator extra Secured
+      Decrypt, Remove Keys & Re-encrypt to Secure
+      User delete also deletes matching Key Items
+      Audio System code cleaned up and improved
+      Added Key Match & Key Write User-Printing
+      Added Key Directory Full Path show Tooltip
 
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 4.0.1 Added sound and voice mixing and priority control for better audio experience

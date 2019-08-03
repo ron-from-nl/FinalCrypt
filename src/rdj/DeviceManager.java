@@ -24,7 +24,7 @@ public class DeviceManager extends Thread
         
     public DeviceManager(UI ui) { this.ui = ui; }
     
-    public void createKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
+    public void createManualKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
     {
 //		      isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	if ( Validate.isValidFile(   ui,            "", targetFCPath.path, targetFCPath.isKey,	    true,  	    1L,           false,             true,           true) )
@@ -34,13 +34,13 @@ public class DeviceManager extends Thread
 //	    gpt.create(GPT.getKeyFileSize(ui, keyFilePath), targetDevice);
 	    gpt.create(keyFCPath.size, targetFCPath);
 	    gpt.write(targetFCPath);
-	    gpt.createKeyPartitions(keyFCPath, targetFCPath);
+	    gpt.createManualKeyPartitions(keyFCPath, targetFCPath);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}
     }
 
-    public void cloneKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
+    public void cloneManualKeyDevice(FCPath keyFCPath, FCPath targetFCPath)
     {
 //		           isValidFile(UI ui, String caller,  Path targetSourcePath, boolean isKey,     boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	if (
@@ -55,7 +55,7 @@ public class DeviceManager extends Thread
 //            gpt.read(keyDeviceFilePath); // Copies currentLBA and backupLBA which causes invalid headers on a different size USB Stick
 	    gpt.create(DeviceController.getKeyPartitionSize(ui, keyFCPath), targetFCPath);
 	    gpt.write(targetFCPath);
-	    gpt.cloneKeypartitions(keyFCPath, targetFCPath);
+	    gpt.cloneManualKeypartitions(keyFCPath, targetFCPath);
 	    gpt.print();
 	    try { Thread.sleep(250); } catch (InterruptedException ex) {  }
 	}

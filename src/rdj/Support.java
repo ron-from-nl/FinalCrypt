@@ -41,27 +41,48 @@ import javax.sound.sampled.*;
 
 public class Support extends Application implements Initializable
 {
-    private final Media WAV_SND_BUTTON =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_button.wav").toExternalForm());
-    private final Media WAV_SND_ENCRYPTFILES =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_encrypt_files.wav").toExternalForm());
-    private final Media WAV_SND_INPUT_FAIL =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_input_fail.wav").toExternalForm());
-    private final Media WAV_SND_INPUT_OK =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_input_ok.wav").toExternalForm());
-    private final Media WAV_SND_KEYPRESS =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_key_press.wav").toExternalForm());
-    private final Media WAV_SND_OPEN =			    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_open.wav").toExternalForm());
-    private final Media WAV_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_shutdown.wav").toExternalForm());
-
-    private final Media WAV_VOI_CREATE_KEY =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_create_key.wav").toExternalForm());
-    private final Media WAV_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_select_key.wav").toExternalForm());
-
-    private final Media MP3_SND_BUTTON =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_button.mp3").toExternalForm());
-    private final Media MP3_SND_ENCRYPTFILES =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_encrypt_files.mp3").toExternalForm());
-    private final Media MP3_SND_INPUT_FAIL =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_input_fail.mp3").toExternalForm());
-    private final Media MP3_SND_INPUT_OK =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_input_ok.mp3").toExternalForm());
-    private final Media MP3_SND_KEYPRESS =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_key_press.mp3").toExternalForm());
-    private final Media MP3_SND_OPEN =			    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_open.mp3").toExternalForm());
-    private final Media MP3_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_shutdown.mp3").toExternalForm());
-
-    private final Media MP3_VOI_CREATE_KEY =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_create_key.mp3").toExternalForm());
-    private final Media MP3_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_select_key.mp3").toExternalForm());
+//    private final String SND_ALARM =			    "/rdj/audio/sounds/alarm";
+//    private final String SND_ALERT =			    "/rdj/audio/sounds/alert";
+//    private final String SND_BUTTON =			    "/rdj/audio/sounds/button";
+//    private final String SND_DECRYPTFILES =		    "/rdj/audio/sounds/decrypt_files";
+//    private final String SND_ENCRYPTFILES =		    "/rdj/audio/sounds/encrypt_files";
+//    private final String SND_ERROR =			    "/rdj/audio/sounds/error";
+//    private final String SND_INPUT_FAIL =		    "/rdj/audio/sounds/input_fail";
+//    private final String SND_INPUT_OK =			    "/rdj/audio/sounds/input_ok";
+//    private final String SND_KEYPRESS =			    "/rdj/audio/sounds/key_press";
+//    private final String SND_MESSAGE =			    "/rdj/audio/sounds/message";
+//    private final String SND_OFF =			    "/rdj/audio/sounds/off";
+//    private final String SND_ON =			    "/rdj/audio/sounds/on";
+//    private final String SND_OPEN =			    "/rdj/audio/sounds/open";
+//    private final String SND_READY =			    "/rdj/audio/sounds/ready";
+//    private final String SND_SELECT =			    "/rdj/audio/sounds/select";
+//    private final String SND_SELECTINVALID =		    "/rdj/audio/sounds/select_invalid";
+//    private final String SND_SELECTKEY =			    "/rdj/audio/sounds/select_key";
+//    private final String SND_SOUND_DISABLED =		    "/rdj/audio/sounds/sound_disabled";
+//    private final String SND_SOUND_ENABLED =		    "/rdj/audio/sounds/sound_enabled";
+//    private final String SND_SHUTDOWN =			    "/rdj/audio/sounds/shutdown";
+//    private final String SND_STARTUP =			    "/rdj/audio/sounds/startup";
+//
+//    private final String VOI_CLONE_KEY_DEVICE =		    "/rdj/audio/voice/clone_key_device";
+//    private final String VOI_CONFIRM_PASS_WITH_ENTER =	    "/rdj/audio/voice/confirm_password_with_enter";
+//    private final String VOI_CREATE_KEY =		    "/rdj/audio/voice/create_key";
+//    private final String VOI_CREATE_KEY_DEVICE =		    "/rdj/audio/voice/create_key_device";
+//    private final String VOI_DECRYPT_FILES =		    "/rdj/audio/voice/decrypt_files";
+//    private final String VOI_DECRYPTING_FILES =		    "/rdj/audio/voice/decrypting_files";
+//    private final String VOI_ENCRYPT_FILES =		    "/rdj/audio/voice/encrypt_files";
+//    private final String VOI_ENCRYPTING_FILES =		    "/rdj/audio/voice/encrypting_files";
+//    private final String VOI_ENCRYPT_OR_DECRYPT_FILES =	    "/rdj/audio/voice/encrypt_or_decrypt_files";
+//    private final String VOI_SCANNING_FILES =		    "/rdj/audio/voice/scanning_files";
+//    private final String VOI_SELECT_FILES =		    "/rdj/audio/voice/select_files";
+//    private final String VOI_SELECT_KEY =		    "/rdj/audio/voice/select_key";
+//    private final String VOI_VOICE_DISABLED =		    "/rdj/audio/voice/voice_disabled";
+//    private final String VOI_VOICE_ENABLED =		    "/rdj/audio/voice/voice_enabled";
+//    private final String VOI_WRONG_KEY_OR_PASSWORD =	    "/rdj/audio/voice/wrong_key_or_password";
+//
+//    public final int WAV =				    0;
+//    public final int OGG =				    1; // Not supported
+//    public final int AIFF =				    2; // Not supported
+//    public final int MP3 =				    3;
 
     private Parent root;
     private Stage stage;
@@ -75,15 +96,15 @@ public class Support extends Application implements Initializable
     @FXML private ImageView twitterImageView;
     @FXML private ImageView linkedInImageView;
     @FXML private ImageView pinterestImageView;
-    private ImageView instagramImageView;
-    @FXML private Label statusLabel;
+//    private ImageView instagramImageView;
+//    @FXML private Label statusLabel;
     
-    private AudioClip audioClipSounds;
-    private AudioClip audioClipVoice;
-    private AudioInputStream audioInSounds;
-    private AudioInputStream audioInVoice;
-    private Clip clipSounds;
-    private Clip clipVoice;
+//    private AudioClip audioClipSounds;
+//    private AudioClip audioClipVoice;
+//    private AudioInputStream audioInSounds;
+//    private AudioInputStream audioInVoice;
+//    private Clip clipSounds;
+//    private Clip clipVoice;
     
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     @FXML
@@ -127,8 +148,9 @@ public class Support extends Application implements Initializable
 
     @FXML private void facebookImageViewOnMouseClicked(MouseEvent event)
     {
-	play_MP3(MP3_SND_BUTTON);
-	play_MP3(MP3_SND_OPEN);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+//	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    try {  Desktop.getDesktop().browse(new URI("https://www.facebook.com/share.php?u=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
@@ -142,8 +164,10 @@ public class Support extends Application implements Initializable
 
     @FXML private void twitterImageViewOnMouseClicked(MouseEvent event)
     {
-	play_MP3(MP3_SND_BUTTON);
-	play_MP3(MP3_SND_OPEN);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+//	play(SND_BUTTON,Audio.AUDIO_CODEC);
+//	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    try {  Desktop.getDesktop().browse(new URI("https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
@@ -157,8 +181,10 @@ public class Support extends Application implements Initializable
 
     @FXML private void linkedInImageViewOnMouseClicked(MouseEvent event)
     {
-	play_MP3(MP3_SND_BUTTON);
-	play_MP3(MP3_SND_OPEN);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+//	play(SND_BUTTON,Audio.AUDIO_CODEC);
+//	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    try {  Desktop.getDesktop().browse(new URI("https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
@@ -172,8 +198,10 @@ public class Support extends Application implements Initializable
 
     @FXML private void pinterestImageViewOnMouseClicked(MouseEvent event)
     {
-	play_MP3(MP3_SND_BUTTON);
-	play_MP3(MP3_SND_OPEN);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+//	play(SND_BUTTON,Audio.AUDIO_CODEC);
+//	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    try {  Desktop.getDesktop().browse(new URI("http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption")); prefs.put("Shared", "Yes"); }
@@ -187,8 +215,10 @@ public class Support extends Application implements Initializable
 
     @FXML private void finalcryptImageViewOnMouseClicked(MouseEvent event)
     {
-	play_MP3(MP3_SND_BUTTON);
-	play_MP3(MP3_SND_OPEN);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+//	play(SND_BUTTON,Audio.AUDIO_CODEC);
+//	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    Version.openWebSite(guifx);
@@ -201,70 +231,160 @@ public class Support extends Application implements Initializable
 	shareThread.start();
     }
 
-    public void play_WAV(Media media)
-    {
-//	Thread playThread = new Thread(() ->
+//    synchronized public void play(String audio, int audio_codec)
+//    {
+//	Media media;
+//	switch (audio_codec)
 //	{
-	    if (media != null) 
-	    {
-		if (media.getSource().contains("sounds")) // new sound added to any other audio playing
-		{
-		    try { audioInSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-		    catch (UnsupportedAudioFileException ex) { guifx.log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { guifx.log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    try { clipSounds.open(audioInSounds); } 
-		    catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { guifx.log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipSounds.start();
-		}
-		else
-		{
-		    if ((clipVoice != null) && ( media.getSource().contains("voice") ) && ( clipVoice.isActive() )) // new voice stopping currently playing voice
-		    {
-			clipVoice.stop(); try { audioInVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    }
-		    try { audioInVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-		    catch (UnsupportedAudioFileException ex) { guifx.log("Error: UnsupportedAudioFileException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { guifx.log("Error: IOException play(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    try { clipVoice.open(audioInVoice); } 
-		    catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-		    catch (IOException ex) { guifx.log("Error: IOException play(..).clip.open(..) " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-
-		    clipVoice.start();
-		}
-	    }
-//	});
-//	playThread.setName("playThread");
-//	playThread.setDaemon(true);
-//	playThread.start();
-    }
-
-    public void play_MP3(Media media)
-    {
-//	test("Invoking play_MP3: " + media.getSource() + " ");
-	
-	if (media != null) 
-	{
-	    if ( media.getSource().contains("sounds") )
-	    {
-		if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-	    }
-	    else if ( media.getSource().contains("voice") )
-	    {
-		if ( guifx.voice_Is_Enabled)
-		{
-		    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-		    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
-		}
-	    }
-	    else { guifx.log("Alert: play_MP3(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-	}
-    }
+//	    case WAV:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
+//	    case OGG:		media = new Media(getClass().getResource(audio + ".ogg").toExternalForm());		break;
+//	    case MP3:		media = new Media(getClass().getResource(audio + ".mp3").toExternalForm());		break;
+//	    default:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
+//	}
+//	
+//	if (audio != null) 
+//	{
+//	    if ( (audio.contains("sounds")) ) // new sound added to any other audio playing
+//	    {
+//		if (guifx.sound_Is_Enabled)
+//		{
+//		    try { audioInputStreamSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
+//		    catch (UnsupportedAudioFileException ex)	{ guifx.log("Error: UnsupportedAudioFileException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//		    catch (IOException ex)			{ guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//		    
+//		    clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//
+//		    try { clipSounds.open(audioInputStreamSounds); } 
+//		    catch (LineUnavailableException ex)	{ clipSounds.close(); clipSounds = null; guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).clip.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//		    catch (IOException ex)		{ clipSounds.close(); clipSounds = null; guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clip.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//
+//		    if ( clipSounds != null )
+//		    {
+//			clipSounds.start();
+//			try { audioInputStreamSounds.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//		    }
+//		    else
+//		    {
+//			try { audioInputStreamSounds.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
+//		    }
+//		    // test(" " + clipSounds.isOpen() + "\r\n");
+//		}
+//	    }
+//	    else if ( audio.contains("voice") )
+//	    {
+//		if (guifx.voice_Is_Enabled)
+//		{
+//		    if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
+//		    {
+//			clipVoice.stop(); try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//		    }
+//		    try { audioInputStreamVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
+//		    catch (UnsupportedAudioFileException ex) { guifx.log("Error: UnsupportedAudioFileException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//		    catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//
+//		    clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
+//
+//		    try { clipVoice.open(audioInputStreamVoice); } 
+//		    catch (LineUnavailableException ex) { clipVoice.close(); clipVoice = null; guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + "play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//		    catch (IOException ex)		{ clipVoice.close(); clipVoice = null; guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//		    
+//		    if ( clipVoice != null )
+//		    {
+//			clipVoice.start();
+//			try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
+//		    }
+//		    else
+//		    {
+//			try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
+//		    }
+//		    // test(" " + clipVoice.isOpen() + "\r\n");
+//		}
+//	    }
+//	    else { guifx.log("Alert: " + this.getClass().getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
+//	}
+//    }
+        
+//    synchronized public void play(String audio, int audio_codec)
+//    {
+//	Media media;
+//	switch (audio_codec)
+//	{
+//	    case Audio.WAV:	media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
+//	    case Audio.OGG:	media = new Media(getClass().getResource(audio + ".ogg").toExternalForm());		break;
+//	    case Audio.AIFF:	media = new Media(getClass().getResource(audio + ".aiff").toExternalForm());		break;
+//	    case Audio.MP3:	media = new Media(getClass().getResource(audio + ".mp3").toExternalForm());		break;
+//	    default:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
+//	}
+//	
+//	if (audio != null) 
+//	{
+//	    if ( (audio.contains("sounds")) ) // new sound added to any other audio playing
+//	    {
+//		if (guifx.sound_Is_Enabled)
+//		{
+//		    Platform.runLater(new Runnable(){ @Override public void run()
+//		    {
+//			if (media != null) 
+//			{
+//			    if ( media.getSource().contains("sounds") )
+//			    {
+//				Thread playSoundThread = new Thread(() ->
+//				{
+//				    if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+//				});
+//				playSoundThread.setName("playSoundThread");
+//				playSoundThread.setDaemon(true);
+//				playSoundThread.start();
+//			    }
+//			    else if ( media.getSource().contains("voice") )
+//			    {
+//				if ( guifx.voice_Is_Enabled)
+//				{
+//				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+//				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+//				}
+//			    }
+//			    else { guifx.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
+//			}
+//		    }});
+//		}
+//	    }
+//	    else if ( audio.contains("voice") )
+//	    {
+//		if (guifx.voice_Is_Enabled)
+//		{
+//		    if ((audioClipSounds != null) && ( audioClipSounds.isPlaying() )) // new voice stopping currently playing voice
+//		    {
+//			audioClipSounds.stop();
+//		    }
+//		    Platform.runLater(new Runnable(){ @Override public void run()
+//		    {
+//			if (media != null) 
+//			{
+//			    if ( media.getSource().contains("sounds") )
+//			    {
+//				Thread playVoiceThread = new Thread(() ->
+//				{
+//				    if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
+//				});
+//				playVoiceThread.setName("playVoiceThread");
+//				playVoiceThread.setDaemon(true);
+//				playVoiceThread.start();
+//			    }
+//			    else if ( media.getSource().contains("voice") )
+//			    {
+//				if ( guifx.voice_Is_Enabled)
+//				{
+//				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
+//				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
+//				}
+//			    }
+//			    else { guifx.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
+//			}
+//		    }});
+//		}
+//	    }
+//	    else { guifx.log("Alert: " + this.getClass().getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
+//	}
+//    }        
 }

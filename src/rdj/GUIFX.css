@@ -20,6 +20,10 @@
 @font-face { font-family: 'Liberation Mono'; src: url('fonts/LiberationMono-Regular.ttf'); }
 @font-face { font-family: 'Liberation Sans'; src: url('fonts/LiberationSans-Regular.ttf'); }
 
+/*
+    Test font on terminal: fc-match
+*/
+
 .background_top
 {
     /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/

@@ -1,7 +1,7 @@
-[Version] =		{5.1.1}
+[Version] =		{5.2.0}
 [] = {} ================================================================
-[Release Notes] =	{New Audio System for better (audio) stability}
-[Release Message] =	{Update is tested & supported on Free/GhostBSD}
+[Release Notes] =	{SecureRandom Number Generator extra Secured}
+[Release Message] =	{Decrypt, Remove Keys & Re-encrypt to Secure}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -14,17 +14,18 @@
 [Version Notes] =	{   were added for an even better user experience}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 1}
+[Upgrade Notes] =	{Upgrade 2}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   Added manual create key discouragement dialog}
-[Upgrade Notes] =	{   Fixed incorrect printing of "Create Key" path}
-[Upgrade Notes] =	{   "Create Key" path only prints on user request}
+[Upgrade Notes] =	{   SecureRandom Number Generator extra Secured}
+[Upgrade Notes] =	{   Decrypt, Remove Keys & Re-encrypt to Secure}
+[Upgrade Notes] =	{   User delete also deletes matching Key Items}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{   New Audio System for better (audio) stability}
-[Update Notes] =	{   Update is tested & supported on Free/GhostBSD}
+[Update Notes] =	{   Audio System code cleaned up and improved}
+[Update Notes] =	{   Added Key Match & Key Write User-Printing}
+[Update Notes] =	{   Added Key Directory Full Path show Tooltip}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

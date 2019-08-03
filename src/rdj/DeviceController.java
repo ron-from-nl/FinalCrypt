@@ -133,7 +133,7 @@ public class DeviceController
     }
 
 //  Write KeyFile to partition
-    synchronized public void createKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
+    synchronized public void createManualKeyPartition(FCPath keyFCPath, FCPath targetFCPath, long firstLBA, long lastLBA)
     {
 	FinalCrypt.io_Throughput_Ceiling = FinalCrypt.IO_THROUGHPUT_CEILING_DEFAULT;
 	startCalendar = Calendar.getInstance(Locale.ROOT);

@@ -32,7 +32,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.security.SecureRandom;
+import java.security.*;
 import java.util.EnumSet;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -65,71 +65,6 @@ import javax.sound.sampled.*;
 
 public class CreateOTPKey extends Application implements Initializable
 {
-//    private final Media WAV_SND_BUTTON =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_button.wav").toExternalForm());
-//    private final Media WAV_SND_ENCRYPTFILES =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_encrypt_files.wav").toExternalForm());
-//    private final Media WAV_SND_INPUT_FAIL =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_input_fail.wav").toExternalForm());
-//    private final Media WAV_SND_INPUT_OK =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_input_ok.wav").toExternalForm());
-//    private final Media WAV_SND_KEYPRESS =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_key_press.wav").toExternalForm());
-//    private final Media WAV_SND_OPEN =			    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_open.wav").toExternalForm());
-//    private final Media WAV_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/wav/sounds/snd_shutdown.wav").toExternalForm());
-//
-//    private final Media WAV_VOI_CREATE_KEY =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_create_key.wav").toExternalForm());
-//    private final Media WAV_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/wav/voice/voi_select_key.wav").toExternalForm());
-//
-//    private final Media MP3_SND_BUTTON =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_button.mp3").toExternalForm());
-//    private final Media MP3_SND_ENCRYPTFILES =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_encrypt_files.mp3").toExternalForm());
-//    private final Media MP3_SND_INPUT_FAIL =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_input_fail.mp3").toExternalForm());
-//    private final Media MP3_SND_INPUT_OK =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_input_ok.mp3").toExternalForm());
-//    private final Media MP3_SND_KEYPRESS =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_key_press.mp3").toExternalForm());
-//    private final Media MP3_SND_OPEN =			    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_open.mp3").toExternalForm());
-//    private final Media MP3_SND_SHUTDOWN =		    new Media(getClass().getResource("/rdj/audio/mp3/sounds/snd_shutdown.mp3").toExternalForm());
-//
-//    private final Media MP3_VOI_CREATE_KEY =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_create_key.mp3").toExternalForm());
-//    private final Media MP3_VOI_SELECT_KEY =		    new Media(getClass().getResource("/rdj/audio/mp3/voice/voi_select_key.mp3").toExternalForm());
-
-    private final String SND_ALARM =			    "/rdj/audio/sounds/alarm";
-    private final String SND_ALERT =			    "/rdj/audio/sounds/alert";
-    private final String SND_BUTTON =			    "/rdj/audio/sounds/button";
-    private final String SND_DECRYPTFILES =		    "/rdj/audio/sounds/decrypt_files";
-    private final String SND_ENCRYPTFILES =		    "/rdj/audio/sounds/encrypt_files";
-    private final String SND_ERROR =			    "/rdj/audio/sounds/error";
-    private final String SND_INPUT_FAIL =		    "/rdj/audio/sounds/input_fail";
-    private final String SND_INPUT_OK =			    "/rdj/audio/sounds/input_ok";
-    private final String SND_KEYPRESS =			    "/rdj/audio/sounds/key_press";
-    private final String SND_MESSAGE =			    "/rdj/audio/sounds/message";
-    private final String SND_OFF =			    "/rdj/audio/sounds/off";
-    private final String SND_ON =			    "/rdj/audio/sounds/on";
-    private final String SND_OPEN =			    "/rdj/audio/sounds/open";
-    private final String SND_READY =			    "/rdj/audio/sounds/ready";
-    private final String SND_SELECT =			    "/rdj/audio/sounds/select";
-    private final String SND_SELECTINVALID =		    "/rdj/audio/sounds/select_invalid";
-    private final String SND_SELECTKEY =			    "/rdj/audio/sounds/select_key";
-    private final String SND_SOUND_DISABLED =		    "/rdj/audio/sounds/sound_disabled";
-    private final String SND_SOUND_ENABLED =		    "/rdj/audio/sounds/sound_enabled";
-    private final String SND_SHUTDOWN =			    "/rdj/audio/sounds/shutdown";
-    private final String SND_STARTUP =			    "/rdj/audio/sounds/startup";
-
-    private final String VOI_CLONE_KEY_DEVICE =		    "/rdj/audio/voice/clone_key_device";
-    private final String VOI_CONFIRM_PASS_WITH_ENTER =	    "/rdj/audio/voice/confirm_password_with_enter";
-    private final String VOI_CREATE_KEY =		    "/rdj/audio/voice/create_key";
-    private final String VOI_CREATE_KEY_DEVICE =		    "/rdj/audio/voice/create_key_device";
-    private final String VOI_DECRYPT_FILES =		    "/rdj/audio/voice/decrypt_files";
-    private final String VOI_DECRYPTING_FILES =		    "/rdj/audio/voice/decrypting_files";
-    private final String VOI_ENCRYPT_FILES =		    "/rdj/audio/voice/encrypt_files";
-    private final String VOI_ENCRYPTING_FILES =		    "/rdj/audio/voice/encrypting_files";
-    private final String VOI_ENCRYPT_OR_DECRYPT_FILES =	    "/rdj/audio/voice/encrypt_or_decrypt_files";
-    private final String VOI_SCANNING_FILES =		    "/rdj/audio/voice/scanning_files";
-    private final String VOI_SELECT_FILES =		    "/rdj/audio/voice/select_files";
-    private final String VOI_SELECT_KEY =		    "/rdj/audio/voice/select_key";
-    private final String VOI_VOICE_DISABLED =		    "/rdj/audio/voice/voice_disabled";
-    private final String VOI_VOICE_ENABLED =		    "/rdj/audio/voice/voice_enabled";
-    private final String VOI_WRONG_KEY_OR_PASSWORD =	    "/rdj/audio/voice/wrong_key_or_password";
-
-    public final int WAV =				    0;
-    public final int OGG =				    1; // Not supported
-    public final int AIFF =				    2; // Not supported
-    public final int MP3 =				    3;
-
     private Parent root;
     private Stage stage;
     private Scene scene;
@@ -171,20 +106,7 @@ public class CreateOTPKey extends Application implements Initializable
     private long lastThroughputClock;
     private long realtimeBytesProcessed;
     private double realtimeMiBPS;
-//    private Sound sound;
-    private AudioClip audioClipSounds;
-    private AudioClip audioClipVoice;
-    private AudioInputStream audioInputStreamSounds;
-    private AudioInputStream audioInputStreamVoice;
-    private Clip clipSounds;
-    private Clip clipVoice;
-    @FXML
-    private Label otpRulesLabel;
-
-//    public CreateOTPKey(GUIFX guifx)
-//    {
-//	this.guifx = guifx;
-//    }
+    @FXML   private Label otpRulesLabel;
     
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -221,7 +143,8 @@ public class CreateOTPKey extends Application implements Initializable
 	{
 	    String regex = "[^a-zA-Z0-9\\\\-\\\\_\\\\.\\\\ ]";
 	    if ( filenameTextField.getText().matches(regex) ) { filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); }
-	    else { play(SND_KEYPRESS, guifx.AUDIO_CODEC); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
+//	    else { play(SND_KEYPRESS, guifx.AUDIO_CODEC); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
+	    else { Audio.play(guifx, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
 
 	    if (( filenameTextField.getText().length() > 0 ))
 	    {
@@ -292,27 +215,16 @@ public class CreateOTPKey extends Application implements Initializable
 	currentDirPath = curDirPath; 
 	statusLabel1.setText("Current directory");
 	statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
-	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, VOI_CREATE_KEY, 0);
+//	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, VOI_CREATE_KEY, 0);
+	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, Audio.VOI_CREATE_KEY, 0);
     }
         
-    @FXML
-    private void increaseButtonOnAction(ActionEvent event) { changeSize(1); }
-
-    @FXML
-    private void decreaseButtonOnAction(ActionEvent event) { changeSize(-1); }
-    
-
-    @FXML
-    private void increaseButtonOnMousePressed(MouseEvent event) { play(SND_BUTTON, guifx.AUDIO_CODEC); changeSizeRepeaterOn(1); }
-
-    @FXML
-    private void decreaseButtonOnMousePressed(MouseEvent event) { play(SND_BUTTON, guifx.AUDIO_CODEC); changeSizeRepeaterOn(-1); }
-
-    @FXML
-    private void increaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
-
-    @FXML
-    private void decreaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
+    @FXML   private void increaseButtonOnAction(ActionEvent event) { changeSize(1); }
+    @FXML   private void decreaseButtonOnAction(ActionEvent event) { changeSize(-1); }
+    @FXML   private void increaseButtonOnMousePressed(MouseEvent event) { Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);; changeSizeRepeaterOn(1); }
+    @FXML   private void decreaseButtonOnMousePressed(MouseEvent event) { Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);; changeSizeRepeaterOn(-1); }
+    @FXML   private void increaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
+    @FXML   private void decreaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
 
     private void changeSizeRepeaterOn(long step)
     {
@@ -366,7 +278,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void createButtonAction(ActionEvent event)
     {
-	play(SND_BUTTON, guifx.AUDIO_CODEC); 
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);; 
 	filenameTextField.setDisable(true);
 	filesizeLabel.setDisable(true);
 	filesizeTextField.setDisable(true);
@@ -397,7 +309,7 @@ public class CreateOTPKey extends Application implements Initializable
 //	Start writing key file
 //	====================================================================================================================
 
-	Thread createKeyThread; createKeyThread = new Thread(() ->
+	Thread createManualKeyThread; createManualKeyThread = new Thread(() ->
 	{
 	    if ( filesizeInBytes < bufferSize) { bufferSize =  filesizeInBytes.intValue(); }
 
@@ -408,12 +320,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Long remainder = 0L;
 
     //      Write the keyfile to 1st partition
-	    byte[]      randomBytes1 =	    new byte[bufferSize];
-//	    byte[]      randomBytes2 =	    new byte[bufferSize];
-//	    byte[]      randomBytes3 =	    new byte[bufferSize];
-	    ByteBuffer  randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-//	    ByteBuffer  randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-//	    ByteBuffer  randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
+	    ByteBuffer  randomBuffer =	    ByteBuffer.allocate(bufferSize); randomBuffer.clear();
 
 	    throughputClock = 0L;
 	    lastThroughputClock = 0L;
@@ -438,44 +345,24 @@ public class CreateOTPKey extends Application implements Initializable
 		}
 	    }; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
-	    SecureRandom random = new SecureRandom();
 
-	    play(SND_ENCRYPTFILES, guifx.AUDIO_CODEC);
+	    Audio.play(guifx, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC);;
 
 	    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
 	    {
 		remainder = (filesizeInBytes - totalTranfered);
 
-		if	    ( remainder >= bufferSize )				
-		{
-		    randomBytes1 =	    new byte[bufferSize];
-//		    randomBytes2 =	    new byte[bufferSize];
-//		    randomBytes3 =	    new byte[bufferSize];
-		    randomBuffer1 =	    ByteBuffer.allocate(bufferSize); randomBuffer1.clear();
-//		    randomBuffer2 =	    ByteBuffer.allocate(bufferSize); randomBuffer2.clear();
-//		    randomBuffer3 =	    ByteBuffer.allocate(bufferSize); randomBuffer3.clear();
-		}
-		else if (( remainder > 0 ) && ( remainder < bufferSize ))
-		{
-		    randomBytes1 =	    new byte[remainder.intValue()];
-//		    randomBytes2 =	    new byte[remainder.intValue()];
-//		    randomBytes3 =	    new byte[remainder.intValue()];
-		    randomBuffer1 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer1.clear();
-//		    randomBuffer2 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer2.clear();
-//		    randomBuffer3 =	    ByteBuffer.allocate(remainder.intValue()); randomBuffer3.clear();
-		}
-		else							{ inputEnded = true; }
+		if ( remainder >= bufferSize )				    { randomBuffer = ByteBuffer.allocate(bufferSize); randomBuffer.clear(); }
+		else if (( remainder > 0 ) && ( remainder < bufferSize ))   { randomBuffer = ByteBuffer.allocate(remainder.intValue()); randomBuffer.clear(); }
+		else							    { inputEnded = true; }
+		//		    getFCRandomBuffer(UI ui,		    int size, boolean extraSeed, boolean encrypt,    boolean print)
+		randomBuffer = TRNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print);
 		
-//		Randomize raw key or write raw key straight to partition
-		random.nextBytes(randomBytes1); randomBuffer1.put(randomBytes1); randomBuffer1.flip();
-//		random.nextBytes(randomBytes2); randomBuffer2.put(randomBytes2); randomBuffer2.flip();
-//		randomBuffer3 = FinalCrypt.encryptBuffer(randomBuffer1, randomBuffer2, 0, false); // Encrypt
-
     //          Write Device (randomBuffer3 became randomBuffer1)
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
-		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer1); randomBuffer1.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
+		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer); randomBuffer.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
 		    totalTranfered += writeKeyFileChannelTransfered; 
 //		    System.out.println("tot: " + filesizeInBytes + " trans: " + totalTranfered + " remain: " + remainder + " p: " + (double)totalTranfered / filesizeInBytes + "\r\n");
 
@@ -483,7 +370,7 @@ public class CreateOTPKey extends Application implements Initializable
 
 		    writeKeyFileChannel.close();
 		} catch (IOException ex) { statusLabel1.setText("Error: " + ex.getMessage()); inputEnded = true; break; }
-		randomBuffer1.clear(); randomBuffer1.clear(); randomBuffer1.clear();
+		randomBuffer.clear();
 	    }
 	    writeKeyFileChannelPosition = 0;                
 	    writeKeyFileChannelTransfered = 0;                
@@ -498,7 +385,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
 		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
-		guifx.userGuidanceMessage(guifx.SELECT_KEY_MAP, 64, false, false, true, false, VOI_SELECT_KEY, 0);
+		guifx.userGuidanceMessage(guifx.SELECT_KEY_MAP, 64, false, false, true, false, Audio.VOI_SELECT_KEY, 0);
 	    }});
 	    
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));
@@ -507,9 +394,9 @@ public class CreateOTPKey extends Application implements Initializable
 	    repeaterTimeline.play();
 	    
 	});
-	createKeyThread.setName("createKeyThread");
-	createKeyThread.setDaemon(true);
-	createKeyThread.start();
+	createManualKeyThread.setName("createManualKeyThread");
+	createManualKeyThread.setDaemon(true);
+	createManualKeyThread.start();
 
 
 //	====================================================================================================================
@@ -521,13 +408,13 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void cancelButtonAction(ActionEvent event)
     {
-	play(SND_BUTTON, guifx.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);;
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); statusLabel1.setText("Canceled"); } else { statusLabel1.setText("Closing"); }
 	    statusLabel1.setVisible(true);
 	    
-	    play(SND_INPUT_FAIL, guifx.AUDIO_CODEC);
+	    Audio.play(guifx, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);;
 
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));
 	    repeaterTimeline.setCycleCount(1);
@@ -540,8 +427,8 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    play(SND_SHUTDOWN, guifx.AUDIO_CODEC);
-	    guifx.updateFileChoosers2(true, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
+	    Audio.play(guifx, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+	    guifx.updateFileChoosers(true, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
 	    Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();		
 	}});
     }
@@ -560,8 +447,8 @@ public class CreateOTPKey extends Application implements Initializable
 
     @FXML private void complianceLabelOnMouseClicked(MouseEvent event)
     {
-	play(SND_BUTTON, guifx.AUDIO_CODEC);
-	play(SND_OPEN, guifx.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);;
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);;
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{
@@ -577,8 +464,8 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void otpRulesOnMouseClicked(MouseEvent event)
     {
-	play(SND_BUTTON, guifx.AUDIO_CODEC);
-	play(SND_OPEN, guifx.AUDIO_CODEC);
+	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);;
+	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);;
 	Thread otpKeyURLThread;
 	otpKeyURLThread = new Thread(() ->
 	{
@@ -590,161 +477,4 @@ public class CreateOTPKey extends Application implements Initializable
 	otpKeyURLThread.setDaemon(true);
 	otpKeyURLThread.start();
     }
-
-//    synchronized public void play(String audio, int audio_codec)
-//    {
-//	Media media;
-//	switch (audio_codec)
-//	{
-//	    case WAV:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-//	    case OGG:		media = new Media(getClass().getResource(audio + ".ogg").toExternalForm());		break;
-//	    case MP3:		media = new Media(getClass().getResource(audio + ".mp3").toExternalForm());		break;
-//	    default:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-//	}
-//	
-//	if (audio != null) 
-//	{
-//	    if ( (audio.contains("sounds")) ) // new sound added to any other audio playing
-//	    {
-//		if (guifx.sound_Is_Enabled)
-//		{
-//		    try { audioInputStreamSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-//		    catch (UnsupportedAudioFileException ex)	{ guifx.log("Error: UnsupportedAudioFileException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    catch (IOException ex)			{ guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    
-//		    clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    try { clipSounds.open(audioInputStreamSounds); } 
-//		    catch (LineUnavailableException ex)	{ clipSounds.close(); clipSounds = null; guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).clip.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    catch (IOException ex)		{ clipSounds.close(); clipSounds = null; guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clip.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//
-//		    if ( clipSounds != null )
-//		    {
-//			clipSounds.start();
-//			try { audioInputStreamSounds.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    }
-//		    else
-//		    {
-//			try { audioInputStreamSounds.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
-//		    }
-//		    // test(" " + clipSounds.isOpen() + "\r\n");
-//		}
-//	    }
-//	    else if ( audio.contains("voice") )
-//	    {
-//		if (guifx.voice_Is_Enabled)
-//		{
-//		    if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
-//		    {
-//			clipVoice.stop(); try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    }
-//		    try { audioInputStreamVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-//		    catch (UnsupportedAudioFileException ex) { guifx.log("Error: UnsupportedAudioFileException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    try { clipVoice.open(audioInputStreamVoice); } 
-//		    catch (LineUnavailableException ex) { clipVoice.close(); clipVoice = null; guifx.log("Error: LineUnavailableException " + this.getClass().getSimpleName() + "play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    catch (IOException ex)		{ clipVoice.close(); clipVoice = null; guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    
-//		    if ( clipVoice != null )
-//		    {
-//			clipVoice.start();
-//			try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    }
-//		    else
-//		    {
-//			try { audioInputStreamVoice.close(); } catch (IOException ex) { guifx.log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
-//		    }
-//		    // test(" " + clipVoice.isOpen() + "\r\n");
-//		}
-//	    }
-//	    else { guifx.log("Alert: " + this.getClass().getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-//	}
-//    }
-        
-    synchronized public void play(String audio, int audio_codec)
-    {
-	Media media;
-	switch (audio_codec)
-	{
-	    case WAV:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-	    case OGG:		media = new Media(getClass().getResource(audio + ".ogg").toExternalForm());		break;
-	    case AIFF:		media = new Media(getClass().getResource(audio + ".aiff").toExternalForm());		break;
-	    case MP3:		media = new Media(getClass().getResource(audio + ".mp3").toExternalForm());		break;
-	    default:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-	}
-	
-	if (audio != null) 
-	{
-	    if ( (audio.contains("sounds")) ) // new sound added to any other audio playing
-	    {
-		if (guifx.sound_Is_Enabled)
-		{
-		    Platform.runLater(new Runnable(){ @Override public void run()
-		    {
-			if (media != null) 
-			{
-			    if ( media.getSource().contains("sounds") )
-			    {
-				Thread playSoundThread = new Thread(() ->
-				{
-				    if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-				});
-				playSoundThread.setName("playSoundThread");
-				playSoundThread.setDaemon(true);
-				playSoundThread.start();
-			    }
-			    else if ( media.getSource().contains("voice") )
-			    {
-				if ( guifx.voice_Is_Enabled)
-				{
-				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
-				}
-			    }
-			    else { guifx.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-			}
-		    }});
-		}
-	    }
-	    else if ( audio.contains("voice") )
-	    {
-		if (guifx.voice_Is_Enabled)
-		{
-		    if ((audioClipSounds != null) && ( audioClipSounds.isPlaying() )) // new voice stopping currently playing voice
-		    {
-			audioClipSounds.stop();
-		    }
-		    Platform.runLater(new Runnable(){ @Override public void run()
-		    {
-			if (media != null) 
-			{
-			    if ( media.getSource().contains("sounds") )
-			    {
-				Thread playVoiceThread = new Thread(() ->
-				{
-				    if (guifx.sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-				});
-				playVoiceThread.setName("playVoiceThread");
-				playVoiceThread.setDaemon(true);
-				playVoiceThread.start();
-			    }
-			    else if ( media.getSource().contains("voice") )
-			    {
-				if ( guifx.voice_Is_Enabled)
-				{
-				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
-				}
-			    }
-			    else { guifx.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-			}
-		    }});
-		}
-	    }
-	    else { guifx.log("Alert: " + this.getClass().getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-	}
-    }        
 }

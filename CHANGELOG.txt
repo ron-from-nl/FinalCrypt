@@ -1,3 +1,9 @@
+5.2.0 SecureRandom Number Generator extra Secured
+      Decrypt, Remove Keys & Re-encrypt to Secure
+      User delete also deletes matching Key Items
+      Audio System code cleaned up and improved
+      Added Key Match & Key Write User-Printing
+      Added Key Directory Full Path show Tooltip
 5.1.1 New Audio System for better (audio) stability
       Update is tested & supported on Free/GhostBSD
 5.1.0 Added manual create key discouragement dialog
@@ -5,8 +11,8 @@
       "Create Key" path only prints on user request
 5.0.2 Fixed major Auto-Key I/O Buffer Performance Issue
 5.0.1 Added Pause & Stop during Auto-Key Creation
-5.0.0 GAME-CHANGING One-Time Pad "Auto Key Mode"
-      Also added many user-interface improvements
+5.0.0 Game changing One-Time Pad "Auto Key Mode"
+      encrypt files with 100% One-Time Pad Security
 4.8.0 Major Upgrade Java8-u212 security & stability updates
       Please UN-Install FinalCrypt before installing v4.8.0
       The FinalCrypt Windows Portable upgraded to Java8-u201

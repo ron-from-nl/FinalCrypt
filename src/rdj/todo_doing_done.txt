@@ -13,19 +13,29 @@ Communicate about non MAC mode "0 non invert" change?
 Release notes change
 Solve issue targetFileChooser dirchange visible font swapping
 
+Fixed UTF8 symbols Cross OS
+Open Last Key Directory
+Tools Settings
+
+
 =============================== Don't forget ================================
 
 Test UI.java test(String message) usage and remove / comment any used instances accross the project
 Set version						nbproject/project.properties application.implementation.version=1.2.3
+Set version on file:					Version
+Set version on file:					Version2
 Set "<Program_Version>1.2.3</Program_Version>" in	FinalCrypt_pad.xml file
 Update file:						CHANGELOG
 Update file:						MANPAGE
-Set version on file:					Version
-Set version on file:					Version2
  
 =================================== Done ====================================
 
-
+Audio System Static Object 
+Key Directory display
+TRNG Object
+Key Read Print
+Key Write Print
+Delete Key file when Encrypted File is deleted
 
 ============================= Source Committed ==============================
 
@@ -129,8 +139,8 @@ Encrypt:
 
 if (FCPathPair == "Auto Key Mode")
 {
-    if	(! exist FCKey) { createKey(FCKey, size, create) }
-    else	( (exist FCKey) && (FCKey >= FCKeyMin) && (FCKey < FCData) ) { createKey(FCKey, size, append) }
+    if	(! exist FCKey) { writeAutoKey(FCKey, size, create) }
+    else	( (exist FCKey) && (FCKey >= FCKeyMin) && (FCKey < FCData) ) { writeAutoKey(FCKey, size, append) }
 }
 else
 {

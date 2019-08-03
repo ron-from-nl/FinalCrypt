@@ -205,10 +205,37 @@ public class Validate
 	return keyAuthenticatedTargetSource;
     }
 
-    synchronized public static long getTargetKeySizeRequired(UI ui, Path targetSourcePath, long targetSourceSize, Path keySourcePath)
+    synchronized public static long getTargetReadAutoKeySizeMatched(UI ui, Path targetSourcePath, long targetSourceSize, Path keySourcePath)
     {
-	long existingAutoKeySize = 0L;
-	long createAutoKeySize = 0L;
+	long existingReadAutoKeySize = 0L;
+	long readAutoKeySize = 0L;
+	
+	if ( keySourcePath == null ) { return 0L; }
+	if ( ! Files.isDirectory(keySourcePath)) { return 0L; } // Manual Key Mode
+	else // Auto Key Mode
+	{
+	    Path autoKeyPath1 = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", ""));
+	    Path autoKeyPath2 = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", "") + ".bit");
+	    if ((Files.exists(autoKeyPath1, LinkOption.NOFOLLOW_LINKS)))
+	    {
+		try { existingReadAutoKeySize = Files.size(autoKeyPath1); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
+	    }
+	    else if (Files.exists(autoKeyPath2, LinkOption.NOFOLLOW_LINKS))
+	    {
+		try { existingReadAutoKeySize = Files.size(autoKeyPath2); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
+	    }
+	    else
+	    {
+		existingReadAutoKeySize = 0L;
+	    }
+	}
+	return existingReadAutoKeySize;
+    }
+
+    synchronized public static long getTargetWriteAutoKeySizeRequired(UI ui, Path targetSourcePath, long targetSourceSize, Path keySourcePath)
+    {
+	long existingWriteAutoKeySize = 0L;
+	long writeAutoKeySize = 0L;
 	
 	if ( keySourcePath == null ) { return 0L; }
 	if ( ! Files.isDirectory(keySourcePath)) { return 0L; } // Manual Key Mode
@@ -217,15 +244,15 @@ public class Validate
 	    Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", "") + ".bit");
 	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 	    {
-		try { existingAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
-		createAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) - existingAutoKeySize);
+		try { existingWriteAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
+		writeAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) - existingWriteAutoKeySize);
 	    }
 	    else
 	    {
-		createAutoKeySize = ( targetSourceSize + FCPath.MAC_SIZE );
+		writeAutoKeySize = ( targetSourceSize + FCPath.MAC_SIZE );
 	    }
 	}
-	return createAutoKeySize;
+	return writeAutoKeySize;
     }
 
 
@@ -332,8 +359,11 @@ public class Validate
 	boolean isDecrypted =		    false;
 	
 	boolean isEncryptable =		    false;
-	boolean needsCreateKey =	    false;
-	long	needsCreateKeySize =	    0;
+	
+	boolean matchedReadAutoKey =	    false;
+	long	matchedReadAutoKeySize =    0;
+	boolean needsWriteAutoKey =	    false;
+	long	needsWriteAutoKeySize =	    0;
 	
 	boolean isNewEncrypted =	    false;
 	boolean isUnEncryptable =	    false;
@@ -402,14 +432,23 @@ public class Validate
 		
 		if ((isEncrypted) && (keyPath != null)  && (size > (FCPath.MAC_SIZE))) { if (keyPath != null) { isDecryptable = targetHasAuthenticatedMAC(ui, path, keyPath, macVersion); } } // Encrypted files must by MAC_SIZE at least
 	    }
-	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))					{ isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true; }
-	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))					{ isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false; }
+	    
+	    if (( isValidFile ) && ( isEncrypted ) && ( ! isDecryptable ))  {
+										isEncrypted = true; isDecryptable = false; isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = true;
+										if ( (! isKey)) { matchedReadAutoKeySize = getTargetReadAutoKeySizeMatched(ui, path, size, keyPath); if (matchedReadAutoKeySize > 0L) { matchedReadAutoKey = true; } }
+									    }
+	    if (( isValidFile )	&& ( isEncrypted ) && (   isDecryptable ))  {
+										isEncrypted = true; isDecryptable = true;  isDecrypted = false; isEncryptable = false; isUnEncryptable = true; isUnDecryptable = false;
+										if ( (! isKey)) { matchedReadAutoKeySize = getTargetReadAutoKeySizeMatched(ui, path, size, keyPath); if (matchedReadAutoKeySize > 0L) { matchedReadAutoKey = true; } }
+									    }
 	    
 	    // Decrypted File State	    
-	    if (( isValidFile ) && ( ! isEncrypted ))								{ 
-														    isDecrypted = true; isUnEncryptable = false; isDecryptable = false; isEncryptable = true; isUnDecryptable = true;
-														    if ((isEncryptable) && (! isKey)) { needsCreateKeySize = getTargetKeySizeRequired(ui, path, size, keyPath); if (needsCreateKeySize > 0L) { needsCreateKey = true; } }
-														}
+	    if (( isValidFile ) && ( ! isEncrypted ))			    { 
+									        isDecrypted = true; isUnEncryptable = false; isDecryptable = false; isEncryptable = true; isUnDecryptable = true;
+										if ((isEncryptable) && (! isKey)) { needsWriteAutoKeySize = getTargetWriteAutoKeySizeRequired(ui, path, size, keyPath); if (needsWriteAutoKeySize > 0L) { needsWriteAutoKey = true; } }
+
+										if ( (! isKey)) { matchedReadAutoKeySize = getTargetReadAutoKeySizeMatched(ui, path, size, keyPath); if (matchedReadAutoKeySize > 0L) { matchedReadAutoKey = true; } }
+									    }
 
 	    // Key =============================================================================================================================================================================================
 	    
@@ -443,8 +482,8 @@ public class Validate
 	    }	    
 	}
 
-//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir, boolean isDecrypted, boolean isEncryptable, boolean needsCreateKey, long needsCreateKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
-	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsCreateKey,      needsCreateKeySize,	  isNewEncrypted,	  isUnEncryptable,          isEncrypted,     macVersion,	 isDecryptable,		isNewDecrypted,         isUnDecryptable);
+//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir, boolean isDecrypted, boolean isEncryptable, boolean needsWriteAutoKey, long needsWriteAutoKeySize, boolean matchedReadAutoKey, long matchedReadAutoKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
+	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsWriteAutoKey,      needsWriteAutoKeySize,	        matchedReadAutoKey,      matchedReadAutoKeySize,	isNewEncrypted,		isUnEncryptable,          isEncrypted,     macVersion,	       isDecryptable,	      isNewDecrypted,         isUnDecryptable);
 	return fcPath;
     }
 
@@ -549,7 +588,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-	    if	(delete)	{ return FileVisitResult.CONTINUE; }
+	    if	(delete)		{ return FileVisitResult.CONTINUE; }
 	    else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
 	    else			{ ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); return FileVisitResult.CONTINUE; }
 	}
@@ -562,7 +601,26 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	{
 	    if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
 	    {            
-		if	(delete)                 { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
+		if	(delete)
+		{
+		    ui.log("Delete: \"" + path + "\"\r\n", true, true, true, false, false);
+		    try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		    if ((keyFCPath != null) && (keyFCPath.isValidKeyDir))
+		    {
+			Path autoKeyPath1 = Paths.get(keyFCPath.path.toAbsolutePath().toString(), path.toAbsolutePath().toString().replace(":", ""));
+			Path autoKeyPath2 = Paths.get(keyFCPath.path.toAbsolutePath().toString(), path.toAbsolutePath().toString().replace(":", "") + ".bit");
+			if (Files.exists(autoKeyPath1, LinkOption.NOFOLLOW_LINKS))
+			{
+			    ui.log("Delete: \"" + autoKeyPath1 + "\"\r\n", true, true, true, false, false);
+			    try { Files.delete(autoKeyPath1); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + autoKeyPath1.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			}
+			if (Files.exists(autoKeyPath2, LinkOption.NOFOLLOW_LINKS))
+			{
+			    ui.log("Delete: \"" + autoKeyPath2 + "\"\r\n", true, true, true, false, false);
+			    try { Files.delete(autoKeyPath2); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + autoKeyPath2.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			}
+		    }
+		}
 		else if (setFCPathlist)    
 		{
 //    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean disabledMAC, boolean report)
@@ -590,7 +648,20 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-	    if      (delete)        { try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
+	    if      (delete)
+	    {
+		ui.log("Delete: \"" + path + "\"\r\n", true, true, true, false, false);
+		try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		if ((keyFCPath != null) && (keyFCPath.isValidKeyDir))
+		{
+		    Path autoKeyDir = Paths.get(keyFCPath.path.toAbsolutePath().toString(), path.toAbsolutePath().toString().replace(":", ""));
+		    if (Files.exists(autoKeyDir, LinkOption.NOFOLLOW_LINKS))
+		    {
+			ui.log("Delete: \"" + autoKeyDir + "\"\r\n", true, true, true, false, false);
+			    try { Files.delete(autoKeyDir); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed dir: " + autoKeyDir.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		    }
+		}
+	    }
 	    else if (setFCPathlist) {     }
 	    else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    
