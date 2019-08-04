@@ -736,7 +736,7 @@
                                        <children>
                                           <Label fx:id="keyReadLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" onMouseClicked="#keyReadLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list matching keys for encrypted files">
+                                                <Tooltip text="Click to list matching keys for the selected files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
