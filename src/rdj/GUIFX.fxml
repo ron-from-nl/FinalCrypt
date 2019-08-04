@@ -529,7 +529,7 @@
                                        <children>
                                           <Label fx:id="keyWriteLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" onMouseClicked="#keyWriteLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list keys that need to be created or grow larger">
+                                                <Tooltip text="Click to list keys to create and/or grow in size before encryption">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>

@@ -575,7 +575,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	
-	keyButton.setText(CREATE_KEY);
+	keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);
 
 //	=========================================================================================================================================
 //	============================================================= USER GUIDANCE =============================================================
@@ -1671,7 +1671,7 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManagerLocal = new DeviceManager(this); deviceManagerLocal.start(); deviceManagerLocal.printGPT(targetFCPath);
 		targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY);});
+		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);});
 	    }
 	    else // Not a Device
 	    {
@@ -1706,7 +1706,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); });
+		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
 		} // Not a device / file or symlink
 	    }
         }
@@ -1730,7 +1730,7 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(keyFCPath);
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(true); keyButton.setText(CREATE_KEY); });
+		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
 	    }
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
 	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      1L, true,    false,  true))
@@ -1747,13 +1747,13 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);
-		keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
+		keyButton.setDisable(false); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	    keyButton.setDisable(false); keyButton.setText(CREATE_KEY);
+	    keyButton.setDisable(false); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);
 	}	
         keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to double click file
     }
@@ -2435,8 +2435,8 @@ public class GUIFX extends Application implements UI, Initializable
 //			    log("1 " + keyFCPath.getString());
 //			    createManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Manual Key List:\r\n" + createManualKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			    keyButton.setDisable(false); keyButton.setText(CREATE_KEYDEV);
-			} else {  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); }
+			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CREATE_KEYDEV);
+			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
 		    }
 		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
@@ -2444,10 +2444,10 @@ public class GUIFX extends Application implements UI, Initializable
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
 //			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
-			    keyButton.setDisable(false); keyButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else {  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); }
+			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
 		    }
-		    else {  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); }
+		    else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
 
 //		    Setting Encryption / Decryption Buttons
 		    
@@ -2515,7 +2515,7 @@ public class GUIFX extends Application implements UI, Initializable
 //			}
 //		    }
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		     keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); // Default enabler
+		     keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); // Default enabler
 		}
 	    }
 	});
@@ -3040,7 +3040,7 @@ public class GUIFX extends Application implements UI, Initializable
 			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
 			targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); }});
+			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }});
 		    }
 		}
 	    });
@@ -3283,7 +3283,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
 //	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
@@ -3298,7 +3298,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
 //	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
