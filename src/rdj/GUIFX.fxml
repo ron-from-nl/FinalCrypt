@@ -52,10 +52,16 @@
                                                    <children>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Button fx:id="tgtFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" maxHeight="20.0" mnemonicParsing="false" onAction="#tgtFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: grey;" text="Delete" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0">
+                                                            <Button fx:id="tgtFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" maxHeight="20.0" mnemonicParsing="false" onAction="#tgtFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: #AAAAAA;" text="Delete" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
                                                                <tooltip>
-                                                                  <Tooltip text="Delete selected item(s)" />
+                                                                  <Tooltip text="Delete selected item(s)">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font></Tooltip>
                                                                </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
                                                             </Button>
                                                          </children></AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
@@ -154,10 +160,17 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Button fx:id="keyFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" maxHeight="20.0" mnemonicParsing="false" onAction="#keyFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: grey;" text="Delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                                                            <Button fx:id="keyFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" maxHeight="20.0" mnemonicParsing="false" onAction="#keyFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: #AAAAAA;" text="Delete" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
                                                                <tooltip>
-                                                                  <Tooltip text="Delete selected item(s)" />
+                                                                  <Tooltip text="Delete selected item(s)">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Tooltip>
                                                                </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
                                                             </Button>
                                                          </children>
                                                       </AnchorPane>
