@@ -1073,7 +1073,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
 		    
-//		    keyButton.setDisable(false);
+		    keyButton.setDisable(false);
 		    checkUpdateButton.setDisable(false);
 		    supportButton.setDisable(false);
 		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
@@ -1747,13 +1747,13 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);
-		 keyButton.setDisable(false);  keyButton.setText(CREATE_KEY); });
+		keyButton.setDisable(false); keyButton.setText(CREATE_KEY); });
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	     keyButton.setDisable(false);  keyButton.setText(CREATE_KEY);
+	    keyButton.setDisable(false); keyButton.setText(CREATE_KEY);
 	}	
         keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to double click file
     }
