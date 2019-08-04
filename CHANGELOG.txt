@@ -1,3 +1,4 @@
+5.2.1 Fixed Audio System instability on Linux
 5.2.0 SecureRandom Number Generator extra Secured
       Decrypt, Remove Keys & Re-encrypt to Secure
       User delete also deletes matching Key Items

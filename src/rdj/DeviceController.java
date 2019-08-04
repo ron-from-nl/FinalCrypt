@@ -24,6 +24,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.*;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,6 +32,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.*;
 
 public class DeviceController
 {
@@ -295,7 +297,7 @@ public class DeviceController
 
         updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
 //        updateProgressTimeline.stop();
-        ui.processFinished(new FCPathList(), false);
+        ui.processFinished(new FCPathList<FCPath>(), false);
     }
 
 //  Write KeyFile to partition 1 & 2
@@ -458,7 +460,7 @@ public class DeviceController
 
 	    updateProgressTaskTimer.cancel(); updateProgressTaskTimer.purge();
     //        updateProgressTimeline.stop();
-//	    ui.processFinished(new FCPathList(), false);
+//	    ui.processFinished(new FCPathList<FCPath>(), false);
 	}
 	else
 	{
@@ -479,18 +481,26 @@ public class DeviceController
 //  Wrapper method
     synchronized public static long getDeviceSize(UI ui, Path path, boolean isKey)
     {
-	long size = getDeviceSize2(ui, path, isKey, true); return size; // Customized method (platform independent)
+	long size = getDeviceGuessedSize(ui, path, isKey, true); return size; // Customized method (platform independent) default: getDeviceGuessedSize()
+    }
+
+//  Get size of file NOT USED!
+    synchronized public static long getDeviceFileSize(UI ui, Path path, boolean isKey, boolean firstcall)
+    {
+        long deviceSize = 0;
+	try { deviceSize = Files.size(path);} catch (IOException ex) { ui.log("Error: IOException DevCTRL: getDeviceFileSize() Files.size(" + path.toAbsolutePath().toString() + ") " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	return deviceSize;
     }
 
 //  Get size of device NOT USED!
-    synchronized public static long getDeviceSize1(UI ui, Path path)
+    synchronized public static long getDeviceChannelSize(UI ui, Path path, boolean isKey, boolean firstcall)
     {
         long deviceSize = 0;
         try (final SeekableByteChannel deviceChannel = Files.newByteChannel(path, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.log(ex.getMessage(), true, true, false, false, false); }
         return deviceSize;
     }
 
-    synchronized public static long getDeviceSize2(UI ui, Path path, boolean isKey, boolean firstcall) // OS Independent half or dubbel guess size test (Files.size(..) doesn't work on Apple OSX)
+    synchronized public static long getDeviceGuessedSize(UI ui, Path path, boolean isKey, boolean firstcall) // OS Independent half or dubbel guess size test (Files.size(..) doesn't work on Apple OSX)
     {
 	boolean verbose = false;
 //	deviceSize = 0;
@@ -527,8 +537,8 @@ public class DeviceController
 		    if (step < 0) {step = 1;}
 		    currpos = above; step = 1;
 		    lastpos = currpos;
-//		    getDeviceSize2(ui, path, isKey, true)
-		    getDeviceSize2(ui,path, isKey, false);
+//		    getDeviceSize2(ui, path, isKey, true);
+		    getDeviceGuessedSize(ui,path, isKey, false);
 		}
 	    }
 	}
@@ -622,7 +632,7 @@ public class DeviceController
     public static boolean isValidFile(UI ui, Path path, boolean readSize, boolean isKey, boolean symlink, boolean report)
     {
         boolean validfile = true; String conditions = "";       String size = ""; String exist = ""; String dir = ""; String read = ""; String write = ""; String symbolic = "";
-        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { } }
+        long fileSize = 0;					if ( readSize ) { try { fileSize = Files.size(path); } catch (IOException ex) { ui.log("Error: IOException DevCTRL: isValidFile() Files.size(" + path.toAbsolutePath().toString() + ") " + ex.getMessage() + "\r\n", true, true, true, true, false); } }
 
         if ( ! Files.exists(path))                              { validfile = false; exist = "[not found] "; conditions += exist; }
         else

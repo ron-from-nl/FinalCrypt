@@ -1,7 +1,7 @@
-[Version] =		{5.2.0}
+[Version] =		{5.2.1}
 [] = {} ================================================================
-[Release Notes] =	{SecureRandom Number Generator extra Secured}
-[Release Message] =	{Decrypt, Remove Keys & Re-encrypt to Secure}
+[Release Notes] =	{Fixed Audio System instability on Linux}
+[Release Message] =	{Fixed Audio System instability on Linux}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -21,11 +21,9 @@
 [Upgrade Notes] =	{   User delete also deletes matching Key Items}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   Audio System code cleaned up and improved}
-[Update Notes] =	{   Added Key Match & Key Write User-Printing}
-[Update Notes] =	{   Added Key Directory Full Path show Tooltip}
+[Update Notes] =	{   Fixed Audio System instability on Linux}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

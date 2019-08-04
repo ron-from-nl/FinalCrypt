@@ -119,7 +119,7 @@ public class Support extends Application implements Initializable
         scene = new Scene((Parent)loader.getRoot());        
         stage = primaryStage;
         stage.setScene(scene);
-        stage.setTitle("Activate " + Version.getProductName() + " Support");
+        stage.setTitle(Version.getProductName() + " Support");
 	stage.setResizable(false);
         stage.show();
     }
@@ -148,8 +148,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void facebookImageViewOnMouseClicked(MouseEvent event)
     {
-	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
@@ -164,8 +164,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void twitterImageViewOnMouseClicked(MouseEvent event)
     {
-	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_BUTTON,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
@@ -181,8 +181,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void linkedInImageViewOnMouseClicked(MouseEvent event)
     {
-	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_BUTTON,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
@@ -198,8 +198,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void pinterestImageViewOnMouseClicked(MouseEvent event)
     {
-	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_BUTTON,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
@@ -215,8 +215,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void finalcryptImageViewOnMouseClicked(MouseEvent event)
     {
-	Audio.play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	Audio.play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_BUTTON,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->

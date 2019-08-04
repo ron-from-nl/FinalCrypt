@@ -184,8 +184,8 @@ public class FinalCrypt extends Thread
         
     public void encryptSelection
     (
-	    FCPathList targetSourceFCPathList
-	    , FCPathList filteredTargetSourceFCPathList // encryptableList / decryptableList
+	    FCPathList<FCPath> targetSourceFCPathList
+	    , FCPathList<FCPath> filteredTargetSourceFCPathList // encryptableList / decryptableList
 	    , FCPath keySourceFCPath
 	    , boolean encryptMode
 	    , String pwdParam
@@ -1039,9 +1039,9 @@ public class FinalCrypt extends Thread
 //  Recursive Deletion of PathList
     public void deleteSelection(ArrayList<Path> targetSourcePathList, FCPath keyFCPath, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
     {
-        EnumSet opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
+        EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
 //							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
-        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,       keyFCPath,		   new FCPathList(),        pattern,	     negatePattern,	    disabledMAC);
+        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,       keyFCPath,		   new FCPathList<FCPath>() ,        pattern,	     negatePattern,	    disabledMAC);
         for (Path path:targetSourcePathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: IOException: deleteSelection() Files.walkFileTree(" + path.toAbsolutePath().toString() + "): " + e.getMessage() + "\r\n", true, true, true, true, false); }

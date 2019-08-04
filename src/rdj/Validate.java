@@ -35,7 +35,7 @@ public class Validate
     private static MySimpleFCFileVisitor mySimpleFCFileVisitor;
     
 
-    public static void validateBuild(UI ui, FCPathList targetFCPathList, FCPath keyFCPath, boolean printgpt, boolean deletegpt)
+    public static void validateBuild(UI ui, FCPathList<FCPath> targetFCPathList, FCPath keyFCPath, boolean printgpt, boolean deletegpt)
     {
     }
 
@@ -257,7 +257,7 @@ public class Validate
 
 
     // Synchronized removes multifile target inconsistency, but also smooth busy animation
-    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean disabledMAC, boolean status)
+    public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean disabledMAC, boolean status)
     {
 //				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern,  boolean disabledMAC)
 	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	   false,          false,         symlink,                  true,    keyFCPath,                   targetFCPathList,	   pattern,         negatePattern,	    disabledMAC);
@@ -319,7 +319,7 @@ public class Validate
 		{ returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().toString().endsWith("nvme0n1")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
 	    }
-	    else if (path.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Key Device Selection
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/disk")) // Apple Device Selection
 	    {
 		if  (
 			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
@@ -327,6 +327,24 @@ public class Validate
 		    )
 		{ returnFCPathType = FCPath.PARTITION; }
 		else { if ( ! path.getFileName().toString().endsWith("disk0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+	    }
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/ada")) // BSD ATAPI Device Selection
+	    {
+		if  (
+			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
+			(String.valueOf(path.getFileName().toString().charAt(path.getFileName().toString().length()-2)).equalsIgnoreCase("p"))
+		    )
+		{ returnFCPathType = FCPath.PARTITION; }
+		else { if ( ! path.getFileName().toString().endsWith("ada0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE_PROTECTED; } }
+	    }
+	    else if (path.toAbsolutePath().toString().startsWith("/dev/da")) // BSD Direct Attached Device Selection
+	    {
+		if  (
+			(Character.isDigit(path.getFileName().toString().charAt(path.getFileName().toString().length()-1))) &&
+			(String.valueOf(path.getFileName().toString().charAt(path.getFileName().toString().length()-2)).equalsIgnoreCase("p"))
+		    )
+		{ returnFCPathType = FCPath.PARTITION; }
+		else { if ( ! path.getFileName().toString().endsWith("da0")) { returnFCPathType = FCPath.DEVICE; } else { returnFCPathType = FCPath.DEVICE; } }
 	    }
 	    else { returnFCPathType = FCPath.DEVICE_INVALID; }
 	} // Not a Device /dev/
@@ -386,7 +404,7 @@ public class Validate
 	    type = getFCPathType(path);
 	    if (exist)
 	    {
-		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isKey); }
+		if ( (type == FCPath.PARTITION) || (type == FCPath.DEVICE) || (type == FCPath.DEVICE_PROTECTED) )   { size = DeviceController.getDeviceSize(ui, path, isKey); } // OS Independent guessing size method
 		else if( (exist) && ((type == FCPath.FILE) /*|| (type == FCPath.SYMLINK)*/) )			    { try { size = Files.size(path); } catch (IOException ex)  { ui.log("Error: IOException: Validate.getFCPath: Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } } // Symlinks give Files.size() errors on broken links
 	    }
 	    
@@ -558,7 +576,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     private final boolean symlink; 
     private final boolean setFCPathlist; 
     public FCPath keyFCPath;
-    private FCPathList targetFCPathList;
+    private FCPathList<FCPath> targetFCPathList;
     private boolean negatePattern;
     public long bytesCount = 0;
     public static boolean running = false; 
@@ -568,7 +586,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 //  all *.bit   =   'regex:^.*\.bit$'
 //  all but *.bit   'regex:(?!.*\.bit$)^.*$'
     
-    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
+    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
     {
         this.ui = ui;
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern

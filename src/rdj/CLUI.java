@@ -65,20 +65,20 @@ public class CLUI implements UI
     private boolean printgpt = false;
     private boolean deletegpt = false;
     
-    private FCPathList encryptableList;
-    private FCPathList decryptableList;
-    private FCPathList createManualKeyList;
-    private FCPathList cloneManualKeyList;
+    private FCPathList<FCPath> encryptableList;
+    private FCPathList<FCPath> decryptableList;
+    private FCPathList<FCPath> createManualKeyList;
+    private FCPathList<FCPath> cloneManualKeyList;
     
     private boolean encryptablesFound = false;
     private boolean decryptablesFound = false;
     private boolean createManualKeyDeviceFound = false;
     private boolean cloneManualKeyDeviceFound = false;
-    private FCPathList printGPTTargetList;
+    private FCPathList<FCPath> printGPTTargetList;
     private boolean printGPTDeviceFound;
     private boolean deleteGPTDeviceFound;
-    private FCPathList deleteGPTTargetList;
-    private  FCPathList targetFCPathList;
+    private FCPathList<FCPath> deleteGPTTargetList;
+    private  FCPathList<FCPath> targetFCPathList;
     private boolean keySourceChecksumReadEnded = false;
     private int bufferSize;
     private Long totalTranfered;
@@ -399,7 +399,7 @@ public class CLUI implements UI
 	
 //////////////////////////////////////////////////// BUILD SELECTION /////////////////////////////////////////////////
         
-	targetFCPathList = new FCPathList();
+	targetFCPathList = new FCPathList<FCPath>();
 //	if (!cfsetneeded) { keyFCPath = (FCPath) targetPathList.get(0); }
 	if (!kfsetneeded) 
 	{
@@ -540,12 +540,12 @@ public class CLUI implements UI
 	}
 	else if (createManualKeyDev)
 	{
-	    if (createManualKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createManualKeyDevice(keyFCPath, (FCPath) createManualKeyList.get(0)); processFinished(new FCPathList(), false); }
+	    if (createManualKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.createManualKeyDevice(keyFCPath, (FCPath) createManualKeyList.get(0)); processFinished(new FCPathList<FCPath>() , false); }
 	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((clonekeydev) && (cloneManualKeyDeviceFound))
 	{
-	    if (cloneManualKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneManualKeyDevice(keyFCPath, (FCPath) cloneManualKeyList.get(0));  processFinished(new FCPathList(), false); }
+	    if (cloneManualKeyDeviceFound)	{ processStarted(); deviceManager = new DeviceManager(ui); deviceManager.start(); deviceManager.cloneManualKeyDevice(keyFCPath, (FCPath) cloneManualKeyList.get(0));  processFinished(new FCPathList<FCPath>() , false); }
 	    else			{ log("No valid target device found:\r\n", false, true, true, false, false); log(targetFCPathList.getStats(), false, true, false, false, false); }
 	}
 	else if ((printgpt) && (printGPTDeviceFound))
@@ -599,9 +599,9 @@ public class CLUI implements UI
         return ifset;
     }
 
-    public static FCPathList filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
+    public static FCPathList<FCPath> filter(ArrayList<FCPath> fcPathList, Predicate<FCPath> fcPath)
     {
-	FCPathList result = new FCPathList();
+	FCPathList<FCPath> result = new FCPathList<FCPath>() ;
 	for (FCPath fcPathItem : fcPathList) { if (fcPath.test(fcPathItem)) { result.add(fcPathItem); } }
 	return result;
     }
@@ -769,7 +769,7 @@ public class CLUI implements UI
 //        log("filesProgress: " + filesProgress + " fileProgress: " + fileProgress);
     }
     
-    @Override public void processFinished(FCPathList openFCPathList, boolean open)
+    @Override public void processFinished(FCPathList<FCPath> openFCPathList, boolean open)
     {
     }
 
@@ -778,10 +778,10 @@ public class CLUI implements UI
     {
     }
 
-//    @Override public void buildProgress(FCPathList targetFCPathList) {  }
+//    @Override public void buildProgress(FCPathList<FCPath> targetFCPathList) {  }
 
     @Override
-    public void buildReady(FCPathList fcPathListParam, boolean validBuild)
+    public void buildReady(FCPathList<FCPath> fcPathListParam, boolean validBuild)
     {
 	targetFCPathList = fcPathListParam;
     }

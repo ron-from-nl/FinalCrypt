@@ -19,9 +19,6 @@
 
 package rdj;
 
-import javafx.application.*;
-import javafx.scene.media.*;
-
 public class Audio
 {
     public static final int WAV =				0;
@@ -30,10 +27,12 @@ public class Audio
     public static final int MP3 =				3;
     public static final int AUDIO_CODEC =			AIFF;
 
-//    MP3;
-//    AIFF containing uncompressed PCM
-//    WAV containing uncompressed PCM
-//    MPEG-4 multimedia container with Advanced Audio Coding (AAC) audio    
+//  JavaFX Audio Support
+    
+//  MP3;
+//  AIFF containing uncompressed PCM
+//  WAV containing uncompressed PCM
+//  MPEG-4 multimedia container with Advanced Audio Coding (AAC) audio    
 
     public static final String SND_ALARM =			    "/rdj/audio/sounds/alarm";
     public static final String SND_ALERT =			    "/rdj/audio/sounds/alert";
@@ -73,173 +72,6 @@ public class Audio
     public static final String VOI_VOICE_ENABLED =		    "/rdj/audio/voice/voice_enabled";
     public static final String VOI_WRONG_KEY_OR_PASSWORD =	    "/rdj/audio/voice/wrong_key_or_password";
 
-    public static AudioClip audioClipSounds;
-    public static AudioClip audioClipVoice;
-    
-//    private static AudioInputStream audioInputStreamSounds;
-//    private static AudioInputStream audioInputStreamVoice;
-//    private static Clip clipSounds;
-//    private static Clip clipVoice;
-
-    public  static boolean sound_Is_Enabled =		true;
-    public  static boolean voice_Is_Enabled =		true;
-    
-//    synchronized public void play(String audio, int audio_codec)
-//    {
-//	Media media;
-//	switch (audio_codec)
-//	{
-//	    case WAV:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-//	    case OGG:		media = new Media(getClass().getResource(audio + ".ogg").toExternalForm());		break;
-//	    case MP3:		media = new Media(getClass().getResource(audio + ".mp3").toExternalForm());		break;
-//	    default:		media = new Media(getClass().getResource(audio + ".wav").toExternalForm());		break;
-//	}
-//	
-//	if (audio != null) 
-//	{
-//	    if (audio.contains("sounds")) // Just to keep playing ClipSounds parallel over ClipVoice
-//	    {
-//		if (sound_Is_Enabled)
-//		{
-//		    try { audioInputStreamSounds = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-//		    catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    clipSounds = null; try {  clipSounds = AudioSystem.getClip(); } catch (LineUnavailableException ex)
-//		    { log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    try { clipSounds.open(audioInputStreamSounds); } 
-//		    catch (LineUnavailableException ex)	{ clipSounds.close(); clipSounds = null; log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).clipSounds.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    catch (IOException ex)		{ clipSounds.close(); clipSounds = null; log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clipSounds.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//
-//		    if ( clipSounds != null )
-//		    {
-//			clipSounds.start();
-//			try { audioInputStreamSounds.close(); } catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    }
-//		    else
-//		    {
-//			try { audioInputStreamSounds.close(); } catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamSounds.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
-//		    }
-//		    // test(" " + clipSounds.isOpen() + "\r\n");
-//		}
-//	    }
-//	    else if ( audio.contains("voice") )
-//	    {
-//		if (voice_Is_Enabled)
-//		{
-//		    if ((clipVoice != null) && ( clipVoice.isOpen() )) // new voice stopping currently playing voice
-//		    {
-//			clipVoice.stop(); try { audioInputStreamVoice.close(); } catch (IOException ex) { log("Error: IOException audioIn.close() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    }
-//		    try { audioInputStreamVoice = AudioSystem.getAudioInputStream(new URL(media.getSource())); }
-//		    catch (UnsupportedAudioFileException ex) { log("Error: UnsupportedAudioFileException play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//		    catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..) AudioSystem.getAudioInputStream(" + media.getSource() + " " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    clipVoice = null; try {  clipVoice = AudioSystem.getClip(); } catch (LineUnavailableException ex) { log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).AudioSystem.getClip() " + ex.getMessage() + " \r\n", true, true, true, true, false); }
-//
-//		    try { clipVoice.open(audioInputStreamVoice); }
-//		    catch (LineUnavailableException ex) { clipVoice.close(); clipVoice = null; log("Error: LineUnavailableException " + this.getClass().getSimpleName() + ".play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    catch (IOException ex)		{ clipVoice.close(); clipVoice = null; log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).clipVoice.open(" + media.getSource() + ") " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//
-//		    if ( clipVoice != null )
-//		    {
-//			clipVoice.start();
-//			try { audioInputStreamVoice.close(); } catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }
-//		    }
-//		    else
-//		    {
-//			try { audioInputStreamVoice.close(); } catch (IOException ex) { log("Error: IOException " + this.getClass().getSimpleName() + ".play(..).audioInputStreamVoice.close() " + ex.getMessage() + " \r\n", true, true, true, false, false); }			
-//		    }
-//		    // test(" " + clipVoice.isOpen() + "\r\n");
-//		}
-//	    }
-//	    else { log("Alert: " + this.getClass().getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-//	}
-//    }
-
-    synchronized public static void play(UI ui, String audio, int audio_codec)
-    {
-	Media media;
-	switch (audio_codec)
-	{
-	    case WAV:		media = new Media(Audio.class.getClassLoader().getResource(audio + ".wav").toExternalForm());		break;
-	    case OGG:		media = new Media(Audio.class.getClassLoader().getResource(audio + ".ogg").toExternalForm());		break;
-//	    case AIFF:		media = new Media(Audio.class.getClassLoader().getResource(audio + ".aiff").toExternalForm());		break;
-	    case AIFF:		media = new Media(ui.getClass().getResource(audio + ".aiff").toExternalForm());		break;
-	    case MP3:		media = new Media(Audio.class.getClassLoader().getResource(audio + ".mp3").toExternalForm());		break;
-	    default:		media = new Media(Audio.class.getClassLoader().getResource(audio + ".wav").toExternalForm());		break;
-	}
-	
-	if (audio != null) 
-	{
-	    if ( (audio.contains("sounds")) ) // new sound added to any other audio playing
-	    {
-		if (sound_Is_Enabled)
-		{
-		    Platform.runLater(new Runnable(){ @Override public void run()
-		    {
-			if (media != null) 
-			{
-			    if ( media.getSource().contains("sounds") )
-			    {
-				Thread playSoundThread = new Thread(() ->
-				{
-				    if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-				});
-				playSoundThread.setName("playSoundThread");
-				playSoundThread.setDaemon(true);
-				playSoundThread.start();
-			    }
-			    else if ( media.getSource().contains("voice") )
-			    {
-				if ( voice_Is_Enabled)
-				{
-				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
-				}
-			    }
-			    else { ui.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-			}
-		    }});
-		}
-	    }
-	    else if ( audio.contains("voice") )
-	    {
-		if (voice_Is_Enabled)
-		{
-		    if ((audioClipSounds != null) && ( audioClipSounds.isPlaying() )) // new voice stopping currently playing voice
-		    {
-			audioClipSounds.stop();
-		    }
-		    Platform.runLater(new Runnable(){ @Override public void run()
-		    {
-			if (media != null) 
-			{
-			    if ( media.getSource().contains("sounds") )
-			    {
-				Thread playVoiceThread = new Thread(() ->
-				{
-				    if (sound_Is_Enabled) { audioClipSounds = new AudioClip(media.getSource()); audioClipSounds.play(); /*(" " + play.isPlaying() + "\r\n");*/ }
-				});
-				playVoiceThread.setName("playVoiceThread");
-				playVoiceThread.setDaemon(true);
-				playVoiceThread.start();
-			    }
-			    else if ( media.getSource().contains("voice") )
-			    {
-				if ( voice_Is_Enabled)
-				{
-				    if ( (audioClipVoice != null) && ( audioClipVoice.isPlaying() )) { audioClipVoice.stop(); }
-				    audioClipVoice = new AudioClip(media.getSource()); audioClipVoice.play(); /*test(" " + play.isPlaying() + "\r\n");*/ 
-				}
-			    }
-			    else { ui.log("Alert: play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-			}
-		    }});
-		}
-	    }
-	    else { ui.log("Alert: " + Audio.class.getSimpleName() + ".play(" + media.getSource() + ") not recognized!\r\n", true, true, true, true, false); }
-	}
-    }
+    public  static boolean sound_Is_Enabled =			    true;
+    public  static boolean voice_Is_Enabled =			    true;
 }

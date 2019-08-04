@@ -12,7 +12,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="228.0" prefWidth="690.0" styleClass="text_color_standard" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Support">
+<AnchorPane id="AnchorPane" prefHeight="228.0" prefWidth="690.0" styleClass="text_color_standard" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.Support">
    <children>
       <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -20,7 +20,7 @@
                <children>
                   <Pane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="690.0" minHeight="70.0" prefHeight="70.0" prefWidth="690.0" style="-fx-background-color: #222222; -fx-font-family: Liberation Sans; -fx-font-size: 36;" text="Activate Free Support" textAlignment="CENTER" textFill="WHITE">
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="690.0" minHeight="70.0" prefHeight="70.0" prefWidth="690.0" style="-fx-background-color: #222222; -fx-font-family: Liberation Sans; -fx-font-size: 48;" text="Activate Free Support" textAlignment="CENTER" textFill="WHITE">
                            <font>
                               <Font size="36.0" />
                            </font>
@@ -28,17 +28,17 @@
                               <Glow level="1.0" />
                            </effect>
                         </Label>
-                        <Label alignment="CENTER" layoutY="70.0" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="Activate Free Support after sharing on Social Media" textAlignment="CENTER" textFill="#222222">
+                        <Label alignment="CENTER" layoutY="70.0" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="Email our website to some friends and send us a copy" textAlignment="CENTER" textFill="#222222">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" layoutY="105.0" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="Click and Share verifiably to entitle for Free Support" textAlignment="CENTER" textFill="#222222">
+                        <Label alignment="CENTER" layoutY="105.0" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 24;" text="or Share FinalCrypt on Social Media by clicking below" textAlignment="CENTER" textFill="#222222">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="202.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Free Support is given after verifying that you shared a fair amount of time on Social Media" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="202.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Thank you for supporting FinalCrypt!  -  this window won't popup again after sharing when closing" textAlignment="CENTER" textFill="#727272">
                            <font>
                               <Font name="System Italic" size="14.0" />
                            </font>
