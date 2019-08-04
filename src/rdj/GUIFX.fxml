@@ -37,20 +37,27 @@
                                        <children>
                                           <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top" VBox.vgrow="NEVER">
                                              <children>
-                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefHeight="50.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="22.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="181.0" minWidth="11.0" prefWidth="52.0" />
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="438.0" minWidth="253.0" prefWidth="338.0" />
-                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="170.0" minWidth="37.0" prefWidth="114.0" />
-                                                      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="78.0" />
+                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="181.0" minWidth="11.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="438.0" minWidth="253.0" prefWidth="344.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="181.0" minWidth="37.0" prefWidth="181.0" />
+                                                      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="92.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
                                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                                       <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+                                                         <children>
+                                                            <Button fx:id="tgtFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" maxHeight="20.0" mnemonicParsing="false" onAction="#tgtFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: grey;" text="Delete" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0">
+                                                               <tooltip>
+                                                                  <Tooltip text="Delete selected item(s)" />
+                                                               </tooltip>
+                                                            </Button>
+                                                         </children></AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
                                                             <Label fx:id="targetLabel1" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -62,7 +69,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" styleClass="text_color_standard" text="Hold down [Control] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="438.0" style="-fx-font-size: 11;" styleClass="text_color_standard" text="Hold down [Control] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -71,7 +78,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="20.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="114.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <cursor>
                                                                   <Cursor fx:constant="HAND" />
                                                                </cursor>
@@ -81,6 +88,7 @@
                                                             </Label>
                                                          </children>
                                                       </AnchorPane>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowSpan="2" />
                                                    </children>
                                                    <effect>
                                                       <Glow level="0.5" />
@@ -144,17 +152,26 @@
                                                             </Label>
                                                          </children>
                                                       </AnchorPane>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
+                                                         <children>
+                                                            <Button fx:id="keyFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" maxHeight="20.0" mnemonicParsing="false" onAction="#keyFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" style="-fx-background-color: grey;" text="Delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                                                               <tooltip>
+                                                                  <Tooltip text="Delete selected item(s)" />
+                                                               </tooltip>
+                                                            </Button>
+                                                         </children>
+                                                      </AnchorPane>
                                                    </children>
                                                    <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="164.0" minWidth="38.0" prefWidth="112.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="325.0" minWidth="210.0" prefWidth="281.0" />
-                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="210.0" minWidth="34.0" prefWidth="210.0" />
-                                                      <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="183.0" minWidth="38.0" prefWidth="108.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="325.0" minWidth="206.0" prefWidth="250.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="210.0" minWidth="34.0" prefWidth="181.0" />
+                                                      <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" />
                                                    </columnConstraints>
                                                    <rowConstraints>
-                                                      <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                                                      <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="21.0" minHeight="20.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="20.0" minHeight="19.0" prefHeight="19.0" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <effect>
                                                       <Glow level="0.5" />
@@ -1017,7 +1034,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="4">
                                        <children>
-                                          <Button fx:id="keyButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyButtonOnAction" prefHeight="50.0" prefWidth="171.0" styleClass="background_bottom" text="Create Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="keyButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyButtonOnAction" prefHeight="50.0" prefWidth="171.0" styleClass="key_button" text="Create Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="5">

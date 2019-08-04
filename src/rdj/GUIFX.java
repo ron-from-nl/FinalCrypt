@@ -354,8 +354,8 @@ public class GUIFX extends Application implements UI, Initializable
     private JFileChooser tgtFileChooser;
     private boolean negatePattern;
     public  JFileChooser keyFileChooser;
-    private JButton tgtFileDeleteButton;
-    private JButton keyFileDeleteButton;
+//    private JButton tgtFileDeleteButton;
+//    private JButton keyFileDeleteButton;
     private Version version;
 
     private boolean processRunning;
@@ -459,6 +459,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Label keyReadLabel;
     @FXML
     private Label keyReadSizeLabel;
+    @FXML   private Button tgtFileDeleteButton2; // Because Apple hides the FCChooserDelete Button
+    @FXML   private Button keyFileDeleteButton2; // Because Apple hides the FCChooserDelete Button
 
     @Override
     public void start(Stage stage) throws Exception
@@ -520,20 +522,22 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.setCycleCount(1);
 
-	tgtFileDeleteButton = new javax.swing.JButton();
-        tgtFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
-        tgtFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
-        tgtFileDeleteButton.setEnabled(false);
-        tgtFileDeleteButton.setToolTipText("Delete selected item(s)");
-        tgtFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { targetFileDeleteButtonActionPerformed(evt); });
+//	tgtFileDeleteButton = new javax.swing.JButton();
+//      tgtFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
+//      tgtFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
+//      tgtFileDeleteButton.setEnabled(false);
+	tgtFileDeleteButton2.setDisable(true);
+//      tgtFileDeleteButton.setToolTipText("Delete selected item(s)");
+//      tgtFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { targetFileDeleteButtonActionPerformed(evt); });
 	tgtDetailViewButton = new JToggleButton();
 	
-        keyFileDeleteButton = new javax.swing.JButton();
-        keyFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
-        keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
-        keyFileDeleteButton.setEnabled(false);
-        keyFileDeleteButton.setToolTipText("Delete selected item");
-        keyFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { keyFileDeleteButtonActionPerformed(evt); });
+//        keyFileDeleteButton = new javax.swing.JButton();
+//        keyFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
+//        keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
+//        keyFileDeleteButton.setEnabled(false);
+        keyFileDeleteButton2.setDisable(true);
+//        keyFileDeleteButton.setToolTipText("Delete selected item");
+//        keyFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { keyFileDeleteButtonActionPerformed(evt); });
 	keyDetailViewButton = new JToggleButton();
         
 //      Create filefilters        
@@ -1531,7 +1535,10 @@ public class GUIFX extends Application implements UI, Initializable
     }
     
 //  Custom FileChooserDelete Listener methods
-    private void targetFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)
+    private void targetFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)	{ targetFileDelete(); }                                               
+    @FXML  private void tgtFileDeleteButton2OnAction(ActionEvent event)			{ targetFileDelete(); }
+
+    private void targetFileDelete()
     {
         Platform.runLater(() ->
 	{
@@ -1570,7 +1577,11 @@ public class GUIFX extends Application implements UI, Initializable
 	});
     }                                               
 
-    private void keyFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt)                                                
+
+    private void keyFileDeleteButtonActionPerformed(java.awt.event.ActionEvent evt) { keyFileDelete(); }                                               
+    @FXML  private void keyFileDeleteButton2OnAction(ActionEvent event)		    { keyFileDelete(); }
+
+    private void keyFileDelete()                                                
     {                                                            
         Platform.runLater(() ->
 	{
@@ -1836,7 +1847,8 @@ public class GUIFX extends Application implements UI, Initializable
 //		});
 
 		ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
-		tgtFileDeleteButton.setEnabled(false);
+//		tgtFileDeleteButton.setEnabled(false);
+		tgtFileDeleteButton2.setDisable(true);
 
 		// En/Disable FileChooser deletebutton
 		if (
@@ -1848,7 +1860,15 @@ public class GUIFX extends Application implements UI, Initializable
 			    (Files.isDirectory(tgtFileChooser.getSelectedFile().toPath()))
 			) 
 		   )
-		{ tgtFileDeleteButton.setEnabled(true); } else {tgtFileDeleteButton.setEnabled(false); }
+		{
+//		    tgtFileDeleteButton.setEnabled(true);
+		    tgtFileDeleteButton2.setDisable(false);
+		}
+		else
+		{
+//		    tgtFileDeleteButton.setEnabled(false);
+		    tgtFileDeleteButton2.setDisable(true);
+		}
 
 		targetFCPathList = new FCPathList<FCPath>();// targetFCPathList.clear();
 		final FCPathList<FCPath> targetFCPathList2 = targetFCPathList;
@@ -1972,7 +1992,15 @@ public class GUIFX extends Application implements UI, Initializable
 			    (Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
 			) 
 		   )
-		{ keyFileDeleteButton.setEnabled(true);} else {keyFileDeleteButton.setEnabled(false); }
+		{
+//		    keyFileDeleteButton.setEnabled(true);
+		    keyFileDeleteButton2.setDisable(false);
+		}
+		else
+		{
+//		    keyFileDeleteButton.setEnabled(false);
+		    keyFileDeleteButton2.setDisable(true);
+		}
 
 		// Set Buffer Size
 		finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
@@ -2541,7 +2569,7 @@ public class GUIFX extends Application implements UI, Initializable
         for (Component component : components)
         {
 	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
+//	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
             
             if (component instanceof JToggleButton) // Click "details view" ToggleButton
             {
@@ -2566,7 +2594,7 @@ public class GUIFX extends Application implements UI, Initializable
         for (Component component : components)
         {
 	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
+//	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
             
             if (component instanceof JToggleButton) // Click "details view" ToggleButton
             {

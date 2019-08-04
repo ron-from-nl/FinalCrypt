@@ -14,6 +14,7 @@
       Added Key Match & Key Write User-Printing
       Added Key Directory Full Path show Tooltip
 5.2.1 Fixed Audio System instability on Linux
+      Added delete button visible on all OSes
 
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 4.0.1 Added sound and voice mixing and priority control for better audio experience
