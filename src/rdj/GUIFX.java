@@ -394,7 +394,9 @@ public class GUIFX extends Application implements UI, Initializable
     private FCPathList<FCPath> newDecryptedList;
     private FCPathList<FCPath> undecryptableList;
     private FCPathList<FCPath> invalidFilesList;
-    
+    private FCPathList<FCPath> createManualKeyList;
+    private FCPathList<FCPath> cloneManualKeyList;
+
     private long	bytesTotal;	
     private long	bytesProcessed;
     private double	totalToProcessedRatio;
@@ -461,6 +463,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Label keyReadSizeLabel;
     @FXML   private Button tgtFileDeleteButton2; // Because Apple hides the FCChooserDelete Button
     @FXML   private Button keyFileDeleteButton2; // Because Apple hides the FCChooserDelete Button
+    @FXML
+    private Tooltip pwdtxtFieldTooltip;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -1303,10 +1307,10 @@ public class GUIFX extends Application implements UI, Initializable
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
 	env +=    "Interface:          rdj/GUIFX\r\n";
-	env +=    "Email:              " + Version.getAuthorEmail() + "\r\n";
+	env +=    "Email:              " + Version.getEmail() + "\r\n";
 	env +=    "Copyright:          " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
 	env +=    "Logfiles:           " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:       java -cp FinalCrypt.jar rdj/CLUI --help\r\n";
+	env +=    "Command line:       java -cp finalcrypt.jar rdj/CLUI --help\r\n";
 	env +=    "License:            " + Version.getLicense() + "\r\n";
 	env += "\r\n";
 	env +=    "OS Name:            " + OS_NAME + "\r\n";
@@ -2374,8 +2378,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
 	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1));
 
-	    keyReadLabel.setText(Long.toString(targetFCPathList.readAutoKeyFiles));
-	    keyReadSizeLabel.setText(Validate.getHumanSize(targetFCPathList.readAutoKeyFilesSize,1));
+	    keyReadLabel.setText(Long.toString(targetFCPathList.matchedAutoKeyFiles));
+	    keyReadSizeLabel.setText(Validate.getHumanSize(targetFCPathList.matchedAutoKeyFilesSize,1));
 
 	    keyWriteLabel.setText(Long.toString(targetFCPathList.writeAutoKeyFiles));
 	    keyWriteSizeLabel.setText(Validate.getHumanSize(targetFCPathList.writeAutoKeyFilesSize,1));
@@ -2418,7 +2422,7 @@ public class GUIFX extends Application implements UI, Initializable
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 		    } else { encryptButton.setDisable(true); encryptableList = null; }
-		    if (targetFCPathList.readAutoKeyFiles > 0)	    { readAutoKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey); } else { readAutoKeyList = null; }
+		    if (targetFCPathList.matchedAutoKeyFiles > 0)	    { readAutoKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey); } else { readAutoKeyList = null; }
 		    if (targetFCPathList.writeAutoKeyFiles > 0)	    { writeAutoKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.needsWriteAutoKey); } else { writeAutoKeyList = null; }
 		    if (targetFCPathList.newEncryptedFiles > 0)	    { newEncryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewEncrypted); } else { newEncryptedList = null; }
 //		    if (targetFCPathList.encryptRemainingFiles > 0) { encryptRemainingList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.); } else { encryptRemainingList = null; }
@@ -2461,7 +2465,7 @@ public class GUIFX extends Application implements UI, Initializable
 			if (targetFCPathList.validDevices > 0)
 			{
 //			    log("1 " + keyFCPath.getString());
-//			    createManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Manual Key List:\r\n" + createManualKeyList.getStats());
+			    createManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Manual Key List:\r\n" + createManualKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CREATE_KEYDEV);
 			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
@@ -2471,7 +2475,7 @@ public class GUIFX extends Application implements UI, Initializable
 //			Clone Key Device
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
-//			    cloneKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
+			    cloneManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
 			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
 		    }
@@ -3682,7 +3686,13 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML private void showPasswordCheckBoxOnAction(ActionEvent event)
     {
-	if (showPasswordCheckBox.isSelected()) { pwdtxtField.setText(pwdField.getText()); } else { pwdField.setText(pwdtxtField.getText()); }
+	if (showPasswordCheckBox.isSelected())
+	{
+	    pwdtxtField.setText(pwdField.getText()); pwdtxtFieldTooltip.setText(pwdField.getText());
+	}
+	else
+	{
+	    pwdField.setText(pwdtxtField.getText()); pwdtxtFieldTooltip.setText(pwdtxtField.getText()); }
 	setFont(pwdField);setFont(pwdtxtField);
 	pwdField.setVisible(! showPasswordCheckBox.isSelected());
 	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
@@ -3709,6 +3719,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    pwdtxtField.setText(pwdField.getText());
+	    pwdtxtFieldTooltip.setText(pwdField.getText());
 	    setFont(pwdField);setFont(pwdtxtField);
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
 	    targetFCPathList = new FCPathList<FCPath>();
@@ -3737,6 +3748,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    finalCrypt.setPwd(pwdtxtField.getText()); finalCrypt.setPwdBytes(pwdtxtField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    pwdField.setText(pwdtxtField.getText());
+	    pwdtxtFieldTooltip.setText(pwdtxtField.getText());
 	    setFont(pwdField);setFont(pwdtxtField);
 	    passwordHeaderLabel.setText(PASSWORD_ENTER);
 //	    if (!settingPassword)

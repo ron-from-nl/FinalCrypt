@@ -1,22 +1,27 @@
 =================================== Todo ====================================
 
-Compare last two encrypt decrypt sessions
-auto encrypt on exit getDesktop.open(..
+Crash outside VM on Ubuntu 19.04 (runs fine on Ubuntu 18.04)
 
-Property parameters version, perf, tally stats
-http://../VERSION2?params
-Added: Share on Social Media to entitle for Free Support
+Problematic frame: C  [libpango-1.0.so.0+0x193e6]
+com.sun.javafx.font.freetype.PangoGlyphLayout 
+
+Package: libpango-1.0-0
+Version: 1.42.4-6ubuntu0.1
+Source: pango1.0
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Homepage: http://www.pango.org/
 
 =================================== Doing ===================================
 
-Communicate about non MAC mode "0 non invert" change?
-Release notes change
-Solve issue targetFileChooser dirchange visible font swapping
 
+Compare last two encrypt decrypt sessions
+auto encrypt on exit getDesktop.open(..
+Property parameters version, perf, tally stats: http://../VERSION2?params
 Fixed UTF8 symbols Cross OS
 Open Last Key Directory
 Tools Settings
-
 
 =============================== Don't forget ================================
 
@@ -24,12 +29,15 @@ Test UI.java test(String message) usage and remove / comment any used instances 
 Set version						nbproject/project.properties application.implementation.version=1.2.3
 Set version on file:					Version
 Set version on file:					Version2
-Update file:						CHANGELOG
-Update file:						MANPAGE
+Update file:						changelog
+Update file:						manpage
  
 =================================== Done ====================================
 
-Fixed Audio System instability on Linux
+Added Show Password Tooltip with fontsize 14px
+Printing scanresults in Command Line Interface
+FinalCrypt crashes on Ubuntu 19.04 libpango-1.0
+This update allows full feature fallback to CLI
 
 ============================= Source Committed ==============================
 
@@ -42,105 +50,5 @@ Fixed Audio System instability on Linux
 
 ================================= Comments =================================
 
-~/jdk1.8.0_121/bin/javapackager -deploy -native exe -BsystemWide=true -BjvmOptions=-Xmx128m -BjvmOptions=-Xms128m -outdir packages -outfile FinalCrypt -srcdir dist -srcfiles FinalCrypt.jar -appclass rdj.GUIFX -name FinalCrypt -title "FinalCrypt Demo"
+~/jdk1.8.0_121/bin/javapackager -deploy -native exe -BsystemWide=true -BjvmOptions=-Xmx128m -BjvmOptions=-Xms128m -outdir packages -outfile FinalCrypt -srcdir dist -srcfiles finalcrypt.jar -appclass rdj.GUIFX -name FinalCrypt -title "FinalCrypt Demo"
 
-[Alert Subject_] =	{Re-encrypt after updating to FinalCrypt v4.2.0 or higher}
-[Alert Notes_] =		{If you still have encrypted files encrypted with FinalCrypt prior to version: 4.2.0}
-[Alert Notes_] =		{then it is adviced to (if needed update to the latest stable release and) RE-ENCRYPT}
-[Alert Notes_] =		{}
-[Alert Notes_] =		{FinalCrypt v4.2.0 and higher performs more secure password over key encryption}
-[Alert Notes_] =		{}
-[Alert Notes_] =		{Technical notes:}
-[Alert Notes_] =		{}
-[Alert Notes_] =		{The type of encryption on your encrypted files can be recognized by the first 70 bytes}
-[Alert Notes_] =		{}
-[Alert Notes_] =		{                        1         2         3         4         5         6         7}
-[Alert Notes_] =		{               1234567890123456789012345678901234567890123456789012345678901234567890}
-[Alert Notes_] =		{Prior v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Authentication Token"}
-[Alert Notes_] =		{From  v4.2.0: "FinalCrypt - File Encryption Program - Plain Text Auth Token Version 2"}
-[Alert Notes_] =		{}
-[Alert Notes_] =		{File-headers can be viewed with a HexEditor: http://www.disk-editor.org/index.html}
-
-[Alert Subject] =	{Are you willing to switch to "Auto Key" One-Time Pad Encryption}
-[Alert Notes] =		{A major change is about to be implemented, but before that users need to know the implications}
-[Alert Notes] =		{and we need to know user opinions and see if users are ready to step up towards higher security}
-[Alert Notes] =		{}
-[Alert Notes] =		{Currently FinalCrypt does not automatically generate a separate key for every file you encrypt}
-[Alert Notes] =		{Re-using keys (One key encrypting more files) breaks the One-Time Pad rules compromising security}
-[Alert Notes] =		{}
-[Alert Notes] =		{When 100% One-Time Pad security is critical, automatic key generation must be added to FinalCrypt}
-[Alert Notes] =		{as manually creating and selecting keys for every individual file takes a lot of time and effort}
-[Alert Notes] =		{Manual key generation and selection will still be supported alongside this new "Auto Key Mode"}
-[Alert Notes] =		{}
-[Alert Notes] =		{In "Auto Key Mode" change into any directory (and USB drive) which will be used to hold your keys}
-[Alert Notes] =		{Encrypting "Auto Key Mode": keys are generated in a identical directory and filename structure}
-[Alert Notes] =		{Decrypting "Auto Key Mode": keys read read from the same identical directory and filename structure}
-[Alert Notes] =		{}
-[Alert Notes] =		{Consequences}
-[Alert Notes] =		{}
-[Alert Notes] =		{"Auto Key Mode" encryption takes allmost twice as long as unexisting keyfiles need to be created}
-[Alert Notes] =		{"Auto Key Mode" requires double storage capacity (every encrypted file has it's own equally sized key}
-[Alert Notes] =		{"Auto Key Mode" requires quadruple storage capacity when you backup every encrypted file and key file}
-[Alert Notes] =		{}
-[Alert Notes] =		{"Auto Key Mode" key management is automatic so using FinalCrypt will be easier and more secure}
-[Alert Notes] =		{"Auto Key Mode" will require more storage capacity and (first) time encrypting your data files}
-[Alert Notes] =		{"Auto Key Mode" will offer the highest level of security possible by modern computer technology}
-[Alert Notes] =		{}
-[Alert Notes] =		{Are you willing to step up to new standards of security exterminating todays privacy violations?}
-[Alert Notes] =		{}
-[Alert Notes] =		{Please share your opinion with us as every FinalCrypt user is important to us}
-[Alert Notes] =		{}
-[Alert Notes] =		{You can send your opinion to email: info@finalcrypt.org (Subject: "Auto Key Mode")}
-
-
-Design Auto Key Mode:
-
-Data Structure:
-
-FCPathPair (FCPath (Data), FCPath (Key), Auto_Key_Mode_Boolean)
-
-
-FCChoosers Behavior
-
-if	((FC Key Nothing) || (FC Key Dir) ) { Auto Key Mode }
-else if (FC Key File)			    { Manual Key Mode }
-else					    { Invalid Key Mode }
-
-if (! Invalid Key Mode) && (FC Data File / Dir selected)
-{
-    if ((Auto Key Mode)	    && (Data FS Root != Key Dir))   { buildSelection(Key Mode); }
-    if ((Manual Key Mode)				    { buildSelection(Key Mode); }
-}
-
-buildSelection(Key Mode)
-{
-    Scan Return (Data Selection, FCKey):
-
-    FCPathPairList
-		    if (FCKey == File)
-		    {
-			[ FCPath (Data) - FCPath (Key) == FCKey ]
-		    }
-		    else
-		    {
-			[ FCPath (Data) - FCPath (Key) == FCKey(FCKeyDir + FCPath (Data)) ]
-		    }
-
-    buildReady();
-}
-
-Encrypt:
-
-if (FCPathPair == "Auto Key Mode")
-{
-    if	(! exist FCKey) { writeAutoKey(FCKey, size, create) }
-    else	( (exist FCKey) && (FCKey >= FCKeyMin) && (FCKey < FCData) ) { writeAutoKey(FCKey, size, append) }
-}
-else
-{
-}
-
-if ((exist(FCKey)) && (((FCKey) >= FCData) && (FCKey >= FCKeyMin)))
-{
-    Encrypt()
-}

@@ -1,4 +1,4 @@
-[Version] =		{5.2.1}
+[Version] =		{5.3.0}
 [] = {} ================================================================
 [Release Notes] =	{Fixed Audio System instability on Linux}
 [Release Message] =	{Added delete button visible on all OSes}
@@ -14,17 +14,22 @@
 [Version Notes] =	{   were added for an even better user experience}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 2}
+[Upgrade Notes] =	{Upgrade 3}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   SecureRandom Number Generator extra Secured}
-[Upgrade Notes] =	{   Decrypt, Remove Keys & Re-encrypt to Secure}
-[Upgrade Notes] =	{   User delete also deletes matching Key Items}
+[Upgrade Notes] =	{   Added Show Password Tooltip with fontsize 14px}
+[Upgrade Notes] =	{   Added Print scanresults Command Line Interface}
+[Upgrade Notes] =	{}
+[Upgrade Notes] =	{   Print scanresults notes:}
+[Upgrade Notes] =	{}
+[Upgrade Notes] =	{   FinalCrypt crashes on Ubuntu 19.04 outside JVM}
+[Upgrade Notes] =	{   due to new font rendering library libpango-1.0}
+[Upgrade Notes] =	{   This update allows full feature fallback to CLI}
+[Upgrade Notes] =	{   This bug is reported. Ubuntu 18 is not affected}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{   Fixed Audio System instability on Linux}
-[Update Notes] =	{   Added delete button visible on all OSes}
+[Update Notes] =	{   See Upgrade 3}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

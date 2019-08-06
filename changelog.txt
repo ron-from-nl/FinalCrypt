@@ -1,3 +1,10 @@
+5.3.0 Added Show Password Tooltip with fontsize 14px
+      Added Print scanresults Command Line Interface
+      Print scanresults notes:
+      FinalCrypt crashes on Ubuntu 19.04 outside JVM
+      due to new font rendering library libpango-1.0
+      This update allows full feature fallback to CLI
+      This bug is reported. Ubuntu 18 is not affected
 5.2.1 Fixed Audio System instability on Linux
       Added delete button visible on all OSes
 5.2.0 SecureRandom Number Generator extra Secured

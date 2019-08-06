@@ -43,7 +43,7 @@ public class FinalCrypt extends Thread
 {
     public static boolean verbose = false;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
-    private boolean symlink = false, txt = false, dry = false;
+    private boolean symlink = false, txt = false, test = false;
     protected static boolean print = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int BUFFERSIZEDEFAULT = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
@@ -158,7 +158,7 @@ public class FinalCrypt extends Thread
     public boolean getDec()                                                 { return dec; }
     public boolean getHex()                                                 { return hex; }
     public boolean getChr()                                                 { return chr; }
-    public boolean getDry()                                                 { return dry; }
+    public boolean getTest()                                                { return test; }
     public int getBufferSizeDefault()					    { return BUFFERSIZEDEFAULT; }
 //    public ArrayList<Path> getTargetFilesPathList()                         { return targetReadFilesPathList; }
 //    public Path getKeyFilePath()                                         { return keyReadFilePath; }
@@ -173,7 +173,7 @@ public class FinalCrypt extends Thread
     public void setDec(boolean dec)                                         { FinalCrypt.dec = dec; }
     public void setHex(boolean hex)                                         { FinalCrypt.hex = hex; }
     public void setChr(boolean chr)                                         { FinalCrypt.chr = chr; }
-    public void setDry(boolean dry)                                         { this.dry = dry; }
+    public void setTest(boolean test)                                       { this.test = test; }
     public void setBufferSize(int bufferSize)                               
     {
         this.bufferSize = bufferSize;
@@ -379,7 +379,7 @@ public class FinalCrypt extends Thread
 		// Auto Key Mode
 		// =================================================================================================================================================================
 
-		if (! dry)
+		if (! test)
 		{
 		    if ( (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Detects Auto Key Mode
 		    {		    
@@ -492,7 +492,7 @@ public class FinalCrypt extends Thread
 			{
 			    if (newTargetSourceFCPath.isEncryptable) // TargetSource is (Encryptable)
 			    {				
-				if ( ! dry )
+				if ( ! test )
 				{
 				    ui.log(UTF8_MAC_WRTE_SYMBOL + " ", false, true, true, false, false);
 				    // Add MAC to targetDestinPath
@@ -522,7 +522,7 @@ public class FinalCrypt extends Thread
 			{
 			    if (newTargetSourceFCPath.isDecryptable) // TargetSource Has Authenticated MAC (Decryptable)
 			    {
-				if (! dry)
+				if (! test)
 				{
 				    ui.log(UTF8_MAC_READ_SYMBOL + " ", false, true, true, false, false);
 				    ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2))); targetSourceBuffer.clear();
@@ -576,7 +576,7 @@ public class FinalCrypt extends Thread
 		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 		ui.log(UTF8_PROCESS_SYMBOL, false, true, true, false, false);
 		
-		while (( ! targetSourceEnded ) && ( ! dry ))
+		while (( ! targetSourceEnded ) && ( ! test ))
 		{
 //                  Delete broken outputFile and keep original
 //		    At the encryption stage of the process
@@ -672,7 +672,7 @@ public class FinalCrypt extends Thread
 “acl:owner”	UserPrincipal
 */
 
-		if ( ! dry)
+		if ( ! test)
 		{
 		    attributeViewloop: for (String view:newTargetSourceFCPath.path.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
 		    {
@@ -734,7 +734,7 @@ public class FinalCrypt extends Thread
 
 		long targetDestinSize = 0; double targetDiffFactor = 1;
 
-		if ( ! dry)
+		if ( ! test)
 		{
 		    ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
 		    ui.log(UTF8_CLONE_SYMBOL, false, true, true, false, false);
@@ -842,7 +842,7 @@ public class FinalCrypt extends Thread
 
 
 //              Delete the original
-		if ( ! dry)
+		if ( ! test)
 		{
 		    if
 		    (
@@ -865,7 +865,7 @@ public class FinalCrypt extends Thread
 		String dstHashString = getHexString(dstHashBytes,2); // print checksum
 		
 		fileStatusLine = allDataStats.getAllDataBytesProgressPercentage();
-		if (! dry)
+		if (! test)
 		{
 		    ui.log(HASH_ALGORITHM_NAME + ": \"" + srcHashString + "\"->\"" + dstHashString + "\" " + fileStatusLine + "\r\n", true, true, true, false, false);		    
 		}

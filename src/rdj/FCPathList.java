@@ -66,7 +66,7 @@ public class FCPathList<E> extends ArrayList<E>
     
     public	    long decryptedFiles =	    0; public	    long decryptedFilesSize =		0;
     public	    long encryptableFiles =	    0; public	    long encryptableFilesSize =		0;
-    public	    long readAutoKeyFiles =	    0; public	    long readAutoKeyFilesSize =		0;
+    public	    long matchedAutoKeyFiles =	    0; public	    long matchedAutoKeyFilesSize =		0;
     public	    long writeAutoKeyFiles =	    0; public	    long writeAutoKeyFilesSize =	0;
     public	    long newEncryptedFiles =	    0; public	    long newEncryptedFilesSize =	0;
     public	    long encryptRemainingFiles =    0; public	    long encryptRemainingFilesSize =	0;
@@ -119,7 +119,7 @@ public class FCPathList<E> extends ArrayList<E>
 
 		if ( fcPath.isDecrypted )							{ decryptedFiles++;	    decryptedFilesSize += fcPath.size; }
 		if ( fcPath.isEncryptable )						        { encryptableFiles++;	    encryptableFilesSize += fcPath.size; }
-		if ( fcPath.matchedReadAutoKey )						{ readAutoKeyFiles++;	    readAutoKeyFilesSize += fcPath.matchedReadAutoKeySize; }
+		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles++;	    matchedAutoKeyFilesSize += fcPath.matchedReadAutoKeySize; }
 		if ( fcPath.needsWriteAutoKey )						        { writeAutoKeyFiles++;	    writeAutoKeyFilesSize += fcPath.needsWriteAutoKeySize; }
 		if ( fcPath.isNewEncrypted )							{ newEncryptedFiles++;	    newEncryptedFilesSize += fcPath.size; }
 //		if ( fcPath.isEncryptable )						        { encryptRemainingFiles++;  encryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
@@ -169,7 +169,7 @@ public class FCPathList<E> extends ArrayList<E>
 
 		if ( fcPath.isDecrypted )							{ decryptedFiles--;	    decryptedFilesSize -= fcPath.size; }
 		if ( fcPath.isEncryptable )							{ encryptableFiles--;	    encryptableFilesSize -= fcPath.size; }
-		if ( fcPath.matchedReadAutoKey )						{ readAutoKeyFiles--;	    readAutoKeyFilesSize -= fcPath.matchedReadAutoKeySize; }
+		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles--;	    matchedAutoKeyFilesSize -= fcPath.matchedReadAutoKeySize; }
 		if ( fcPath.needsWriteAutoKey )						        { writeAutoKeyFiles--;	    writeAutoKeyFilesSize -= fcPath.needsWriteAutoKeySize; }
 		if ( fcPath.isNewEncrypted )							{ newEncryptedFiles--;	    newEncryptedFilesSize -= fcPath.size; }
 		if ( fcPath.isEncryptable )							{ encryptRemainingFiles--;  encryptRemainingFilesSize -= fcPath.size; } // Just here for Remaining stats
@@ -213,26 +213,25 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Readable Files		: " +	readableFiles + "\r\n";
 	returnString += "Writable Files		: " +	writableFiles + "\r\n";
 	returnString += "Hidden Files		: " +	hiddenFiles + "\r\n";
-	returnString += "Key Matching		: " +	matchingKey + "\r\n";
 	returnString += "Valid Paths		: " +	validPaths + " (" + Validate.getHumanSize(validPathsSize,1) + ")\r\n";
 	returnString += "Valid Files		: " +	validFiles + " (" + Validate.getHumanSize(validFilesSize,1) + ")\r\n";
 	returnString += "Valid Devices		: " +	validDevices + " (" + Validate.getHumanSize(validDevicesSize,1) + ")\r\n";
 	returnString += "Valid Devices		: " +	validDevicesProtected + " (" + Validate.getHumanSize(validDevicesProtectedSize,1) + ")\r\n";
 	returnString += "Valid Partitions	: " +	validPartitions + " (" + Validate.getHumanSize(validPartitionsSize,1) + ")\r\n";
-	returnString += "Key Read		: " +	keyRead + " (" + Validate.getHumanSize(keyReadSize,1) + ")\r\n";
-	returnString += "Key Write		: " +	keyWrite + " (" + Validate.getHumanSize(keyWriteSize,1) + ")\r\n";
+	returnString += "\r\n";
+	returnString += "Key Match		: " +	matchedAutoKeyFiles + " (" + Validate.getHumanSize(matchedAutoKeyFilesSize,1) + ")\r\n";
+	returnString += "Key Write		: " +	writeAutoKeyFiles + " (" + Validate.getHumanSize(writeAutoKeyFilesSize,1) + ")\r\n";
 	returnString += "\r\n";
 	returnString += "Decrypted Files 	: " +	decryptedFiles + " (" + Validate.getHumanSize(decryptedFilesSize,1) + ")\r\n";
 	returnString += "Encryptable Files	: " +	encryptableFiles + " (" + Validate.getHumanSize(encryptableFilesSize,1) + ")\r\n";
-	returnString += "Create Key Files	: " +	writeAutoKeyFiles + " (" + Validate.getHumanSize(writeAutoKeyFilesSize,1) + ")\r\n";
-	returnString += "New Encrypted Files 	: " +	newEncryptedFiles + " (" + Validate.getHumanSize(newEncryptedFilesSize,1) + ")\r\n";
-	returnString += "Encrypt Remaining Files : " +	encryptRemainingFiles + " (" + Validate.getHumanSize(encryptRemainingFilesSize,1) + ")\r\n";
+//	returnString += "New Encrypted Files 	: " +	newEncryptedFiles + " (" + Validate.getHumanSize(newEncryptedFilesSize,1) + ")\r\n";
+//	returnString += "Encrypt Remaining Files : " +	encryptRemainingFiles + " (" + Validate.getHumanSize(encryptRemainingFilesSize,1) + ")\r\n";
 	returnString += "Unencryptable Files	: " +	unEncryptableFiles + " (" + Validate.getHumanSize(unEncryptableFilesSize,1) + ")\r\n";
 	returnString += "\r\n";
 	returnString += "Encrypted Files 	: " +	encryptedFiles + " (" + Validate.getHumanSize(encryptedFilesSize,1) + ")\r\n";
 	returnString += "Decryptable Files	: " +	decryptableFiles + " (" + Validate.getHumanSize(decryptableFilesSize,1) + ")\r\n";
-	returnString += "New Decrypted Files	: " +	newDecryptedFiles + " (" + Validate.getHumanSize(newDecryptedFilesSize,1) + ")\r\n";
-	returnString += "Decrypt Remaining Files : " +	decryptRemainingFiles + " (" + Validate.getHumanSize(decryptRemainingFilesSize,1) + ")\r\n";
+//	returnString += "New Decrypted Files	: " +	newDecryptedFiles + " (" + Validate.getHumanSize(newDecryptedFilesSize,1) + ")\r\n";
+//	returnString += "Decrypt Remaining Files : " +	decryptRemainingFiles + " (" + Validate.getHumanSize(decryptRemainingFilesSize,1) + ")\r\n";
 	returnString += "UnDecryptable Files	: " +	unDecryptableFiles + " (" + Validate.getHumanSize(unDecryptableFilesSize,1) + ")\r\n";
 	returnString += "\r\n";
 //	returnString += "File  Valid Keys	: " +	filesValidKey + "\r\n"; // Targets can't be keys (only match keypaths)

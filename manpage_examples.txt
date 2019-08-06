@@ -1,0 +1,66 @@
+Examples:   java -cp finalcrypt.jar rdj/CLUI <Mode> [options] <Parameters>
+
+            # Test Run Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k "mykeydir" -t "mydocdir" -t "myfile"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k "mykeydir" -t "mydocdir" -t "myfile"
+
+            # Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -k "mykeydir" -t "mydocdir" -t "myfile"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -k "mykeydir" -t "mydocdir" -t "myfile"
+
+            # Encrypt / Decrypt files in batchfile
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -k "mykeydir" -b "mybatchfile"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -k "mykeydir" -b "mybatchfile"
+
+            # Encrypt / Decrypt all *.doc files in mydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -w '*.doc'-k "mykeydir" -t "mydir"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -w '*.doc'-k "mykeydir" -t "mydir"
+
+            # Encrypt / Decrypt all non *.doc files in mydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -W '*.doc' -k "mykeydir" -t "mydir" 
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -W '*.doc' -k "mykeydir" -t "mydir" 
+
+            # Encrypt / Decrypt all *.doc files in mydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -r '^.*\.doc$' -k "mykeydir" -t "mydir"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -r '^.*\.doc$' -k "mykeydir" -t "mydir"
+
+            # Encrypt / Decrypt all non *.bit files in mydir
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -r '(?!.*\.bit$)^.*$' -k "mykeydir" -t "mydir"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -r '(?!.*\.bit$)^.*$' -k "mykeydir" -t "mydir"
+
+Create OTP Key file:
+
+            java -cp finalcrypt.jar rdj.CLUI --create-keyfile -K "mykeyfile" -S 268435456 # (256 MiB) echo $((1024**2*256))
+
+Key Device Examples (Linux):
+
+            # Create Key Device with 2 key partitions (e.g. on USB Mem Stick)
+            # Beware: keyfile gets randomized before writing to Device
+
+            java -cp finalcrypt.jar rdj/CLUI --create-keydev -k mykeyfile -t /dev/sdb
+
+            # Print GUID Partition Table
+
+            java -cp finalcrypt.jar rdj/CLUI --print-gpt -t /dev/sdc
+
+            # Delete GUID Partition Table
+
+            java -cp finalcrypt.jar rdj/CLUI --delete-gpt -t /dev/sdc
+
+            # Clone Key Device (-k sourcekeydevice -t destinationkeydevice)
+
+            java -cp finalcrypt.jar rdj/CLUI --clone-keydev -k /dev/sdc -t /dev/sdd
+
+            # Encrypt / Decrypt myfile with raw key partition
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
+
+FinalCrypt 5.3.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

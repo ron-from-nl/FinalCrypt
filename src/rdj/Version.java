@@ -35,6 +35,7 @@ public class Version
     private static final String PRODUCTNAME =				"FinalCrypt";
     private static final String AUTHOR =				"Ron de Jong";
     private static final String AUTHOREMAIL =				"ronuitzaandam@gmail.com";
+    private static final String EMAIL =					"info@finalcrypt.org";
     private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
     private static final String COPYRIGHT =				"© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     private static String currentOverallVersionString =			"";
@@ -367,6 +368,7 @@ public class Version
     public static String getLicense()	    { return LICENSE; }
     public static String getAuthor()        { return AUTHOR; }
     public static String getAuthorEmail()   { return AUTHOREMAIL; }
+    public static String getEmail()	    { return EMAIL; }
     public static String getProductName()   { return PRODUCTNAME; }
     public static String getCompany()       { return COMPANYNAME; }
 }
