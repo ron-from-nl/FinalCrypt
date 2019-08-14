@@ -66,7 +66,7 @@ public class CLUI implements UI
     // Filtered Lists
     protected FCPathList<FCPath> decryptedList; 
     protected FCPathList<FCPath> encryptableList;
-    protected FCPathList<FCPath> matchedAutoKeyList;
+    protected FCPathList<FCPath> readAutoKeyList;
     protected FCPathList<FCPath> writeAutoKeyList;
 
     protected FCPathList<FCPath> encryptedList; 
@@ -117,6 +117,7 @@ public class CLUI implements UI
     
     protected boolean test =		false;
     protected String testAnswer =		"";
+    protected FCPath keyFCPath;
     
     
     public CLUI(String[] args)
@@ -135,7 +136,7 @@ public class CLUI implements UI
 //        Path targetFilePath = null;
 	
 //        Path keyFilePath = null;
-        FCPath keyFCPath = null;
+        keyFCPath = null;
 	
         Path outputFilePath = null;
         configuration = new Configuration(this);
@@ -447,12 +448,6 @@ public class CLUI implements UI
 		    )
 	{
 
-
-
-
-
-
-
 // ================================================================================================================================================================================================
 // Building filtered lists (equal to checkModeReady() in GUIFX)
 // ================================================================================================================================================================================================
@@ -460,14 +455,12 @@ public class CLUI implements UI
 	    invalidFilesList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.INVALID);							// else { invalidFilesList = null; }
 	    decryptedList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecrypted);								// else { decryptedList = null; }
 	    encryptableList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable); encryptablesFound = true;					// else { encryptableList = null; }
-	    matchedAutoKeyList =    filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey);							// else { readAutoKeyList = null; }
-	    writeAutoKeyList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.needsWriteAutoKey);							// else { writeAutoKeyList = null; }
-	    newEncryptedList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewEncrypted);								// else { newEncryptedList = null; }
+
+
 	    unencryptableList =	    filter(targetFCPathList,(FCPath fcPath) -> (fcPath.isUnEncryptable) && (fcPath.isDecrypted)  && (fcPath.size > 0));		// else { unencryptableList = null; }
 
 	    encryptedList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncrypted);								// else { encryptedList = null; }
 	    decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable); decryptablesFound = true;					// else { decryptableList = null; }
-	    newDecryptedList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewDecrypted);								// else { newDecryptedList = null; }
 	    undecryptableList =	    filter(targetFCPathList,(FCPath fcPath) -> (fcPath.isUnDecryptable) && (fcPath.isEncrypted) && (fcPath.size > 0));		// else { undecryptableList = null; }
 
 	    emptyList =		    filter(targetFCPathList,(FCPath fcPath) -> fcPath.size == 0 && fcPath.type == FCPath.FILE);					// else { emptyList = null; }
@@ -476,8 +469,8 @@ public class CLUI implements UI
 	    unwritableList =	    filter(targetFCPathList,(FCPath fcPath) -> (! fcPath.isWritable) && (fcPath.type == FCPath.FILE));				// else { unwritableList = null; }
 	    hiddenList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden);								// else { hiddenList = null; }
 
+	    readAutoKeyList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey);							// else { readAutoKeyList = null; }
 	    writeAutoKeyList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.needsWriteAutoKey);							// else { writeAutoKeyList = null; }
-	    newEncryptedList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewEncrypted);								// else { newEncryptedList = null; }
 
 	    // Create Key Device
 	    if (keyFCPath.type == FCPath.FILE)
@@ -529,7 +522,9 @@ public class CLUI implements UI
 	if ((encrypt))
 	{
 	    if (finalCrypt.disabledMAC)	{ log("\"Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false); }
-	    //targetFCPathList.decryptedFiles > 0
+
+	    if ( finalCrypt.getTest() ) { testListPrompt(); }
+
 	    if ((encryptableList.size() > 0) && (encryptableList.encryptableFiles > 0))
 	    {
 		Runtime.getRuntime().addShutdownHook(new Thread()
@@ -545,7 +540,6 @@ public class CLUI implements UI
 			}
 		    }
 		});
-		if ( finalCrypt.getTest() ) { testListPrompt(); }
 		processStarted();
 		finalCrypt.encryptSelection(targetFCPathList, encryptableList, keyFCPath, true, pwd, pwdBytes, false);
 //		catch (InterruptedException ex){ log("Encryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
@@ -564,6 +558,8 @@ public class CLUI implements UI
 	    }
 	    else
 	    {
+		if ( finalCrypt.getTest() ) { testListPrompt(); }
+		
 		if ((decryptableList.size() > 0) && (decryptableList.decryptableFiles > 0))
 		{
 		    Runtime.getRuntime().addShutdownHook(new Thread()
@@ -578,7 +574,6 @@ public class CLUI implements UI
 			    }
 			}
 		    });
-		    if ( finalCrypt.getTest() ) { testListPrompt(); }
 		    processStarted();
 		    finalCrypt.encryptSelection(targetFCPathList, decryptableList, keyFCPath, false, pwd, pwdBytes, false);
 //		    catch (InterruptedException ex) { log("Decryption Interrupted (CLUI): " + ex.getMessage() +" \r\n", false, true, true, false, false); }
@@ -1009,101 +1004,109 @@ class TestListReaderThread extends Thread
     //
 	    clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
 	    clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log("12. print " + clui.matchedAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.matchedAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log("12. print " + clui.readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
 	    clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
 	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
 
 	    clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
-	    try(Scanner in = new Scanner(System.in))
-	    {
-		clui.testAnswer = in.nextLine(); 	    
-	    }
+	    
+	    try(Scanner in = new Scanner(System.in)) { clui.testAnswer = in.nextLine().trim(); }
 	}
-	else
+	
+	if	    ( (clui.finalCrypt.getTest()) && ( clui.testAnswer.trim().toLowerCase().equals("c") ))	    { clui.testListAborted = false; }
+	else if ( clui.testAnswer.trim().toLowerCase().equals("1") )
 	{
-	    if	    ( (clui.finalCrypt.getTest()) && ( clui.testAnswer.trim().toLowerCase().equals("c") ))	    { clui.testListAborted = false; }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("1") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.decryptedList != null) && (clui.decryptedList.size() > 0) ) { clui.log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("2") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.encryptableList != null) && (clui.encryptableList.size() > 0) ) { clui.log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("3") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.encryptedList != null) && (clui.encryptedList.size() > 0) ) { clui.log("\r\nEncryptedList Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("4") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.decryptableList != null) && (clui.decryptableList.size() > 0) ) { clui.log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("5") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.emptyList != null) && (clui.emptyList.size() > 0) ) { clui.log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("6") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.symlinkList != null) && (clui.symlinkList.size() > 0) ) { clui.log("\r\nSymlink Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("7") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.unreadableList != null) && (clui.unreadableList.size() > 0) ) { clui.log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("8") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.unwritableList != null) && (clui.unwritableList.size() > 0) ) { clui.log("\r\nUnwritable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("9") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.hiddenList != null) && (clui.hiddenList.size() > 0) ) { clui.log("\r\nHiddenList Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("10") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.unencryptableList != null) && (clui.unencryptableList.size() > 0) ) { clui.log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("11") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.undecryptableList != null) && (clui.undecryptableList.size() > 0) ) { clui.log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("12") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.matchedAutoKeyList != null) && (clui.matchedAutoKeyList.size() > 0) ) { clui.log("\r\nMatched Key Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.matchedAutoKeyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().equals("13") )
-	    {
-		clui.testListAborted = true;
-		if ( (clui.writeAutoKeyList != null) && (clui.writeAutoKeyList.size() > 0) ) { clui.log("\r\nWrite Key Files:\r\n\r\n", false, true, true, false, false);
-		for (Iterator it = clui.writeAutoKeyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
-	    }
-	    else if ( clui.testAnswer.trim().toLowerCase().length() == 0 )    { clui.testListAborted = true; System.exit(0); }
-	    else if ( clui.testAnswer.toLowerCase().equals("\r\n"))	    { clui.testListAborted = true; System.exit(0); }
-	    else { clui.testListAborted = true; System.exit(0); }
+	    clui.testListAborted = true;
+	    if ( (clui.decryptedList != null) && (clui.decryptedList.size() > 0) ) { clui.log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("2") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.encryptableList != null) && (clui.encryptableList.size() > 0) ) { clui.log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("3") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.encryptedList != null) && (clui.encryptedList.size() > 0) ) { clui.log("\r\nEncryptedList Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("4") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.decryptableList != null) && (clui.decryptableList.size() > 0) ) { clui.log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("5") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.emptyList != null) && (clui.emptyList.size() > 0) ) { clui.log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("6") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.symlinkList != null) && (clui.symlinkList.size() > 0) ) { clui.log("\r\nSymlink Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("7") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.unreadableList != null) && (clui.unreadableList.size() > 0) ) { clui.log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("8") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.unwritableList != null) && (clui.unwritableList.size() > 0) ) { clui.log("\r\nUnwritable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("9") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.hiddenList != null) && (clui.hiddenList.size() > 0) ) { clui.log("\r\nHiddenList Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("10") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.unencryptableList != null) && (clui.unencryptableList.size() > 0) ) { clui.log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("11") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.undecryptableList != null) && (clui.undecryptableList.size() > 0) ) { clui.log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("12") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.readAutoKeyList != null) && (clui.readAutoKeyList.size() > 0) ) { clui.log("\r\nMatched Key Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.readAutoKeyList.iterator(); it.hasNext();)
+	    {
+			FCPath fcPath = (FCPath) it.next();
+		Path autoKeyPath = null;
+		if (fcPath.isDecrypted) { autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit"); }
+		else			{ autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "")); }
+		clui.log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
+	    } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("13") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.writeAutoKeyList != null) && (clui.writeAutoKeyList.size() > 0) ) { clui.log("\r\nWrite Key Files:\r\n\r\n", false, true, true, false, false);
+	    for (Iterator it = clui.writeAutoKeyList.iterator(); it.hasNext();)
+	    {
+		FCPath fcPath = (FCPath) it.next();
+		Path autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit");
+		clui.log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
+	    } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().length() == 0 )    { clui.testListAborted = true; System.exit(0); }
+	else if ( clui.testAnswer.toLowerCase().equals("\r\n"))	    { clui.testListAborted = true; System.exit(0); }
+	else { clui.testListAborted = true; System.exit(0); }
     }
 }
 

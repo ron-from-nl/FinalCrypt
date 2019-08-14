@@ -23,6 +23,7 @@
       This update allows full feature fallback to CLI
       This bug is reported. Ubuntu 18 is not affected
 5.3.1 Added non interactive print scan results to CLI
+      Corrected print Write / Matched Key Path in CLI
 
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 4.0.1 Added sound and voice mixing and priority control for better audio experience
