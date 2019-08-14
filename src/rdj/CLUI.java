@@ -547,7 +547,7 @@ public class CLUI implements UI
 	    else
 	    {
 		log("No encryptable targets found:\r\n", false, true, true, false, false); // log(targetFCPathList.getStats(), false, true, false, false, false);
-		testListPrompt();
+		log(getScanResults(false), false, true, true, false, false); // log(targetFCPathList.getStats(), false, true, false, false, false);
 	    }
 	}
 	else if ((decrypt))
@@ -583,7 +583,7 @@ public class CLUI implements UI
 		    log("No decryptable targets found\r\n\r\n", false, true, true, false, false);
 		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key / password?\r\n\r\n", false, true, false, false, false); }
 //		    log(targetFCPathList.getStats(), false, true, true, false, false);
-		    testListPrompt();
+		    log(getScanResults(false), false, true, true, false, false); // log(targetFCPathList.getStats(), false, true, false, false, false);
 		}
 	    }
 	}
@@ -912,6 +912,37 @@ public class CLUI implements UI
 	return env;
     }
     
+    public String getScanResults(boolean interactive)
+    {
+	String prefix = ""; if (interactive) { prefix = "print"; } else { prefix = "scanned"; }
+	String results = "";
+	results += "\r\n";
+	    results += "\r\n";
+	    results += "Scanning results:\r\n";
+	    results += "\r\n";
+	    if (finalCrypt.getTest()) { results += " C. Continue test\r\n"; }
+	    results += " 1. " + prefix + " " + decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(decryptedList.decryptedFilesSize,1) + ")\r\n";
+	    results += " 2. " + prefix + " " + encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(encryptableList.encryptableFilesSize,1) + ")\r\n";
+    //
+	    results += " 3. " + prefix + " " + encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(encryptedList.encryptedFilesSize,1) + ")\r\n";
+	    results += " 4. " + prefix + " " + decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(decryptableList.decryptableFilesSize,1) + ")\r\n";
+    //
+	    results += " 5. " + prefix + " " + emptyList.emptyFiles + " empty files \r\n";
+	    results += " 6. " + prefix + " " + symlinkList.symlinkFiles + " symlink files \r\n";
+	    results += " 7. " + prefix + " " + unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(unreadableList.unreadableFilesSize,1) + ")\r\n";
+	    results += " 8. " + prefix + " " + unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(unwritableList.unwritableFilesSize,1) + ")\r\n";
+	    results += " 9. " + prefix + " " + hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(hiddenList.hiddenFilesSize,1) + ")\r\n";
+    //
+	    results += "10. " + prefix + " " + unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(unencryptableList.unEncryptableFilesSize,1) + ")\r\n";
+	    results += "11. " + prefix + " " + undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(undecryptableList.unDecryptableFilesSize,1) + ")\r\n";
+	    results += "12. " + prefix + " " + readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n";
+	    results += "13. " + prefix + " " + writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n";
+	    results += "\r\n";
+
+	    if (interactive) { results += "What list would you like to see ? "; }
+	return results;
+    }
+
     @Override public void test(String message) { log(message, true, true, false, false, false); }
     
     @Override
@@ -981,35 +1012,36 @@ class TestListReaderThread extends Thread
     private CLUI clui;
     
     public TestListReaderThread(CLUI ui) { this.clui = ui; }
-    
+
     @Override public void run()
     {
-	if (clui.testAnswer.isEmpty())
-	{
-	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-	    clui.log("Scanning results:\r\n", false, true, false, false, false); // Leave Error file to: true
-	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-	    if (clui.finalCrypt.getTest()) { clui.log(" C. Continue test\r\n", false, true, false, false, false); }
-	    clui.log(" 1. print " + clui.decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(clui.decryptedList.decryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log(" 2. print " + clui.encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(clui.encryptableList.encryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-    //
-	    clui.log(" 3. print " + clui.encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(clui.encryptedList.encryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log(" 4. print " + clui.decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(clui.decryptableList.decryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-    //
-	    clui.log(" 5. print " + clui.emptyList.emptyFiles + " empty files \r\n", false, true, false, false, false);
-	    clui.log(" 6. print " + clui.symlinkList.symlinkFiles + " symlink files \r\n", false, true, false, false, false);
-	    clui.log(" 7. print " + clui.unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(clui.unreadableList.unreadableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log(" 8. print " + clui.unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(clui.unwritableList.unwritableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log(" 9. print " + clui.hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(clui.hiddenList.hiddenFilesSize,1) + ")\r\n", false, true, false, false, false);
-    //
-	    clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log("12. print " + clui.readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
 
-	    clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
-	    
+	if (clui.testAnswer.isEmpty())
+	{	    
+	    clui.log(clui.getScanResults(true), false, true, false, false, false); // Leave Error file to: true
+//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
+//	    clui.log("Scanning results:\r\n", false, true, false, false, false); // Leave Error file to: true
+//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
+//	    if (clui.finalCrypt.getTest()) { clui.log(" C. Continue test\r\n", false, true, false, false, false); }
+//	    clui.log(" 1. print " + clui.decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(clui.decryptedList.decryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log(" 2. print " + clui.encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(clui.encryptableList.encryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//    //
+//	    clui.log(" 3. print " + clui.encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(clui.encryptedList.encryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log(" 4. print " + clui.decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(clui.decryptableList.decryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//    //
+//	    clui.log(" 5. print " + clui.emptyList.emptyFiles + " empty files \r\n", false, true, false, false, false);
+//	    clui.log(" 6. print " + clui.symlinkList.symlinkFiles + " symlink files \r\n", false, true, false, false, false);
+//	    clui.log(" 7. print " + clui.unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(clui.unreadableList.unreadableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log(" 8. print " + clui.unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(clui.unwritableList.unwritableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log(" 9. print " + clui.hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(clui.hiddenList.hiddenFilesSize,1) + ")\r\n", false, true, false, false, false);
+//    //
+//	    clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log("12. print " + clui.readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
+//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
+//
+//	    clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
 	    try(Scanner in = new Scanner(System.in)) { clui.testAnswer = in.nextLine().trim(); }
 	}
 	
