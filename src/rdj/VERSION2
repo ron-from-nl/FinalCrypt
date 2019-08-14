@@ -1,7 +1,7 @@
 [Version] =		{5.3.1}
 [] = {} ================================================================
 [Release Notes] =	{Added non interactive print scan results to CLI}
-[Release Message] =	{Added non interactive print scan results to CLI}
+[Release Message] =	{Corrected print Write / Matched Key Path in CLI}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -30,6 +30,7 @@
 [Update Notes] =	{Update 1}
 [Update Notes] =	{}
 [Update Notes] =	{   Added non interactive print scan results to CLI}
+[Update Notes] =	{   Corrected print Write / Matched Key Path in CLI}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
