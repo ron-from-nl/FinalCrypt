@@ -4,14 +4,14 @@ Examples:
 
             java -cp finalcrypt.jar rdj/CLUI --examples                     Print commandline examples.
 
-            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k "key_dir" -t "target_dir" -t "target_file"  # Auto Key Mode Test Run
-            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k "key_dir" -t "target_dir" -t "target_file"  # Auto Key Mode Test Run
+            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k "key_dir" -t "target_dir" -t "target_file" # Test Encrypt (Auto Key Mode)
+            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k "key_dir" -t "target_dir" -t "target_file" # Test Decrypt (Auto Key Mode)
 
-            java -cp finalcrypt.jar rdj/CLUI --encrypt        -k "key_dir" -t "target_dir" -t "target_file"  # Auto Key Mode
-            java -cp finalcrypt.jar rdj/CLUI --decrypt        -k "key_dir" -t "target_dir" -t "target_file"  # Auto Key Mode
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -k "key_dir" -t "target_dir" -t "target_file"  # Encrypt (Auto Key Mode)
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -k "key_dir" -t "target_dir" -t "target_file"  # Decrypt (Auto Key Mode)
 
-            java -cp finalcrypt.jar rdj/CLUI --encrypt        -k "key_file" -t "target_file"  # Manual Key Mode (not recommended)
-            java -cp finalcrypt.jar rdj/CLUI --decrypt        -k "key_file" -t "target_file"  # Manual Key Mode (not recommended)
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -k "key_file" -t "target_file"  # Encrypt (Manual Key Mode not recommended)
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -k "key_file" -t "target_file"  # Decrypt (Manual Key Mode not recommended)
 
 Mode:
             <--encrypt>           -k "key_dir"       -t "target"	    Encrypt Targets.
@@ -26,13 +26,13 @@ Options:
             [-h] [--help]                                                   Print help page.
             [--password]          -p 'password'                             Optional password (non-interactive).
             [--password-prompt]   -pp                                       Optional password (safe interactive prompt).
-            [--key-chksum]        -k "key_file"	                            Calculate key checksum.
+            [--key-chksum]        -k "key_file"			            Calculate key checksum.
             [--no-key-size]                                                 Allow key-size less than the default minimum of 140 bytes.
             [-d] [--debug]                                                  Enables debugging mode.
             [-v] [--verbose]                                                Enables verbose mode.
             [--print]                                                       Print all bytes binary, hexdec & char (slows encryption severely).
             [-l] [--symlink]                                                Include symlinks (can cause double encryption! Not recommended!).
-            [--disable-MAC]                                                 Disable Message Authentication (use only experimentally).
+            [--disable-MAC]                                                 Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).
             [--version]                                                     Print FinalCrypt version.
             [--license]                                                     Print FinalCrypt license.
             [--check-update]                                                Check for online updates.
@@ -42,6 +42,7 @@ Options:
 Filtering Options:
 
             [--test]                                                        Test run without executing (also prints statistics at the end).
+            [--test "answer"]                                               Same but then with non interactive answer (c,1-13) included.
             [-w 'wildcard']                                                 File wildcard INCLUDE filter. Uses: "Globbing Patterns Syntax".
             [-W 'wildcard']                                                 File wildcard EXCLUDE filter. Uses: "Globbing Patterns Syntax".
             [-r 'regex']                                                    File regular expression filter. Advanced filename filter!
@@ -50,8 +51,8 @@ Parameters:
 
             <-k "keydir">                                                   The directory that holds your keys. Keep SECRET!
 
-            <-t / -b>                                                       Target items you want to encrypt. target (-t) or batch (-b).
-            <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt.
+            <-t / -b>                                                       The target items you want to encrypt. Individual (-t) or by batch (-b).
+            <[-t "file/dir"]>                                               The target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 5.3.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.3.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

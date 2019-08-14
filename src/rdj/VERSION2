@@ -1,7 +1,7 @@
-[Version] =		{5.3.0}
+[Version] =		{5.3.1}
 [] = {} ================================================================
-[Release Notes] =	{Fixed Audio System instability on Linux}
-[Release Message] =	{Added delete button visible on all OSes}
+[Release Notes] =	{Added non interactive print scan results to CLI}
+[Release Message] =	{Added non interactive print scan results to CLI}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -21,15 +21,15 @@
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{   Print scanresults notes:}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   FinalCrypt crashes on Ubuntu 19.04 outside JVM}
-[Upgrade Notes] =	{   due to new font rendering library libpango-1.0}
+[Upgrade Notes] =	{   FinalCrypt can crash on Ubuntu 19.04 outside JVM}
+[Upgrade Notes] =	{   due to new a font rendering library libpango-1.0}
 [Upgrade Notes] =	{   This update allows full feature fallback to CLI}
 [Upgrade Notes] =	{   This bug is reported. Ubuntu 18 is not affected}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   See Upgrade 3}
+[Update Notes] =	{   Added non interactive print scan results to CLI}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

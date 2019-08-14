@@ -1,9 +1,16 @@
-Examples:   java -cp finalcrypt.jar rdj/CLUI <Mode> [options] <Parameters>
+Usage:      java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
+
+Examples:
 
             # Test Run Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir
 
             java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k "mykeydir" -t "mydocdir" -t "myfile"
             java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k "mykeydir" -t "mydocdir" -t "myfile"
+
+            # Same but then with non interactive answer (c,1-13) included
+
+            java -cp finalcrypt.jar rdj/CLUI --encrypt --test c -k "mykeydir" -t "mydocdir" -t "myfile"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt --test c -k "mykeydir" -t "mydocdir" -t "myfile"
 
             # Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir
 
@@ -63,4 +70,4 @@ Key Device Examples (Linux):
             java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
 
-FinalCrypt 5.3.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.3.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

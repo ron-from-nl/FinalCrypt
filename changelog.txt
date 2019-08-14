@@ -1,3 +1,4 @@
+5.3.1 Added non interactive print scan results to CLI
 5.3.0 Added Show Password Tooltip with fontsize 14px
       Added Print scanresults Command Line Interface
       Print scanresults notes:

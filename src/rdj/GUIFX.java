@@ -2894,6 +2894,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
+	    tgtFileDeleteButton2.setDisable(true);
+	    keyFileDeleteButton2.setDisable(true);
 	    
 	    pwdField.setDisable(true);
 	    pwdtxtField.setDisable(true);

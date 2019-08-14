@@ -115,6 +115,10 @@ public class CLUI implements UI
     private boolean pwdPromptNeeded =	false;
     private boolean pwdIsSet =		false;
     
+    protected boolean test =		false;
+    protected String testAnswer =		"";
+    
+    
     public CLUI(String[] args)
     {	
         this.ui = this;
@@ -204,8 +208,9 @@ public class CLUI implements UI
 			&&  (!createManualKeyFile)
 		    )												    { log("\r\nWarning: No <--Mode> parameter specified" + "\r\n",			    false, true, true, false, false); usagePrompt(true); }
 
-//          Filtering Options
-            else if ( args[paramCnt].equals("--test"))                                                              { finalCrypt.setTest(true); }
+//          Filtering Options if ( validateIntegerString(args[paramCnt + 1]) ) {  }
+            else if ( ( args[paramCnt].equals("--test")) && (args[paramCnt+1].isEmpty()) )                          { test=true; finalCrypt.setTest(test);  }
+            else if ( ( args[paramCnt].equals("--test")) && (!args[paramCnt+1].isEmpty()) )			    { test=true; finalCrypt.setTest(test); if ((args[paramCnt + 1].toLowerCase().equals("c")) || ( validateIntegerString(args[paramCnt + 1]) )) {testAnswer = args[paramCnt + 1]; paramCnt++;} }
             else if ( ( args[paramCnt].equals("-w")) && (!args[paramCnt+1].isEmpty()) )				    { negatePattern = false; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( ( args[paramCnt].equals("-W")) && (!args[paramCnt+1].isEmpty()) )				    { negatePattern = true; pattern = "glob:" + args[paramCnt+1]; paramCnt++; }
             else if ( ( args[paramCnt].equals("-r")) && (!args[paramCnt+1].isEmpty()) )				    { pattern = "regex:" + args[paramCnt+1]; paramCnt++; }
@@ -696,11 +701,14 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --examples                     Print commandline examples.\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k \"key_dir\" -t \"target_dir\" -t \"target_file\"  # Auto Key Mode\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_dir\" -t \"target_dir\" -t \"target_file\"  # Auto Key Mode\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k \"key_dir\" -t \"target_dir\" -t \"target_file\" # Test Encrypt (Auto Key Mode)\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k \"key_dir\" -t \"target_dir\" -t \"target_file\" # Test Decrypt (Auto Key Mode)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k \"key_file\" -t \"target_file\"  # Manual Key Mode (not recommended)\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_file\" -t \"target_file\"  # Manual Key Mode (not recommended)\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k \"key_dir\" -t \"target_dir\" -t \"target_file\"  # Encrypt (Auto Key Mode)\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_dir\" -t \"target_dir\" -t \"target_file\"  # Decrypt (Auto Key Mode)\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k \"key_file\" -t \"target_file\"  # Encrypt (Manual Key Mode not recommended)\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_file\" -t \"target_file\"  # Decrypt (Manual Key Mode not recommended)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Mode:\r\n", false, true, false, false, false);
         log("            <--encrypt>           -k \"key_dir\"       -t \"target\"	    Encrypt Targets.\r\n", false, true, false, false, false);
@@ -737,6 +745,7 @@ public class CLUI implements UI
         log("Filtering Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            [--test]                                                        Test run without executing (also prints statistics at the end).\r\n", false, true, false, false, false);
+        log("            [--test \"answer\"]                                               Same but then with non interactive answer (c,1-13) included.\r\n", false, true, false, false, false);
         log("            [-w \'wildcard\']                                                 File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
         log("            [-W \'wildcard\']                                                 File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
         log("            [-r \'regex\']                                                    File regular expression filter. Advanced filename filter!\r\n", false, true, false, false, false);
@@ -756,7 +765,19 @@ public class CLUI implements UI
     private void examples()
     {
         log("\r\n", false, true, false, false, false);
-        log("Examples:   java -cp finalcrypt.jar rdj/CLUI <Mode> [options] <Parameters>\r\n", false, true, false, false, false);
+        log("Usage:      java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Examples:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Test Run Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k \"mykeydir\" -t \"mydocdir\" -t \"myfile\"\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k \"mykeydir\" -t \"mydocdir\" -t \"myfile\"\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            # Same but then with non interactive answer (c,1-13) included\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt --test c -k \"mykeydir\" -t \"mydocdir\" -t \"myfile\"\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt --test c -k \"mykeydir\" -t \"mydocdir\" -t \"myfile\"\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            # Encrypt / Decrypt mydir and myfile auto creating and selecting keys in mykeydir\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
@@ -968,116 +989,119 @@ class TestListReaderThread extends Thread
     
     @Override public void run()
     {
-	clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-	clui.log("Scanning results:\r\n", false, true, false, false, false); // Leave Error file to: true
-        clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-	if (clui.finalCrypt.getTest()) { clui.log(" C. Continue test\r\n", false, true, false, false, false); }
-	clui.log(" 1. print " + clui.decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(clui.decryptedList.decryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log(" 2. print " + clui.encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(clui.encryptableList.encryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//
-	clui.log(" 3. print " + clui.encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(clui.encryptedList.encryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log(" 4. print " + clui.decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(clui.decryptableList.decryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//
-	clui.log(" 5. print " + clui.emptyList.emptyFiles + " empty files \r\n", false, true, false, false, false);
-	clui.log(" 6. print " + clui.symlinkList.symlinkFiles + " symlink files \r\n", false, true, false, false, false);
-	clui.log(" 7. print " + clui.unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(clui.unreadableList.unreadableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log(" 8. print " + clui.unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(clui.unwritableList.unwritableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log(" 9. print " + clui.hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(clui.hiddenList.hiddenFilesSize,1) + ")\r\n", false, true, false, false, false);
-//
-	clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log("12. print " + clui.matchedAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.matchedAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-	clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-
-	clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
-        try(Scanner in = new Scanner(System.in))
+	if (clui.testAnswer.isEmpty())
 	{
-            String input = in.nextLine(); 
+	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
+	    clui.log("Scanning results:\r\n", false, true, false, false, false); // Leave Error file to: true
+	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
+	    if (clui.finalCrypt.getTest()) { clui.log(" C. Continue test\r\n", false, true, false, false, false); }
+	    clui.log(" 1. print " + clui.decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(clui.decryptedList.decryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log(" 2. print " + clui.encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(clui.encryptableList.encryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+    //
+	    clui.log(" 3. print " + clui.encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(clui.encryptedList.encryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log(" 4. print " + clui.decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(clui.decryptableList.decryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+    //
+	    clui.log(" 5. print " + clui.emptyList.emptyFiles + " empty files \r\n", false, true, false, false, false);
+	    clui.log(" 6. print " + clui.symlinkList.symlinkFiles + " symlink files \r\n", false, true, false, false, false);
+	    clui.log(" 7. print " + clui.unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(clui.unreadableList.unreadableFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log(" 8. print " + clui.unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(clui.unwritableList.unwritableFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log(" 9. print " + clui.hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(clui.hiddenList.hiddenFilesSize,1) + ")\r\n", false, true, false, false, false);
+    //
+	    clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log("12. print " + clui.matchedAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.matchedAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
+	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
 
-	    
-	    
-	    if	    ( (clui.finalCrypt.getTest()) && ( input.trim().toLowerCase().equals("c") ))	    { clui.testListAborted = false; }
-	    else if ( input.trim().toLowerCase().equals("1") )
+	    clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
+	    try(Scanner in = new Scanner(System.in))
+	    {
+		clui.testAnswer = in.nextLine(); 	    
+	    }
+	}
+	else
+	{
+	    if	    ( (clui.finalCrypt.getTest()) && ( clui.testAnswer.trim().toLowerCase().equals("c") ))	    { clui.testListAborted = false; }
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("1") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.decryptedList != null) && (clui.decryptedList.size() > 0) ) { clui.log("\r\nDecrypted Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.decryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("2") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("2") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.encryptableList != null) && (clui.encryptableList.size() > 0) ) { clui.log("\r\nEncryptable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.encryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("3") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("3") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.encryptedList != null) && (clui.encryptedList.size() > 0) ) { clui.log("\r\nEncryptedList Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.encryptedList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("4") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("4") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.decryptableList != null) && (clui.decryptableList.size() > 0) ) { clui.log("\r\nDecryptable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.decryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("5") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("5") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.emptyList != null) && (clui.emptyList.size() > 0) ) { clui.log("\r\nEmpty Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.emptyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("6") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("6") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.symlinkList != null) && (clui.symlinkList.size() > 0) ) { clui.log("\r\nSymlink Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.symlinkList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("7") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("7") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.unreadableList != null) && (clui.unreadableList.size() > 0) ) { clui.log("\r\nUnreadable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("8") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("8") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.unwritableList != null) && (clui.unwritableList.size() > 0) ) { clui.log("\r\nUnwritable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("9") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("9") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.hiddenList != null) && (clui.hiddenList.size() > 0) ) { clui.log("\r\nHiddenList Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.hiddenList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("10") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("10") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.unencryptableList != null) && (clui.unencryptableList.size() > 0) ) { clui.log("\r\nUnencryptable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.unencryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("11") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("11") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.undecryptableList != null) && (clui.undecryptableList.size() > 0) ) { clui.log("\r\nUndecryptable Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.undecryptableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("12") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("12") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.matchedAutoKeyList != null) && (clui.matchedAutoKeyList.size() > 0) ) { clui.log("\r\nMatched Key Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.matchedAutoKeyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().equals("13") )
+	    else if ( clui.testAnswer.trim().toLowerCase().equals("13") )
 	    {
 		clui.testListAborted = true;
 		if ( (clui.writeAutoKeyList != null) && (clui.writeAutoKeyList.size() > 0) ) { clui.log("\r\nWrite Key Files:\r\n\r\n", false, true, true, false, false);
 		for (Iterator it = clui.writeAutoKeyList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); clui.log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } clui.log("\r\n", false, true, true, false, false); } else { }
 	    }
-	    else if ( input.trim().toLowerCase().length() == 0 )    { clui.testListAborted = true; System.exit(0); }
-	    else if ( input.toLowerCase().equals("\r\n"))	    { clui.testListAborted = true; System.exit(0); }
+	    else if ( clui.testAnswer.trim().toLowerCase().length() == 0 )    { clui.testListAborted = true; System.exit(0); }
+	    else if ( clui.testAnswer.toLowerCase().equals("\r\n"))	    { clui.testListAborted = true; System.exit(0); }
 	    else { clui.testListAborted = true; System.exit(0); }
 	}
     }
