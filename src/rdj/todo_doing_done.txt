@@ -34,10 +34,13 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Added Show Password Tooltip with fontsize 14px
-Printing scanresults in Command Line Interface
-FinalCrypt crashes on Ubuntu 19.04 libpango-1.0
-This update allows full feature fallback to CLI
+Important: removed partial key reusage on re-encryption 
+Re-encryption now forces the creation of a new Key File
+Decrypting now also deletes the existing used Key File
+Please decrypt & encrypt your files to secure 100% OTP
+
+Disabled the animations, sounds and voices on first use
+Replaced some UTF8 symbols for better Cross OS clarity
 
 ============================= Source Committed ==============================
 

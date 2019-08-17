@@ -277,14 +277,14 @@ public class GUIFX extends Application implements UI, Initializable
     private final Image KEY_MAP_IMAGE =			new Image(getClass().getResourceAsStream("/rdj/images/keymap.png"));
     private final Image KEY_FILE_IMAGE =		new Image(getClass().getResourceAsStream("/rdj/images/key.png"));
     
-    private final String ANIMATED_SYMBOL =		"📽";
-    private final String SOUND_ON_SYMBOL =		"🔊";
-    private final String SOUND_OFF_SYMBOL =		"🔇";
-    private final String CPU_SYMBOL =			"🖳";
-    private final String RAM_SYMBOL =			"🅼";
-    private final String STORAGE_SYMBOL =		"🖴";
-    private final String VOICE_ON_SYMBOL =		"🗣";
-    private final String VOICE_OFF_SYMBOL =		"🔇";
+    private final String ANIMATED_SYMBOL =		"@"; //  📽
+    private final String SOUND_ON_SYMBOL =		"S"; //  🔊
+    private final String SOUND_OFF_SYMBOL =		"s"; //  🔇
+    private final String CPU_SYMBOL =			"¹"; // ♥ 🖳
+    private final String RAM_SYMBOL =			"²"; //  🅼
+    private final String STORAGE_SYMBOL =		"³"; //  🖴
+    private final String VOICE_ON_SYMBOL =		"V"; //  🗣
+    private final String VOICE_OFF_SYMBOL =		"v"; //  🔇
     
     private double load_High_MS_Passed =		0.0d;
     private double load_Low_MS_Passed =			0.0d;
@@ -491,7 +491,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 	this.stage.setOnCloseRequest((WindowEvent e) ->
 	{
-	    new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+	    if ( Voice.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
 	    	    
 //	    Shared
 	    String val = prefs.get("Shared", "Unknown");
@@ -649,13 +649,15 @@ public class GUIFX extends Application implements UI, Initializable
 	sysmon.setTextBaseline(VPos.BOTTOM);
 	sysmon.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 14));
 	
-	sysmon.setFill(Color.valueOf("#58781F"));
+//	sysmon.setFill(Color.valueOf("#58781F"));
+	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.fillText(SOUND_ON_SYMBOL, sysmonOffSetX + 0, 20);
 	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.fillText(CPU_SYMBOL, sysmonOffSetX + 30, 20);
 	sysmon.fillText(RAM_SYMBOL, sysmonOffSetX + 60, 20); 
 	sysmon.fillText(STORAGE_SYMBOL, sysmonOffSetX + 90, 20);
-	sysmon.setFill(Color.valueOf("#58781F"));
+//	sysmon.setFill(Color.valueOf("#58781F"));
+	sysmon.setFill(Color.valueOf("#4A4039"));
 	sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
 	welcome();
 	
@@ -671,8 +673,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    int memUsePosX = userLdPosX + 25;
 	    int ioLoadPosX = memUsePosX + 32;
 
-	    String soundStatusString = "Sound is "; if (Voice.sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_ON_SYMBOL + " to Enable)"; }
-	    String voiceStatusString = "Voice is "; if (Voice.voice_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_ON_SYMBOL + " to Enable)"; }
+	    String soundStatusString = SOUND_ON_SYMBOL + " Sound is "; if (Voice.sound_Is_Enabled) { soundStatusString += "Enabled (Click " + SOUND_ON_SYMBOL + " to Disable)"; } else { soundStatusString += "Disabled (Click " + SOUND_ON_SYMBOL + " to Enable)"; }
+	    String voiceStatusString = VOICE_ON_SYMBOL + " Voice is "; if (Voice.voice_Is_Enabled) { voiceStatusString += "Enabled (Click " + VOICE_ON_SYMBOL + " to Disable)"; } else { voiceStatusString += "Disabled (Click " + VOICE_ON_SYMBOL + " to Enable)"; }
 	    String animationStatusString = "Animation is "; if (animation_Is_Enabled) { animationStatusString += "Enabled (Click display to Disable)"; } else { animationStatusString += "Disabled (Click display to Enable)"; }
 
 	    String sysMonString = "";
@@ -768,8 +770,8 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void updateSystemMonitor()
     {
-	double userLoadPerc = getUserLoadPerc(); String userLoadString = "CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
-	double throughputPerc = ((megaBytesPerSecond) / (finalCrypt.io_Throughput_Ceiling / 100)); String throughputString = "Storage I/O Throughput (" + Stats.getDecimal((throughputPerc * (finalCrypt.io_Throughput_Ceiling / 100)),1) + " MiB/S)";
+	double userLoadPerc = getUserLoadPerc(); String userLoadString = CPU_SYMBOL + " CPU Workload (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
+	double throughputPerc = ((megaBytesPerSecond) / (finalCrypt.io_Throughput_Ceiling / 100)); String throughputString = STORAGE_SYMBOL + " Storage I/O Throughput (" + Stats.getDecimal((throughputPerc * (finalCrypt.io_Throughput_Ceiling / 100)),1) + " MiB/S)";
 	displaySystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, throughputPerc, throughputString);
     }
     
@@ -781,7 +783,7 @@ public class GUIFX extends Application implements UI, Initializable
 	memStats.usedMem = Runtime.getRuntime().totalMemory();
 	memStats.usedMemPerc = Double.valueOf(memStats.usedMem / (memStats.totMem / 100d)).doubleValue();
 	memStats.memStatsString = "";
-	memStats.memStatsString += "RAM Mem Used (" + Stats.getDecimal(memStats.usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(memStats.usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(memStats.totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB"; 
+	memStats.memStatsString += RAM_SYMBOL + " RAM Mem Used (" + Stats.getDecimal(memStats.usedMemPerc,1) + "%) " + Stats.getDecimal(Long.valueOf(memStats.usedMem).doubleValue() / (1024d * 1024d),1) + " MiB / " + Stats.getDecimal(Long.valueOf(memStats.totMem).doubleValue() / (1024d * 1024d * 1024d),1) + " GiB"; 
 
 	return memStats;
     }
@@ -1114,24 +1116,24 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	    Sound
 	    String val = prefs.get("Sound", "Unknown");
-	    if (val.equals("Unknown"))		{ setSound(true); prefs.put("Sound", "Enabled"); }
+	    if (val.equals("Unknown"))		{ setSound(false); prefs.put("Sound", "Disabled"); }
 	    else if (val.equals("Enabled"))	{ setSound(true); }
 	    else if (val.equals("Disabled"))	{ setSound(false); }
-	    else				{ prefs.put("Sound", "Enabled"); setSound(true); }
+	    else				{ prefs.put("Sound", "Disabled"); setSound(false); }
 
 //	    Voice
 	    val = prefs.get("Voice", "Unknown");
-	    if (val.equals("Unknown"))		{ setVoice(true); prefs.put("Voice", "Enabled"); }
+	    if (val.equals("Unknown"))		{ setVoice(false); prefs.put("Voice", "Disabled"); }
 	    else if (val.equals("Enabled"))	{ setVoice(true); }
 	    else if (val.equals("Disabled"))	{ setVoice(false); }
-	    else				{ prefs.put("Sound", "Enabled"); setVoice(true); }
+	    else				{ prefs.put("Sound", "Disabled"); setVoice(false); }
 	    
 //	    Animated
 	    val = prefs.get("Animated", "Unknown");
-	    if (val.equals("Unknown"))		{ prefs.put("Animated", "Enabled"); animation_Is_Enabled = true; }
+	    if (val.equals("Unknown"))		{ prefs.put("Animated", "Disabled"); animation_Is_Enabled = false; }
 	    else if (val.equals("Enabled"))	{ animation_Is_Enabled = true;}
 	    else if (val.equals("Disabled"))	{ animation_Is_Enabled = false; }
-	    else				{ prefs.put("Animated", "Enabled"); animation_Is_Enabled = true; }
+	    else				{ prefs.put("Animated", "Disabled"); animation_Is_Enabled = false; }
 	    
 //	    new Audio_Instance().play(this, Audio.SND_STARTUP,Audio.AUDIO_CODEC);
 	});
@@ -1290,15 +1292,18 @@ public class GUIFX extends Application implements UI, Initializable
 	String symbols = "";
 	symbols += "Symbols:            ";
 	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_READ_DESC + ": " + FinalCrypt.UTF8_MAC_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_WRTE_DESC + ": " + FinalCrypt.UTF8_MAC_WRTE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
 //	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
 
@@ -3149,7 +3154,11 @@ public class GUIFX extends Application implements UI, Initializable
 //	    }};
 //	    Timer fileChooserPropertyChecksTaskTimer = new java.util.Timer(); fileChooserPropertyChecksTaskTimer.schedule(fileChooserPropertyChecksTask, 100L); // Needs a delay for proper column width
 	    
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { tgtFileChooserPropertyCheck(true); keyFileChooserPropertyCheck(); })); timeline.play();
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+	    {
+		tgtFileChooserPropertyCheck(true);
+		keyFileChooserPropertyCheck(); }));
+	    timeline.play();
 	});
     }
     

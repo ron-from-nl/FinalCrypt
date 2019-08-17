@@ -1027,7 +1027,7 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="2">
                                        <children>
-                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 14; -fx-text-fill: white;" styleClass="background_bottom" text="Ⅱ" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 14; -fx-text-fill: white;" styleClass="background_bottom" text="Pause" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
@@ -1042,7 +1042,7 @@
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
                                        <children>
-                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" minHeight="40.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 14;" styleClass="background_bottom" text="■" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-55.0" layoutY="2.0" minHeight="40.0" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 14;" styleClass="background_bottom" text="Stop" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>

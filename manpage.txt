@@ -1,4 +1,4 @@
-Usage:	    java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
+Usage:      java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
 
 Examples:
 
@@ -26,13 +26,13 @@ Options:
             [-h] [--help]                                                   Print help page.
             [--password]          -p 'password'                             Optional password (non-interactive).
             [--password-prompt]   -pp                                       Optional password (safe interactive prompt).
-            [--key-chksum]        -k "key_file"			            Calculate key checksum.
+            [--key-chksum]        -k "key_file"                             Calculate key checksum.
             [--no-key-size]                                                 Allow key-size less than the default minimum of 140 bytes.
             [-d] [--debug]                                                  Enables debugging mode.
             [-v] [--verbose]                                                Enables verbose mode.
             [--print]                                                       Print all bytes binary, hexdec & char (slows encryption severely).
             [-l] [--symlink]                                                Include symlinks (can cause double encryption! Not recommended!).
-            [--disable-MAC]                                                 Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).
+            [--disable-MAC]                                                 Disable MAC - (not compatible with MAC encrypted files!)
             [--version]                                                     Print FinalCrypt version.
             [--license]                                                     Print FinalCrypt license.
             [--check-update]                                                Check for online updates.
@@ -51,8 +51,8 @@ Parameters:
 
             <-k "keydir">                                                   The directory that holds your keys. Keep SECRET!
 
-            <-t / -b>                                                       The target items you want to encrypt. Individual (-t) or by batch (-b).
-            <[-t "file/dir"]>                                               The target items (files or directories) you want to encrypt (recursive).
+            <-t / -b>                                                       Target items you want to encrypt. Individual (-t) or by batch (-b).
+            <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 5.3.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.4.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

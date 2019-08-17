@@ -24,13 +24,13 @@ Examples:
 
             # Encrypt / Decrypt all *.doc files in mydir
 
-            java -cp finalcrypt.jar rdj/CLUI --encrypt -w '*.doc'-k "mykeydir" -t "mydir"
-            java -cp finalcrypt.jar rdj/CLUI --decrypt -w '*.doc'-k "mykeydir" -t "mydir"
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -w "*.doc" -k "mykeydir" -t "mydir"
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -w "*.doc" -k "mykeydir" -t "mydir"
 
             # Encrypt / Decrypt all non *.doc files in mydir
 
-            java -cp finalcrypt.jar rdj/CLUI --encrypt -W '*.doc' -k "mykeydir" -t "mydir" 
-            java -cp finalcrypt.jar rdj/CLUI --decrypt -W '*.doc' -k "mykeydir" -t "mydir" 
+            java -cp finalcrypt.jar rdj/CLUI --encrypt -W "*.doc" -k "mykeydir" -t "mydir" 
+            java -cp finalcrypt.jar rdj/CLUI --decrypt -W "*.doc" -k "mykeydir" -t "mydir" 
 
             # Encrypt / Decrypt all *.doc files in mydir
 
@@ -70,4 +70,4 @@ Key Device Examples (Linux):
             java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
 
-FinalCrypt 5.3.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.4.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

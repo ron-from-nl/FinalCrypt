@@ -690,7 +690,7 @@ public class CLUI implements UI
 	
         String fileSeparator = java.nio.file.FileSystems.getDefault().getSeparator();
         log("\r\n", false, true, false, false, false);
-        log("Usage:	    java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
+        log("Usage:      java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Examples:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
@@ -718,13 +718,13 @@ public class CLUI implements UI
         log("            [-h] [--help]                                                   Print help page.\r\n", false, true, false, false, false);
         log("            [--password]          -p \'password\'                             Optional password (non-interactive).\r\n", false, true, false, false, false);
         log("            [--password-prompt]   -pp                                       Optional password (safe interactive prompt).\r\n", false, true, false, false, false);
-        log("            [--key-chksum]        -k \"key_file\"			            Calculate key checksum.\r\n", false, true, false, false, false);
+        log("            [--key-chksum]        -k \"key_file\"                             Calculate key checksum.\r\n", false, true, false, false, false);
         log("            [--no-key-size]                                                 Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]                                                  Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]                                                Enables verbose mode.\r\n", false, true, false, false, false);
         log("            [--print]                                                       Print all bytes binary, hexdec & char (slows encryption severely).\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]                                                Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
-        log("            [--disable-MAC]                                                 Disable Message Authentication Code - (files will be encrypted without Message Authentication Code header).\r\n", false, true, false, false, false);
+        log("            [--disable-MAC]                                                 Disable MAC - (not compatible with MAC encrypted files!)\r\n", false, true, false, false, false);
         log("            [--version]                                                     Print " + version.getProductName() + " version.\r\n", false, true, false, false, false);
         log("            [--license]                                                     Print " + version.getProductName() + " license.\r\n", false, true, false, false, false);
         log("            [--check-update]                                                Check for online updates.\r\n", false, true, false, false, false);
@@ -749,8 +749,8 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("            <-k \"keydir\">                                                   The directory that holds your keys. Keep SECRET!\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            <-t / -b>                                                       The target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, false, false, false);
-        log("            <[-t \"file/dir\"]>                                               The target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
+        log("            <-t / -b>                                                       Target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, false, false, false);
+        log("            <[-t \"file/dir\"]>                                               Target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
         log("            <[-b \"batchfile\"]>                                              Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
@@ -786,13 +786,13 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("            # Encrypt / Decrypt all *.doc files in mydir\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -w '*.doc'-k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -w '*.doc'-k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -w \"*.doc\" -k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -w \"*.doc\" -k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            # Encrypt / Decrypt all non *.doc files in mydir\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -W '*.doc' -k \"mykeydir\" -t \"mydir\" \r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -W '*.doc' -k \"mykeydir\" -t \"mydir\" \r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -W \"*.doc\" -k \"mykeydir\" -t \"mydir\" \r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -W \"*.doc\" -k \"mykeydir\" -t \"mydir\" \r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            # Encrypt / Decrypt all *.doc files in mydir\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
@@ -872,15 +872,18 @@ public class CLUI implements UI
 	String symbols = "";
 	symbols += "Symbols:            ";
 	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_READ_DESC + ": " + FinalCrypt.UTF8_MAC_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_WRTE_DESC + ": " + FinalCrypt.UTF8_MAC_WRTE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
 //	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
 	
@@ -920,7 +923,7 @@ public class CLUI implements UI
 	    results += "\r\n";
 	    results += "Scanning results:\r\n";
 	    results += "\r\n";
-	    if (finalCrypt.getTest()) { results += " C. Continue test\r\n"; }
+	    if (interactive) { results += " C. Continue test\r\n"; }
 	    results += " 1. " + prefix + " " + decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(decryptedList.decryptedFilesSize,1) + ")\r\n";
 	    results += " 2. " + prefix + " " + encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(encryptableList.encryptableFilesSize,1) + ")\r\n";
     //

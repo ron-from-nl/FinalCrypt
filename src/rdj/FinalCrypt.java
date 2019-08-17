@@ -73,45 +73,61 @@ public class FinalCrypt extends Thread
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //											❌ ❎ 🚫 ⊝ ⊖⭕⛔ ⨷ 🆘 ☝ ☹ 💣 🔐 🔏 📄 XOR ⊕ XOR ⊻ 🔀 ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  🔓->🔒->🔓 ⎘ ✔ ⚛
 //											🡔 🡕 🡖 🡗 | 🡤 🡥 🡦 🡧 | 🡬 🡭 🡮 🡯 | 🡴 🡵 🡶 🡷 | 🡼 🡽 🡾 🡿 | 🢄 🢅 🢆 🢇 | ⬈ ⬉ ⬊ ⬋ | ⇖ ⇗ ⇘ ⇙ | ↖ ↗ ↘ ↙
-    public static final String WHEEL_OF_DHARMA_DESC =		    "Wheel of Dharma";
-    public static final String WHEEL_OF_DHARMA_SYMBOL =		    "☸";
-
-    public static final String UTF8_ENCRYPT_SYMBOL =		    "🔒";
-    public static final String UTF8_XOR_NOMAC_SYMBOL =		    "🔀";
-    public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "⚠";
-
+//    public static final String WHEEL_OF_DHARMA_DESC =		    "Wheel of Dharma";
+//    public static final String WHEEL_OF_DHARMA_SYMBOL =		    "☸";
+//
+    public static final String UTF8_ENCRYPT_SYMBOL =		    "E"; // 🔒
     public static final String UTF8_ENCRYPT_DESC =		    "Encrypt";
+
+    public static final String UTF8_XOR_NOMAC_SYMBOL =		    "X";
     public static final String UTF8_XOR_NOMAC_DESC =		    "XOR";
+
+    public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "U"; // ⚠
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
 
-    public static final String UTF8_DECRYPT_SYMBOL =		    "🔓";
-    public static final String UTF8_UNDECRYPTABLE_SYMBOL =	    "⚠";
+    public static final String UTF8_DECRYPT_SYMBOL =		    "D"; // 🔓
     public static final String UTF8_DECRYPT_DESC =		    "Decrypt";
+
+    public static final String UTF8_UNDECRYPTABLE_SYMBOL =	    "U"; // ⚠
     public static final String UTF8_UNDECRYPTABLE_DESC =	    "Undecryptable";
 
     public static 	String UTF8_PROCESS_SYMBOL =		    "?";
 
-    public static final String UTF8_CLONE_SYMBOL =		    "℄";
-    public static final String UTF8_DELETE_SYMBOL =		    "🗑";
-
+    public static final String UTF8_CLONE_SYMBOL =		    "C"; // ℄
     public static final String UTF8_CLONE_DESC =		    "Clone";
+
+    public static final String UTF8_KEY_DESC =			    "Key";
+    public static final String UTF8_KEY_SYMBOL =			    "K"; // 🗝
+    
+    public static final String UTF8_OLD_TARGET_DESC =		    "Old Target";
+    public static final String UTF8_OLD_TARGET_SYMBOL =		    "O"; // 🗝
+    
+    public static final String UTF8_NEW_TARGET_DESC =		    "New Target";
+    public static final String UTF8_NEW_TARGET_SYMBOL =		    "N"; // 🗝
+    
+    public static final String UTF8_MAC_DESC =			    "MAC";
+    public static final String UTF8_MAC_SYMBOL =			    "M"; // 🖃
+        
+    public static final String UTF8_CREATE_SYMBOL =		    "+"; // 🗑
+    public static final String UTF8_CREATE_DESC =		    "Create";
+
+    public static final String UTF8_READ_SYMBOL =		    "r"; // 🗑
+    public static final String UTF8_READ_DESC =			    "Read";
+
+    public static final String UTF8_WRITE_SYMBOL =		    "w"; // 🗑
+    public static final String UTF8_WRITE_DESC =		    "Write";
+
+    public static final String UTF8_DELETE_SYMBOL =		    "-"; // 🗑
     public static final String UTF8_DELETE_DESC =		    "Delete";
 
-    public static final String UTF8_KEY_DESC =			    "Create Key";
-    public static final String UTF8_KEY_SYMBOL =		    "🗝";
-    
-    public static final String UTF8_MAC_READ_DESC =		    "MAC Read";
-    public static final String UTF8_MAC_READ_SYMBOL =		    "🖃";
-    
-    public static final String UTF8_MAC_WRTE_DESC =		    "MAC Write";
-    public static final String UTF8_MAC_WRTE_SYMBOL =		    "🖆";
-    
-    public static final String UTF8_FINISHED_SYMBOL =		    "✔";
-
+    public static final String UTF8_FINISHED_SYMBOL =		    "1"; // ✔
     public static final String UTF8_FINISHED_DESC =		    "Finished";
     
-    public static final String UTF8_PAUSE_SYMBOL =		    "Ⅱ";
-    public static final String UTF8_STOP_SYMBOL =		    "■";
+    public static final String UTF8_UNFINISHED_SYMBOL =		    "0"; // ✔
+    public static final String UTF8_UNFINISHED_DESC =		    "Unfinished";
+    
+    public static final String UTF8_PAUSE_SYMBOL =		    "PS"; // Ⅱ
+    public static final String UTF8_STOP_SYMBOL =		    "ST"; // ■
 
     public static final String UTF8_PAUSE_DESC =		    "Pause";
     public static final String UTF8_STOP_DESC =			    "Stop";
@@ -398,8 +414,8 @@ public class FinalCrypt extends Thread
 			    // Create non existing directory structure for key
 			    try { Files.createDirectories(autoKeyPath.getParent()); } catch (IOException ex) { ui.log("Error: Files.createDirectories(..): " + ex.getMessage() + "\r\n", true, true, true, true, false); break; }
 
-			    if ( dynamicKeyFCPath.size < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) ) // Only append extra key data when key is smaller than data file
-			    {
+//			    if ( dynamicKeyFCPath.size < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) ) // Only append extra key data when key is smaller than data file
+			    { // Allways write a new full size key
 				if ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize) { bufferSize =  (int) ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ); }
 
 				boolean inputEnded = false;
@@ -410,8 +426,8 @@ public class FinalCrypt extends Thread
 
 				ByteBuffer  randomBuffer =	    ByteBuffer.allocate(bufferSize); randomBuffer.clear();
 
-				ui.log(UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_KEY_SYMBOL + " ", false, true, true, false, false);
+				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL, false, true, true, false, false);
 
 				write1loop: while ( (totalTranfered < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE )) && (! inputEnded ))
 				{
@@ -436,7 +452,7 @@ public class FinalCrypt extends Thread
 
 				    // Write Device (randomBuffer3 became randomBuffer1)
 				    wrteKeyStat.setFileStartEpoch();
-				    try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(dynamicKeyFCPath.path, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
+				    try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(dynamicKeyFCPath.path, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
 				    {
 					writeKeyFileChannel.position(writeKeyFileChannelPosition);
 					writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer); randomBuffer.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;
@@ -494,7 +510,7 @@ public class FinalCrypt extends Thread
 			    {				
 				if ( ! test )
 				{
-				    ui.log(UTF8_MAC_WRTE_SYMBOL + " ", false, true, true, false, false);
+				    ui.log(UTF8_CREATE_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
 				    // Add MAC to targetDestinPath
 				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC)))
@@ -524,7 +540,7 @@ public class FinalCrypt extends Thread
 			    {
 				if (! test)
 				{
-				    ui.log(UTF8_MAC_READ_SYMBOL + " ", false, true, true, false, false);
+				    ui.log(UTF8_READ_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
 				    ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2))); targetSourceBuffer.clear();
 				    try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, EnumSet.of(StandardOpenOption.READ)))
 				    {
@@ -584,7 +600,14 @@ public class FinalCrypt extends Thread
 		    {
 			boolean deleted = false;
 			try { deleted = Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+			if ( deleted )
+			{
+			    ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+			}
+			else
+			{
+			    ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+			}
 			targetSourceEnded = true;
 			ui.log("\r\n", true, true, true, false, false);
 			filesBytesPerMilliSecond = 0d;
@@ -764,7 +787,7 @@ public class FinalCrypt extends Thread
 			{
 			    boolean deleted = false;
 			    try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-			    if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " " + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+			    if ( deleted ) { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 			    targetSourceEnded = true;
 //			    ui.log("\r\n", true, true, true, false, false);
 			    targetDestinEnded = true;
@@ -854,9 +877,20 @@ public class FinalCrypt extends Thread
 //			After the shredding stage of the process
 			boolean deleted = false;
 			try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+
+
+//			Delete the key file after decryption
+			if (! encryptMode)
+			{
+			    deleted = false;
+			    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + dynamicKeyFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+			    if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false); }
+			}
 		    }
+		    
 		}
+		
 
 		byte[] srcHashBytes = srcMessageDigest.digest();
 		String srcHashString = getHexString(srcHashBytes,2); // print checksum
@@ -893,7 +927,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, dynamicKeyFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();

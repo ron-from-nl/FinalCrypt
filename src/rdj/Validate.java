@@ -234,7 +234,7 @@ public class Validate
 
     synchronized public static long getTargetWriteAutoKeySizeRequired(UI ui, Path targetSourcePath, long targetSourceSize, Path keySourcePath)
     {
-	long existingWriteAutoKeySize = 0L;
+//	long existingWriteAutoKeySize = 0L;
 	long writeAutoKeySize = 0L;
 	
 	if ( keySourcePath == null ) { return 0L; }
@@ -244,8 +244,9 @@ public class Validate
 	    Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", "") + ".bit");
 	    if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 	    {
-		try { existingWriteAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
-		writeAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) - existingWriteAutoKeySize);
+//		try { existingWriteAutoKeySize = Files.size(autoKeyPath); } catch (IOException ex)  { ui.log("Error: IOException: getTargetKeySizeRequired(..): Files.size() "+ ex.getMessage() + "\r\n", true, true, true, true, false); } // Symlinks give Files.size() errors on broken links
+//		writeAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) - existingWriteAutoKeySize);
+		writeAutoKeySize = ( ( targetSourceSize + FCPath.MAC_SIZE ) );
 	    }
 	    else
 	    {

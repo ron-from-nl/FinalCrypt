@@ -1,3 +1,10 @@
+5.4.0 Important: removed partial key reusage on re-encryption
+      Re-encryption now forces the creation of a new Key File
+      Decrypting now also deletes the existing used Key File
+      Please decrypt & encrypt your files to secure 100% OTP
+
+      Disabled the animations, sounds and voices on first use
+      Replaced some UTF8 symbols for better Cross OS clarity
 5.3.1 Added non interactive print scan results to CLI
       Corrected print Write / Matched Key Path in CLI
 5.3.0 Added Show Password Tooltip with fontsize 14px

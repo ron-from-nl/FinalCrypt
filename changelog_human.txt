@@ -24,6 +24,13 @@
       This bug is reported. Ubuntu 18 is not affected
 5.3.1 Added non interactive print scan results to CLI
       Corrected print Write / Matched Key Path in CLI
+5.4.0 Important: removed partial key reusage on re-encryption
+      Re-encryption now forces the creation of a new Key File
+      Decrypting now also deletes the existing used Key File
+      Please decrypt & encrypt your files to secure 100% OTP
+
+      Disabled the animations, sounds and voices on first use
+      Replaced some UTF8 symbols for better Cross OS clarity
 
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 4.0.1 Added sound and voice mixing and priority control for better audio experience
