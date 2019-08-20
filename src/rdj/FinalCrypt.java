@@ -259,7 +259,7 @@ public class FinalCrypt extends Thread
 
 	    @Override public void run()
 	    {
-//		// File
+		// File
 		long fileBytesProcessed =	( (readTargetSourceStat.getFileBytesProcessed()) + (wrteTargetSourceStat.getFileBytesProcessed()) + (wrteKeyStat.getFileBytesProcessed() * 1));
 		double fileBytesTotalPercent =	( (readTargetSourceStat.getFileBytesTotal()) / 100.0 );
 		int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesTotalPercent); // 600 / 10 = 60 - 600 * (10*0.01)
@@ -274,7 +274,7 @@ public class FinalCrypt extends Thread
 		fileBytesProcessed =		allDataStats.getFileBytesProcessed();
 		filesBytesPerMilliSecond =	filesBytesProcessed / (processProgressCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
 
-    //	    System Monitor
+		// System Monitor
 		throughputClock = System.nanoTime();
 		realtimeMiBPS = ((realtimeBytesProcessed * (1000000000d / (throughputClock - lastThroughputClock)))/(1024d*1024d)); // ui.test("FC BPS: " + realtimeMiBPS + "\r\n");
 		if ( realtimeMiBPS > io_Throughput_Ceiling ) { io_Throughput_Ceiling = realtimeMiBPS; }
