@@ -1,3 +1,11 @@
+5.4.1 Disabled clone modification time after encrypting files
+      -Re-encrypting files without modifying them now results
+       in totally different encrypted file and key file pairs
+       Therefor the modification timestamp should also change
+       Differential backup ignores files with unmodified time
+
+       Improved User Interrupted key file deletion and logging
+       Fixed file progressbar during the create key file phase
 5.4.0 Important: removed partial key reusage on re-encryption
       Re-encryption now forces the creation of a new Key File
       Decrypting now also deletes the existing used Key File

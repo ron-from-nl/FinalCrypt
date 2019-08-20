@@ -358,7 +358,7 @@ public class CreateOTPKey extends Application implements Initializable
 		randomBuffer = TRNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print);
 		
     //          Write Device (randomBuffer3 became randomBuffer1)
-		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
 		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer); randomBuffer.rewind(); realtimeBytesProcessed += writeKeyFileChannelTransfered;

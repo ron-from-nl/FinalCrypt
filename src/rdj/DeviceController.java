@@ -75,7 +75,7 @@ public class DeviceController
     {        
         long readInputDeviceChannelTransfered = 0;
         ByteBuffer inputDeviceBuffer = ByteBuffer.allocate((int)length); inputDeviceBuffer.clear();
-        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(fcPath.path, EnumSet.of(StandardOpenOption.READ)))
+        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(fcPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
         {
             readInputDeviceChannel.position(getLBAOffSet(bytesPerSector, fcPath.size, lba));
             readInputDeviceChannelTransfered = readInputDeviceChannel.read(inputDeviceBuffer); inputDeviceBuffer.flip();
@@ -89,7 +89,7 @@ public class DeviceController
     {        
         long readInputDeviceChannelTransfered = 0;
         ByteBuffer inputDeviceBuffer = ByteBuffer.allocate((int)length); inputDeviceBuffer.clear();
-        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(fcPath.path, EnumSet.of(StandardOpenOption.READ)))
+        try (final SeekableByteChannel readInputDeviceChannel = Files.newByteChannel(fcPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
         {
             readInputDeviceChannel.position(pos);
             readInputDeviceChannelTransfered = readInputDeviceChannel.read(inputDeviceBuffer); inputDeviceBuffer.flip();
@@ -105,7 +105,7 @@ public class DeviceController
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
         ui.log("Write " + desc + " Pos (" + getLBAOffSet(bytesPerSector, fcPath.size, lba) + ") ", true, true, true, false, false);
-        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(fcPath.path, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(fcPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.WRITE))))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("Buffer: " + outputDeviceBuffer.capacity());
@@ -123,7 +123,7 @@ public class DeviceController
         long writeOutputDeviceChannelTransfered = 0;
         ByteBuffer outputDeviceBuffer = null;
         ui.log("Wrote " + desc + " Pos(" + pos + ") ", true, true, true, false, false);
-        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(device.path, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+        try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(device.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.WRITE))))
         {
             outputDeviceBuffer = ByteBuffer.allocate(bytes.length); outputDeviceBuffer.put(bytes); outputDeviceBuffer.flip(); // logBytes(outputDeviceBuffer.array());
 //            guifx.log("Buffer: " + outputDeviceBuffer.capacity());
@@ -214,7 +214,7 @@ public class DeviceController
             if (stopPending)    { inputEnded = true; break write1loop; }
 
             readKeyFileStat1.setFileStartEpoch();
-            try (final SeekableByteChannel readKeyFileChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+            try (final SeekableByteChannel readKeyFileChannel = Files.newByteChannel(keyFCPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
             {
                 // Fill up keyFileBuffer
                 readKeyFileChannel.position(readKeyFileChannelPosition);
@@ -223,7 +223,7 @@ public class DeviceController
                 keyFileBuffer.flip();
                 readKeyFileChannel.close(); readKeyFileStat1.setFileEndEpoch(); readKeyFileStat1.clock();
                 readKeyFileStat1.addFileBytesProcessed(readKeyFileChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyFileChannelTransfered);
-            } catch (IOException ex) { ui.log("Files.newByteChannel(keyFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+            } catch (IOException ex) { ui.log("Files.newByteChannel(keyFilePath, FinalCrypt.getEnumSet()EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n", true, true, true, true, false); }
             
 //          Randomize raw key or write raw key straight to partition
 	    SecureRandom random = new SecureRandom();
@@ -233,7 +233,7 @@ public class DeviceController
             
 //          Write Device
             writeKeyFileStat1.setFileStartEpoch();
-            try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetFCPath.path, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+            try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetFCPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.WRITE))))
             {
 //              Write keyfile to partition 1
                 writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
@@ -410,7 +410,7 @@ public class DeviceController
 		if (stopPending)    { inputEnded = true; bytesPerMilliSecond = 0d; break write1loop; }
 
 		readKeyFileStat1.setFileStartEpoch();
-		try (final SeekableByteChannel readKeyDeviceFileChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ)))
+		try (final SeekableByteChannel readKeyDeviceFileChannel = Files.newByteChannel(keyFCPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 		{
 		    // Fill up keyDeviceBuffer
 		    readKeyDeviceFileChannel.position(readKeyDeviceFileChannelPosition);
@@ -419,14 +419,14 @@ public class DeviceController
 		    if ( readKeyDeviceFileChannelTransferedTotal >= keyPartitionSize ) { inputEnded = true; keyDeviceBuffer.limit((int)readKeyDeviceFileChannelTransferedTotal - (int)keyPartitionSize); }
 		    readKeyDeviceFileChannel.close(); readKeyFileStat1.setFileEndEpoch(); readKeyFileStat1.clock();
 		    readKeyFileStat1.addFileBytesProcessed(readKeyDeviceFileChannelTransfered); allDataStats.addAllDataBytesProcessed("", readKeyDeviceFileChannelTransfered);
-		} catch (IOException ex) { ui.log("Error: Files.newByteChannel(keyFilePath, EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		} catch (IOException ex) { ui.log("Error: Files.newByteChannel(keyFilePath, FinalCrypt.getEnumSet()EnumSet.of(StandardOpenOption.READ)) " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
 		// For sone reason keyDeviceBuffer does not poor any data out into the writeOutputDeviceChannel, but does output data to GPT.logBytes
 		outputDeviceBuffer.put(keyDeviceBuffer.array()); outputDeviceBuffer.flip();
 
     //          Write Device
 		writeKeyFileStat1.setFileStartEpoch();
-		try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetFCPath.path, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+		try (final SeekableByteChannel writeOutputDeviceChannel = Files.newByteChannel(targetFCPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.WRITE))))
 		{
     //              Write keyfile to partition 1
 		    writeOutputDeviceChannel.position((getLBAOffSet(bytesPerSector, targetFCPath.size, firstLBA) + writeOutputDeviceChannelPosition));
@@ -435,7 +435,7 @@ public class DeviceController
 
 		    writeOutputDeviceChannelPosition += writeOutputDeviceChannelTransfered;
 		    writeOutputDeviceChannel.close(); writeKeyFileStat1.setFileEndEpoch(); writeKeyFileStat1.clock();
-		} catch (IOException ex) { ui.log("Error: Files.newByteChannel(targetFCPath.path, EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC))" + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		} catch (IOException ex) { ui.log("Error: Files.newByteChannel(targetFCPath.path, FinalCrypt.getEnumSet()EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.SYNC))" + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		keyDeviceBuffer.clear();
 	    }
 	    readKeyDeviceFileChannelPosition = 0;
@@ -496,7 +496,7 @@ public class DeviceController
     synchronized public static long getDeviceChannelSize(UI ui, Path path, boolean isKey, boolean firstcall)
     {
         long deviceSize = 0;
-        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(path, EnumSet.of(StandardOpenOption.READ))) { deviceSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.log(ex.getMessage(), true, true, false, false, false); }
+        try (final SeekableByteChannel deviceChannel = Files.newByteChannel(path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ)))) { deviceSize = deviceChannel.size(); deviceChannel.close(); } catch (IOException ex) { ui.log(ex.getMessage(), true, true, false, false, false); }
         return deviceSize;
     }
 
@@ -557,7 +557,7 @@ public class DeviceController
         {
             if (verbose) ui.log(String.format("%-20d %-20d %-20d %-20d %-20d %-20d \r\n", lastpos, currpos, step, above, below, cycles), true, true, true, false, false);
             
-            final SeekableByteChannel deviceChannel = Files.newByteChannel(path, EnumSet.of(StandardOpenOption.READ));
+            final SeekableByteChannel deviceChannel = Files.newByteChannel(path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ)));
             deviceChannel.position(currpos);
             ByteBuffer bb = ByteBuffer.allocate(1); bb.clear();
             int transfered = 0; transfered = deviceChannel.read(bb);

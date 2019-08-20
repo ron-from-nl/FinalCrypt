@@ -22,6 +22,9 @@ Property parameters version, perf, tally stats: http://../VERSION2?params
 Fixed UTF8 symbols Cross OS
 Open Last Key Directory
 Tools Settings
+Backup in stead of Create Key button Files.createLink(link, target);
+key buff en wachtwoord
+file progressie key
 
 =============================== Don't forget ================================
 
@@ -34,13 +37,14 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Important: removed partial key reusage on re-encryption 
-Re-encryption now forces the creation of a new Key File
-Decrypting now also deletes the existing used Key File
-Please decrypt & encrypt your files to secure 100% OTP
+Disabled clone modification time after encrypting files
+ Reencrypting files without modifying them now results
+ in a totally different encrypted file and key file pair
+ Therefor the modification timestamps should also change 
+ Differential backups ignore files with unmodified times
 
-Disabled the animations, sounds and voices on first use
-Replaced some UTF8 symbols for better Cross OS clarity
+Fixed file progress bar during the create key file phase
+Improved user interrupted key file deletion and logging
 
 ============================= Source Committed ==============================
 

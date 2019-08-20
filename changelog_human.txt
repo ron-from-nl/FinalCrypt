@@ -31,6 +31,14 @@
 
       Disabled the animations, sounds and voices on first use
       Replaced some UTF8 symbols for better Cross OS clarity
+5.4.1 Disabled clone modification time after encrypting files
+      -Re-encrypting files without modifying them now results
+       in totally different encrypted file and key file pairs
+       Therefor the modification timestamp should also change
+       Differential backup ignores files with unmodified time
+
+       Improved User Interrupted key file deletion and logging
+       Fixed file progressbar during the create key file phase
 
 4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
 4.0.1 Added sound and voice mixing and priority control for better audio experience

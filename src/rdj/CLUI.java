@@ -34,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import static rdj.FinalCrypt.sync;
 import static rdj.GUIFX.getHexString;
 
 /* commandline test routine
@@ -363,7 +364,7 @@ public class CLUI implements UI
 		randomBuffer = TRNG.getFCRandomBuffer(   ui, randomBuffer.capacity(),		   true,	    true, finalCrypt.getPrint());
 
 //              Write Device
-		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC)))
+		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, finalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))))
 		{
 		    writeKeyFileChannel.position(writeKeyFileChannelPosition);
 		    writeKeyFileChannelTransfered = writeKeyFileChannel.write(randomBuffer); randomBuffer.rewind();
@@ -406,7 +407,7 @@ public class CLUI implements UI
 	    int x = 0;
 	    while ( ! keySourceChecksumReadEnded )
 	    {
-		try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+		try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, finalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 		{
 		    readKeySourceChannel.position(readKeySourceChannelPosition);
 		    readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;
@@ -868,24 +869,32 @@ public class CLUI implements UI
     private String getRuntimeEnvironment()
     {
 	String env = "";
-	
 	String symbols = "";
-	symbols += "Symbols:            ";
+	
+	// Encrypt: +K1 +M1 E1 C1 -O1
+	// Decrypt: rM1 D1 C1 -O1 -K1
+
+	symbols += "Status Symbols      ";
+	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	symbols += "\r\n";
+	symbols += "Data   Symbols      ";
 	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " + FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " + FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
+	symbols += "\r\n";
+	symbols += "Action Symbols      ";
+	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-//	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
 	
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
 	env += "\r\n";

@@ -106,7 +106,7 @@ public class Validate
 	long readTargetSourceChannelTransfered = 0;
 	
 	// Create Target Source MAC Buffer
-	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 	{
 	    // Fill up inputFileBuffer
 	    readTargetSourceChannelTransfered = readTargetSourceChannel.read(plainTextMACBuffer); plainTextMACBuffer.flip();
@@ -142,7 +142,7 @@ public class Validate
 	long readKeySourceChannelPosition = 0;	    long readKeySourceChannelTransfered = 0;                
 	
 	// Create Target Source MAC Buffer
-	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, EnumSet.of(StandardOpenOption.READ)))
+	try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(targetSourcePath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 	{
 	    // Fill up inputFileBuffer
 //	    readTargetSourceChannel.position(readTargetSourceChannelPosition);
@@ -160,7 +160,7 @@ public class Validate
 	{
 	    if ( ! Files.isDirectory(keySourcePath)) // Manual Key Mode
 	    {
-		try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, EnumSet.of(StandardOpenOption.READ)))
+		try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 		{
 		    // Fill up keyFileBuffer
 		    readKeySourceChannel.read(keySourceBuffer);
@@ -180,7 +180,7 @@ public class Validate
 		Path autoKeyPath = Paths.get(keySourcePath.toAbsolutePath().toString(), targetSourcePath.toAbsolutePath().toString().replace(":", ""));
 		if (Files.exists(autoKeyPath, LinkOption.NOFOLLOW_LINKS))
 		{
-		    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(autoKeyPath, EnumSet.of(StandardOpenOption.READ)))
+		    try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(autoKeyPath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 		    {
 			// Fill up keyFileBuffer
 			readKeySourceChannel.read(keySourceBuffer);

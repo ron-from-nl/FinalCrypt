@@ -1288,26 +1288,32 @@ public class GUIFX extends Application implements UI, Initializable
     private String getRuntimeEnvironment()
     {
 	String env = "";
-	
 	String symbols = "";
-	symbols += "Symbols:            ";
+
+	// Encrypt: +K1 +M1 E1 C1 -O1
+	// Decrypt: rM1 D1 C1 -O1 -K1
+
+	symbols += "Status Symbols      ";
+	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	symbols += "\r\n";
+	symbols += "Data   Symbols      ";
 	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " + FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " + FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
+	symbols += "\r\n";
+	symbols += "Action Symbols      ";
+	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
+	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
 	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-//	symbols += FinalCrypt.WHEEL_OF_DHARMA_DESC + ": " + FinalCrypt.WHEEL_OF_DHARMA_SYMBOL + " ";
-
-//    public final String CLASS_VERSION = System.getProperty("java.class.version");
 
 	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
@@ -2195,7 +2201,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    int x = 0;
 			    while (( ! keySourceChecksumReadEnded ) && ( ! keySourceChecksumReadCanceled ))
 			    {
-				try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC)))
+				try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keyFCPath.path, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.READ,StandardOpenOption.SYNC))))
 				{
 				    readKeySourceChannel.position(readKeySourceChannelPosition);
 				    readKeySourceChannelTransfered = readKeySourceChannel.read(keySourceBuffer); keySourceBuffer.flip(); readKeySourceChannelPosition += readKeySourceChannelTransfered;

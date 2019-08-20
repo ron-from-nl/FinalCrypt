@@ -1,4 +1,4 @@
-[Version] =		{5.4.0}
+[Version] =		{5.4.1}
 [] = {} ================================================================
 [Release Notes] =	{Added non interactive print scan results to CLI}
 [Release Message] =	{Corrected print Write / Matched Key Path in CLI}
@@ -25,9 +25,16 @@
 [Upgrade Notes] =	{   Replaced some UTF8 symbols for better Cross OS clarity}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   See upgrade section}
+[Update Notes] =	{   Disabled clone modification time after encrypting files}
+[Update Notes] =	{   -Re-encrypting files without modifying them now results}
+[Update Notes] =	{    in totally different encrypted file and key file pairs}
+[Update Notes] =	{    Therefor the modification timestamp should also change}
+[Update Notes] =	{    Differential backup ignores files with unmodified time}
+[Update Notes] =	{}
+[Update Notes] =	{   Improved User Interrupted key file deletion and logging}
+[Update Notes] =	{   Fixed file progressbar during the create key file phase}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
