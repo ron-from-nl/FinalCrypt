@@ -261,9 +261,7 @@ public class FinalCrypt extends Thread
 	    {
 //		// File
 		long fileBytesProcessed =	( (readTargetSourceStat.getFileBytesProcessed()) + (wrteTargetSourceStat.getFileBytesProcessed()) + (wrteKeyStat.getFileBytesProcessed() * 1));
-		double fileBytesTotalPercent =	(
-						  (readTargetSourceStat.getFileBytesTotal()) / 100.0
-						);
+		double fileBytesTotalPercent =	( (readTargetSourceStat.getFileBytesTotal()) / 100.0 );
 		int fileBytesPercentage =	(int)(fileBytesProcessed / fileBytesTotalPercent); // 600 / 10 = 60 - 600 * (10*0.01)
 
 		// Files
