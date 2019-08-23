@@ -14,7 +14,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="800.0" minWidth="1600.0" prefHeight="800.0" prefWidth="1400.0" style="-fx-background-color: #000000;" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFX">
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="800.0" minWidth="1600.0" prefHeight="800.0" prefWidth="1400.0" style="-fx-background-color: #000000;" stylesheets="@GUIFX.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFX">
     <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -106,8 +106,8 @@
                                              <children>
                                                 <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="targetFileSwingNode" mouseTransparent="true" />
                                                       <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
+                                                      <SwingNode fx:id="targetFileSwingNode" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -196,8 +196,8 @@
                                              <children>
                                                 <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <SwingNode fx:id="keyFileSwingNode" mouseTransparent="true" StackPane.alignment="CENTER" />
                                                       <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
+                                                      <SwingNode fx:id="keyFileSwingNode" StackPane.alignment="CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -214,7 +214,7 @@
                      <content>
                         <AnchorPane>
                            <children>
-                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="580.0" prefWidth="1298.0" styleClass="log" text="❌ ❎ ð&#159;&#154;« ⊝ ⊖⭕⛔ ⨷ ð&#159;&#134;&#152; ☝ ☹ ð&#159;&#146;£ ð&#159;&#148;&#144; ð&#159;&#148;&#143; ð&#159;&#147;&#132; XOR ⊕ XOR ⊻ ð&#159;&#148;&#128; ☒ ✓ ✔ ■ ▣ Ⅱ Ⅱ  ð&#159;&#148;&#147;-&gt;ð&#159;&#148;&#146;-&gt;ð&#159;&#148;&#147; ⎘ ✔ ⚛&#10;ð&#159;¡&#148; ð&#159;¡&#149; ð&#159;¡&#150; ð&#159;¡&#151; | ð&#159;¡¤ ð&#159;¡¥ ð&#159;¡¦ ð&#159;¡§ | ð&#159;¡¬ ð&#159;¡­ ð&#159;¡®&#10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="580.0" prefWidth="1298.0" styleClass="log" text="&#10;&#10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="DejaVu Sans Mono Bold" size="10.0" />
                                  </font>

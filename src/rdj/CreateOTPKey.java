@@ -384,7 +384,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
 		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
-		guifx.userGuidanceMessage(guifx.SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+		guifx.userGuidanceMessage(guifx.SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 	    }});
 	    
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));

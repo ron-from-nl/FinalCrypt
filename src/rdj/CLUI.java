@@ -34,7 +34,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import static rdj.FinalCrypt.sync;
 import static rdj.GUIFX.getHexString;
 
 /* commandline test routine
@@ -157,7 +156,7 @@ public class CLUI implements UI
 
         // Validate Parameters
 	
-	log(getRuntimeEnvironment(), false, false, true, false ,false);
+	log(FinalCrypt.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, false, true, false ,false);
 	
 	if (args.length == 0 ) { log("\r\nWarning: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
 	
@@ -583,7 +582,6 @@ public class CLUI implements UI
 		{
 		    log("No decryptable targets found\r\n\r\n", false, true, true, false, false);
 		    if ( targetFCPathList.encryptedFiles > 0 ) { log("Wrong key / password?\r\n\r\n", false, true, false, false, false); }
-//		    log(targetFCPathList.getStats(), false, true, true, false, false);
 		    log(getScanResults(false), false, true, true, false, false); // log(targetFCPathList.getStats(), false, true, false, false, false);
 		}
 	    }
@@ -866,64 +864,6 @@ public class CLUI implements UI
 	targetFCPathList = fcPathListParam;
     }
     
-    private String getRuntimeEnvironment()
-    {
-	String env = "";
-	String symbols = "";
-	
-	// Encrypt: +K1 +M1 E1 C1 -O1
-	// Decrypt: rM1 D1 C1 -O1 -K1
-
-	symbols += "Status Symbols      ";
-	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += "\r\n";
-	symbols += "Data   Symbols      ";
-	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " + FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " + FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
-	symbols += "\r\n";
-	symbols += "Action Symbols      ";
-	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
-	
-	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + " (CLUI)\r\n";
-	env += "\r\n";
-	env +=    "Interface:          rdj/CLUI\r\n";
-	env +=    "Email:              " + Version.getEmail() + "\r\n";
-	env +=    "Copyright:          " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
-	env +=    "Logfiles:           " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:       java -cp finalcrypt.jar rdj/CLUI --help\r\n";
-	env +=    "License:            " + Version.getLicense() + "\r\n";
-	env += "\r\n";
-	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
-	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
-	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
-	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
-	env += "\r\n";
-	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
-	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
-	env +=    "Class Version:      " + System.getProperty("java.class.version") + "\r\n";
-	env += "\r\n";
-	env +=    "User Name:          " + System.getProperty("user.name") + "\r\n";
-	env +=    "User Home:          " + System.getProperty("user.home") + "\r\n";
-	env +=    "User Dir:           " + System.getProperty("user.dir") + "\r\n";
-	env += "\r\n";
-	env += symbols + "\r\n";
-	env += "\r\n";
-		
-	return env;
-    }
-    
     public String getScanResults(boolean interactive)
     {
 	String prefix = ""; if (interactive) { prefix = "print"; } else { prefix = "scanned"; }
@@ -1031,29 +971,6 @@ class TestListReaderThread extends Thread
 	if (clui.testAnswer.isEmpty())
 	{	    
 	    clui.log(clui.getScanResults(true), false, true, false, false, false); // Leave Error file to: true
-//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-//	    clui.log("Scanning results:\r\n", false, true, false, false, false); // Leave Error file to: true
-//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-//	    if (clui.finalCrypt.getTest()) { clui.log(" C. Continue test\r\n", false, true, false, false, false); }
-//	    clui.log(" 1. print " + clui.decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(clui.decryptedList.decryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log(" 2. print " + clui.encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(clui.encryptableList.encryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//    //
-//	    clui.log(" 3. print " + clui.encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(clui.encryptedList.encryptedFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log(" 4. print " + clui.decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(clui.decryptableList.decryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//    //
-//	    clui.log(" 5. print " + clui.emptyList.emptyFiles + " empty files \r\n", false, true, false, false, false);
-//	    clui.log(" 6. print " + clui.symlinkList.symlinkFiles + " symlink files \r\n", false, true, false, false, false);
-//	    clui.log(" 7. print " + clui.unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(clui.unreadableList.unreadableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log(" 8. print " + clui.unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(clui.unwritableList.unwritableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log(" 9. print " + clui.hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(clui.hiddenList.hiddenFilesSize,1) + ")\r\n", false, true, false, false, false);
-//    //
-//	    clui.log("10. print " + clui.unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(clui.unencryptableList.unEncryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log("11. print " + clui.undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(clui.undecryptableList.unDecryptableFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log("12. print " + clui.readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(clui.readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log("13. print " + clui.writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(clui.writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n", false, true, false, false, false);
-//	    clui.log("\r\n", false, true, false, false, false); // Leave Error file to: true
-//
-//	    clui.log("What list would you like to see ? ", false, true, false, false, false); // Leave Error file to: true
 	    try(Scanner in = new Scanner(System.in)) { clui.testAnswer = in.nextLine().trim(); }
 	}
 	

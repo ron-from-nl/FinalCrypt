@@ -211,6 +211,7 @@ public class Version
 //          remoteContent.replaceAll("\\p{C}", "?");
 //	    String[] lines = remoteContent.split(System.getProperty("line.separator"));
 
+//	    ui.test("\r\nNEXT\r\n");
 	    if (! failed)
 	    {
 		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
@@ -224,7 +225,7 @@ public class Version
 		    int c = 0; for (String line:lines)
 		    {
 //			ui.test(line + "\r\n");
-			if ( (line != null) && (! line.isEmpty()) && (line.contains("[")) && (line.contains("]")) )
+			if ( (line != null) && (! line.isEmpty()) && (line.contains("[")) && (line.contains("]")) && (line.contains("{")) && (line.contains("}")) )
 			{
 			    boolean validLine = false;
 			    String remoteField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	if (! remoteField.isEmpty()) { remoteFields[c] = remoteField; validLine = true; }

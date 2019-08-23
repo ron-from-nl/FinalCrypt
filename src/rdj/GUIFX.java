@@ -239,7 +239,7 @@ public class GUIFX extends Application implements UI, Initializable
     private final String CREATE_KEYDEV =		"Create Key Device";
     private final String CLONE_KEYDEV =			"Clone Key Device";
 
-    public final String SELECT_KEY_MAP =		"Select Key Map";
+    public final String SELECT_KEY_DIR =		"Select Key Directory";
     private final String PASSWORD_ENTER =		"Password<Enter>";
     private final String PASSWORD_OPTIONAL =		"Password (optional)";
     private final String PASSWORD_SET =			"Password (set)";
@@ -465,6 +465,9 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Button keyFileDeleteButton2; // Because Apple hides the FCChooserDelete Button
     @FXML
     private Tooltip pwdtxtFieldTooltip;
+    private JComboBox keyPathSelector;
+    private int keyPathSelectorPrefered;
+    private File keyPathFile;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -491,25 +494,23 @@ public class GUIFX extends Application implements UI, Initializable
 
 	this.stage.setOnCloseRequest((WindowEvent e) ->
 	{
-	    if ( Voice.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
+	    if ( Audio.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
 	    	    
 //	    Shared
 	    String val = prefs.get("Shared", "Unknown");
 	    if (val.equals("Unknown"))		{ prefs.put("Shared", "No"); pleaseShare(); }
 	    else if (val.equals("No"))		{ pleaseShare(); }
 	    else if (val.equals("Yes"))		{  }
-	    else				{ prefs.put("Shared", "No"); pleaseShare(); }
-	    
-//	    Platform.runLater(() ->
-//	    {
-//	    });
-	    
+	    else				{ prefs.put("Shared", "No"); pleaseShare(); }	    
 	});
 	
-	version = new Version(ui);
-	version.checkCurrentlyInstalledVersion(ui);
-        this.stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
-	fadeInMessage = version.getCurrentlyInstalledOverallVersionString();
+	Platform.runLater(() ->
+	{
+	    version = new Version(ui);
+	    version.checkCurrentlyInstalledVersion(ui);
+	    this.stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
+	    fadeInMessage = version.getCurrentlyInstalledOverallVersionString();
+	});
     }
 
     @Override
@@ -572,6 +573,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.setFocusable(true);
         keyFileChooser.setFont(FILE_CHOOSER_FONT);
         keyFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+	Validate.key_Home_Path =  keyFileChooser.getCurrentDirectory().toPath();
 	
         keyFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { keyFileChooserPropertyChange(evt); });
 	keyListener = keyFileChooser.getPropertyChangeListeners();
@@ -885,7 +887,8 @@ public class GUIFX extends Application implements UI, Initializable
 	}
 	
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
-	log(getRuntimeEnvironment(), false, true, true, false ,false);
+//	log(getRuntimeEnvironment(), false, true, true, false ,false);
+	log(FinalCrypt.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
@@ -1011,6 +1014,7 @@ public class GUIFX extends Application implements UI, Initializable
 		tgtFileChooserComponentAlteration(tgtFileChooser, true);
 	    }
 	    
+
 //	textLabel Introduction Animation ==========================================================
 
 	    FadeTransition fadeTransition = new FadeTransition(Duration.millis(1500), userGuidanceLabel);
@@ -1051,26 +1055,32 @@ public class GUIFX extends Application implements UI, Initializable
 		See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
 		JDK 8 all the items in java.util.prefs:
 		*/
-				
+
 		String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		if (! val.equals("Yes")) // First time
 		{		    
-//		    userGuidanceMessage(CREATE_KEY, 64, false, false, false, true, MP3_VOI_CREATE_KEY, 0);
+//		    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 		    prefs.put("Initialized", "Yes");
 		}
 //		else
 //		{
-//		    userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, MP3_VOI_SELECT_KEY, 0);
+//		    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 //		}
 		
-		disableFileChoosers(false);
+		disableFileChoosers(false, true);
 		
 //		Make surethere is a key dir selected at startup
-		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-		keyFileChooserPropertyCheck();
-		userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+
+//		File dummy_file = null;
+//		try { dummy_file = new File(new File("C:\\").getCanonicalPath()); } catch (IOException ex) { log(ex.getMessage(), true, true, true, true ,false); }
+//		keyFileChooser.setCurrentDirectory(dummy_file);
+//		keyFileChooser.changeToParentDirectory();
+//
+////		keyFileChooser.setCurrentDirectory(new File("/"));
+//		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+////				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+//		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+//		keyFileChooserPropertyCheck();
 
 		FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
 		sysmonFadeTransition.setFromValue(0.0f);
@@ -1095,10 +1105,23 @@ public class GUIFX extends Application implements UI, Initializable
 		    systemMonitorTestTimeline.setCycleCount(10);
 		    systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) ->
 		    {
+//			Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+//	//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+//			keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+//			keyFileChooserPropertyCheck();
+			
+//			keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
+//			test("sset: " + keyPathFile + "\r\n");
+//			keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(keyPathSelectorPrefered));
+//			keyFileChooser.setCurrentDirectory((File) keyPathFile);
+//			keyFileChooser.rescanCurrentDirectory();			
+
+			userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			update_System_Monitor_Enabled = true;
 		    });
 		    new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
 		    systemMonitorTestTimeline.play();
+		    
 		});
 		sysmonFadeTransition.play();
 
@@ -1109,6 +1132,9 @@ public class GUIFX extends Application implements UI, Initializable
 		now = Calendar.getInstance().getTimeInMillis(); // Epoch date
 		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		boolean invalidUpdateCheckedValue = false;
+		
+
+
 		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
 		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 	    });
@@ -1135,7 +1161,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if (val.equals("Disabled"))	{ animation_Is_Enabled = false; }
 	    else				{ prefs.put("Animated", "Disabled"); animation_Is_Enabled = false; }
 	    
-//	    new Audio_Instance().play(this, Audio.SND_STARTUP,Audio.AUDIO_CODEC);
+//	    new Audio_Instance().play(this, Audio.SND_STARTUP,Audio.AUDIO_CODEC); // Causes instability
 	});
 	
 //        Alert alert = new Alert(AlertType.INFORMATION);
@@ -1166,9 +1192,9 @@ public class GUIFX extends Application implements UI, Initializable
 //        alert.showAndWait();        
     }
     
-    private void disableFileChoosers(boolean param)
+    private void disableFileChoosers(boolean param, boolean firsttime)
     {
-	if (param)
+	if (param) // disable filechoosers
 	{
 	    keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
 	    
@@ -1185,7 +1211,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    disableTimeline.setOnFinished((ActionEvent actionEvent) -> { });
 	    disableTimeline.play();
 	}
-	else
+	else // enable filechoosers
 	{
 	    Timeline enableTimeline = new Timeline
 	    (
@@ -1197,7 +1223,37 @@ public class GUIFX extends Application implements UI, Initializable
 		    new KeyValue(targetFileFoil.opacityProperty(), 0.1))
 	    );
 	    enableTimeline.setAutoReverse(false);
-	    enableTimeline.setOnFinished((ActionEvent actionEvent) -> { keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param); });
+	    enableTimeline.setOnFinished((ActionEvent actionEvent) ->
+	    {
+		keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
+		
+		if (firsttime)
+		{
+//			Path root = new File(":").toPath();
+//			Path rootParent = root.getParent();
+//			test("root: " + root.toAbsolutePath().toString() + "\r\n");
+//			test("rootP: " + rootParent.toAbsolutePath().toString() + "\r\n");
+//			if (rootParent != null)
+//			{
+//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getFileSystemView().getParentDirectory(new File("C:\\"))); // hangs
+//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getRoot().toFile()); // hangs
+//			    int c=keyFileChooser.getCurrentDirectory().toPath().getNameCount();
+//			    for ( int x=2; x<c; x++) {keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getParent().toFile());}
+//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getParent().toFile()); // hangs
+			    keyFileChooser.setCurrentDirectory(new File("C:\\Users\\Ron de Jong\\::{20D04FE0-3AEA-1069-A2D8-08002B30309D}")); // hangs
+//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getFileSystemView().getRoots()); // hangs
+			    // �C:\Users\Ron de Jong\::{20D04FE0-3AEA-1069-A2D8-08002B30309D}� 
+
+//			    for (File file: keyFileChooser.getFileSystemView().getRoots()) { test(file + "\r\n");}
+			    
+//			}
+//			else
+//			{
+//			    keyFileChooser.setCurrentDirectory(root.toFile());
+//			}
+//			keyFileChooserPropertyCheck();
+		}
+	    });
 	    enableTimeline.play();
 	}
     }
@@ -1284,64 +1340,6 @@ public class GUIFX extends Application implements UI, Initializable
 	}); // Do at fade out ready
 	labelTimeline.play();
     }
-        
-    private String getRuntimeEnvironment()
-    {
-	String env = "";
-	String symbols = "";
-
-	// Encrypt: +K1 +M1 E1 C1 -O1
-	// Decrypt: rM1 D1 C1 -O1 -K1
-
-	symbols += "Status Symbols      ";
-	symbols += FinalCrypt.UTF8_UNFINISHED_DESC + ": " + FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_FINISHED_DESC + ": " + FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	symbols += "\r\n";
-	symbols += "Data   Symbols      ";
-	symbols += FinalCrypt.UTF8_KEY_DESC + ": " + FinalCrypt.UTF8_KEY_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_MAC_DESC + ": " + FinalCrypt.UTF8_MAC_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " + FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " + FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
-	symbols += "\r\n";
-	symbols += "Action Symbols      ";
-	symbols += FinalCrypt.UTF8_CREATE_DESC + ": " + FinalCrypt.UTF8_CREATE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_READ_DESC + ": " + FinalCrypt.UTF8_READ_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_WRITE_DESC + ": " + FinalCrypt.UTF8_WRITE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_ENCRYPT_DESC + ": " + FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DECRYPT_DESC + ": " + FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " + FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_CLONE_DESC + ": " + FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_DELETE_DESC + ": " + FinalCrypt.UTF8_DELETE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_PAUSE_DESC + ": " + FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
-	symbols += FinalCrypt.UTF8_STOP_DESC + ": " + FinalCrypt.UTF8_STOP_SYMBOL + " ";
-
-	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
-	env += "\r\n";
-	env +=    "Interface:          rdj/GUIFX\r\n";
-	env +=    "Email:              " + Version.getEmail() + "\r\n";
-	env +=    "Copyright:          " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
-	env +=    "Logfiles:           " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:       java -cp finalcrypt.jar rdj/CLUI --help\r\n";
-	env +=    "License:            " + Version.getLicense() + "\r\n";
-	env += "\r\n";
-	env +=    "OS Name:            " + OS_NAME + "\r\n";
-	env +=    "OS Architecture:    " + OS_ARCH + "\r\n";
-	env +=    "OS Version:         " + OS_VERSION + "\r\n";
-	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
-	env += "\r\n";
-	env +=    "Java Vendor:        " + JAVA_VENDER + "\r\n";
-	env +=    "Java Version:       " + JAVA_VERSION + "\r\n";
-	env +=    "Class Version:      " + CLASS_VERSION + "\r\n";
-	env += "\r\n";
-	env +=    "User Name:          " + System.getProperty("user.name") + "\r\n";
-	env +=    "User Home:          " + System.getProperty("user.home") + "\r\n";
-	env +=    "User Dir:           " + System.getProperty("user.dir") + "\r\n";
-	env += "\r\n";
-	env += symbols + "\r\n";
-	env += "\r\n";
-		
-	return env;
-    }
     
     public Alert introAlert(AlertType type, String title, String headerText, String message, String optOutMessage, Consumer<Boolean> optOutAction, ButtonType... buttonTypes)
     {
@@ -1377,8 +1375,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkUpdate(boolean userActivated)
     {
-        Platform.runLater(() ->
-	{
+//        Platform.runLater(() ->
+//	{
 	    version = new Version(ui);
 	    version.checkCurrentlyInstalledVersion(GUIFX.this);
 	    version.checkLatestOnlineVersion(GUIFX.this);
@@ -1420,7 +1418,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    && ( ! version.getCurrentAlertString().isEmpty())
 		)   // Only display Alert in VERSION2 file
 	    { currentAlertMessage(); }
-	});
+//	});
     }
     
     private void alertCurrentVersionIsUp2Date()
@@ -1577,13 +1575,13 @@ public class GUIFX extends Application implements UI, Initializable
 			new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 //			play(SND_INPUT_OK, AUDIO_CODEC);
 			ArrayList<Path> pathList = finalCrypt.getPathList(tgtFileChooser.getSelectedFiles());
-			boolean delete = true;
+//			boolean delete = true;
 			boolean returnpathlist = false;
 			String pattern1 = "glob:*";
 
 			tab.getSelectionModel().select(1);
 			log("\r\nDeleting selecttion started\r\n\r\n", true, true, true, false, false);
-			finalCrypt.deleteSelection(pathList, keyFCPath, delete, returnpathlist, pattern1, false);
+			finalCrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
 			updateFileChoosers(true, true); // targetFileDeleteButtonActionPerformed()
 		    }
@@ -1618,13 +1616,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 			ArrayList<Path> pathList = finalCrypt.getPathList(keyFileChooser.getSelectedFiles());
-			boolean delete = true;
+//			boolean delete = true;
 			boolean returnpathlist = false;
 			String pattern1 = "glob:*";
 
 			tab.getSelectionModel().select(1);
 			log("\r\nDeleting selecttion started\r\n\r\n", true, true, true, false, false);
-			finalCrypt.deleteSelection(pathList, keyFCPath, delete, returnpathlist, pattern1, false);
+			finalCrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
 			//					Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath,    boolean disabledMAC,	boolean report)
 			Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,         false,         path, finalCrypt.disabledMAC,         true);
@@ -1834,7 +1832,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter()); keyFileChooser.updateUI(); keyFileChooserComponentAlteration(keyFileChooser, false);
 	    }	    
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { keyFileChooserPropertyCheck(); })); timeline.play();
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+	    {
+		keyFileChooserPropertyCheck();
+//		    test("Path: " + keyFileChooser.getCurrentDirectory().getAbsolutePath() + "\r\n");
+	    })); timeline.play();
 	}
     }
     
@@ -1894,7 +1896,7 @@ public class GUIFX extends Application implements UI, Initializable
 		if  (
 			    (tgtFileChooser != null) && (tgtFileChooser.getSelectedFiles() != null) && (tgtFileChooser.getSelectedFiles().length > 0)
 			&&  ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
-			||  ((keyFCPath != null) && (keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+			||  ((keyFCPath != null) && (keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir) )
 		    )
 		{
 		    Validate.bytesCount = 0;
@@ -1952,7 +1954,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    else
 		    {
 			new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
-			userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+			userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 		    }
 
 		    targetFCPathList = new FCPathList<FCPath>();
@@ -2023,7 +2025,8 @@ public class GUIFX extends Application implements UI, Initializable
 		// Validate KeyFile
 		if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
 		{
-		    Path keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
+//		    Path keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
+		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
     //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
 		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
@@ -2101,7 +2104,7 @@ public class GUIFX extends Application implements UI, Initializable
 				keyImageView.setImage(KEY_FILE_IMAGE);
 				keyImageView.setOpacity(0.2);
 
-				userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+				userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 
 				targetFCPathList = new FCPathList<FCPath>();
 				buildReady(targetFCPathList, false);
@@ -2165,7 +2168,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    else					{ keyHeaderLabel.setTextFill(Color.ORANGE); }
 			    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
 			    checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-			    userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+			    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 
 			    targetFCPathList = new FCPathList<FCPath>();
 			    buildReady(targetFCPathList, true);
@@ -2500,7 +2503,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if ((! keyFCPath.isValidKey) && (keyFCPath.type != FCPath.DIRECTORY ))
 			{
-			    userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+			    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			}
 			else
 			{
@@ -2521,7 +2524,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if ((! keyFCPath.isValidKey) && (keyFCPath.type != FCPath.DIRECTORY ))
 			{
-			    userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+			    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			}
 //			else
 //			{
@@ -2543,7 +2546,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    if ((keyFCPath != null) && (! keyFCPath.isValidKey) && (keyFCPath.type != FCPath.DIRECTORY ))
 		    {
-			userGuidanceMessage(SELECT_KEY_MAP, 64, false, false, true, false, Voice.VOI_SELECT_KEY, 0);
+			userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 		    }
 //		    else
 //		    {
@@ -2610,6 +2613,7 @@ public class GUIFX extends Application implements UI, Initializable
         Component[] components = container.getComponents();
         for (Component component : components)
         {
+//	    test("Component: " + component.getClass().getTypeName().toString() + "\r\n");
 	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
 //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
             
@@ -2619,13 +2623,48 @@ public class GUIFX extends Application implements UI, Initializable
                 {
 		    if ( firsttime )
 		    {
-			TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { keyFileChooser.setVisible(false); ((JToggleButton)component).doClick(); keyFileChooser.setVisible(true); }};
+			TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+			{
+			    keyFileChooser.setVisible(false); ((JToggleButton)component).doClick(); keyFileChooser.setVisible(true);
+			}};
 			Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 1500L); // Needs a delay for proper column width
 		    }
 		    else { ((JToggleButton)component).doClick(); }
                 }
             }
             if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
+            if (firsttime)
+	    {
+		if (component instanceof JComboBox)
+		{
+		    keyPathFile = new File(".");
+		    keyPathSelector = (JComboBox) component;
+//		    for (int x=0; x<keyPathSelector.getItemCount(); x++)
+//		    {
+////			test("item: " + b.getItemAt(x) + "\r\n");
+//			String item = keyPathSelector.getItemAt(x).toString();
+//			test("item: " + item + "\r\n");
+//			if ( item.toLowerCase().contains("deze"))
+//			{
+//			    test("YES: " + item + "\r\n");
+////			    keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(x));
+//			    keyPathSelectorPrefered = x;
+////			    keyPathFile = new File(keyPathSelector.getItemAt(x).toString());
+//			    keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
+//			    keyPathFile = keyFileChooser.getCurrentDirectory();
+////			    keyFileChooser.rescanCurrentDirectory();
+//			    break;
+////			    x=keyPathSelector.getItemCount(); break;
+////			    TimerTask keyFileChooserSetPrefDirTask = new TimerTask() { @Override public void run()
+////			    {
+////				keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
+////				keyFileChooser.rescanCurrentDirectory();
+////			    }};
+////			    Timer keyFileChooserSetPrefDirTaskTimer = new java.util.Timer(); keyFileChooserSetPrefDirTaskTimer.schedule(keyFileChooserSetPrefDirTask, 4000L); // Needs a delay for proper column width
+//			}
+//		    }
+		}
+	    }
         }
         return false;
     }
@@ -2903,7 +2942,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    processRunning = true;
 	    
-	    disableFileChoosers(true);
+	    disableFileChoosers(true, false);
 	    
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
@@ -3035,7 +3074,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    updateDashboard(targetFCPathList);
 	    
-	    disableFileChoosers(false);
+	    disableFileChoosers(false, false);
 	    
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);

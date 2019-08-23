@@ -19,12 +19,10 @@ Homepage: http://www.pango.org/
 Compare last two encrypt decrypt sessions
 auto encrypt on exit getDesktop.open(..
 Property parameters version, perf, tally stats: http://../VERSION2?params
-Fixed UTF8 symbols Cross OS
 Open Last Key Directory
 Tools Settings
 Backup in stead of Create Key button Files.createLink(link, target);
 key buff en wachtwoord
-file progressie key
 
 =============================== Don't forget ================================
 
@@ -37,14 +35,17 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Disabled clone modification time after encrypting files
- Reencrypting files without modifying them now results
- in a totally different encrypted file and key file pair
- Therefor the modification timestamps should also change 
- Differential backups ignore files with unmodified times
+Major Upgrade: FinalCrypt now has its own Backup Solution
+This Backup is highly efficient being based on hard linked 
+historical archives combined with differential data file-sets
+Backups only grow when the backed up files are different
 
-Fixed file progress bar during the create key file phase
-Improved user interrupted key file deletion and logging
+Select your target files (left) and click the Backup button
+and select a backup-directory and it automatically archives
+Unencrypted files, Encrypted files & key-files (Cross OS)
+
+It is adviced to use NTFS for your Key Directory Storage and
+Archive Storage for optimal Cross OS data interchangeability
 
 ============================= Source Committed ==============================
 

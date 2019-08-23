@@ -68,6 +68,7 @@ public class Audio
     public static final String VOI_SCANNING_FILES =		    "/rdj/audio/voice/scanning_files";
     public static final String VOI_SELECT_FILES =		    "/rdj/audio/voice/select_files";
     public static final String VOI_SELECT_KEY =			    "/rdj/audio/voice/select_key";
+    public static final String VOI_SELECT_KEY_DIRECTORY =	    "/rdj/audio/voice/select_key_directory";
     public static final String VOI_VOICE_DISABLED =		    "/rdj/audio/voice/voice_disabled";
     public static final String VOI_VOICE_ENABLED =		    "/rdj/audio/voice/voice_enabled";
     public static final String VOI_WRONG_KEY_OR_PASSWORD =	    "/rdj/audio/voice/wrong_key_or_password";

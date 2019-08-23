@@ -72,28 +72,23 @@ public class FinalCrypt extends Thread
     private static double   filesBytesPerMilliSecond = 0;
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //
-    public static final String UTF8_ENCRYPT_SYMBOL =		    "E";
-    public static final String UTF8_ENCRYPT_DESC =		    "Encrypt";
-
-    public static final String UTF8_XOR_NOMAC_SYMBOL =		    "X";
-    public static final String UTF8_XOR_NOMAC_DESC =		    "XOR";
-
+    public static final String UTF8_UNFINISHED_SYMBOL =		    "0";
+    public static final String UTF8_UNFINISHED_DESC =		    "Unfinished";
+    
+    public static final String UTF8_UNKNOWN_SYMBOL =		    "½";
+    public static final String UTF8_UNKNOWN_DESC =		    "Unknown";
+    
+    public static final String UTF8_FINISHED_SYMBOL =		    "1";
+    public static final String UTF8_FINISHED_DESC =		    "Finished";
+    
     public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "U";
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
-
-    public static final String UTF8_DECRYPT_SYMBOL =		    "D";
-    public static final String UTF8_DECRYPT_DESC =		    "Decrypt";
 
     public static final String UTF8_UNDECRYPTABLE_SYMBOL =	    "U";
     public static final String UTF8_UNDECRYPTABLE_DESC =	    "Undecryptable";
 
-    public static 	String UTF8_PROCESS_SYMBOL =		    "?";
-
-    public static final String UTF8_CLONE_SYMBOL =		    "C";
-    public static final String UTF8_CLONE_DESC =		    "Clone";
-
     public static final String UTF8_KEY_DESC =			    "Key";
-    public static final String UTF8_KEY_SYMBOL =		    "K";
+    public static final String UTF8_KEY_SYMBOL =			    "K";
     
     public static final String UTF8_OLD_TARGET_DESC =		    "Old Target";
     public static final String UTF8_OLD_TARGET_SYMBOL =		    "O";
@@ -101,27 +96,42 @@ public class FinalCrypt extends Thread
     public static final String UTF8_NEW_TARGET_DESC =		    "New Target";
     public static final String UTF8_NEW_TARGET_SYMBOL =		    "N";
     
-    public static final String UTF8_MAC_DESC =			    "MAC";
-    public static final String UTF8_MAC_SYMBOL =		    "M";
+    public static final String UTF8_MAC_DESC =			    "Message Authentication Code (MAC)";
+    public static final String UTF8_MAC_SYMBOL =			    "M";
         
+    public static final String UTF8_ATTRIB_SYMBOL =		    "A";
+    public static final String UTF8_ATTRIB_DESC =		    "File Attributes";
+
+    public static 	String UTF8_PROCESS_SYMBOL =		    "?"; // Dynamically changes
+    public static 	String UTF8_PROCESS_DESC =		    "Process";
+
     public static final String UTF8_CREATE_SYMBOL =		    "+";
     public static final String UTF8_CREATE_DESC =		    "Create";
 
-    public static final String UTF8_READ_SYMBOL =		    "r";
+    public static final String UTF8_READ_SYMBOL =		    "R";
     public static final String UTF8_READ_DESC =			    "Read";
 
-    public static final String UTF8_WRITE_SYMBOL =		    "w";
+    public static final String UTF8_WRITE_SYMBOL =		    "W";
     public static final String UTF8_WRITE_DESC =		    "Write";
+
+    public static final String UTF8_ENCRYPT_SYMBOL =		    "E";
+    public static final String UTF8_ENCRYPT_DESC =		    "Encrypt";
+
+    public static final String UTF8_DECRYPT_SYMBOL =		    "D";
+    public static final String UTF8_DECRYPT_DESC =		    "Decrypt";
+
+    public static final String UTF8_XOR_NOMAC_SYMBOL =		    "X";
+    public static final String UTF8_XOR_NOMAC_DESC =		    "XOR";
+
+    public static final String UTF8_SHRED_SYMBOL =		    "S";
+    public static final String UTF8_SHRED_DESC =		    "Shred";
+
+    public static final String UTF8_CLONE_SYMBOL =		    "C";
+    public static final String UTF8_CLONE_DESC =		    "Clone";
 
     public static final String UTF8_DELETE_SYMBOL =		    "-";
     public static final String UTF8_DELETE_DESC =		    "Delete";
 
-    public static final String UTF8_FINISHED_SYMBOL =		    "1";
-    public static final String UTF8_FINISHED_DESC =		    "Finished";
-    
-    public static final String UTF8_UNFINISHED_SYMBOL =		    "0";
-    public static final String UTF8_UNFINISHED_DESC =		    "Unfinished";
-    
     public static final String UTF8_PAUSE_SYMBOL =		    "PS";
     public static final String UTF8_STOP_SYMBOL =		    "ST";
 
@@ -160,7 +170,65 @@ public class FinalCrypt extends Thread
         this.ui = ui;
 //        fc = this;
     }
-        
+    
+    public static String getLogHeader(String classname, Version version, Configuration configuration)
+    {
+	String env = "";
+	
+	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
+	env += "\r\n";
+	env +=    "Interface:          " + classname + "\r\n";
+	env +=    "Email:              " + Version.getEmail() + "\r\n";
+	env +=    "Copyright:          " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
+	env +=    "Logfiles:           " + configuration.getLogDirPath().toString() + "\r\n";
+	env +=    "Command line:       java -cp finalcrypt.jar rdj/CLUI --help\r\n";
+	env +=    "License:            " + Version.getLicense() + "\r\n";
+	env += "\r\n";
+	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
+	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
+	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
+	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
+	env += "\r\n";
+	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
+	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
+	env +=    "Class Version:      " + System.getProperty("java.class.version") + "\r\n";
+	env += "\r\n";
+	env +=    "User Name:          " + System.getProperty("user.name") + "\r\n";
+	env +=    "User Home:          " + System.getProperty("user.home") + "\r\n";
+	env +=    "User Dir:           " + System.getProperty("user.dir") + "\r\n";
+	env += "\r\n";
+	env += "Status Symbols      ";
+	env += FinalCrypt.UTF8_UNFINISHED_DESC + ": " +	    FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNKNOWN_DESC + ": " +	    FinalCrypt.UTF8_UNKNOWN_SYMBOL + " ";
+	env += FinalCrypt.UTF8_FINISHED_DESC + ": " +	    FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNENCRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNENCRYPTABLE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNDECRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNDECRYPTABLE_SYMBOL + " ";
+	env += "\r\n";
+	env += "Data   Symbols      ";
+	env += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " +	    FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
+	env += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " +	    FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
+	env += FinalCrypt.UTF8_MAC_DESC + ": " +	    FinalCrypt.UTF8_MAC_SYMBOL + " ";
+	env += FinalCrypt.UTF8_KEY_DESC + ": " +	    FinalCrypt.UTF8_KEY_SYMBOL + " ";
+	env += FinalCrypt.UTF8_ATTRIB_DESC + ": " +	    FinalCrypt.UTF8_ATTRIB_SYMBOL + " ";
+	env += "\r\n";
+	env += "Action Symbols      ";
+	env += FinalCrypt.UTF8_CREATE_DESC + ": " +	    FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_READ_DESC + ": " +	    FinalCrypt.UTF8_READ_SYMBOL + " ";
+	env += FinalCrypt.UTF8_WRITE_DESC + ": " +	    FinalCrypt.UTF8_WRITE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_ENCRYPT_DESC + ": " +	    FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
+	env += FinalCrypt.UTF8_DECRYPT_DESC + ": " +	    FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	env += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " +	    FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
+	env += FinalCrypt.UTF8_SHRED_DESC + ": " +	    FinalCrypt.UTF8_SHRED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_CLONE_DESC + ": " +	    FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_DELETE_DESC + ": " +	    FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_PAUSE_DESC + ": " +	    FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_STOP_DESC + ": " +	    FinalCrypt.UTF8_STOP_SYMBOL + " ";
+	env += "\r\n";
+	env += "\r\n";
+	
+	return env;
+    }
+
     public int getBufferSize()                                              { return bufferSize; }
     
 //    public boolean getDebug()                                               { return debug; }
@@ -391,7 +459,7 @@ public class FinalCrypt extends Thread
 		}
 		
 		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
-		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
 
 		// =================================================================================================================================================================
 		// Auto Key Mode
@@ -525,7 +593,7 @@ public class FinalCrypt extends Thread
 			    {				
 				if ( ! test )
 				{
-				    ui.log(UTF8_CREATE_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
+				    ui.log(UTF8_WRITE_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
 				    // Add MAC to targetDestinPath
 				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND))))
@@ -605,7 +673,7 @@ public class FinalCrypt extends Thread
 		// Open and close files after every bufferrun. Interrupted file I/O works much faster than uninterrupted I/O encryption
 		
 		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
-		ui.log(UTF8_PROCESS_SYMBOL, false, true, true, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL, false, true, true, false, false);
 		
 		while (( ! targetSourceEnded ) && ( ! test ))
 		{
@@ -700,81 +768,10 @@ public class FinalCrypt extends Thread
 //    ==================================================================================================================================================================
 //                      Copy inputFilePath attributes to outputFilePath
 
-/*
-“basic:creationTime”	FileTime	The exact time when the file was created.
-“basic:fileKey”	Object	An object that uniquely identifies a file or null if a file key is not available.
-“basic:isDirectory”	Boolean	Returns true if the file is a directory.
-“basic:isRegularFile”	Boolean	Returns true if a file is not a directory.
-“basic:isSymbolicLink”	Boolean	Returns true if the file is considered to be a symbolic link.
-“basic:isOther”	Boolean	
-“basic:lastAccessTime”	FileTime	The last time when the file was accesed.
-“basic:lastModifiedTime”	FileTime	The time when the file was last modified.
-“basic:size”	Long	The file size.    
-
-“dos:archive”	Boolean	Return true if a file is archive or not.
-“dos:hidden”	Boolean	Returns true if the file/folder is hidden.
-“dos:readonly”	Boolean	Returns true if the file/folder is read-only.
-“dos:system”	Boolean	Returns true if the file/folder is system file.
-
-“posix:permissions”	Set<PosixFilePermission>	The file permissions.
-“posix:group”	GroupPrincipal	Used to determine access rights to objects in a file system
-
-“acl:acl”	List<AclEntry>
-“acl:owner”	UserPrincipal
-*/
-
 		if ( ! test)
 		{
-		    attributeViewloop: for (String view:newTargetSourceFCPath.path.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
-		    {
-//                            ui.println(view);
-			if ( view.toLowerCase().equals("basic") )
-			{
-			    try
-			    {
-				BasicFileAttributes basicAttributes = null; basicAttributes = Files.readAttributes(newTargetSourceFCPath.path, BasicFileAttributes.class);
-				try
-				{
-				    Files.setAttribute(targetDestinPath, "basic:creationTime",        basicAttributes.creationTime());
-//				    Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime());
-				    Files.setAttribute(targetDestinPath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
-				}
-				catch (IOException ex) { ui.log("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			}
-			else if ( view.toLowerCase().equals("dos") )
-			{
-			    try
-			    {
-				DosFileAttributes msdosAttributes = null; msdosAttributes = Files.readAttributes(newTargetSourceFCPath.path, DosFileAttributes.class);
-				try
-				{
-//				    Files.setAttribute(targetDestinPath, "basic:lastModifiedTime",    msdosAttributes.lastModifiedTime());
-				    Files.setAttribute(targetDestinPath, "dos:hidden",                msdosAttributes.isHidden());
-				    Files.setAttribute(targetDestinPath, "dos:system",                msdosAttributes.isSystem());
-//				    Files.setAttribute(targetDestinPath, "dos:readonly",              msdosAttributes.isReadOnly());
-//				    Files.setAttribute(targetDestinPath, "dos:archive",               msdosAttributes.isArchive());
-				}
-				catch (IOException ex) { ui.log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			}
-			else if ( view.toLowerCase().equals("posix") )
-			{
-			    PosixFileAttributes posixAttributes = null;
-			    try
-			    {
-				posixAttributes = Files.readAttributes(newTargetSourceFCPath.path, PosixFileAttributes.class);
-				try
-				{
-				    Files.setAttribute(targetDestinPath, "posix:owner",               posixAttributes.owner());
-				    Files.setAttribute(targetDestinPath, "posix:group",               posixAttributes.group());
-				    Files.setPosixFilePermissions(targetDestinPath,                   posixAttributes.permissions());
-//				    Files.setLastModifiedTime(targetDestinPath,                       posixAttributes.lastModifiedTime());
-				}
-				catch (IOException ex) { ui.log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			    }   catch (IOException ex) { ui.log("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); }
-			}
-		    } // End attributeViewloop // End attributeViewloop
+    		    copyFileAttributes(newTargetSourceFCPath.path, targetDestinPath, true, UTF8_OLD_TARGET_SYMBOL, UTF8_NEW_TARGET_SYMBOL);
+		    copyFileAttributes(newTargetSourceFCPath.path, dynamicKeyFCPath.path, true, UTF8_OLD_TARGET_SYMBOL, UTF8_KEY_SYMBOL);
 		} // End ! dry
 
 //    ==================================================================================================================================================================
@@ -787,8 +784,8 @@ public class FinalCrypt extends Thread
 
 		if ( ! test)
 		{
-		    ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
-		    ui.log(UTF8_CLONE_SYMBOL, false, true, true, false, false);
+		    ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+		    ui.log(UTF8_SHRED_SYMBOL + UTF8_OLD_TARGET_SYMBOL, false, true, true, false, false);
 		    
 //				     isValidFile(UI ui, String caller,    Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 		    if (Validate.isValidFile(   ui,            "", targetDestinPath,		false,		false,            1L,           false,            false,	    true)) // newly created targetdest file has to be tested
@@ -990,6 +987,88 @@ public class FinalCrypt extends Thread
 	ui.processFinished(filteredTargetSourceFCPathList, open);
     }
     
+    synchronized public void copyFileAttributes(Path sourcePath, Path destPath, boolean cloneModTime, String sourceSymbol, String destSymbol)
+    {
+
+/*
+“basic:creationTime”	FileTime	The exact time when the file was created.
+“basic:fileKey”	Object	An object that uniquely identifies a file or null if a file key is not available.
+“basic:isDirectory”	Boolean	Returns true if the file is a directory.
+“basic:isRegularFile”	Boolean	Returns true if a file is not a directory.
+“basic:isSymbolicLink”	Boolean	Returns true if the file is considered to be a symbolic link.
+“basic:isOther”	Boolean	
+“basic:lastAccessTime”	FileTime	The last time when the file was accesed.
+“basic:lastModifiedTime”	FileTime	The time when the file was last modified.
+“basic:size”	Long	The file size.    
+
+“dos:archive”	Boolean	Return true if a file is archive or not.
+“dos:hidden”	Boolean	Returns true if the file/folder is hidden.
+“dos:readonly”	Boolean	Returns true if the file/folder is read-only.
+“dos:system”	Boolean	Returns true if the file/folder is system file.
+
+“posix:permissions”	Set<PosixFilePermission>	The file permissions.
+“posix:group”	GroupPrincipal	Used to determine access rights to objects in a file system
+
+“acl:acl”	List<AclEntry>
+“acl:owner”	UserPrincipal
+*/
+
+	String statusSymbol = UTF8_FINISHED_SYMBOL;
+	ui.log(UTF8_CLONE_SYMBOL + UTF8_ATTRIB_SYMBOL + destSymbol, false, true, true, false, false);
+	
+	attributeViewloop: for (String view:sourcePath.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
+	{
+//                            ui.println(view);
+	    if ( view.toLowerCase().equals("basic") )
+	    {
+		try
+		{
+		    BasicFileAttributes basicAttributes = null; basicAttributes = Files.readAttributes(sourcePath, BasicFileAttributes.class);
+		    try
+		    {
+			Files.setAttribute(destPath, "basic:creationTime",        basicAttributes.creationTime());
+			if (cloneModTime) { Files.setAttribute(destPath, "basic:lastModifiedTime",    basicAttributes.lastModifiedTime()); }
+			Files.setAttribute(destPath, "basic:lastAccessTime",      basicAttributes.lastAccessTime());
+		    }
+		    catch (IOException ex) { ui.log("Error: Set Basic Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+		}   catch (IOException ex) { ui.log("Error: basicAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+	    }
+	    else if ( view.toLowerCase().equals("dos") )
+	    {
+		try
+		{
+		    DosFileAttributes msdosAttributes = null; msdosAttributes = Files.readAttributes(sourcePath, DosFileAttributes.class);
+		    try
+		    {
+			if (cloneModTime) { Files.setAttribute(destPath, "basic:lastModifiedTime",    msdosAttributes.lastModifiedTime()); }
+			Files.setAttribute(destPath, "dos:hidden",                msdosAttributes.isHidden());
+			Files.setAttribute(destPath, "dos:system",                msdosAttributes.isSystem());
+			Files.setAttribute(destPath, "dos:readonly",              msdosAttributes.isReadOnly());
+			Files.setAttribute(destPath, "dos:archive",               msdosAttributes.isArchive());
+		    }
+		    catch (IOException ex) { ui.log("Error: Set DOS Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+		}   catch (IOException ex) { ui.log("Error: msdosAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+	    }
+	    else if ( view.toLowerCase().equals("posix") )
+	    {
+		PosixFileAttributes posixAttributes = null;
+		try
+		{
+		    posixAttributes = Files.readAttributes(sourcePath, PosixFileAttributes.class);
+		    try
+		    {
+			Files.setAttribute(destPath, "posix:owner",               posixAttributes.owner());
+			Files.setAttribute(destPath, "posix:group",               posixAttributes.group());
+			Files.setPosixFilePermissions(destPath,                   posixAttributes.permissions());
+			if (cloneModTime) { Files.setLastModifiedTime(destPath,                       posixAttributes.lastModifiedTime()); }
+		    }
+		    catch (IOException ex) { ui.log("Error: Set POSIX Attributes: " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+		}   catch (IOException ex) { ui.log("Error: posixAttributes = Files.readAttributes(..): " + ex.getMessage() + "\r\n", false, false, true, true, false); statusSymbol = "?"; }
+	    }
+	} // End attributeViewloop // End attributeViewloop
+	ui.log(statusSymbol + " ", false, true, true, false, false);
+    }
+    
     synchronized public static String getHexString(byte[] bytes, int digits) { String returnString = ""; for (byte mybyte:bytes) { returnString += getHexString(mybyte, digits); } return returnString; }
     synchronized public static String getHexString(byte value, int digits) { return String.format("%0" + Integer.toString(digits) + "X", (value & 0xFF)).replaceAll("[^A-Za-z0-9]",""); }
 
@@ -1119,11 +1198,11 @@ public class FinalCrypt extends Thread
     }
     
 //  Recursive Deletion of PathList
-    public void deleteSelection(ArrayList<Path> targetSourcePathList, FCPath keyFCPath, boolean delete, boolean returnpathlist, String pattern, boolean negatePattern)
+    public void deleteSelection(ArrayList<Path> targetSourcePathList, FCPath keyFCPath, int function, boolean returnpathlist, String pattern, boolean negatePattern)
     {
         EnumSet<FileVisitOption> opts = EnumSet.of(FileVisitOption.FOLLOW_LINKS); //follow links
-//							  MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
-        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,         delete,         symlink,		 false,       keyFCPath,		   new FCPathList<FCPath>() ,        pattern,	     negatePattern,	    disabledMAC);
+//							  MySimpleFCFileVisitor(UI ui, boolean verbose,	int function, boolean symlink, boolean setFCPathlist,    Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
+        MySimpleFCFileVisitor mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	       verbose,	    function,         symlink,		     false,       keyFCPath,	      new FCPathList<FCPath>() ,        pattern,         negatePattern,		disabledMAC);
         for (Path path:targetSourcePathList)
         {
             try{Files.walkFileTree(path, opts, Integer.MAX_VALUE, mySimpleFCFileVisitor);} catch(IOException e) { ui.log("Error: IOException: deleteSelection() Files.walkFileTree(" + path.toAbsolutePath().toString() + "): " + e.getMessage() + "\r\n", true, true, true, true, false); }

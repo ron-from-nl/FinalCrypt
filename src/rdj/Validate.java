@@ -33,7 +33,9 @@ public class Validate
     private static Path selectedKeyPath;
     public static long bytesCount;
     private static MySimpleFCFileVisitor mySimpleFCFileVisitor;
-    
+    private static final Path	HOME_DIR = Paths.get(System.getProperty("user.home"));
+    private static final Path	WORK_DIR = Paths.get(System.getProperty("user.dir"));
+    public static Path		key_Home_Path = HOME_DIR;
 
     public static void validateBuild(UI ui, FCPathList<FCPath> targetFCPathList, FCPath keyFCPath, boolean printgpt, boolean deletegpt)
     {
@@ -260,8 +262,8 @@ public class Validate
     // Synchronized removes multifile target inconsistency, but also smooth busy animation
     public static void buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern, boolean disabledMAC, boolean status)
     {
-//				    MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern,  boolean disabledMAC)
-	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	   false,          false,         symlink,                  true,    keyFCPath,                   targetFCPathList,	   pattern,         negatePattern,	    disabledMAC);
+//				    MySimpleFCFileVisitor(UI ui, boolean verbose,		int function, boolean symlink, boolean setFCPathlist, Path keyPath, ArrayList<FCPath> targetFCPathList, String pattern, boolean negatePattern,  boolean disabledMAC)
+	mySimpleFCFileVisitor = new MySimpleFCFileVisitor(   ui,	   false, MySimpleFCFileVisitor.SCAN,         symlink,                  true,    keyFCPath,                   targetFCPathList,	   pattern,         negatePattern,	    disabledMAC);
 	
 	for (Path path:pathList)
 	{
@@ -422,7 +424,7 @@ public class Validate
 	    // isValid in general
 	    if ( isKey )
 	    {
-		if ((exist) && (type == FCPath.DIRECTORY) && (readable) && (writable) )							    { isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true; } else { isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true; }
+		if ((exist) && (type == FCPath.DIRECTORY) && (readable) && (writable) && ( path.compareTo(HOME_DIR) != 0) && ( path.compareTo(WORK_DIR) != 0) && ( path.compareTo(key_Home_Path) != 0) && ( path.compareTo(Paths.get(HOME_DIR.toString(), "Desktop")) != 0))							    { isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true; } else { isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true; }
 		
 		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
@@ -573,7 +575,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     private final UI ui;
     private final PathMatcher pathMatcher;
     private final boolean verbose; 
-    private final boolean delete; 
+//    private final boolean delete;
     private final boolean symlink; 
     private final boolean setFCPathlist; 
     public FCPath keyFCPath;
@@ -582,17 +584,23 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     public long bytesCount = 0;
     public static boolean running = false; 
     private static boolean disabledMAC = false; 
+    public static final int NOFUNCTION = 0;
+    public static final int SCAN = 1;
+    public static final int DELETE = 2;
+    public static final int BACKUP = 3;
+    public static int function = NOFUNCTION;
 
 //  regex pattern
 //  all *.bit   =   'regex:^.*\.bit$'
 //  all but *.bit   'regex:(?!.*\.bit$)^.*$'
     
-    public MySimpleFCFileVisitor(UI ui, boolean verbose, boolean delete, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
+    public MySimpleFCFileVisitor(UI ui, boolean verbose, int function, boolean symlink, boolean setFCPathlist, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, String pattern, boolean negatePattern, boolean disabledMAC)
     {
         this.ui = ui;
         pathMatcher = FileSystems.getDefault().getPathMatcher(pattern); // "glob:" or "regex:" included in pattern
         this.verbose = verbose;
-        this.delete = delete;
+	this.function = function;
+//        this.delete = delete;
         this.symlink = symlink;
         this.setFCPathlist = setFCPathlist;
 	this.keyFCPath = keyFCPath;
@@ -601,15 +609,17 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	this.disabledMAC = disabledMAC;
 	bytesCount = 0;
 	running = true;
+	
     }
    
     @Override public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs)
     {
 	if (running)
 	{
-	    if	(delete)		{ return FileVisitResult.CONTINUE; }
-	    else if (setFCPathlist)	{ if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } }
-	    else			{ ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); return FileVisitResult.CONTINUE; }
+	    if	    (function == DELETE)    { return FileVisitResult.CONTINUE; }
+	    else if (function == SCAN)	    { if (setFCPathlist) { if ( Validate.isValidDir(ui, path, symlink, true) ) { return FileVisitResult.CONTINUE; } else { return FileVisitResult.SKIP_SUBTREE; } } else { return FileVisitResult.SKIP_SUBTREE; } }
+	    else if (function == BACKUP)    { return FileVisitResult.CONTINUE; }
+	    else			    { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); return FileVisitResult.CONTINUE; }
 	}
 	else { targetFCPathList.clear(); return FileVisitResult.TERMINATE; }
     }    
@@ -620,7 +630,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 	{
 	    if ( (path.getFileName() != null ) && ( negatePattern ^ pathMatcher.matches(path.getFileName())) ) // ^ = XOR just reverses the match when -W instead of -w if given in CLUI
 	    {            
-		if	(delete)
+		if	(function == DELETE)
 		{
 		    ui.log("Delete: \"" + path + "\"\r\n", true, true, true, false, false);
 		    try { Files.delete(path); } catch (IOException ex) { ui.log("Error: visitFile(.. ) Failed file: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -640,10 +650,16 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 			}
 		    }
 		}
-		else if (setFCPathlist)    
+		else if (function == SCAN)    
 		{
-//    					     getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean disabledMAC, boolean report)
-		    FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path, disabledMAC,          true); targetFCPathList.add(fcPath);
+		    if (setFCPathlist)
+		    {
+//						 getFCPath(UI ui, String caller, Path path, boolean isKey,	 Path keyPath, boolean disabledMAC, boolean report)
+			FCPath fcPath = Validate.getFCPath(   ui,            "",      path,            false, this.keyFCPath.path, disabledMAC,          true); targetFCPathList.add(fcPath);
+		    }
+		}
+		else if (function == BACKUP)    
+		{
 		}
 		else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    }
@@ -667,7 +683,7 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
     {
 	if (running)
 	{
-	    if      (delete)
+	    if      (function == DELETE)
 	    {
 		ui.log("Delete: \"" + path + "\"\r\n", true, true, true, false, false);
 		try { Files.delete(path); } catch (IOException ex) { ui.log("Error: postVisitDirectory: " + path.toAbsolutePath().toString() + " due to: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -681,8 +697,9 @@ class MySimpleFCFileVisitor extends SimpleFileVisitor<Path>
 		    }
 		}
 	    }
-	    else if (setFCPathlist) {     }
-	    else { ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
+	    else if (function==SCAN)	{ if (setFCPathlist) {     } }
+	    else if (function==BACKUP)	{  }
+	    else			{ ui.log("Huh? this shouldn't have happened. Neither booleans: delete & returnpathlist are present?\r\n", true, true, false, false, false); }
 	    
 	    return FileVisitResult.CONTINUE;
 	}

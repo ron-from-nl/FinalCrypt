@@ -1,3 +1,17 @@
+5.4.2 Enabled clone modification time for encrypted files and
+      key files. If both files have cloned mod-time then it's
+      much more backup efficient as the new encrypted file in
+      decrypted form is no different from its backed up file
+
+      The Working, Home, Documents & Desktop directory can't
+      be selected anymore as the Key Directory, making users
+      actively select the Key Directory for Key Dir awareness
+
+      The Key Directory is now only selected by going INTO the
+      Key Directory. Key Dir Selection is now more uniform
+
+      Replaced UTF8 symbols fixed instability on Ubuntu 19.04
+
 5.4.1 Disabled clone modification time after encrypting files
       -Re-encrypting files without modifying them now results
        in totally different encrypted file and key file pairs
@@ -6,13 +20,11 @@
 
        Improved User Interrupted key file deletion and logging
        Fixed file progressbar during the create key file phase
-5.4.0 Important: removed partial key reusage on re-encryption
-      Re-encryption now forces the creation of a new Key File
-      Decrypting now also deletes the existing used Key File
-      Please decrypt & encrypt your files to secure 100% OTP
+5.4.0 Re-encryption now forces new Key Creation
+      Decryption also deletes existing key file
 
-      Disabled the animations, sounds and voices on first use
-      Replaced some UTF8 symbols for better Cross OS clarity
+      Disabled animation, sound & voice on first use
+      Removed some UTF8 symbols fixing Linux instability
 5.3.1 Added non interactive print scan results to CLI
       Corrected print Write / Matched Key Path in CLI
 5.3.0 Added Show Password Tooltip with fontsize 14px
