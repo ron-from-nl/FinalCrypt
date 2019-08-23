@@ -1069,19 +1069,6 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		disableFileChoosers(false, true);
 		
-//		Make surethere is a key dir selected at startup
-
-//		File dummy_file = null;
-//		try { dummy_file = new File(new File("C:\\").getCanonicalPath()); } catch (IOException ex) { log(ex.getMessage(), true, true, true, true ,false); }
-//		keyFileChooser.setCurrentDirectory(dummy_file);
-//		keyFileChooser.changeToParentDirectory();
-//
-////		keyFileChooser.setCurrentDirectory(new File("/"));
-//		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-////				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-//		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-//		keyFileChooserPropertyCheck();
-
 		FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
 		sysmonFadeTransition.setFromValue(0.0f);
 		sysmonFadeTransition.setToValue(1.0f);
@@ -1105,17 +1092,6 @@ public class GUIFX extends Application implements UI, Initializable
 		    systemMonitorTestTimeline.setCycleCount(10);
 		    systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) ->
 		    {
-//			Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-//	//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-//			keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-//			keyFileChooserPropertyCheck();
-			
-//			keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
-//			test("sset: " + keyPathFile + "\r\n");
-//			keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(keyPathSelectorPrefered));
-//			keyFileChooser.setCurrentDirectory((File) keyPathFile);
-//			keyFileChooser.rescanCurrentDirectory();			
-
 			userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			update_System_Monitor_Enabled = true;
 		    });
@@ -1229,28 +1205,6 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		if (firsttime)
 		{
-//			Path root = new File(":").toPath();
-//			Path rootParent = root.getParent();
-//			test("root: " + root.toAbsolutePath().toString() + "\r\n");
-//			test("rootP: " + rootParent.toAbsolutePath().toString() + "\r\n");
-//			if (rootParent != null)
-//			{
-//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getFileSystemView().getParentDirectory(new File("C:\\"))); // hangs
-//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getRoot().toFile()); // hangs
-//			    int c=keyFileChooser.getCurrentDirectory().toPath().getNameCount();
-//			    for ( int x=2; x<c; x++) {keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getParent().toFile());}
-//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getCurrentDirectory().toPath().getParent().toFile()); // hangs
-			    keyFileChooser.setCurrentDirectory(new File("C:\\Users\\Ron de Jong\\::{20D04FE0-3AEA-1069-A2D8-08002B30309D}")); // hangs
-//			    keyFileChooser.setCurrentDirectory(keyFileChooser.getFileSystemView().getRoots()); // hangs
-			    // �C:\Users\Ron de Jong\::{20D04FE0-3AEA-1069-A2D8-08002B30309D}� 
-
-//			    for (File file: keyFileChooser.getFileSystemView().getRoots()) { test(file + "\r\n");}
-			    
-//			}
-//			else
-//			{
-//			    keyFileChooser.setCurrentDirectory(root.toFile());
-//			}
 //			keyFileChooserPropertyCheck();
 		}
 	    });
@@ -1307,7 +1261,7 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0); bottomrightLabel.setVisible(bottomrightLabelEnabled);
 	    }
 	    userGuidanceLabel.setOpacity(0);
-	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * 1.3) + "px;");
+	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / message.length() * 1.5) + "px;");
 	    userGuidanceLabel.setText(message);
 	    fadevar = 0.0;
 	    Timeline labelTimeline1 = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae -> // Begin fade in
