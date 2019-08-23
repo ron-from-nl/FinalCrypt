@@ -81,10 +81,10 @@ public class FinalCrypt extends Thread
     public static final String UTF8_FINISHED_SYMBOL =		    "1";
     public static final String UTF8_FINISHED_DESC =		    "Finished";
     
-    public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "U";
+    public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "UE";
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
 
-    public static final String UTF8_UNDECRYPTABLE_SYMBOL =	    "U";
+    public static final String UTF8_UNDECRYPTABLE_SYMBOL =	    "UD";
     public static final String UTF8_UNDECRYPTABLE_DESC =	    "Undecryptable";
 
     public static final String UTF8_KEY_DESC =			    "Key";
