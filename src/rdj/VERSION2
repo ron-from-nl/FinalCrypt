@@ -31,6 +31,9 @@
 [Update Notes] =	{}
 [Update Notes] =	{   The Key Directory is now only selected by going INTO the}
 [Update Notes] =	{   Key Directory. Key Dir Selection is now more uniform}
+[Update Notes] =	{}
+[Update Notes] =	{   Improved Command Line Key Dir/File and Target Validation}
+[Update Notes] =	{   Replaced UTF8 symbols fixed instability on Ubuntu 19.04}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

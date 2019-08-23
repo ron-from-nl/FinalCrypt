@@ -398,8 +398,12 @@ public class Validate
 	boolean isUnDecryptable =	    false;	
 	
 	boolean isValidKey =		    false;	
-	boolean isValidKeyDir =		    false;	
+	boolean isValidKeyDir =		    false;
 
+	String	errorDesc =		    "";
+
+	path = path.normalize();
+	
         if ( Files.exists(path, LinkOption.NOFOLLOW_LINKS) ) // Does not check if symbolic link target file exist
 //        if ( Files.exists(path) )
 	{
@@ -424,7 +428,40 @@ public class Validate
 	    // isValid in general
 	    if ( isKey )
 	    {
-		if ((exist) && (type == FCPath.DIRECTORY) && (readable) && (writable) && ( path.compareTo(HOME_DIR) != 0) && ( path.compareTo(WORK_DIR) != 0) && ( path.compareTo(key_Home_Path) != 0) && ( path.compareTo(Paths.get(HOME_DIR.toString(), "Desktop")) != 0))							    { isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true; } else { isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true; }
+		if (
+			    (exist)
+			&&  (type == FCPath.DIRECTORY)
+			&& (readable)
+			&& (writable)
+		    )
+		{
+		    isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true;
+		}
+		else
+		{
+		    isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true;
+		}
+
+		boolean tmpValid = true;
+		if (type != FCPath.DIRECTORY)
+		{
+		    if ( ! readable )									{ tmpValid = false; errorDesc += "Warning: Key File: \"" + path.toAbsolutePath().toString() + "\" not readable!\r\n"; }
+		    if ( ! writable )									{ tmpValid = false; errorDesc += "Warning: Key File: \"" + path.toAbsolutePath().toString() + "\" not writable!\r\n"; }
+		}
+		else
+		{
+		    if ( ! readable )									{ tmpValid = false; errorDesc += "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" not readable!\r\n"; }
+		    if ( ! writable )									{ tmpValid = false; errorDesc += "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" not writable!\r\n"; }
+		}
+		if ( path.toAbsolutePath().toString().equals(Paths.get("/").toAbsolutePath().toString()) )				{ tmpValid = false; errorDesc = "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" equals Root directory!\r\n"; }
+		if ( path.toAbsolutePath().compareTo(HOME_DIR.toAbsolutePath()) == 0)							{ tmpValid = false; errorDesc = "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" equals Home directory!\r\n"; }
+		if ( path.toAbsolutePath().compareTo(WORK_DIR.toAbsolutePath()) == 0)							{ tmpValid = false; errorDesc = "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" equals Work directory!\r\n";}
+		if ( path.toAbsolutePath().compareTo(key_Home_Path.toAbsolutePath()) == 0)						{ tmpValid = false; errorDesc = "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" equals Home directory!\r\n";}
+		if ( path.toAbsolutePath().compareTo(Paths.get(HOME_DIR.toAbsolutePath().toString(), "Desktop").toAbsolutePath()) == 0)	{ tmpValid = false; errorDesc = "Warning: Key Directory: \"" + path.toAbsolutePath().toString() + "\" equals Desktop directory!\r\n";}
+
+		if (tmpValid)   { isValid = true; isValidPath = true; isValidKeyDir = true; isUnEncryptable = true; isUnDecryptable = true; }
+		else		{ isValid = false; isValidPath = false; isValidKeyDir = false; isUnEncryptable = true; isUnDecryptable = true; }
+
 		
 		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
@@ -503,8 +540,8 @@ public class Validate
 	    }	    
 	}
 
-//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir, boolean isDecrypted, boolean isEncryptable, boolean needsWriteAutoKey, long needsWriteAutoKeySize, boolean matchedReadAutoKey, long matchedReadAutoKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
-	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsWriteAutoKey,      needsWriteAutoKeySize,	        matchedReadAutoKey,      matchedReadAutoKeySize,	isNewEncrypted,		isUnEncryptable,          isEncrypted,     macVersion,	       isDecryptable,	      isNewDecrypted,         isUnDecryptable);
+//				    Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchesKey,boolean isValid,boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir, boolean isDecrypted, boolean isEncryptable, boolean needsWriteAutoKey, long needsWriteAutoKeySize, boolean matchedReadAutoKey, long matchedReadAutoKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEnacrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable, String errorDesc
+	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsWriteAutoKey,      needsWriteAutoKeySize,	        matchedReadAutoKey,      matchedReadAutoKeySize,	isNewEncrypted,		isUnEncryptable,          isEncrypted,     macVersion,	       isDecryptable,	      isNewDecrypted,         isUnDecryptable,	       errorDesc);
 	return fcPath;
     }
 

@@ -10,6 +10,7 @@
       The Key Directory is now only selected by going INTO the
       Key Directory. Key Dir Selection is now more uniform
 
+      Improved Command Line Key Dir/File and Target Validation
       Replaced UTF8 symbols fixed instability on Ubuntu 19.04
 
 5.4.1 Disabled clone modification time after encrypting files

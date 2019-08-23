@@ -261,7 +261,8 @@ public class CLUI implements UI
 
 		all = exist + /*dir +*/ sym + size ;
 
-		log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
+//		log("\r\nWarning: Key parameter: -k \"" + keyFCPath.path.toAbsolutePath().toString() + "\" Invalid:" + all + "\r\n\r\n", false, true, true, false, false);
+		if ( ! keyFCPath.errorDescription.isEmpty() )  { log("\r\n" + keyFCPath.errorDescription +"\r\n", false, true, true, false, false); }
 		log(Validate.getFCPathStatus(keyFCPath), false, true, false, false, false); usagePrompt(true);
 	    }
 	    else

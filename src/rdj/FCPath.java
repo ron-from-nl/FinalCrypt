@@ -79,6 +79,7 @@ public class FCPath
     public	    boolean isDecryptable =		    false;    
     public	    boolean isNewDecrypted =		    false;
     public	    boolean isUnDecryptable =		    false;
+    public	    String  errorDescription =		    "";
     
     public FCPath(Path path)   { this.path = path; }
     
@@ -86,7 +87,7 @@ public class FCPath
     (
 	Path path,boolean exist,int type,long size,boolean readable,boolean writable,boolean isHidden,boolean matchKey,boolean isValidPath, boolean isValidFile, boolean isValidDeviceProtected, boolean isValidDevice, boolean isValidPartition, boolean isKey, boolean isValidKey, boolean isValidKeyDir
 //	, boolean isDecrypted, boolean isEncryptable, boolean isNewEncrypted, boolean isUnEncryptable, boolean hasFCToken, boolean isEncrypted, boolean isAuthenticated,boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
-	, boolean isDecrypted, boolean isEncryptable, boolean needsWriteAutoKey, long needsWriteAutoKeySize, boolean matchedReadAutoKey, long matchedReadAutoKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable
+	, boolean isDecrypted, boolean isEncryptable, boolean needsWriteAutoKey, long needsWriteAutoKeySize, boolean matchedReadAutoKey, long matchedReadAutoKeySize, boolean isNewEncrypted, boolean isUnEncryptable, boolean isEncrypted, int macVersion, boolean isDecryptable, boolean isNewDecrypted, boolean isUnDecryptable, String errorDesc
     )
     {
 	this.path = path; this.exist = exist; this.type = type; this.size = size; this.isReadable = readable; this.isWritable = writable; this.isHidden = isHidden;	this.matchKey = matchKey;
@@ -94,7 +95,7 @@ public class FCPath
 	
 	this.isDecrypted = isDecrypted; this.isEncryptable = isEncryptable; this.needsWriteAutoKey = needsWriteAutoKey; this.needsWriteAutoKeySize = needsWriteAutoKeySize; this.matchedReadAutoKey = matchedReadAutoKey; this.matchedReadAutoKeySize = matchedReadAutoKeySize; this.isNewEncrypted = isNewEncrypted; this.isUnEncryptable = isUnEncryptable; 
 //	this.hasFCToken = hasFCToken; this.isEncrypted = isEncrypted; this.isAuthenticated = isAuthenticated; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
-  	this.isEncrypted = isEncrypted; this.macVersion = macVersion; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable;
+  	this.isEncrypted = isEncrypted; this.macVersion = macVersion; this.isDecryptable = isDecryptable; this.isNewDecrypted = isNewDecrypted; this.isUnDecryptable = isUnDecryptable; this.errorDescription = errorDesc;
     }
         
     public FCPath clone(FCPath fcPath) // Used by FCPathList.updateStat(FCPath oldFCPath, FCPath newFCPath) Basically does a proper deep clone
@@ -105,7 +106,7 @@ public class FCPath
 	newFCPath.isValidPath = fcPath.isValidPath; newFCPath.isValidFile = fcPath.isValidFile; newFCPath.isValidDeviceProtected = fcPath.isValidDeviceProtected; newFCPath.isValidDevice = fcPath.isValidDevice; newFCPath.isValidPartition = fcPath.isValidPartition; newFCPath.isKey = fcPath.isKey; newFCPath.isValidKey = fcPath.isValidKey; newFCPath.isValidKeyDir = fcPath.isValidKeyDir;
 	newFCPath.isDecrypted = fcPath.isDecrypted; newFCPath.isEncryptable = fcPath.isEncryptable; newFCPath.needsWriteAutoKey = fcPath.needsWriteAutoKey; newFCPath.needsWriteAutoKeySize = fcPath.needsWriteAutoKeySize; newFCPath.matchedReadAutoKey = fcPath.matchedReadAutoKey; newFCPath.matchedReadAutoKeySize = fcPath.matchedReadAutoKeySize; newFCPath.isNewEncrypted = fcPath.isNewEncrypted; newFCPath.isUnEncryptable = fcPath.isUnEncryptable; 
 //	newFCPath.hasFCToken = fcPath.hasFCToken; newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.isAuthenticated = fcPath.isAuthenticated; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
-	newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.macVersion = fcPath.macVersion; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; 
+	newFCPath.isEncrypted = fcPath.isEncrypted; newFCPath.macVersion = fcPath.macVersion; newFCPath.isDecryptable = fcPath.isDecryptable; newFCPath.isNewDecrypted = fcPath.isNewDecrypted; newFCPath.isUnDecryptable = fcPath.isUnDecryptable; newFCPath.errorDescription = fcPath.errorDescription;
 	return newFCPath;
     }
     

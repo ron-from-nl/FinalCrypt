@@ -277,14 +277,14 @@ public class GUIFX extends Application implements UI, Initializable
     private final Image KEY_MAP_IMAGE =			new Image(getClass().getResourceAsStream("/rdj/images/keymap.png"));
     private final Image KEY_FILE_IMAGE =		new Image(getClass().getResourceAsStream("/rdj/images/key.png"));
     
-    private final String ANIMATED_SYMBOL =		"@"; //  📽
-    private final String SOUND_ON_SYMBOL =		"S"; //  🔊
-    private final String SOUND_OFF_SYMBOL =		"s"; //  🔇
-    private final String CPU_SYMBOL =			"¹"; // ♥ 🖳
-    private final String RAM_SYMBOL =			"²"; //  🅼
-    private final String STORAGE_SYMBOL =		"³"; //  🖴
-    private final String VOICE_ON_SYMBOL =		"V"; //  🗣
-    private final String VOICE_OFF_SYMBOL =		"v"; //  🔇
+    private final String ANIMATED_SYMBOL =		"@";
+    private final String SOUND_ON_SYMBOL =		"S";
+    private final String SOUND_OFF_SYMBOL =		"s";
+    private final String CPU_SYMBOL =			"¹";
+    private final String RAM_SYMBOL =			"²";
+    private final String STORAGE_SYMBOL =		"³";
+    private final String VOICE_ON_SYMBOL =		"V";
+    private final String VOICE_OFF_SYMBOL =		"v";
     
     private double load_High_MS_Passed =		0.0d;
     private double load_Low_MS_Passed =			0.0d;

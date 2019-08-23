@@ -106,8 +106,8 @@
                                              <children>
                                                 <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                       <SwingNode fx:id="targetFileSwingNode" />
+                                                      <BorderPane fx:id="targetFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
@@ -196,8 +196,8 @@
                                              <children>
                                                 <StackPane prefHeight="455.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                       <SwingNode fx:id="keyFileSwingNode" StackPane.alignment="CENTER" />
+                                                      <BorderPane fx:id="keyFileFoil" cache="true" mouseTransparent="true" opacity="0.5" style="-fx-background-color: #504030;" StackPane.alignment="CENTER" />
                                                    </children>
                                                 </StackPane>
                                              </children>
