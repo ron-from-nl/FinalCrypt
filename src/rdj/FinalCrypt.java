@@ -784,7 +784,7 @@ public class FinalCrypt extends Thread
 
 		if ( ! test)
 		{
-		    ui.log(UTF8_SHRED_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+		    ui.log(UTF8_SHRED_SYMBOL + UTF8_OLD_TARGET_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
 		    ui.log(UTF8_SHRED_SYMBOL + UTF8_OLD_TARGET_SYMBOL, false, true, true, false, false);
 		    
 //				     isValidFile(UI ui, String caller,    Path path, boolean isKey, boolean device, long minSize, boolean symlink, boolean writable, boolean report)
