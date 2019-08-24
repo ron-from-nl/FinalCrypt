@@ -1,3 +1,10 @@
+5.4.4 Critical Update!!!
+
+      Manual Key was deleted as if Auto Key Mode was chosen
+      This update prevents a Manual Key File to be deleted
+      Manual Key Mode should not be used anymore, but still
+      This update is quite urgent, please update immediately
+
 5.4.3 Enabled Manual Key File Selection in GUIFX again
       I apologise for temporary inconvenience in update2
       Please see Update 2 containing many improvements

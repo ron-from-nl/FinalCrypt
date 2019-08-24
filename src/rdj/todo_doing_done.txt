@@ -35,7 +35,9 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Included Manual Key File Selection in the GUIFX again. I apologise!
+Critical: Manual Key was treated as Auto Key and deleted after decryption
+This update tests if decrypting with a Manual Key and skips Key Deletion
+Manual Key shouldn't be used anymore but for those who do please update!
 
 ============================= Source Committed ==============================
 

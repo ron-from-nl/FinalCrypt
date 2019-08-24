@@ -1,4 +1,4 @@
-[Version] =		{5.4.3}
+[Version] =		{5.4.4}
 [] = {} ================================================================
 [Release Notes] =	{Added non interactive print scan results to CLI}
 [Release Message] =	{Corrected print Write / Matched Key Path in CLI}
@@ -18,11 +18,14 @@
 [Upgrade Notes] =	{   Please decrypt and reencrypt for 100% OTP}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3}
+[Update Notes] =	{Update 4}
 [Update Notes] =	{}
-[Update Notes] =	{   Enabled Manual Key File Selection in GUIFX again}
-[Update Notes] =	{   I apologise for temporary inconvenience in update2}
-[Update Notes] =	{   Please see Update 2 containing many improvements}
+[Update Notes] =	{   Critical Update!!!}
+[Update Notes] =	{}
+[Update Notes] =	{   Manual Key was deleted as if Auto Key Mode was chosen}
+[Update Notes] =	{   This update prevents a Manual Key File to be deleted}
+[Update Notes] =	{   Manual Key Mode should not be used anymore, but still}
+[Update Notes] =	{   This update is quite urgent, please update immediately}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
