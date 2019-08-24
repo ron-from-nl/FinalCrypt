@@ -1,7 +1,7 @@
 [Version] =		{5.4.4}
 [] = {} ================================================================
-[Release Notes] =	{Added non interactive print scan results to CLI}
-[Release Message] =	{Corrected print Write / Matched Key Path in CLI}
+[Release Notes] =	{Manual Key was deleted as if Auto Key Mode was chosen}
+[Release Message] =	{This update prevents a Manual Key File to be deleted}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
