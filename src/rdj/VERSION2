@@ -1,4 +1,4 @@
-[Version] =		{5.4.2}
+[Version] =		{5.4.3}
 [] = {} ================================================================
 [Release Notes] =	{Added non interactive print scan results to CLI}
 [Release Message] =	{Corrected print Write / Matched Key Path in CLI}
@@ -18,22 +18,11 @@
 [Upgrade Notes] =	{   Please decrypt and reencrypt for 100% OTP}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 2}
+[Update Notes] =	{Update 3}
 [Update Notes] =	{}
-[Update Notes] =	{   Enabled clone modification time for encrypted files and}
-[Update Notes] =	{   key files. If both files have cloned mod-time then it's}
-[Update Notes] =	{   much more backup efficient as the new encrypted file in}
-[Update Notes] =	{   decrypted form is no different from its backed up file}
-[Update Notes] =	{}
-[Update Notes] =	{   The Working, Home, Documents & Desktop directory can't}
-[Update Notes] =	{   be selected anymore as the Key Directory, making users}
-[Update Notes] =	{   actively select the Key Directory for Key Dir awareness}
-[Update Notes] =	{}
-[Update Notes] =	{   The Key Directory is now only selected by going INTO the}
-[Update Notes] =	{   Key Directory. Key Dir Selection is now more uniform}
-[Update Notes] =	{}
-[Update Notes] =	{   Improved Command Line Key Dir/File and Target Validation}
-[Update Notes] =	{   Replaced UTF8 symbols fixed instability on Ubuntu 19.04}
+[Update Notes] =	{   Enabled Manual Key File Selection in GUIFX again}
+[Update Notes] =	{   I apologise for temporary inconvenience in update2}
+[Update Notes] =	{   Please see Update 2 containing many improvements}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

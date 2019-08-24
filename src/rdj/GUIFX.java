@@ -1979,8 +1979,15 @@ public class GUIFX extends Application implements UI, Initializable
 		// Validate KeyFile
 		if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
 		{
-//		    Path keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
-		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+		    Path keyPath;
+		    if ( ! Files.isDirectory(keyFileChooser.getSelectedFiles()[0].toPath()))
+		    {
+			keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
+		    }
+		    else
+		    {
+			keyPath = keyFileChooser.getCurrentDirectory().toPath();
+		    }
     //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
 		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 

@@ -458,7 +458,7 @@ public class FinalCrypt extends Thread
 		    if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
 		}
 		
-		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
 
 		// =================================================================================================================================================================

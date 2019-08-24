@@ -35,17 +35,7 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Major Upgrade: FinalCrypt now has its own Backup Solution
-This Backup is highly efficient being based on hard linked 
-historical archives combined with differential data file-sets
-Backups only grow when the backed up files are different
-
-Select your target files (left) and click the Backup button
-and select a backup-directory and it automatically archives
-Unencrypted files, Encrypted files & key-files (Cross OS)
-
-It is adviced to use NTFS for your Key Directory Storage and
-Archive Storage for optimal Cross OS data interchangeability
+Included Manual Key File Selection in the GUIFX again. I apologise!
 
 ============================= Source Committed ==============================
 

@@ -1,3 +1,7 @@
+5.4.3 Enabled Manual Key File Selection in GUIFX again
+      I apologise for temporary inconvenience in update2
+      Please see Update 2 containing many improvements
+
 5.4.2 Enabled clone modification time for encrypted files and
       key files. If both files have cloned mod-time then it's
       much more backup efficient as the new encrypted file in
