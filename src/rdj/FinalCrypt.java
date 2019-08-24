@@ -672,7 +672,7 @@ public class FinalCrypt extends Thread
 
 		// Open and close files after every bufferrun. Interrupted file I/O works much faster than uninterrupted I/O encryption
 		
-		ui.log(UTF8_PROCESS_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL, false, true, true, false, false);
 		
 		while (( ! targetSourceEnded ) && ( ! test ))
