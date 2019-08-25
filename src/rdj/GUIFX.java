@@ -3058,10 +3058,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
 	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 	    
-	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
-	    {
+//	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
+//	    {
 		if ( keyFCPath.isValidKeyDir ) { updateFileChoosers(true, true); } else { updateFileChoosers(true, false); } // if keyfile selected then NO update keyFileChooser keeping key file selected; processFinished()
-	    }
+//	    }
 	    
 	    processRunningMode = NONE;
 	    processRunning = false;
@@ -3101,70 +3101,36 @@ public class GUIFX extends Application implements UI, Initializable
     
     public void updateFileChoosers(boolean updateTargetFC, boolean updateKeyFC)
     {
-//	SwingWorker sw1 = new SwingWorker()  
-//        { 
-//            @Override protected String doInBackground() throws Exception  
-//            { 
-//
-//		publish(1); // calls process  
-//              return "Finished Execution"; 
-//            } 
-//  
-//            @Override protected void process(List chunks) // intermediate results
-//            { 
-//                int val = (int)chunks.get(chunks.size()-1); 
-//                System.out.println(String.valueOf(val));
-//            } 
-//  
-//            @Override protected void done()  
-//            { 
-//            } 
-//        }; 
-//        sw1.execute();  
-
 	Platform.runLater(() -> 
 	{
 	    if (updateTargetFC)
-	    {
-		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
-		{
-//		    TimerTask tgtFileChooserTask = new TimerTask() { @Override public void run()
-//		    {
-//			tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-//			tgtFileChooser.updateUI();
-//			tgtFileChooserComponentAlteration(tgtFileChooser, false);
-//		    }};
-//		    Timer tgtFileChooserTaskTimer = new java.util.Timer(); tgtFileChooserTaskTimer.schedule(tgtFileChooserTask, 100L); // Needs a delay for proper column width
-		    
+	    {		    
 		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
+//			tgtFileChooser.rescanCurrentDirectory();
 			tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
 			tgtFileChooser.updateUI();
 			tgtFileChooserComponentAlteration(tgtFileChooser, false);
 		    })); timeline.play();
-		}
+//		}
 	    }
 
-	    if (updateKeyFC)
+	    if ((updateKeyFC) && (keyFCPath.type == FCPath.DIRECTORY))
 	    {
-		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
-		{
+//		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+//		{
 		    keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter());
 		    keyFileChooser.updateUI();
 		    keyFileChooserComponentAlteration(keyFileChooser, false);
-		}	    
+//		}	    
 	    }
-//	    TimerTask fileChooserPropertyChecksTask = new TimerTask() { @Override public void run()
-//	    {
-//		tgtFileChooserPropertyCheck(true); keyFileChooserPropertyCheck();
-//	    }};
-//	    Timer fileChooserPropertyChecksTaskTimer = new java.util.Timer(); fileChooserPropertyChecksTaskTimer.schedule(fileChooserPropertyChecksTask, 100L); // Needs a delay for proper column width
 	    
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
-	    {
-		tgtFileChooserPropertyCheck(true);
-		keyFileChooserPropertyCheck(); }));
-	    timeline.play();
+//	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+//	    {
+//		tgtFileChooserPropertyCheck(true);
+//		keyFileChooserPropertyCheck();
+//	    }));
+//	    timeline.play();
 	});
     }
     
@@ -3286,7 +3252,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML private void encryptTabSelectionChanged(Event event)
     {
         String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
-        if ( platform.indexOf("mac") != -1 ) 
+        if ( platform.indexOf("mac") != -1 ) // if it is a mac
 	{
 	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
 	    {
