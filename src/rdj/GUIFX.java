@@ -3125,12 +3125,12 @@ public class GUIFX extends Application implements UI, Initializable
 //		}	    
 	    }
 	    
-//	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
-//	    {
-//		tgtFileChooserPropertyCheck(true);
-//		keyFileChooserPropertyCheck();
-//	    }));
-//	    timeline.play();
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+	    {
+		tgtFileChooserPropertyCheck(true);
+		keyFileChooserPropertyCheck();
+	    }));
+	    timeline.play();
 	});
     }
     
