@@ -1,3 +1,10 @@
+5.4.5 Removed cloning file attributes Manual Key File
+      Removed cloning file attributes Auto Key File after
+      decrypting, when it is no longer needed and deleted
+      This update prevents unwanted Manual Key File backups
+      My sinsere apologies for the many updates lately, but
+      FinalCrypt has to be reliable and function correctly
+
 5.4.4 Critical Update!!!
 
       Manual Key was deleted as if Auto Key Mode was chosen
