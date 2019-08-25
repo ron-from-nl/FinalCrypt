@@ -769,12 +769,15 @@ public class FinalCrypt extends Thread
 		ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
 
 //    ==================================================================================================================================================================
-//                      Copy inputFilePath attributes to outputFilePath
+//              Copy inputFilePath attributes to outputFilePath
 
 		if ( ! test)
 		{
-    		    copyFileAttributes(newTargetSourceFCPath.path, targetDestinPath, true, UTF8_OLD_TARGET_SYMBOL, UTF8_NEW_TARGET_SYMBOL);
-		    copyFileAttributes(newTargetSourceFCPath.path, dynamicKeyFCPath.path, true, UTF8_OLD_TARGET_SYMBOL, UTF8_KEY_SYMBOL);
+    		    cloneFileAttributes(newTargetSourceFCPath.path, targetDestinPath, true, UTF8_OLD_TARGET_SYMBOL, UTF8_NEW_TARGET_SYMBOL);
+		    if ((encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) )
+		    {
+			cloneFileAttributes(newTargetSourceFCPath.path, dynamicKeyFCPath.path, true, UTF8_OLD_TARGET_SYMBOL, UTF8_KEY_SYMBOL);
+		    }
 		} // End ! dry
 
 //    ==================================================================================================================================================================
@@ -990,7 +993,7 @@ public class FinalCrypt extends Thread
 	ui.processFinished(filteredTargetSourceFCPathList, open);
     }
     
-    synchronized public void copyFileAttributes(Path sourcePath, Path destPath, boolean cloneModTime, String sourceSymbol, String destSymbol)
+    synchronized public void cloneFileAttributes(Path sourcePath, Path destPath, boolean cloneModTime, String sourceSymbol, String destSymbol)
     {
 
 /*

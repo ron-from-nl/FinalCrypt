@@ -193,6 +193,7 @@ public class Version
 	loop: for(String REMOTEVERSIONFILEURLSTRING:REMOTEVERSIONFILEURLSTRINGARRAY)
 	{	    
 	    boolean failed = false;
+	    REMOTEVERSIONFILEURLSTRING += "?version=" + getCurrentlyInstalledOverallVersionString();
 	    byteBufferRemote = ByteBuffer.allocate(100000); byteBufferRemote.clear(); remoteContent = "";
 	    ui.log("Checking: " + REMOTEVERSIONFILEURLSTRING + "\r\n", false, false, true, false, false);
 
