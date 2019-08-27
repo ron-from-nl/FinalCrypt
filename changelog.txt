@@ -4,6 +4,7 @@
       Replaced finishing duration from seconds to a clock
       Fixed incorrect Key Type Image display on selection
       Fixed incorrect Total Time Clock on short Encryption
+      Added more runtime environment info to header in log
       Added logging Scan Results on Command Line Interface
 
 5.4.5 Removed cloning file attributes Manual Key File
