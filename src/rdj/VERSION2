@@ -1,4 +1,4 @@
-[Version] =		{5.4.6}
+[Version] =		{5.5.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -11,22 +11,21 @@
 [Version Notes] =	{   New: Auto Key Mode on One-Time Pad Encryption}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 4}
+[Upgrade Notes] =	{Upgrade 5}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{   Re-encryption now forces new Key Creation}
-[Upgrade Notes] =	{   Decryption also deletes existing key file}
-[Upgrade Notes] =	{   Please decrypt and reencrypt for 100% OTP}
-[Upgrade Notes] =	{}
-[] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 6}
-[Update Notes] =	{}
 [Update Notes] =	{   Improved startup and timing graphical user interface}
 [Update Notes] =	{   More robust Check Update process with new HTTPClient}
 [Update Notes] =	{   Added human readable filesizes for files in the log}
 [Update Notes] =	{   Replaced finishing duration from seconds to a clock}
 [Update Notes] =	{   Fixed incorrect Key Type Image display on selection}
 [Update Notes] =	{   Fixed incorrect Total Time Clock on short Encryption}
+[Update Notes] =	{   Added more runtime environment info to header in log}
 [Update Notes] =	{   Added logging Scan Results on Command Line Interface}
+[Upgrade Notes] =	{}
+[] = {} ----------------------------------------------------------------
+[Update Notes] =	{Update 0}
+[Update Notes] =	{}
+[Update Notes] =	{   Updates available, please see Upgrade Section}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
