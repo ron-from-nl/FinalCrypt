@@ -1,3 +1,11 @@
+5.4.6 Improved startup and timing graphical user interface
+      More robust Check Update process with new HTTPClient
+      Added human readable filesizes for files in the log
+      Replaced finishing duration from seconds to a clock
+      Fixed incorrect Key Type Image display on selection
+      Fixed incorrect Total Time Clock on short Encryption
+      Added logging Scan Results on Command Line Interface
+
 5.4.5 Removed cloning file attributes Manual Key File
       Removed cloning file attributes Auto Key File after
       decrypting, when it is no longer needed and deleted

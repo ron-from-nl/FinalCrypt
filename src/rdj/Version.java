@@ -19,30 +19,57 @@
 package rdj;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.lang.management.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.*;
 import java.util.Calendar;
 
 public class Version
 {
+    private static boolean checkLatestOnlineVersionFailed;
     private UI ui;
     private static final String COMPANYNAME =				"Private Person";
     private static final String PRODUCTNAME =				"FinalCrypt";
+    private static       String fcInterface =				"";
     private static final String AUTHOR =				"Ron de Jong";
     private static final String AUTHOREMAIL =				"ronuitzaandam@gmail.com";
     private static final String EMAIL =					"info@finalcrypt.org";
     private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
     private static final String COPYRIGHT =				"© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
+    
+    private static final String OS_NAME =				System.getProperty("os.name");
+    private static final String OS_VERSION =				System.getProperty("os.version");
+    private static final String OS_ARCH =				System.getProperty("os.arch");
+
+    private static final int PROCESSORS =				Runtime.getRuntime().availableProcessors();
+    private static final long TOT_MEM =				        ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+    private static final long MAX_MEM =				        Runtime.getRuntime().maxMemory();
+    private static final long FREE_MEM =				Runtime.getRuntime().freeMemory();
+    private static final long USED_MEM =				Runtime.getRuntime().totalMemory();
+    
+    private static final String JAVA_VENDOR =				System.getProperty("java.vendor");
+    private static final String JAVA_VERSION =				System.getProperty("java.version");
+    private static final String CLASS_VERSION =				System.getProperty("java.class.version");
+
+    private static final String JAVA_HOME =				System.getProperty("java.home");
+    private static final String JAVA_VM_VERSION =			System.getProperty("java.vm.version");
+    private static final String JAVA_VM_NAME =				System.getProperty("java.vm.name");
+    private static final String JAVA_RUNTIME_VERSION =			System.getProperty("java.runtime.version");
+    
+    private static final String USER_NAME =				System.getProperty("user.name");
+    private static final String USER_HOME =				System.getProperty("user.home");
+    private static final String USER_DIR =				System.getProperty("user.dir");
+    
     private static String currentOverallVersionString =			"";
-    private String latestOverallVersionString =				"";
+    private static String latestOverallVersionString =				"";
     private static int currentVersionTotal =				0;
-    private int latestVersionTotal =					0;
-    private InputStream istream =					null;
+    private static int latestVersionTotal =					0;
+    private static InputStream istream =					null;
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
     private static final String[] WEBSITEURLSTRINGARRAY =		{
@@ -69,31 +96,31 @@ public class Version
 //									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"
 //									    ,"https://sourceforge.net/projects/finalcrypt/files/"
 //									};
-    private URL remoteURL = null;
-    private ReadableByteChannel currentVersionByteChannel =		null;
-    private ReadableByteChannel latestVersionByteChannel =		null;
-    private ByteBuffer byteBufferLocal; 
-    private ByteBuffer byteBufferRemote; 
+    private static URL remoteURL = null;
+    private static ReadableByteChannel currentVersionByteChannel =		null;
+    private static ReadableByteChannel latestVersionByteChannel =		null;
+    private static ByteBuffer byteBufferLocal; 
+    private static ByteBuffer byteBufferRemote; 
     
-    private boolean currentVersionIsKnown =				false;
-    private boolean latestVersionIsKnown =				false;
-    private boolean updateAvailable =					false;
-    private String[] localFields;
-    private String[] localValues;
-    private String[] remoteFields;
-    private String[] remoteValues;
-    private String currentReleaseString;
-    private String latestReleaseString;
-//    private String latestReleaseNotesString;
-//    private String latestReleaseMessageString;
+    private static boolean currentVersionIsKnown =				false;
+    private static boolean latestVersionIsKnown =				false;
+    private static boolean updateAvailable =					false;
+    private static String[] localFields;
+    private static String[] localValues;
+    private static String[] remoteFields;
+    private static String[] remoteValues;
+    private static String currentReleaseString;
+    private static String latestReleaseString;
+//    private static String latestReleaseNotesString;
+//    private static String latestReleaseMessageString;
 
-    private String latestAlertSubjectString;
-    private String latestAlertString;
-    private String currentAlertSubjectString;
-    private String currentAlertString;
-//    private String latestAlertMessageString;
-    public int currentInstalledVersion;
-    public int latestRemoteVersion;
+    private static String latestAlertSubjectString;
+    private static String latestAlertString;
+    private static String currentAlertSubjectString;
+    private static String currentAlertString;
+//    private static String latestAlertMessageString;
+    public static int currentInstalledVersion;
+    public static int latestRemoteVersion;
 
     public Version(UI ui)
     {
@@ -110,6 +137,76 @@ public class Version
 //	latestAlertMessageString = "";
     }
     
+    public static String getLogHeader(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String env = "";	
+	env +=    "Welcome to:              " + PRODUCTNAME + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
+	env += "\r\n";
+	env +=    "Interface:               " + fcInterface + "\r\n";
+	env +=    "Email:                   " + EMAIL + "\r\n";
+	env +=    "Copyright:               " + COPYRIGHT + " " + AUTHOR + "\r\n";
+	env +=    "Logfiles:                " + configuration.getLogDirPath().toString() + "\r\n";
+	env +=    "Command line:            java -cp finalcrypt.jar rdj/CLUI --help\r\n";
+	env +=    "License:                 " + LICENSE + "\r\n";
+	env += "\r\n";
+	env +=    "OS Name:                 " + OS_NAME + "\r\n";
+	env +=    "OS Architecture:         " + OS_ARCH + "\r\n";
+	env +=    "OS Version:              " + OS_VERSION + "\r\n";
+	env +=    "OS Time:                 " + configuration.getTime() + "\r\n";
+	env += "\r\n";
+	env +=    "Processors:              " + PROCESSORS + "\r\n";
+	env +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1) + "\r\n";
+//	env +=    "Total   Memory:          " + TOT_MEM + "\r\n";
+	env +=    "Maximum Memory:          " + Validate.getHumanSize(MAX_MEM, 1) + "\r\n";
+	env +=    "Free    Memory:          " + Validate.getHumanSize(FREE_MEM, 1) + "\r\n";
+	env +=    "Used    Memory:          " + Validate.getHumanSize(USED_MEM, 1) + "\r\n";
+	env += "\r\n";
+	env +=    "Java Version:            " + JAVA_VERSION + "\r\n";
+	env +=    "Java Vendor:             " + JAVA_VENDOR + "\r\n";
+	env +=    "Java Home:               " + JAVA_HOME + "\r\n";
+	env +=    "Java_VM_Name:            " + JAVA_VM_NAME + "\r\n";
+	env +=    "Java_VM_Version:         " + JAVA_VM_VERSION + "\r\n";
+	env +=    "Java_Runtime_Version:    " + JAVA_RUNTIME_VERSION + "\r\n";
+	env +=    "Class Version:           " + CLASS_VERSION + "\r\n";
+	env += "\r\n";
+	env +=    "User Name:               " + USER_NAME + "\r\n";
+	env +=    "User Home:               " + USER_HOME + "\r\n";
+	env +=    "User Dir:                " + USER_DIR + "\r\n";
+	env += "\r\n";
+	env +=	  "Status Symbols           ";
+	env += FinalCrypt.UTF8_UNFINISHED_DESC + ": " +	    FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNKNOWN_DESC + ": " +	    FinalCrypt.UTF8_UNKNOWN_SYMBOL + " ";
+	env += FinalCrypt.UTF8_FINISHED_DESC + ": " +	    FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNENCRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNENCRYPTABLE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_UNDECRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNDECRYPTABLE_SYMBOL + " ";
+	env += "\r\n";
+	env +=    "Data   Symbols           ";
+	env += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " +	    FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
+	env += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " +	    FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
+	env += FinalCrypt.UTF8_MAC_DESC + ": " +	    FinalCrypt.UTF8_MAC_SYMBOL + " ";
+	env += FinalCrypt.UTF8_KEY_DESC + ": " +	    FinalCrypt.UTF8_KEY_SYMBOL + " ";
+	env += FinalCrypt.UTF8_ATTRIB_DESC + ": " +	    FinalCrypt.UTF8_ATTRIB_SYMBOL + " ";
+	env += "\r\n";
+	env +=    "Action Symbols           ";
+	env += FinalCrypt.UTF8_CREATE_DESC + ": " +	    FinalCrypt.UTF8_CREATE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_READ_DESC + ": " +	    FinalCrypt.UTF8_READ_SYMBOL + " ";
+	env += FinalCrypt.UTF8_WRITE_DESC + ": " +	    FinalCrypt.UTF8_WRITE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_ENCRYPT_DESC + ": " +	    FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
+	env += FinalCrypt.UTF8_DECRYPT_DESC + ": " +	    FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
+	env += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " +	    FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
+	env += FinalCrypt.UTF8_SHRED_DESC + ": " +	    FinalCrypt.UTF8_SHRED_SYMBOL + " ";
+	env += FinalCrypt.UTF8_CLONE_DESC + ": " +	    FinalCrypt.UTF8_CLONE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_DELETE_DESC + ": " +	    FinalCrypt.UTF8_DELETE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_PAUSE_DESC + ": " +	    FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
+	env += FinalCrypt.UTF8_STOP_DESC + ": " +	    FinalCrypt.UTF8_STOP_SYMBOL + " ";
+	env += "\r\n";
+	env += "\r\n";
+	
+	return env;
+    }
+
     synchronized public String checkCurrentlyInstalledVersion(UI ui)
     {
         istream = getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
@@ -134,7 +231,7 @@ public class Version
 //	Convert lines to fields array
 	int c = 0; for (String line:lines)
 	{
-	    if ( (line != null) && (! line.isEmpty()) && (line.contains("[")) && (line.contains("]")) )
+	    if ( (line != null) && (! line.isEmpty()) && (line.contains("[")) && (line.contains("]")) && (line.contains("{")) && (line.contains("}")) )
 	    {
 		boolean validLine = false;
 		String localField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	    if (! localField.isEmpty()) { localFields[c] = localField; validLine = true; }
@@ -183,38 +280,82 @@ public class Version
 	return "Could not check your current version (VERSION2 file missing?)";
     }
 
-    synchronized public String checkLatestOnlineVersion(UI ui)
+    private static String encodeValue(UI ui, String value)
+    {       
+	String returnValue = "";
+	try { returnValue = URLEncoder.encode(value, StandardCharsets.UTF_8.toString()); }
+	catch (UnsupportedEncodingException ex) { ui.log("Error: Version.checkLatestOnlineVersion URLEncoder.encode(" + value +") (URL Encoding?)\r\n", false, true, true, true, false); }
+	return returnValue;
+    }
+    
+    public static String httpGetRequest(UI ui, String urlString)
+    {
+	String userAgent = "";
+	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface;
+	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
+	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
+	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	
+	URL url = null;
+	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
+	HttpURLConnection httpConnection = null;	
+	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); }
+        httpConnection.setRequestProperty("User-Agent", userAgent);
+        int responseCode = 0;
+	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkLatestOnlineVersionFailed = true;  ui.log("Error: httpGetRequest IOException: httpConnection.getResponseCode()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+
+	if ((responseCode >= 200) && (responseCode < 400))
+	{
+ 
+            BufferedReader responseReader = null;
+	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: new InputStreamReader(httpConnection.getInputStream())" + ex.getCause() + "\r\n", false, true, true, true, false); }
+             
+            String responseLine;
+            StringBuffer response = new StringBuffer();
+ 
+	    try { while ((responseLine = responseReader.readLine()) != null)
+	    {
+		response.append(responseLine + "\n");
+	    } } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.readLine()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	    try { responseReader.close(); } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.close()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+ 
+            return response.toString();
+        } else { ui.log("Error: httpGetRequest HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
+        return null;
+    }
+    
+    synchronized public static String checkLatestOnlineVersion(UI ui)
     {
 //      Read the remote VERSION file
 	
 	latestVersionIsKnown = false;
         latestOverallVersionString = "Unknown";
-	
-	loop: for(String REMOTEVERSIONFILEURLSTRING:REMOTEVERSIONFILEURLSTRINGARRAY)
+	    
+	loop: for(String remoteVERSION2FileString:REMOTEVERSIONFILEURLSTRINGARRAY)
 	{	    
-	    boolean failed = false;
-	    REMOTEVERSIONFILEURLSTRING += "?version=" + getCurrentlyInstalledOverallVersionString();
+	    checkLatestOnlineVersionFailed = false;
+	    
 	    byteBufferRemote = ByteBuffer.allocate(100000); byteBufferRemote.clear(); remoteContent = "";
-	    ui.log("Checking: " + REMOTEVERSIONFILEURLSTRING + "\r\n", false, false, true, false, false);
+	    ui.log("Checking: " + remoteVERSION2FileString + "\r\n", false, false, true, false, false);
 
-	    try { remoteURL = new URL(REMOTEVERSIONFILEURLSTRING); }
-	    catch (MalformedURLException ex)	{ ui.log("Error: Version.checkLatestOnlineVersion MalformedURLException: new URL(" + REMOTEVERSIONFILEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
-	    
-	    InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.checkLatestOnlineVersion IOException: inputStream = \"" + REMOTEVERSIONFILEURLSTRING +"\".openStream()) (webserver up? file exist?)\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
+//	    try { remoteURL = new URL(remoteVERSION2FileString); }
+//	    catch (MalformedURLException ex)	{ ui.log("Error: Version.checkLatestOnlineVersion MalformedURLException: new URL(" + remoteVERSION2FileString +") (URL Typo?)\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }
 	    	    
-	    latestVersionByteChannel = Channels.newChannel(inputStream);
+//	    InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.checkLatestOnlineVersion IOException: inputStream = remoteURL.openStream() \"" + remoteVERSION2FileString +"\".openStream()) (webserver up? file exist?)\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }  finally { } // null pointer at no connect
+//	    	    
+//	    latestVersionByteChannel = Channels.newChannel(inputStream);
+//	    
+//	    try {  while(latestVersionByteChannel.read(byteBufferRemote) > 0) { byteBufferRemote.flip(); while(byteBufferRemote.hasRemaining()) { remoteContent += (char) byteBufferRemote.get(); } } }
+//	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }
+//	    
+//	    try { latestVersionByteChannel.close(); }
+//	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
 	    
-	    try {  while(latestVersionByteChannel.read(byteBufferRemote) > 0) { byteBufferRemote.flip(); while(byteBufferRemote.hasRemaining()) { remoteContent += (char) byteBufferRemote.get(); } } }
-	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); failed = true; continue; }
+	    remoteContent = httpGetRequest(ui, remoteVERSION2FileString);
 	    
-	    try { latestVersionByteChannel.close(); }
-	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
-
-//          remoteContent.replaceAll("\\p{C}", "?");
-//	    String[] lines = remoteContent.split(System.getProperty("line.separator"));
-
 //	    ui.test("\r\nNEXT\r\n");
-	    if (! failed)
+	    if (! checkLatestOnlineVersionFailed)
 	    {
 		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
 
@@ -274,18 +415,18 @@ public class Version
 	return "Could not check for new updates (Internet?)";
     }
 
-    public String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
-    public String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
-    public String getCurrentReleaseString()			{ return currentReleaseString; }
-    public String getLatestReleaseString()			{ return latestReleaseString; }
-//    public String getLatestReleaseNotesString()		{ return latestReleaseNotesString; }
-//    public String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
+    public static String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
+    public static String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
+    public static String getCurrentReleaseString()			{ return currentReleaseString; }
+    public static String getLatestReleaseString()			{ return latestReleaseString; }
+//    public static String getLatestReleaseNotesString()		{ return latestReleaseNotesString; }
+//    public static String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
 
-    public String getLatestAlertSubjectString()			{ return latestAlertSubjectString; }
-    public String getLatestAlertString()			{ return latestAlertString; }
+    public static String getLatestAlertSubjectString()			{ return latestAlertSubjectString; }
+    public static String getLatestAlertString()			{ return latestAlertString; }
     
-    public String getCurrentAlertSubjectString()		{ return currentAlertSubjectString; }
-    public String getCurrentAlertString()			{ return currentAlertString; }
+    public static String getCurrentAlertSubjectString()		{ return currentAlertSubjectString; }
+    public static String getCurrentAlertString()			{ return currentAlertString; }
 //    public String getLatestAlertMessageString()		{ return latestAlertMessageString; }
 
     public String getUpdateStatus() 

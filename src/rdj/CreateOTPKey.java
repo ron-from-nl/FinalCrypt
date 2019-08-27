@@ -32,7 +32,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.security.*;
 import java.util.EnumSet;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -58,10 +57,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.media.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javax.sound.sampled.*;
 
 public class CreateOTPKey extends Application implements Initializable
 {

@@ -1,4 +1,4 @@
-[Version] =		{5.4.5}
+[Version] =		{5.4.6}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -18,14 +18,15 @@
 [Upgrade Notes] =	{   Please decrypt and reencrypt for 100% OTP}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 5}
+[Update Notes] =	{Update 6}
 [Update Notes] =	{}
-[Update Notes] =	{   Removed cloning file attributes Manual Key File}
-[Update Notes] =	{   Removed cloning file attributes Auto Key File after}
-[Update Notes] =	{   decrypting, when it is no longer needed and deleted}
-[Update Notes] =	{   This update prevents unwanted Manual Key File backups}
-[Update Notes] =	{   My sinsere apologies for the many updates lately, but}
-[Update Notes] =	{   FinalCrypt has to be reliable and function correctly}
+[Update Notes] =	{   Improved startup and timing graphical user interface}
+[Update Notes] =	{   More robust Check Update process with new HTTPClient}
+[Update Notes] =	{   Added human readable filesizes for files in the log}
+[Update Notes] =	{   Replaced finishing duration from seconds to a clock}
+[Update Notes] =	{   Fixed incorrect Key Type Image display on selection}
+[Update Notes] =	{   Fixed incorrect Total Time Clock on short Encryption}
+[Update Notes] =	{   Added logging Scan Results on Command Line Interface}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

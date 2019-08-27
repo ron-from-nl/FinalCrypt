@@ -24,7 +24,6 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.*;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,7 +31,6 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.*;
 
 public class DeviceController
 {

@@ -420,9 +420,9 @@ public class GUIFX extends Application implements UI, Initializable
     private boolean keySourceChecksumReadEnded;
     private boolean keySourceChecksumReadCanceled;
     private Stage createOTPKeyStage;
-    private Stage pleaseShareStage;
+    private Stage supportStage;
     private CreateOTPKey createOTPKey;
-    private Support pleaseShare;
+    private Support support;
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private long now;
     private boolean isCalculatingCheckSum;
@@ -498,10 +498,10 @@ public class GUIFX extends Application implements UI, Initializable
 	    	    
 //	    Shared
 	    String val = prefs.get("Shared", "Unknown");
-	    if (val.equals("Unknown"))		{ prefs.put("Shared", "No"); pleaseShare(); }
-	    else if (val.equals("No"))		{ pleaseShare(); }
+	    if (val.equals("Unknown"))		{ prefs.put("Shared", "No"); openSupport(); }
+	    else if (val.equals("No"))		{ openSupport(); }
 	    else if (val.equals("Yes"))		{  }
-	    else				{ prefs.put("Shared", "No"); pleaseShare(); }	    
+	    else				{ prefs.put("Shared", "No"); openSupport(); }	    
 	});
 	
 	Platform.runLater(() ->
@@ -888,7 +888,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
         copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
 //	log(getRuntimeEnvironment(), false, true, true, false ,false);
-	log(FinalCrypt.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
+	log(Version.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
 
 //      cpuIndicator
         Rectangle rect = new Rectangle(0, 0, 100, 100); Tooltip cpuIndicatorToolTip = new Tooltip("Process CPU Load"); Tooltip.install(rect, cpuIndicatorToolTip);
@@ -1056,16 +1056,23 @@ public class GUIFX extends Application implements UI, Initializable
 		JDK 8 all the items in java.util.prefs:
 		*/
 
-		String val = prefs.get("Initialized", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-		if (! val.equals("Yes")) // First time
-		{		    
-//		    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-		    prefs.put("Initialized", "Yes");
-		}
-//		else
-//		{
-//		    userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-//		}
+		// // First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		String val = prefs.get("Initialized", "Unknown"); if (! val.equals("Yes")) {prefs.put("Initialized", "Yes"); } else {  }
+		// ============================================================================================================================
+		// ================================================== GUI gets Idle here ======================================================
+		// ============================================================================================================================
+		// First time selection Key Directory
+		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+		//		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+		keyFileChooserPropertyCheck();
+		// userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+
+		keyButton.setDisable(false);
+		checkUpdateButton.setDisable(false);
+		supportButton.setDisable(false);
+		// ============================================================================================================================
+
 		
 		disableFileChoosers(false, true);
 		
@@ -1079,10 +1086,7 @@ public class GUIFX extends Application implements UI, Initializable
 		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
 		{
 		    new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
-		    
-		    keyButton.setDisable(false);
-		    checkUpdateButton.setDisable(false);
-		    supportButton.setDisable(false);
+			
 		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
 		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		    {
@@ -1092,7 +1096,6 @@ public class GUIFX extends Application implements UI, Initializable
 		    systemMonitorTestTimeline.setCycleCount(10);
 		    systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) ->
 		    {
-			userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			update_System_Monitor_Enabled = true;
 		    });
 		    new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
@@ -1989,7 +1992,7 @@ public class GUIFX extends Application implements UI, Initializable
 			keyPath = keyFileChooser.getCurrentDirectory().toPath();
 		    }
     //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
 //		    Platform.runLater(() -> 
 //		    {
@@ -2062,7 +2065,7 @@ public class GUIFX extends Application implements UI, Initializable
 				pwdField.setDisable(false);
 				pwdtxtField.setDisable(false);			
 
-				keyImageView.setImage(KEY_FILE_IMAGE);
+				if (keyFCPath.type == FCPath.DIRECTORY) { keyImageView.setImage(KEY_MAP_IMAGE); } else { keyImageView.setImage(KEY_FILE_IMAGE); }
 				keyImageView.setOpacity(0.2);
 
 				userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
@@ -2723,7 +2726,7 @@ public class GUIFX extends Application implements UI, Initializable
 	String pwd = pwdField.getText(); byte[] pwdBytes = new byte[0];
 	if (pwd.length() > 0)
 	{
-	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
+	    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false); }
 	    messageDigest.update(pwd.getBytes());
 	    byte[] hashBytes = messageDigest.digest();
 	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
@@ -2831,7 +2834,7 @@ public class GUIFX extends Application implements UI, Initializable
 	else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
     
-    synchronized private void pleaseShare()
+    synchronized private void openSupport()
     {
         // Needs Threading to early split off from the UI Event Dispatch Thread
         final GUIFX guifx = this;
@@ -2846,10 +2849,10 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
-		    pleaseShareStage = new Stage();
-		    pleaseShare = new Support();
-		    try { pleaseShare.start(pleaseShareStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
-		    pleaseShare.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		    supportStage = new Stage();
+		    support = new Support();
+		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: \r\n", true, true, true, true, false); }
+		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
 		});
             }
         });
@@ -3019,17 +3022,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    // Clocks	
 //	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
 	    UPDATE_CLOCKS_TIMELINE.stop();
-	    if (clockUpdated)
-	    {
-		remainingTimeLabel.setText("00:00:00");
-//		elapsedTimeLabel is already correct
-		totalTimeCalendar.setTimeInMillis(elapsedTimeCalendar.getTimeInMillis());
-		String totalTimeString = "";
-		totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.HOUR_OF_DAY) - offSetHours) + ":";
-		totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.MINUTE) - offSetMinutes) + ":";
-		totalTimeString += String.format("%02d", totalTimeCalendar.get(Calendar.SECOND) - offSetSeconds);
-		totalTimeLabel.setText(totalTimeString);
-	    }
 	    
 	    targetFCPathList = new FCPathList<FCPath>();
 	    
@@ -3068,6 +3060,12 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    targetFCPathList = new FCPathList<FCPath>();
 	    buildReady(targetFCPathList, false);
+
+//	    if (clockUpdated)
+//	    {
+		remainingTimeLabel.setText("00:00:00");
+		totalTimeLabel.setText(elapsedTimeLabel.getText());
+//	    }
 
 //	    The Open selected file when finished section
 
@@ -3492,7 +3490,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-	pleaseShare();
+	openSupport();
     }
 
     private void setAttribute(FCPath fcPath, boolean read, boolean write)

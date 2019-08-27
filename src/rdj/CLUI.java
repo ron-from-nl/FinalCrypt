@@ -156,7 +156,7 @@ public class CLUI implements UI
 
         // Validate Parameters
 	
-	log(FinalCrypt.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, false, true, false ,false);
+	log(Version.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, false, true, false ,false);
 	
 	if (args.length == 0 ) { log("\r\nWarning: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
 	
@@ -435,10 +435,10 @@ public class CLUI implements UI
 		     keyFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),          true, targetPathList.get(0), finalCrypt.disabledMAC,          true);
 	}
 		
-	log("\r\nScanning files...", false, true, false, false, false); 
+	log("\r\nScanning files... ", false, true, true, false, false); 
 //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
 	Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-	log("finished\r\n\r\n", false, true, false, false, false); 
+	log("finished\r\n\r\n", false, true, true, false, false); 
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
@@ -971,9 +971,11 @@ class TestListReaderThread extends Thread
 
 	if (clui.testAnswer.isEmpty())
 	{	    
-	    clui.log(clui.getScanResults(true), false, true, false, false, false); // Leave Error file to: true
+	    clui.log(clui.getScanResults(true), false, true, true, false, false); // Leave Error file to: true
 	    try(Scanner in = new Scanner(System.in)) { clui.testAnswer = in.nextLine().trim(); }
 	}
+	
+	clui.log("\r\n", false, false, true, false, false); // Simulate read input enter on logfile as seen on screen
 	
 	if	    ( (clui.finalCrypt.getTest()) && ( clui.testAnswer.trim().toLowerCase().equals("c") ))	    { clui.testListAborted = false; }
 	else if ( clui.testAnswer.trim().toLowerCase().equals("1") )

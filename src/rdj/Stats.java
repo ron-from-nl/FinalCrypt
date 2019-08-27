@@ -141,7 +141,20 @@ public class Stats
     public String getEndSummary(String mode)                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + getDecimal(((nanoSeconds)/1000000000.0),1) + " seconds " + getAllDataBytesThroughPut() + "\r\n\r\n";
+//	long totalSecs = 197579; // Test
+	long totalSecs = Double.valueOf((nanoSeconds)/1000000000.0).longValue();
+	long days = totalSecs / (3600 * 24);
+	long hours = totalSecs / 3600;
+	long minutes = (totalSecs % 3600) / 60;
+	long seconds = totalSecs % 60;
+
+	String dayDesc = "";
+	String duration = "";
+	
+	if (days == 1) { dayDesc = "day"; } else { dayDesc = "days"; }
+	if (days>0) { duration = String.format("[%1d %s %02d:%02d:%02d]", days, dayDesc, hours, minutes, seconds); } else { duration = String.format("[%02d:%02d:%02d]", hours, minutes, seconds); }
+
+        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + duration + " " + getAllDataBytesThroughPut() + "\r\n\r\n";
         return returnString;
     }
     
@@ -150,7 +163,7 @@ public class Stats
         String returnString = new String();
         double throughput = ( ((double)(filesBytesProcessed) / (((double)nanoSeconds / 1000000000.0))) ); // *1000 from mSec to Sec
         String throughputString = String.format("%.1f", throughput);
-        returnString = " (average: " + getHumanSize(throughput,1) + "/s)\r\n";
+        returnString = "(average: " + getHumanSize(throughput,1) + "/s)\r\n";
         
         return returnString;
     }

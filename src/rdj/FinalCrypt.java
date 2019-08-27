@@ -171,64 +171,6 @@ public class FinalCrypt extends Thread
 //        fc = this;
     }
     
-    public static String getLogHeader(String classname, Version version, Configuration configuration)
-    {
-	String env = "";
-	
-	env +=    "Welcome to:         " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
-	env += "\r\n";
-	env +=    "Interface:          " + classname + "\r\n";
-	env +=    "Email:              " + Version.getEmail() + "\r\n";
-	env +=    "Copyright:          " + Version.getCopyright() + " " + Version.getAuthor() + "\r\n";
-	env +=    "Logfiles:           " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:       java -cp finalcrypt.jar rdj/CLUI --help\r\n";
-	env +=    "License:            " + Version.getLicense() + "\r\n";
-	env += "\r\n";
-	env +=    "OS Name:            " + System.getProperty("os.name") + "\r\n";
-	env +=    "OS Architecture:    " + System.getProperty("os.arch") + "\r\n";
-	env +=    "OS Version:         " + System.getProperty("os.version") + "\r\n";
-	env +=    "OS Time:            " + configuration.getTime() + "\r\n";
-	env += "\r\n";
-	env +=    "Java Vendor:        " + System.getProperty("java.vendor") + "\r\n";
-	env +=    "Java Version:       " + System.getProperty("java.version") + "\r\n";
-	env +=    "Class Version:      " + System.getProperty("java.class.version") + "\r\n";
-	env += "\r\n";
-	env +=    "User Name:          " + System.getProperty("user.name") + "\r\n";
-	env +=    "User Home:          " + System.getProperty("user.home") + "\r\n";
-	env +=    "User Dir:           " + System.getProperty("user.dir") + "\r\n";
-	env += "\r\n";
-	env += "Status Symbols      ";
-	env += FinalCrypt.UTF8_UNFINISHED_DESC + ": " +	    FinalCrypt.UTF8_UNFINISHED_SYMBOL + " ";
-	env += FinalCrypt.UTF8_UNKNOWN_DESC + ": " +	    FinalCrypt.UTF8_UNKNOWN_SYMBOL + " ";
-	env += FinalCrypt.UTF8_FINISHED_DESC + ": " +	    FinalCrypt.UTF8_FINISHED_SYMBOL + " ";
-	env += FinalCrypt.UTF8_UNENCRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNENCRYPTABLE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_UNDECRYPTABLE_DESC + ": " +  FinalCrypt.UTF8_UNDECRYPTABLE_SYMBOL + " ";
-	env += "\r\n";
-	env += "Data   Symbols      ";
-	env += FinalCrypt.UTF8_OLD_TARGET_DESC + ": " +	    FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " ";
-	env += FinalCrypt.UTF8_NEW_TARGET_DESC + ": " +	    FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " ";
-	env += FinalCrypt.UTF8_MAC_DESC + ": " +	    FinalCrypt.UTF8_MAC_SYMBOL + " ";
-	env += FinalCrypt.UTF8_KEY_DESC + ": " +	    FinalCrypt.UTF8_KEY_SYMBOL + " ";
-	env += FinalCrypt.UTF8_ATTRIB_DESC + ": " +	    FinalCrypt.UTF8_ATTRIB_SYMBOL + " ";
-	env += "\r\n";
-	env += "Action Symbols      ";
-	env += FinalCrypt.UTF8_CREATE_DESC + ": " +	    FinalCrypt.UTF8_CREATE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_READ_DESC + ": " +	    FinalCrypt.UTF8_READ_SYMBOL + " ";
-	env += FinalCrypt.UTF8_WRITE_DESC + ": " +	    FinalCrypt.UTF8_WRITE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_ENCRYPT_DESC + ": " +	    FinalCrypt.UTF8_ENCRYPT_SYMBOL + " ";
-	env += FinalCrypt.UTF8_DECRYPT_DESC + ": " +	    FinalCrypt.UTF8_DECRYPT_SYMBOL + " ";
-	env += FinalCrypt.UTF8_XOR_NOMAC_DESC + ": " +	    FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " ";
-	env += FinalCrypt.UTF8_SHRED_DESC + ": " +	    FinalCrypt.UTF8_SHRED_SYMBOL + " ";
-	env += FinalCrypt.UTF8_CLONE_DESC + ": " +	    FinalCrypt.UTF8_CLONE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_DELETE_DESC + ": " +	    FinalCrypt.UTF8_DELETE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_PAUSE_DESC + ": " +	    FinalCrypt.UTF8_PAUSE_SYMBOL + " ";
-	env += FinalCrypt.UTF8_STOP_DESC + ": " +	    FinalCrypt.UTF8_STOP_SYMBOL + " ";
-	env += "\r\n";
-	env += "\r\n";
-	
-	return env;
-    }
-
     public int getBufferSize()                                              { return bufferSize; }
     
 //    public boolean getDebug()                                               { return debug; }
@@ -309,13 +251,14 @@ public class FinalCrypt extends Thread
         allDataStats.setFilesTotal(filteredTargetSourceFCPathList.encryptableFiles + filteredTargetSourceFCPathList.decryptableFiles);
         allDataStats.setAllDataBytesTotal(filteredTargetSourceFCPathList.encryptableFilesSize + filteredTargetSourceFCPathList.decryptableFilesSize + filteredTargetSourceFCPathList.writeAutoKeyFilesSize);
 	String modeDesc = "";
+	if (test) { modeDesc = "test "; }
 	if (encryptMode)
 	{
-	    if ( ! disabledMAC ) { modeDesc = "encrypting"; } else { modeDesc = "encrypting (legacy)"; }
+	    if ( ! disabledMAC ) { modeDesc += "encrypting"; } else { modeDesc += "encrypting (legacy)"; }
 	}
 	else
 	{
-	    if ( ! disabledMAC ) { modeDesc = "decrypting"; } else { modeDesc = "decrypting (legacy)"; }
+	    if ( ! disabledMAC ) { modeDesc += "decrypting"; } else { modeDesc += "decrypting (legacy)"; }
 	}
 	ui.log(allDataStats.getStartSummary(modeDesc), true, true, true, false, false);
         try { Thread.sleep(100); } catch (InterruptedException ex) {  }
@@ -458,8 +401,8 @@ public class FinalCrypt extends Thread
 		    if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
 		}
 		
-		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
-		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", false, true, true, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1) + " ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1) + " ", false, true, true, false, false);
 
 		// =================================================================================================================================================================
 		// Auto Key Mode
