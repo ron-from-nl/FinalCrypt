@@ -1,4 +1,4 @@
-5.4.6 Improved startup and timing graphical user interface
+5.5.0 Improved startup and timing graphical user interface
       More robust Check Update process with new HTTPClient
       Added human readable filesizes for files in the log
       Replaced finishing duration from seconds to a clock
