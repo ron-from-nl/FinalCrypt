@@ -1,4 +1,4 @@
-[Version] =		{5.5.0}
+[Version] =		{5.5.1}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -23,9 +23,13 @@
 [Update Notes] =	{   Added logging Scan Results on Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{   Updates available, please see Upgrade Section}
+[Update Notes] =	{   Fixed Check Update Fail on redirected HTTPS connect}
+[Update Notes] =	{   Added HTTPS connection to the Check Update function}
+[Update Notes] =	{   Added HTTPS connection to the Open Website function}
+[Update Notes] =	{   Added extra links for Check Update and Open Website}
+[Update Notes] =	{   Check Update is crucial for bugfixes & improvements}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

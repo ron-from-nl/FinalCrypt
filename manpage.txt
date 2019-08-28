@@ -55,4 +55,4 @@ Parameters:
             <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 5.5.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.5.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

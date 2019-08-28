@@ -28,10 +28,11 @@ import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.*;
 import java.util.Calendar;
+import javax.net.ssl.*;
 
 public class Version
 {
-    private static boolean checkLatestOnlineVersionFailed;
+    private static boolean checkOnlineFailed;
     private UI ui;
     private static final String COMPANYNAME =				"Private Person";
     private static final String PRODUCTNAME =				"FinalCrypt";
@@ -73,17 +74,23 @@ public class Version
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
     private static final String[] WEBSITEURLSTRINGARRAY =		{
-									    ""
-									    ,"http://www.finalcrypt.org/" // tested
-									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/" // tested
-									    ,"http://finalcrypt.000webhostapp.com/" // tested
-									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html" // tested
+									     "https://www.finalcrypt.org/"								// tested
+									    ,"http://www.finalcrypt.org/"								// tested
+									    ,"https://sourceforge.net/projects/finalcrypt/files/"					// tested
+									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"					// tested
+									    ,"http://finalcrypt.000webhostapp.com/"							// tested
+									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"					// tested
+									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"				// tested
+									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"					// tested
+									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"		// tested
 									};
 
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
-									    "http://www.finalcrypt.org/VERSION2"
-									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/version2"
-									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/version2?format=raw"
+									     "https://www.finalcrypt.org/VERSION2"							// tested
+									    ,"http://www.finalcrypt.org/VERSION2"							// tested
+									    ,"https://gitlab.com/finalcrypt/finalcrypt/raw/master/src/rdj/VERSION2"			// tested
+									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"		// tested
+									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"	// tested
 									};    
     
     private static       String remoteContent =				"";
@@ -91,11 +98,7 @@ public class Version
     public static final String WEBSITEURISTRING =			"http://www.finalcrypt.org/";
 
     public static final String REMOTEPACKAGEDOWNLOADURISTRING =		"http://www.finalcrypt.org/";
-//    public static final String[] REMOTEPACKAGEDOWNLOADURISTRINGARRAY =	{
-//									    "http://www.finalcrypt.org/downloads/"
-//									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"
-//									    ,"https://sourceforge.net/projects/finalcrypt/files/"
-//									};
+
     private static URL remoteURL = null;
     private static ReadableByteChannel currentVersionByteChannel =		null;
     private static ReadableByteChannel latestVersionByteChannel =		null;
@@ -237,11 +240,6 @@ public class Version
 		String localField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	    if (! localField.isEmpty()) { localFields[c] = localField; validLine = true; }
 		String localValue = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));   if (! localValue.isEmpty()) { localValues[c] = localValue; validLine = true; }
 		if (validLine) { c++; }
-
-//		boolean validLine = false;
-//		String remoteField = line.substring(line.indexOf("[") + 1, line.indexOf("]"));	    if (! remoteField.isEmpty()) { remoteFields[c] = remoteField; validLine = true; }
-//		String remoteValue = line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));  if (! remoteValue.isEmpty()) { remoteValues[c] = remoteValue; validLine = true; }
-//		if (validLine) { c++; }
 	    }
 	}
 	
@@ -291,25 +289,26 @@ public class Version
     public static String httpGetRequest(UI ui, String urlString)
     {
 	String userAgent = "";
-	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface;
+	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " (HTTP)";
 	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
 	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
 	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
 	
 	URL url = null;
-	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
-	HttpURLConnection httpConnection = null;	
-	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
-	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); return null; }
+	if (url == null) { checkOnlineFailed = true; ui.log("Error: httpGetRequest InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
+	HttpURLConnection httpConnection = null;
+	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
+	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
         httpConnection.setRequestProperty("User-Agent", userAgent);
         int responseCode = 0;
-	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkLatestOnlineVersionFailed = true;  ui.log("Error: httpGetRequest IOException: httpConnection.getResponseCode()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: httpGetRequest IOException: httpConnection.getResponseCode()" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
 
 	if ((responseCode >= 200) && (responseCode < 400))
 	{
  
             BufferedReader responseReader = null;
-	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: new InputStreamReader(httpConnection.getInputStream())" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: new InputStreamReader(httpConnection.getInputStream())" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
              
             String responseLine;
             StringBuffer response = new StringBuffer();
@@ -317,11 +316,49 @@ public class Version
 	    try { while ((responseLine = responseReader.readLine()) != null)
 	    {
 		response.append(responseLine + "\n");
-	    } } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.readLine()" + ex.getCause() + "\r\n", false, true, true, true, false); }
-	    try { responseReader.close(); } catch (IOException ex) { checkLatestOnlineVersionFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.close()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	    } } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.readLine()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	    try { responseReader.close(); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.close()" + ex.getCause() + "\r\n", false, true, true, true, false); }
  
             return response.toString();
-        } else { ui.log("Error: httpGetRequest HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
+        } else { checkOnlineFailed = true; ui.log("Error: httpGetRequest HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
+        return null;
+    }
+    
+    public static String httpsGetRequest(UI ui, String urlString)
+    {
+	String userAgent = "";
+	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " (HTTPS)";
+	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
+	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
+	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	
+	URL url = null;
+	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
+	if (url == null) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
+	HttpsURLConnection httpConnection = null;	
+	try { httpConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); }
+        httpConnection.setRequestProperty("User-Agent", userAgent);
+        int responseCode = 0;
+	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: httpsGetRequest IOException: httpConnection.getResponseCode()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+
+	if ((responseCode >= 200) && (responseCode < 400))
+	{
+ 
+            BufferedReader responseReader = null;
+	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: new InputStreamReader(httpConnection.getInputStream())" + ex.getCause() + "\r\n", false, true, true, true, false); }
+             
+            String responseLine;
+            StringBuffer response = new StringBuffer();
+ 
+	    try { while ((responseLine = responseReader.readLine()) != null)
+	    {
+		response.append(responseLine + "\n");
+	    } } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: responseReader.readLine()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	    try { responseReader.close(); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: responseReader.close()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+ 
+            return response.toString();
+        } else { checkOnlineFailed = true; ui.log("Error: httpsGetRequest HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
         return null;
     }
     
@@ -334,35 +371,21 @@ public class Version
 	    
 	loop: for(String remoteVERSION2FileString:REMOTEVERSIONFILEURLSTRINGARRAY)
 	{	    
-	    checkLatestOnlineVersionFailed = false;
+	    checkOnlineFailed = false;
 	    
-	    byteBufferRemote = ByteBuffer.allocate(100000); byteBufferRemote.clear(); remoteContent = "";
-	    ui.log("Checking: " + remoteVERSION2FileString + "\r\n", false, false, true, false, false);
-
-//	    try { remoteURL = new URL(remoteVERSION2FileString); }
-//	    catch (MalformedURLException ex)	{ ui.log("Error: Version.checkLatestOnlineVersion MalformedURLException: new URL(" + remoteVERSION2FileString +") (URL Typo?)\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }
-	    	    
-//	    InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.checkLatestOnlineVersion IOException: inputStream = remoteURL.openStream() \"" + remoteVERSION2FileString +"\".openStream()) (webserver up? file exist?)\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }  finally { } // null pointer at no connect
-//	    	    
-//	    latestVersionByteChannel = Channels.newChannel(inputStream);
-//	    
-//	    try {  while(latestVersionByteChannel.read(byteBufferRemote) > 0) { byteBufferRemote.flip(); while(byteBufferRemote.hasRemaining()) { remoteContent += (char) byteBufferRemote.get(); } } }
-//	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); checkLatestOnlineVersionFailed = true; continue; }
-//	    
-//	    try { latestVersionByteChannel.close(); }
-//	    catch (IOException ex)		{ ui.log("Error: Version.checkLatestOnlineVersion IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
+	    ui.log("Check Update: " + remoteVERSION2FileString + "\r\n", false, true, true, false, false);
 	    
-	    remoteContent = httpGetRequest(ui, remoteVERSION2FileString);
+	    if (remoteVERSION2FileString.startsWith("https://")) { remoteContent = httpsGetRequest(ui, remoteVERSION2FileString); } else { remoteContent = httpGetRequest(ui, remoteVERSION2FileString); }
 	    
 //	    ui.test("\r\nNEXT\r\n");
-	    if (! checkLatestOnlineVersionFailed)
+	    if ((remoteContent != null) && (! checkOnlineFailed))
 	    {
 		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n
 
 		remoteFields = new String[lines.length];
 		remoteValues = new String[lines.length];
 
-    //	    Convert lines to fields array
+//		Convert lines to fields array
 		if (lines.length > 0)
 		{		    
 		    int c = 0; for (String line:lines)
@@ -411,7 +434,10 @@ public class Version
 		} continue;
 	    } continue;
 
-	} if (latestVersionIsKnown) { return latestOverallVersionString; }
+	} if (latestVersionIsKnown)
+	{
+	    return latestOverallVersionString;
+	}
 	return "Could not check for new updates (Internet?)";
     }
 
@@ -462,30 +488,19 @@ public class Version
 	
 	loop: for(String WEBSITEURLSTRING:WEBSITEURLSTRINGARRAY)
 	{
+	    checkOnlineFailed = false;
 	    if (! WEBSITEURLSTRING.isEmpty())
 	    {
-		boolean failed = false;
-		ByteBuffer byteBuffer = ByteBuffer.allocate(1024); byteBuffer.clear(); String remoteContent = "";
-		ui.log("Checking: " + WEBSITEURLSTRING + "\r\n", false, false, true, false, false);
+		remoteContent = "";
+		ui.log("Check Content: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
 
-		URL remoteURL;
-		try { remoteURL = new URL(WEBSITEURLSTRING); }
-		catch (MalformedURLException ex)	{ ui.log("Error: Version.openWebSite MalformedURLException: new URL(" + WEBSITEURLSTRING +") (URL Typo?)\r\n", false, true, true, true, false); failed = true; continue; }
-
-		InputStream inputStream; try { inputStream = remoteURL.openStream(); } catch (IOException ex) { ui.log("Error: Version.openWebSite IOException: remoteURL.openStream()) \"" + remoteURL.toString() + "\" " + ex.getMessage() + "\r\n", false, true, true, true, false); failed = true; continue; }  finally { } // null pointer at no connect
-
-		ReadableByteChannel latestVersionByteChannel = Channels.newChannel(inputStream);
-
-		try {  while(latestVersionByteChannel.read(byteBuffer) > 0) { byteBuffer.flip(); while(byteBuffer.hasRemaining()) { remoteContent += (char) byteBuffer.get(); } } }
-		catch (IOException ex)		{ ui.log("Error: Version.openWebSite IOException: Channels.read(..) " + ex.getMessage()+"\r\n", false, true, true, true, false); failed = true; continue; }
-
-		try { latestVersionByteChannel.close(); }
-		catch (IOException ex)		{ ui.log("Error: Version.openWebSite IOException: Channels.close(..)  " + ex.getMessage()+"\r\n", false, true, true, true, false); continue; }
-
-		if (! failed)
+		if (WEBSITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, WEBSITEURLSTRING); } else { remoteContent = httpGetRequest(ui, WEBSITEURLSTRING); }
+				
+		if ((remoteContent != null) && (! checkOnlineFailed))
 		{
 		    if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
 		    {
+			ui.log("Opening: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
 			Thread openWebSiteThread;
 			openWebSiteThread = new Thread(() ->
 			{
@@ -499,7 +514,7 @@ public class Version
 			break;
 		    }
 		}
-	    }
+	    } else { ui.log("Error: openWebSite Empty website url: " + WEBSITEURLSTRING + "\r\n", false, true, true, true, false); }
 	}
     }
     
