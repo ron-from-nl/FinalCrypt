@@ -492,7 +492,7 @@ public class Version
 	    if (! WEBSITEURLSTRING.isEmpty())
 	    {
 		remoteContent = "";
-		ui.log("Check Content: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
+		ui.log("Check Website: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
 
 		if (WEBSITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, WEBSITEURLSTRING); } else { remoteContent = httpGetRequest(ui, WEBSITEURLSTRING); }
 				
@@ -500,7 +500,7 @@ public class Version
 		{
 		    if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
 		    {
-			ui.log("Opening: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
+			ui.log("Open Website: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
 			Thread openWebSiteThread;
 			openWebSiteThread = new Thread(() ->
 			{
