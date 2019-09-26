@@ -117,7 +117,7 @@ public class Stats
     public String getStartSummary(String mode)
     {
         String fileString = "files"; if (filesTotal == 1)			{ fileString = "file"; } else { fileString = "files"; }
-        String returnString = "\r\nStarted " + mode + " " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1) + "\r\n\r\n";
+        String returnString = "\r\nStarted " + mode + " " + filesTotal + " " + fileString + " totally " + getHumanSize(filesBytesTotal,1,"Bytes") + "\r\n\r\n";
         
         return returnString;
     }
@@ -141,7 +141,7 @@ public class Stats
     public String getEndSummary(String mode)                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
-        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + getElapsedTime(nanoSeconds) + " " + getAllDataBytesThroughPut() + "\r\n\r\n";
+        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1,"Bytes") + " / " + getHumanSize(filesBytesTotal ,1,"Bytes") + "] in " + getElapsedTime(nanoSeconds) + " " + getAllDataBytesThroughPut() + "\r\n\r\n";
         return returnString;
     }
     
@@ -168,20 +168,30 @@ public class Stats
         String returnString = new String();
         double throughput = ( ((double)(filesBytesProcessed) / (((double)nanoSeconds / 1000000000.0))) ); // *1000 from mSec to Sec
         String throughputString = String.format("%.1f", throughput);
-        returnString = "(average: " + getHumanSize(throughput,1) + "/s)\r\n";
+        returnString = "(average: " + getHumanSize(throughput,1,"Bytes") + "/s)\r\n";
+        
+        return returnString;
+    }
+    
+    public String getBruteForceThroughPut(long items, long nanosecs)                               
+    {
+        String returnString = new String();
+        double throughput = ( ((double)(items) / (((double)nanosecs / 1000000000.0))) ); // *1000 from mSec to Sec
+        String throughputString = String.format("%.1f", throughput);
+        returnString = "(average: " + getHumanSize(throughput,1,"Passwords") + "/s)\r\n";
         
         return returnString;
     }
     
     
 //  OTHER
-    public static String getHumanSize(double value,int decimals)
+    public static String getHumanSize(double value,int decimals, String unit)
     {
         int x = 0;
         long factor;
         double newValue = value;
         String returnString = new String("");
-        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZiB","EiB","PiB","TiB","GiB","MiB","KiB","Bytes"));
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("Zi" + unit.charAt(0),"Ei" + unit.charAt(0),"Pi" + unit.charAt(0),"Ti" + unit.charAt(0),"Gi" + unit.charAt(0),"Mi" + unit.charAt(0),"Ki" + unit.charAt(0), unit));
         for (factor = 70; factor > 0; factor -= 10)
         {
             if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
