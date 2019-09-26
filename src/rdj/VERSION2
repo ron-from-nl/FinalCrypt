@@ -15,7 +15,7 @@
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Added Brute Force Password Dictionary Scan function}
 [Upgrade Notes] =	{This allows users to try to recover a lost password}
-[Upgrade Notes] =	{Performance tested approx 1000 passwords per second}
+[Upgrade Notes] =	{Performance testing at max 950 passwords per second}
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
