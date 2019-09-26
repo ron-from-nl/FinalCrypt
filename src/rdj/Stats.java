@@ -141,8 +141,14 @@ public class Stats
     public String getEndSummary(String mode)                               
     {
         String fileString = "files"; if (filesTotal == 1) { fileString = "file"; } else { fileString = "files"; }
+        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + getElapsedTime(nanoSeconds) + " " + getAllDataBytesThroughPut() + "\r\n\r\n";
+        return returnString;
+    }
+    
+    public String getElapsedTime(long nanosecs)
+    {
 //	long totalSecs = 197579; // Test
-	long totalSecs = Double.valueOf((nanoSeconds)/1000000000.0).longValue();
+	long totalSecs = Double.valueOf((nanosecs)/1000000000.0).longValue();
 	long days = totalSecs / (3600 * 24);
 	long hours = totalSecs / 3600;
 	long minutes = (totalSecs % 3600) / 60;
@@ -153,9 +159,8 @@ public class Stats
 	
 	if (days == 1) { dayDesc = "day"; } else { dayDesc = "days"; }
 	if (days>0) { duration = String.format("[%1d %s %02d:%02d:%02d]", days, dayDesc, hours, minutes, seconds); } else { duration = String.format("[%02d:%02d:%02d]", hours, minutes, seconds); }
-
-        String returnString = "\r\nFinished " + mode + " [" + filesProcessed + " / " + filesTotal + "] " + fileString + " totally [" + getHumanSize(filesBytesProcessed, 1) + " / " + getHumanSize(filesBytesTotal ,1) + "] in " + duration + " " + getAllDataBytesThroughPut() + "\r\n\r\n";
-        return returnString;
+	
+	return duration;
     }
     
     public String getAllDataBytesThroughPut()                               
