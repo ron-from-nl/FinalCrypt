@@ -71,7 +71,7 @@ public class GPT_Entries
     
     private void	setTotalSize()								    { totalSize = 0; for(int entry = 0; entry < gpt_entry.length; entry++)   { totalSize += gpt_entry[entry].partSize; } }
     
-    private void	setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " " + HEADERCLASS + " Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1) + " ]"); }
+    private void	setDesc() { DESCSTRING = ("[ LBA " + ABSTRACT_LBA + " - " + getActiveEntries() + "/" + getTotalEntries() + " " + HEADERCLASS + " Entries (" + getBytes().length + " Bytes) Partitions: " + GPT.getHumanSize(totalSize,1,"Bytes") + " ]"); }
     private String	getDesc() { return DESCSTRING; }
 
     @Override

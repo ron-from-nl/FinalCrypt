@@ -33,6 +33,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 import static rdj.GUIFX.getHexString;
 
@@ -342,7 +343,7 @@ public class CLUI implements UI
 	    totalTranfered = 0L;
 	    
 	    if ( Files.exists(keyPath, LinkOption.NOFOLLOW_LINKS) ) { log("Warning: file: \"" + keyPath.toAbsolutePath().toString() + "\" exists! Aborted!\r\n\r\n", false, true, false, false, false); try{ Thread.sleep(3000); } catch (InterruptedException ex) {} System.exit(1); }
-	    else						    { log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")...", false, true, false, false, false); }
+	    else						    { log("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")...", false, true, false, false, false); }
 
 	    if ( filesizeInBytes < bufferSize) { bufferSize = filesizeInBytes.intValue(); }
 
@@ -448,15 +449,20 @@ public class CLUI implements UI
 //			      isValidFile(UI ui,	  String caller,	       Path targetSourcePath, isKey  boolean device, long minSize, boolean symlink, boolean writable, boolean report)
 	    if ( Validate.isValidFile(this,  "CLUI Dictionary File", Paths.get(dictionaryFilePathString), false,	      false,	       1L,	   symlink,		true,           true) )
 	    {
-		log("\r\nBrute force testing...\r\n\r\n", false, true, true, false, false); 
 		dictFilePath = Paths.get(dictionaryFilePathString);
+		int lines = 0;
+		try { lines = Files.readAllLines(dictFilePath).size(); } catch (IOException ex) { log("Files.readAllLines(" + dictFilePath + ").size();" + ex.getMessage(), false, true, true, true, false); }
+		
+		long counter = 1;
+		Stats allDataStats = new Stats(); allDataStats.reset();
+		allDataStats.setAllDataStartNanoTime(); allDataStats.clock();
+		
+		log("\r\nStart Brute force testing " + lines + " passwords...\r\n\r\n", false, true, true, false, false); 
 		try
 		{
-		    long counter = 1;
-		    for (String pwdString:Files.readAllLines(dictFilePath))
+		    pwloop: for (String pwdString:Files.readAllLines(dictFilePath))
 		    {
 			pwd = pwdString;
-//			log(counter + " password: " + pwd + "\r\n", false, true, true, false, false);
 			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
 			messageDigest.update(pwd.getBytes());
 			byte[] hashBytes = messageDigest.digest();
@@ -467,16 +473,17 @@ public class CLUI implements UI
 			
 			targetFCPathList = new FCPathList<FCPath>();
 			Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-			for (FCPath fcPathItem : targetFCPathList)
+			pathlistloop: for (FCPath fcPathItem : targetFCPathList)
 			{
-//			    log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
 			    log(counter + " testing target: \"" + fcPathItem.path.toAbsolutePath().toString() + "\" password: \"" + pwd + "\" result: " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
+			    if (fcPathItem.isDecryptable) { break pwloop; }
 			    counter++;
 			}
 		    }			    
 		}
 		catch (IOException ex) { log("Files.readAllLines(" + dictFilePath + ");" + ex.getMessage(), false, true, true, true, false); }
-		log("\r\nfinished\r\n\r\n", false, true, true, false, false);
+		allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
+		log("\r\nFinished Brute force testing " + counter + " / " + lines + " passwords in " + allDataStats.getElapsedTime(allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + " " + allDataStats.getBruteForceThroughPut(counter, allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + "\r\n\r\n", false, true, true, false, false);
 	    }
 	    else
 	    {
@@ -489,7 +496,7 @@ public class CLUI implements UI
 	    log("\r\nScanning files... ", false, true, true, false, false); 
     //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
 	    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-	    log("finished\r\n\r\n", false, true, true, false, false);
+	    log("Finished Brute force testing \r\n\r\n", false, true, true, false, false);
 	}
 	
 	
@@ -946,22 +953,22 @@ public class CLUI implements UI
 	    results += "Scanning results:\r\n";
 	    results += "\r\n";
 	    if (interactive) { results += " C. Continue test\r\n"; }
-	    results += " 1. " + prefix + " " + decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(decryptedList.decryptedFilesSize,1) + ")\r\n";
-	    results += " 2. " + prefix + " " + encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(encryptableList.encryptableFilesSize,1) + ")\r\n";
+	    results += " 1. " + prefix + " " + decryptedList.decryptedFiles + " decrypted files (" + Validate.getHumanSize(decryptedList.decryptedFilesSize,1,"Bytes") + ")\r\n";
+	    results += " 2. " + prefix + " " + encryptableList.encryptableFiles + " encryptable files (" + Validate.getHumanSize(encryptableList.encryptableFilesSize,1,"Bytes") + ")\r\n";
     //
-	    results += " 3. " + prefix + " " + encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(encryptedList.encryptedFilesSize,1) + ")\r\n";
-	    results += " 4. " + prefix + " " + decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(decryptableList.decryptableFilesSize,1) + ")\r\n";
+	    results += " 3. " + prefix + " " + encryptedList.encryptedFiles + " encrypted files (" + Validate.getHumanSize(encryptedList.encryptedFilesSize,1,"Bytes") + ")\r\n";
+	    results += " 4. " + prefix + " " + decryptableList.decryptableFiles + " decryptable files (" + Validate.getHumanSize(decryptableList.decryptableFilesSize,1,"Bytes") + ")\r\n";
     //
 	    results += " 5. " + prefix + " " + emptyList.emptyFiles + " empty files \r\n";
 	    results += " 6. " + prefix + " " + symlinkList.symlinkFiles + " symlink files \r\n";
-	    results += " 7. " + prefix + " " + unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(unreadableList.unreadableFilesSize,1) + ")\r\n";
-	    results += " 8. " + prefix + " " + unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(unwritableList.unwritableFilesSize,1) + ")\r\n";
-	    results += " 9. " + prefix + " " + hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(hiddenList.hiddenFilesSize,1) + ")\r\n";
+	    results += " 7. " + prefix + " " + unreadableList.unreadableFiles + " unreadable files (" + Validate.getHumanSize(unreadableList.unreadableFilesSize,1,"Bytes") + ")\r\n";
+	    results += " 8. " + prefix + " " + unwritableList.unwritableFiles + " unwritable files (" + Validate.getHumanSize(unwritableList.unwritableFilesSize,1,"Bytes") + ")\r\n";
+	    results += " 9. " + prefix + " " + hiddenList.hiddenFiles + " hidden files (" + Validate.getHumanSize(hiddenList.hiddenFilesSize,1,"Bytes") + ")\r\n";
     //
-	    results += "10. " + prefix + " " + unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(unencryptableList.unEncryptableFilesSize,1) + ")\r\n";
-	    results += "11. " + prefix + " " + undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(undecryptableList.unDecryptableFilesSize,1) + ")\r\n";
-	    results += "12. " + prefix + " " + readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(readAutoKeyList.matchedAutoKeyFilesSize,1) + ")\r\n";
-	    results += "13. " + prefix + " " + writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(writeAutoKeyList.writeAutoKeyFilesSize,1) + ")\r\n";
+	    results += "10. " + prefix + " " + unencryptableList.unEncryptableFiles + " unencryptable (" + Validate.getHumanSize(unencryptableList.unEncryptableFilesSize,1,"Bytes") + ")\r\n";
+	    results += "11. " + prefix + " " + undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(undecryptableList.unDecryptableFilesSize,1,"Bytes") + ")\r\n";
+	    results += "12. " + prefix + " " + readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(readAutoKeyList.matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	    results += "13. " + prefix + " " + writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(writeAutoKeyList.writeAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	    results += "\r\n";
 
 	    if (interactive) { results += "What list would you like to see ? "; }

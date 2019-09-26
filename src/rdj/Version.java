@@ -160,11 +160,11 @@ public class Version
 	env +=    "OS Time:                 " + configuration.getTime() + "\r\n";
 	env += "\r\n";
 	env +=    "Processors:              " + PROCESSORS + "\r\n";
-	env +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1) + "\r\n";
+	env +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1,"Bytes") + "\r\n";
 //	env +=    "Total   Memory:          " + TOT_MEM + "\r\n";
-	env +=    "Maximum Memory:          " + Validate.getHumanSize(MAX_MEM, 1) + "\r\n";
-	env +=    "Free    Memory:          " + Validate.getHumanSize(FREE_MEM, 1) + "\r\n";
-	env +=    "Used    Memory:          " + Validate.getHumanSize(USED_MEM, 1) + "\r\n";
+	env +=    "Maximum Memory:          " + Validate.getHumanSize(MAX_MEM, 1,"Bytes") + "\r\n";
+	env +=    "Free    Memory:          " + Validate.getHumanSize(FREE_MEM, 1,"Bytes") + "\r\n";
+	env +=    "Used    Memory:          " + Validate.getHumanSize(USED_MEM, 1,"Bytes") + "\r\n";
 	env += "\r\n";
 	env +=    "Java Version:            " + JAVA_VERSION + "\r\n";
 	env +=    "Java Vendor:             " + JAVA_VENDOR + "\r\n";

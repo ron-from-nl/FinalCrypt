@@ -139,7 +139,7 @@ public class GPT_Entry
     
     public void print() { ui.log(toString(), true, true, true, false, false); }
     
-    private void setDesc()			    { DESCSTRING = ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1) + " ]"); }
+    private void setDesc()			    { DESCSTRING = ("[ " + ENTRYCLASS + " Entry " + ENTRYNUMBER + " Pos " + pos + " (" + getBytes().length + " Bytes) Partition: " + GPT.getHumanSize(partSize,1,"Bytes") + " ]"); }
     private String getDesc()			    { return DESCSTRING; }
     
     @Override

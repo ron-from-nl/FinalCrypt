@@ -401,8 +401,8 @@ public class FinalCrypt extends Thread
 		    if ( keySourceFCPath.size < bufferSize ) { setBufferSize((int)keySourceFCPath.size); }
 		}
 		
-		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1) + " ", true, false, false, false, false);
-		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1) + " ", false, true, true, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1,"Bytes") + " ", true, false, false, false, false);
+		ui.log(UTF8_PROCESS_SYMBOL + UTF8_NEW_TARGET_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" " + Validate.getHumanSize(newTargetSourceFCPath.size, 1,"Bytes") + " ", false, true, true, false, false);
 
 		// =================================================================================================================================================================
 		// Auto Key Mode

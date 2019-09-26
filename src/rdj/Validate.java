@@ -273,13 +273,13 @@ public class Validate
 	ui.buildReady(targetFCPathList, true);	
     }
 
-    synchronized public static String getHumanSize(double value,int decimals)
+    synchronized public static String getHumanSize(double value,int decimals, String unit)
     {
         int x = 0;
         long factor;
         double newValue = value;
         String returnString = new String("");
-        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZiB","EiB","PiB","TiB","GiB","MiB","KiB","Bytes"));
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("Zi" + unit.charAt(0),"Ei" + unit.charAt(0),"Pi" + unit.charAt(0),"Ti" + unit.charAt(0),"Gi" + unit.charAt(0),"Mi" + unit.charAt(0),"Ki" + unit.charAt(0), unit));
         for (factor = 70; factor > 0; factor -= 10)
         {
             if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
@@ -553,7 +553,7 @@ public class Validate
 	returnString += "Path:                  " + fcPath.path.toAbsolutePath().toString() + "\r\n";
 	returnString += "Exist:                 " + fcPath.exist + "\r\n";
 	returnString += "Type:                  " + fcPath.getTypeString(fcPath.type) + "\r\n";
-	returnString += "Size:                  " + Validate.getHumanSize(fcPath.size, 1) + "\r\n";
+	returnString += "Size:                  " + Validate.getHumanSize(fcPath.size, 1,"Bytes") + "\r\n";
 	returnString += "Readable:              " + fcPath.isReadable + "\r\n";
 	returnString += "Writable:              " + fcPath.isWritable + "\r\n";
 	returnString += "Hidden:                " + fcPath.isHidden + "\r\n";
@@ -602,7 +602,7 @@ public class Validate
     
     private static String b(boolean b)	{ return Boolean.toString(b); }
     private static String t(int t)	{ return FCPath.getTypeString(t); }
-    private static String s(long s)	{ return Validate.getHumanSize(s, 1); }
+    private static String s(long s)	{ return Validate.getHumanSize(s, 1,"Bytes"); }
 }
 
 

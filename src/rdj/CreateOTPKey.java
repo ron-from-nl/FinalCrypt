@@ -257,7 +257,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    String status1String = "File";
 	    String status2String = keyPath.getParent().toAbsolutePath().toString() + File.separator + keyPath.getFileName().toString();
 	    
-	    if (( filesizeInBytes > 0 ) && ( filesizeInBytes <= Long.MAX_VALUE )) { status1String += " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")"; }
+	    if (( filesizeInBytes > 0 ) && ( filesizeInBytes <= Long.MAX_VALUE )) { status1String += " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")"; }
 	    statusLabel1.setText(status1String);
 	    statusLabel2.setText(status2String);
 	}
@@ -288,7 +288,7 @@ public class CreateOTPKey extends Application implements Initializable
 	keyPath = Paths.get(currentDirPath.toAbsolutePath().toString(), filenameTextField.getText());
 	
 //	Start creating OTP Key file
-	statusLabel1.setText("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
+	statusLabel1.setText("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
 	statusLabel2.setText(keyPath.toAbsolutePath().toString());
 
 	repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(250), ae -> blinkStatusLabel1() ));
@@ -380,7 +380,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); }
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
-		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1) + ")");
+		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
 		guifx.userGuidanceMessage(guifx.SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 	    }});
 	    

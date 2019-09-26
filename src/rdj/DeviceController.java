@@ -138,7 +138,7 @@ public class DeviceController
 	FinalCrypt.io_Throughput_Ceiling = FinalCrypt.IO_THROUGHPUT_CEILING_DEFAULT;
 	startCalendar = Calendar.getInstance(Locale.ROOT);
 	boolean encryptkey = true;
-        if ( keyFCPath.size < bufferSize)   { bufferSize = (int)keyFCPath.size; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n", true, true, true, false, false); }
+        if ( keyFCPath.size < bufferSize)   { bufferSize = (int)keyFCPath.size; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1,"Bytes") + " \r\n", true, true, true, false, false); }
 //        else                            { log("BufferSize is set to: " + getHumanSize(bufferSize, 1) + " \r\n"); }
         Stats allDataStats = new Stats(); allDataStats.reset();        
         Stat readKeyFileStat1 = new Stat(); readKeyFileStat1.reset();
@@ -310,10 +310,10 @@ public class DeviceController
 	{
 	    long targetDeviceSize2 = targetFCPath.size;
 	    long keyPartitionSize = getKeyPartitionSize(ui, keyFCPath);
-	    if ( keyPartitionSize < bufferSize)   { bufferSize = (int)keyPartitionSize; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n", true, true, true, false, false); }
+	    if ( keyPartitionSize < bufferSize)   { bufferSize = (int)keyPartitionSize; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1,"Bytes") + " \r\n", true, true, true, false, false); }
 //	    long keySize = getKeyPartitionSize(ui, keyDevice);
 //	    if ( keyFCPath.size < bufferSize)   { bufferSize = (int)keySize; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n"); }
-	    if ( keyPartitionSize < bufferSize)   { bufferSize = (int)keyPartitionSize; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1) + " \r\n", true, true, true, false, false); }
+	    if ( keyPartitionSize < bufferSize)   { bufferSize = (int)keyPartitionSize; if (FinalCrypt.verbose) ui.log("BufferSize is limited to keyfile size: " + GPT.getHumanSize(bufferSize, 1,"Bytes") + " \r\n", true, true, true, false, false); }
 //            else                            { log("BufferSize is set to: " + getHumanSize(bufferSize, 1) + " \r\n"); }
 	    Stats allDataStats = new Stats(); allDataStats.reset();        
 	    Stat readKeyFileStat1 = new Stat(); readKeyFileStat1.reset();

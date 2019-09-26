@@ -2004,7 +2004,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    checksumLabel.setTextFill(Color.WHITESMOKE); checksumHeader.setText(""); checksumLabel.setText("");
 			    if ( checksumTooltip != null )  { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
 
-			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
 
 			    showPasswordCheckBox.setVisible(true);
 			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
@@ -2052,7 +2052,7 @@ public class GUIFX extends Application implements UI, Initializable
 				else				{ keyHeaderLabel.setTextFill(Color.ORANGE); }
 				if (keyFCPath.type != FCPath.DIRECTORY)
 				{
-				    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+				    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
 				}
 				checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 
@@ -2299,68 +2299,68 @@ public class GUIFX extends Application implements UI, Initializable
 	    emptyFilesLabel.setText(Long.toString(targetFCPathList.emptyFiles));
 	    symlinkFilesLabel.setText(Long.toString(targetFCPathList.symlinkFiles));
 	    unreadableFilesLabel.setText(Long.toString(targetFCPathList.unreadableFiles));
-	    unreadableFilesLabel.getTooltip().setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1) + ")");
-//	    unreadableFilesSizeLabel.setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1) + ")");
+	    unreadableFilesLabel.getTooltip().setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1,"Bytes") + ")");
+//	    unreadableFilesSizeLabel.setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1,"Bytes") + ")");
 	    unwritableFilesLabel.setText(Long.toString(targetFCPathList.unwritableFiles));
-	    unwritableFilesLabel.getTooltip().setText("Click to list unwritable files (" + Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1) + ")");
-//	    unwritableFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1));
+	    unwritableFilesLabel.getTooltip().setText("Click to list unwritable files (" + Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1,"Bytes") + ")");
+//	    unwritableFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1,"Bytes"));
 	    hiddenFilesLabel.setText(Long.toString(targetFCPathList.hiddenFiles));
-	    hiddenFilesLabel.getTooltip().setText("Click to list hidden files (" + Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1) + ")");
-//	    hiddenFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1));
+	    hiddenFilesLabel.getTooltip().setText("Click to list hidden files (" + Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1,"Bytes") + ")");
+//	    hiddenFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1,"Bytes"));
 
 //	    Decrypted Column
 	    decryptedLabel.setText(Long.toString(targetFCPathList.decryptedFiles));
-	    decryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptedFilesSize,1));
+	    decryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptedFilesSize,1,"Bytes"));
 
 	    encryptableLabel.setText(Long.toString(targetFCPathList.encryptableFiles));
-	    encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableFilesSize,1));
+	    encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableFilesSize,1,"Bytes"));
 
 //	    newEncryptedLabel.setText(Long.toString(targetFCPathList.newEncryptedFiles));
-//	    newEncryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newEncryptedFilesSize,1));
+//	    newEncryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newEncryptedFilesSize,1,"Bytes"));
 	    
 //	    encryptRemainingLabel.setText(Long.toString(targetFCPathList.encryptRemainingFiles));
-//	    encryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptRemainingFilesSize,1));
+//	    encryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptRemainingFilesSize,1,"Bytes"));
 
 	    unencryptableLabel.setText(Long.toString(targetFCPathList.unEncryptableFiles));
-	    unencryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unEncryptableFilesSize,1));
+	    unencryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unEncryptableFilesSize,1,"Bytes"));
 
 //	    Encrypted Column
 	    encryptedLabel.setText(Long.toString(targetFCPathList.encryptedFiles));
-	    encryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptedFilesSize,1));
+	    encryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptedFilesSize,1,"Bytes"));
 
 	    decryptableLabel.setText(Long.toString(targetFCPathList.decryptableFiles));
-	    decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableFilesSize,1));
+	    decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableFilesSize,1,"Bytes"));
 
 //	    newDecryptedLabel.setText(Long.toString(targetFCPathList.newDecryptedFiles));
-//	    newDecryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newDecryptedFilesSize,1));
+//	    newDecryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newDecryptedFilesSize,1,"Bytes"));
 	    
 //	    decryptRemainingLabel.setText(Long.toString(targetFCPathList.decryptRemainingFiles));
-//	    decryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptRemainingFilesSize,1));
+//	    decryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptRemainingFilesSize,1,"Bytes"));
 
 	    undecryptableLabel.setText(Long.toString(targetFCPathList.unDecryptableFiles));
-	    undecryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unDecryptableFilesSize,1));
+	    undecryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unDecryptableFilesSize,1,"Bytes"));
 
 //	    Totals Column
 	    totalFilesLabel.setText(Long.toString(targetFCPathList.files));
-	    filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1));
+	    filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1,"Bytes"));
 
 //	    validFilesLabel.setText(Long.toString(targetFCPathList.validFiles));
-//	    validFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validFilesSize,1));
+//	    validFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validFilesSize,1,"Bytes"));
 
 	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
-	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1));
+	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1,"Bytes"));
 
 	    validDevicesLabel.setText(Long.toString(targetFCPathList.validDevices));
-	    validDevicesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validDevicesSize,1));
+	    validDevicesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validDevicesSize,1,"Bytes"));
 
 	    validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
-	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1));
+	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1,"Bytes"));
 
 	    keyReadLabel.setText(Long.toString(targetFCPathList.matchedAutoKeyFiles));
-	    keyReadSizeLabel.setText(Validate.getHumanSize(targetFCPathList.matchedAutoKeyFilesSize,1));
+	    keyReadSizeLabel.setText(Validate.getHumanSize(targetFCPathList.matchedAutoKeyFilesSize,1,"Bytes"));
 
 	    keyWriteLabel.setText(Long.toString(targetFCPathList.writeAutoKeyFiles));
-	    keyWriteSizeLabel.setText(Validate.getHumanSize(targetFCPathList.writeAutoKeyFilesSize,1));
+	    keyWriteSizeLabel.setText(Validate.getHumanSize(targetFCPathList.writeAutoKeyFilesSize,1,"Bytes"));
 	});
     }
     

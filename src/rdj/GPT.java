@@ -244,13 +244,13 @@ public class GPT
     
     synchronized public static String getChar(Byte myByte) { return String.format("%1s", (char) (myByte & 0xFF)).replaceAll("\\p{C}", "?"); }  //  (myByte & 0xFF); }
     
-    synchronized public static String getHumanSize(double value,int decimals)
+    synchronized public static String getHumanSize(double value,int decimals, String unit)
     {
         int x = 0;
         long factor;
         double newValue = value;
         String returnString = new String("");
-        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("ZiB","EiB","PiB","TiB","GiB","MiB","KiB","Bytes"));
+        ArrayList<String> magnitude = new ArrayList<String>(); magnitude.addAll(Arrays.asList("Zi" + unit.charAt(0),"Ei" + unit.charAt(0),"Pi" + unit.charAt(0),"Ti" + unit.charAt(0),"Gi" + unit.charAt(0),"Mi" + unit.charAt(0),"Ki" + unit.charAt(0), unit));
         for (factor = 70; factor > 0; factor -= 10)
         {
             if ((value / Math.pow(2, factor)) >= 1) { newValue = (value / Math.pow(2, factor)); returnString = String.format("%.1f", (newValue)) + " " + magnitude.get(x); break; } x++;
@@ -261,8 +261,8 @@ public class GPT
     
     synchronized public static String getLBAHumanSize(byte[] value,int decimals)
     {
-	if (value.length == 4)  { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * DeviceController.bytesPerSector,decimals ); }
-	else			{ return getHumanSize( Long.reverseBytes(GPT.bytesToLong(value)) * DeviceController.bytesPerSector,decimals ); }
+	if (value.length == 4)  { return getHumanSize( Integer.reverseBytes(GPT.bytesToInteger(value)) * DeviceController.bytesPerSector,decimals,"Bytes" ); }
+	else			{ return getHumanSize( Long.reverseBytes(GPT.bytesToLong(value)) * DeviceController.bytesPerSector,decimals,"Bytes" ); }
     }
     
     synchronized public boolean validateIntegerString(String text) { try { Integer.parseInt(text); return true;} catch (NumberFormatException e) { return false; } }
@@ -308,9 +308,9 @@ public class GPT
                 {
                     ui.log(String.format("%-70s", store.name()), true, true, true, false, false);
                     ui.log(String.format("%-20s", store.type()), true, true, true, false, false);
-                    ui.log(String.format("%-20s", getHumanSize(total_space, 1)), true, true, true, false, false);
-                    ui.log(String.format("%-20s", getHumanSize(used_space,1)), true, true, true, false, false);
-                    ui.log(String.format("%-20s", getHumanSize(available_space,1)), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(total_space, 1,"Bytes")), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(used_space,1,"Bytes")), true, true, true, false, false);
+                    ui.log(String.format("%-20s", getHumanSize(available_space,1,"Bytes")), true, true, true, false, false);
                     ui.log(String.format("%-20s", is_read_only), true, true, true, false, false);
                     ui.log("\r\n", true, true, true, false, false);
                 }
