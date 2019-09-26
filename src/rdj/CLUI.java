@@ -52,7 +52,10 @@ public class CLUI implements UI
     private final Configuration configuration;
     private boolean symlink = false;
     private boolean verbose = false;
-    
+    private boolean scan = false;
+    private boolean dictionary = false;
+    private String dictionaryFilePathString = "";
+
     private boolean encrypt = false;
     private boolean decrypt = false;
     private boolean createManualKeyDev = false;
@@ -133,10 +136,9 @@ public class CLUI implements UI
         ArrayList<Path> targetPathList = new ArrayList<>();
         ArrayList<Path> extendedTargetPathList = new ArrayList<>();
         Path batchFilePath = null;
-//        Path targetFilePath = null;
-	
-//        Path keyFilePath = null;
-        keyFCPath = null;
+        Path dictionaryFilePath = null;
+	String dictionaryFilePathString = "";
+	keyFCPath = null;
 	
         Path outputFilePath = null;
         configuration = new Configuration(this);
@@ -166,6 +168,7 @@ public class CLUI implements UI
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
             else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disabledMAC = true; FCPath.KEY_SIZE_MIN = 1; encryptModeNeeded = true; }
+            else if (  args[paramCnt].equals("--scan"))							            { scan=true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--decrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { decrypt = true; kfsetneeded = true; tfsetneeded = true; } }
             else if (( args[paramCnt].equals("-p")) || ( args[paramCnt].equals("--password") ))                     {
@@ -175,6 +178,7 @@ public class CLUI implements UI
 															pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
 															pwd = args[paramCnt+1]; pwdIsSet = true; paramCnt++;
 														    }
+            else if (( args[paramCnt].equals("-pd")) || ( args[paramCnt].equals("--password-dictionary") ))         { dictionaryFilePathString = args[paramCnt+1]; dictionary = true; paramCnt++;; }
             else if (( args[paramCnt].equals("-pp")) || ( args[paramCnt].equals("--password-prompt") ))             { pwdPromptNeeded = true; }
 
 	    else if (  args[paramCnt].equals("--create-keydev"))						    { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { createManualKeyDev = true; kfsetneeded = true; tfsetneeded = true; } }
@@ -200,7 +204,8 @@ public class CLUI implements UI
 
 //	    Mode parameters
 	    else if (
-			    (!encrypt)
+			    (!scan)
+			&&  (!encrypt)
 			&&  (!decrypt)
 			&&  (!createManualKeyDev)
 			&&  (!clonekeydev)
@@ -434,11 +439,68 @@ public class CLUI implements UI
 //    					  getFCPath(UI ui, String caller,	      Path path, boolean isKey,          Path keyPath, boolean disabledMAC,    boolean report)
 		     keyFCPath = Validate.getFCPath(   ui,            "", targetPathList.get(0),          true, targetPathList.get(0), finalCrypt.disabledMAC,          true);
 	}
-		
-	log("\r\nScanning files... ", false, true, true, false, false); 
-//	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
-	Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-	log("finished\r\n\r\n", false, true, true, false, false); 
+	
+	if ( dictionary )
+	{
+    //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
+	    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
+	    Path dictFilePath;
+//			      isValidFile(UI ui,	  String caller,	       Path targetSourcePath, isKey  boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+	    if ( Validate.isValidFile(this,  "CLUI Dictionary File", Paths.get(dictionaryFilePathString), false,	      false,	       1L,	   symlink,		true,           true) )
+	    {
+		log("\r\nBrute force testing...\r\n\r\n", false, true, true, false, false); 
+		dictFilePath = Paths.get(dictionaryFilePathString);
+		try
+		{
+		    long counter = 1;
+		    for (String pwdString:Files.readAllLines(dictFilePath))
+		    {
+			pwd = pwdString;
+//			log(counter + " password: " + pwd + "\r\n", false, true, true, false, false);
+			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
+			messageDigest.update(pwd.getBytes());
+			byte[] hashBytes = messageDigest.digest();
+			pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+
+			finalCrypt.setPwd(pwd);
+			finalCrypt.setPwdBytes(pwd);
+			
+			targetFCPathList = new FCPathList<FCPath>();
+			Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
+			for (FCPath fcPathItem : targetFCPathList)
+			{
+//			    log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
+			    log(counter + " testing target: " + fcPathItem.path.toAbsolutePath().toString() + " password: " + pwd + " " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
+			    counter++;
+			}
+		    }			    
+		}
+		catch (IOException ex) { log("Files.readAllLines(" + dictFilePath + ");" + ex.getMessage(), false, true, true, true, false); }
+		log("\r\nfinished\r\n\r\n", false, true, true, false, false);
+	    }
+	    else
+	    {
+		log("Warning: dictionary file: " + dictionaryFilePathString + " is not a valid file!\r\n", false, true, true, false, false);
+	    }
+	    System.exit(0);
+	}
+	else
+	{
+	    log("\r\nScanning files... ", false, true, true, false, false); 
+    //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
+	    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
+	    log("finished\r\n\r\n", false, true, true, false, false);
+	}
+	
+	
+	if ( scan )
+	{
+	    	for (FCPath fcPathItem : targetFCPathList)
+		{
+		    log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
+		}
+		System.exit(0);
+	}
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
@@ -706,6 +768,7 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_file\" -t \"target_file\"  # Decrypt (Manual Key Mode not recommended)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Mode:\r\n", false, true, false, false, false);
+        log("            <--scan>              -k \"key_dir\"       -t \"target\"	    Print scan results and quit.\r\n", false, true, false, false, false);
         log("            <--encrypt>           -k \"key_dir\"       -t \"target\"	    Encrypt Targets.\r\n", false, true, false, false, false);
         log("            <--decrypt>           -k \"key_dir\"       -t \"target\"	    Decrypt Targets.\r\n", false, true, false, false, false);
         log("            <--create-keydev>     -k \"key_file\"      -t \"target\"	    Create Key Device (only unix).\r\n", false, true, false, false, false);
@@ -718,7 +781,7 @@ public class CLUI implements UI
         log("            [-h] [--help]                                                   Print help page.\r\n", false, true, false, false, false);
         log("            [--password]          -p \'password\'                             Optional password (non-interactive).\r\n", false, true, false, false, false);
         log("            [--password-prompt]   -pp                                       Optional password (safe interactive prompt).\r\n", false, true, false, false, false);
-        log("            [--key-chksum]        -k \"key_file\"                             Calculate key checksum.\r\n", false, true, false, false, false);
+	log("            [--key-chksum]        -k \"key_file\"                             Calculate key checksum.\r\n", false, true, false, false, false);
         log("            [--no-key-size]                                                 Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]                                                  Enables debugging mode.\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]                                                Enables verbose mode.\r\n", false, true, false, false, false);
@@ -737,10 +800,14 @@ public class CLUI implements UI
         log("            [-s size]                                                       Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n", false, true, false, false, false);
         log("            [-S size]                                                       OTP Key File Size (size = bytes). See --create-keyfile \r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("Filtering Options:\r\n", false, true, false, false, false);
+        log("Test Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            [--test]                                                        Test run without executing (also prints statistics at the end).\r\n", false, true, false, false, false);
         log("            [--test \"answer\"]                                               Same but then with non interactive answer (c,1-13) included.\r\n", false, true, false, false, false);
+	log("            [-pd] [--password-dictionary]  \"dict_file\"                      Brute force test plain text passwords from dictionary file.\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("Filtering Options:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
         log("            [-w \'wildcard\']                                                 File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
         log("            [-W \'wildcard\']                                                 File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
         log("            [-r \'regex\']                                                    File regular expression filter. Advanced filename filter!\r\n", false, true, false, false, false);
@@ -804,8 +871,13 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -r '(?!.*\\.bit$)^.*$' -k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -r '(?!.*\\.bit$)^.*$' -k \"mykeydir\" -t \"mydir\"\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
+        log("Brute force password dictionary testing (in case of forgotten passwords):\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --scan --password-dictionary \"dictionary.txt\" -k \"mykeydir\" -t \"myfile\"\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
 	log("Create OTP Key file:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
+	log("            FinalCrypt automatically creates One-Time Pad Key Files. Creating Manual OTP keys is supported but not recommended\r\n\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj.CLUI --create-keyfile -K \"mykeyfile\" -S 268435456 # (256 MiB) echo $((1024**2*256))\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
 	log("Key Device Examples (Linux):\r\n", false, true, false, false, false);

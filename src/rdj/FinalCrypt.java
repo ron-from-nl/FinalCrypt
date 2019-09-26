@@ -1065,8 +1065,8 @@ public class FinalCrypt extends Thread
 	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
 	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
-	byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte);	    // transitionalByte =	    databyte	XOR keybyte
-	returnByte = (byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos));	    // returnByte =	    transitionalByte	XOR passByte
+	byte transitionalByte = (byte)(targetSourceByte ^ keySourceByte);		// transitionalByte =	databyte	    XOR keybyte
+	returnByte =		(byte)(transitionalByte ^ (byte)pwd.charAt(pwdPos));	// returnByte =		transitionalByte    XOR passByte
 	pwdPos++; if ( pwdPos == pwd.length() ) { pwdPos = 0; }
 	
 	return	returnByte;
@@ -1079,8 +1079,8 @@ public class FinalCrypt extends Thread
 	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
 	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
-	byte transitionalByte = (byte)(keySourceByte ^ pwdBytes[pwdBytesPos]);	// transitionalByte =	keybyte		XOR sumByte
-	returnByte = (byte)(targetSourceByte ^ (transitionalByte));			// returnByte =		dataByte	XOR transitionalByte
+	byte transitionalByte = (byte)(keySourceByte ^	    pwdBytes[pwdBytesPos]);	// transitionalByte =	keybyte		XOR sumByte
+	returnByte =		(byte)(targetSourceByte ^   (transitionalByte));	// returnByte =		dataByte	XOR transitionalByte
 	pwdBytesPos++; if ( pwdBytesPos == pwdBytes.length ) { pwdBytesPos = 0; }
 	
 	return	returnByte;

@@ -14,6 +14,7 @@ Examples:
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k "key_file" -t "target_file"  # Decrypt (Manual Key Mode not recommended)
 
 Mode:
+            <--scan>              -k "key_dir"       -t "target"	    Print scan results and quit.
             <--encrypt>           -k "key_dir"       -t "target"	    Encrypt Targets.
             <--decrypt>           -k "key_dir"       -t "target"	    Decrypt Targets.
             <--create-keydev>     -k "key_file"      -t "target"	    Create Key Device (only unix).
@@ -39,10 +40,14 @@ Options:
             [-s size]                                                       Changes default I/O buffer size (size = KiB) (default 1024 KiB).
             [-S size]                                                       OTP Key File Size (size = bytes). See --create-keyfile 
 
-Filtering Options:
+Test Options:
 
             [--test]                                                        Test run without executing (also prints statistics at the end).
             [--test "answer"]                                               Same but then with non interactive answer (c,1-13) included.
+            [-pd] [--password-dictionary]  "dict_file"                      Brute force test plain text passwords from dictionary file.
+
+Filtering Options:
+
             [-w 'wildcard']                                                 File wildcard INCLUDE filter. Uses: "Globbing Patterns Syntax".
             [-W 'wildcard']                                                 File wildcard EXCLUDE filter. Uses: "Globbing Patterns Syntax".
             [-r 'regex']                                                    File regular expression filter. Advanced filename filter!
@@ -55,4 +60,4 @@ Parameters:
             <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 5.5.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.6.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

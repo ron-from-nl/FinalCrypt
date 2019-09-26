@@ -1,7 +1,5 @@
 =================================== Todo ====================================
 
-Crash outside VM on Ubuntu 19.04 (runs fine on Ubuntu 18.04)
-
 Problematic frame: C  [libpango-1.0.so.0+0x193e6]
 com.sun.javafx.font.freetype.PangoGlyphLayout 
 
@@ -35,9 +33,8 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Critical: Manual Key was treated as Auto Key and deleted after decryption
-This update tests if decrypting with a Manual Key and skips Key Deletion
-Manual Key shouldn't be used anymore but for those who do please update!
+Added Brute Force Password Dictionary Scan to Command Line Interface
+
 
 ============================= Source Committed ==============================
 

@@ -42,7 +42,13 @@ Examples:
             java -cp finalcrypt.jar rdj/CLUI --encrypt -r '(?!.*\.bit$)^.*$' -k "mykeydir" -t "mydir"
             java -cp finalcrypt.jar rdj/CLUI --decrypt -r '(?!.*\.bit$)^.*$' -k "mykeydir" -t "mydir"
 
+Brute force password dictionary testing (in case of forgotten passwords):
+
+            java -cp finalcrypt.jar rdj/CLUI --scan --password-dictionary "dictionary.txt" -k "mykeydir" -t "myfile"
+
 Create OTP Key file:
+
+            FinalCrypt automatically creates One-Time Pad Key Files. Creating Manual OTP keys is supported but not recommended
 
             java -cp finalcrypt.jar rdj.CLUI --create-keyfile -K "mykeyfile" -S 268435456 # (256 MiB) echo $((1024**2*256))
 
@@ -70,4 +76,4 @@ Key Device Examples (Linux):
             java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
 
-FinalCrypt 5.5.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.6.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

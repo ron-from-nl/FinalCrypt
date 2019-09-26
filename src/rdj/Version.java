@@ -286,13 +286,20 @@ public class Version
 	return returnValue;
     }
     
-    public static String httpGetRequest(UI ui, String urlString)
-    {
+    private static String getUserAgent(UI ui, String connType)
+    {       
 	String userAgent = "";
-	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " (HTTP)";
+	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " " + connType;
 	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
 	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
 	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	return userAgent;
+    }
+    
+    
+    public static String httpGetRequest(UI ui, String urlString)
+    {
+	String userAgent = getUserAgent(ui, "(HTTP)");
 	
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); return null; }
@@ -326,11 +333,7 @@ public class Version
     
     public static String httpsGetRequest(UI ui, String urlString)
     {
-	String userAgent = "";
-	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " (HTTPS)";
-	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
-	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
-	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	String userAgent = getUserAgent(ui, "(HTTPS)");
 	
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
@@ -339,6 +342,7 @@ public class Version
 	try { httpConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
 	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); }
         httpConnection.setRequestProperty("User-Agent", userAgent);
+	httpConnection.setRequestProperty("Referer", Version.WEBSITEURISTRING);
         int responseCode = 0;
 	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: httpsGetRequest IOException: httpConnection.getResponseCode()" + ex.getCause() + "\r\n", false, true, true, true, false); }
 
