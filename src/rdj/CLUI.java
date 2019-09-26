@@ -470,7 +470,7 @@ public class CLUI implements UI
 			for (FCPath fcPathItem : targetFCPathList)
 			{
 //			    log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
-			    log(counter + " testing target: " + fcPathItem.path.toAbsolutePath().toString() + " password: " + pwd + " " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
+			    log(counter + " testing target: " + fcPathItem.path.toAbsolutePath().toString() + " password: " + pwd + " result: " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
 			    counter++;
 			}
 		    }			    
