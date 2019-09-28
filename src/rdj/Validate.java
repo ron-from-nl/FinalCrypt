@@ -544,44 +544,6 @@ public class Validate
 	FCPath	fcPath = new FCPath(     path,        exist,    type,     size,        readable,        writable,        isHidden,        matchKey,          isValid,        isValidFile,         isValidDeviceProtected,         isValidDevice,         isValidPartition,	   isKey,         isValidKey,         isValidKeyDir,	     isDecrypted,         isEncryptable,         needsWriteAutoKey,      needsWriteAutoKeySize,	        matchedReadAutoKey,      matchedReadAutoKeySize,	isNewEncrypted,		isUnEncryptable,          isEncrypted,     macVersion,	       isDecryptable,	      isNewDecrypted,         isUnDecryptable,	       errorDesc);
 	return fcPath;
     }
-
-    public static String getSting(FCPath fcPath)
-    {
-	String returnString = "";
-	returnString += "FCPath:\r\n";
-	returnString += "\r\n";
-	returnString += "Path:                  " + fcPath.path.toAbsolutePath().toString() + "\r\n";
-	returnString += "Exist:                 " + fcPath.exist + "\r\n";
-	returnString += "Type:                  " + fcPath.getTypeString(fcPath.type) + "\r\n";
-	returnString += "Size:                  " + Validate.getHumanSize(fcPath.size, 1,"Bytes") + "\r\n";
-	returnString += "Readable:              " + fcPath.isReadable + "\r\n";
-	returnString += "Writable:              " + fcPath.isWritable + "\r\n";
-	returnString += "Hidden:                " + fcPath.isHidden + "\r\n";
-	returnString += "Match Key:             " + fcPath.matchKey + "\r\n";
-	returnString += "\r\n";
-	returnString += "Valid Path:            " + fcPath.isValidPath + "\r\n";
-	returnString += "Valid File:            " + fcPath.isValidFile + "\r\n";
-	returnString += "Valid Device:          " + fcPath.isValidDevice + "\r\n";
-	returnString += "Valid Partition:       " + fcPath.isValidPartition + "\r\n";
-	returnString += "Is Key:                " + fcPath.isKey + "\r\n";
-	returnString += "Valid Key:             " + fcPath.isValidKey + "\r\n";
-	returnString += "\r\n";
-	returnString += "Decrypted:             " + fcPath.isDecrypted + "\r\n";
-	returnString += "Encryptable:           " + fcPath.isEncryptable + "\r\n";
-	returnString += "New Encrypted:         " + fcPath.isNewEncrypted + "\r\n";
-	returnString += "UnEncryptable:         " + fcPath.isUnEncryptable + "\r\n";
-	returnString += "\r\n";
-//	returnString += "Has FCToken:           " + fcPath.hasFCToken + "\r\n";
-	returnString += "Encrypted:             " + fcPath.isEncrypted + "\r\n";
-	returnString += "MAC Version:           " + fcPath.macVersion + "\r\n";
-//	returnString += "Authenticated:         " + fcPath.isAuthenticated + "\r\n";
-	returnString += "Decryptable:           " + fcPath.isDecryptable + "\r\n";
-	returnString += "New Decrypted:         " + fcPath.isNewDecrypted + "\r\n";
-	returnString += "UnDecryptable:         " + fcPath.isUnDecryptable + "\r\n";
-	returnString += "\r\n";
-
-	return returnString;
-    }
     
     synchronized public static String getFCPathStatus(FCPath fcPath)
     {

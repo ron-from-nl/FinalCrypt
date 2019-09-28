@@ -113,6 +113,43 @@ public class FCPath
 //    public static String getKeySelectedDescription()		{ return FCPath.ITEMSELECTDESCRIPTION[type]; }	
     public static String getTypeString(int type) { return FCPath.TYPE_DESCRIPTION_ARRAY[type]; }
     
-    public String getString() {return Validate.getSting(this); }
+//    public String getString() {return Validate.getSting(this); }
+    public String getString()
+    {
+	String returnString = "";
+	returnString += "FCPath:\r\n";
+	returnString += "\r\n";
+	returnString += "Path:                  " + path.toAbsolutePath().toString() + "\r\n";
+	returnString += "Exist:                 " + exist + "\r\n";
+	returnString += "Type:                  " + getTypeString(type) + "\r\n";
+	returnString += "Size:                  " + Validate.getHumanSize(size, 1,"Bytes") + "\r\n";
+	returnString += "Readable:              " + isReadable + "\r\n";
+	returnString += "Writable:              " + isWritable + "\r\n";
+	returnString += "Hidden:                " + isHidden + "\r\n";
+	returnString += "Match Key:             " + matchKey + "\r\n";
+	returnString += "\r\n";
+	returnString += "Valid Path:            " + isValidPath + "\r\n";
+	returnString += "Valid File:            " + isValidFile + "\r\n";
+	returnString += "Valid Device:          " + isValidDevice + "\r\n";
+	returnString += "Valid Partition:       " + isValidPartition + "\r\n";
+	returnString += "Is Key:                " + isKey + "\r\n";
+	returnString += "Valid Key:             " + isValidKey + "\r\n";
+	returnString += "\r\n";
+	returnString += "Decrypted:             " + isDecrypted + "\r\n";
+	returnString += "Encryptable:           " + isEncryptable + "\r\n";
+//	returnString += "New Encrypted:         " + isNewEncrypted + "\r\n";
+	returnString += "UnEncryptable:         " + isUnEncryptable + "\r\n";
+	returnString += "\r\n";
+//	returnString += "Has FCToken:           " + hasFCToken + "\r\n";
+	returnString += "Encrypted:             " + isEncrypted + "\r\n";
+	returnString += "MAC Version:           " + macVersion + "\r\n";
+//	returnString += "Authenticated:         " + isAuthenticated + "\r\n";
+	returnString += "Decryptable:           " + isDecryptable + "\r\n";
+//	returnString += "New Decrypted:         " + isNewDecrypted + "\r\n";
+	returnString += "UnDecryptable:         " + isUnDecryptable + "\r\n";
+	returnString += "\r\n";
+
+	return returnString;
+    }
 
 }

@@ -443,79 +443,89 @@ public class CLUI implements UI
 	
 	if ( dictionary )
 	{
-    //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
-	    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-	    Path dictFilePath;
-//			      isValidFile(UI ui,	  String caller,	       Path targetSourcePath, isKey  boolean device, long minSize, boolean symlink, boolean writable, boolean report)
-	    if ( Validate.isValidFile(this,  "CLUI Dictionary File", Paths.get(dictionaryFilePathString), false,	      false,	       1L,	   symlink,		true,           true) )
+//	    Validate.buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
+	    Validate.buildSelection(	   this,			    targetPathList,    keyFCPath,		    targetFCPathList,	      symlink,	      pattern,	       negatePattern, finalCrypt.disabledMAC,          true);
+	    if ( targetFCPathList.validFiles > 0 )
 	    {
-		dictFilePath = Paths.get(dictionaryFilePathString);
-		int lines = 0;
-		try { lines = Files.readAllLines(dictFilePath).size(); } catch (IOException ex) { log("Files.readAllLines(" + dictFilePath + ").size();" + ex.getMessage(), false, true, true, true, false); }
-		
-		long counter = 1;
-		Stats allDataStats = new Stats(); allDataStats.reset();
-		allDataStats.setAllDataStartNanoTime(); allDataStats.clock();
-		
-		log("\r\nStart Brute force testing " + lines + " passwords...\r\n\r\n", false, true, true, false, false); 
-		try
+//		     Validate.isValidFile(UI ui, 	  String caller,	       Path targetSourcePath, boolean isKey,  boolean device, long minSize, boolean symlink, boolean writable, boolean report)
+		FCPath dictFileFCPath = Validate.getFCPath(ui, "NA", Paths.get(dictionaryFilePathString), false, Paths.get(dictionaryFilePathString), false, true);
+		if ( ( dictFileFCPath.exist ) && (dictFileFCPath.isValidFile) && (dictFileFCPath.isReadable) && ( dictFileFCPath.size > 0) )
 		{
-		    pwloop: for (String pwdString:Files.readAllLines(dictFilePath))
-		    {
-			pwd = pwdString;
-			MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
-			messageDigest.update(pwd.getBytes());
-			byte[] hashBytes = messageDigest.digest();
-			pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+		    int lines = 0;
+		    try { lines = Files.readAllLines(dictFileFCPath.path).size(); } catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path.toAbsolutePath().toString() + ").size();" + ex.getMessage(), false, true, true, true, false); }
 
-			finalCrypt.setPwd(pwd);
-			finalCrypt.setPwdBytes(pwd);
-			
-			targetFCPathList = new FCPathList<FCPath>();
-			Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
-			pathlistloop: for (FCPath fcPathItem : targetFCPathList)
+		    long counter = 1;
+		    Stats allDataStats = new Stats(); allDataStats.reset();
+		    allDataStats.setAllDataStartNanoTime(); allDataStats.clock();
+
+		    log("\r\nStart Brute force testing " + lines + " passwords...\r\n\r\n", false, true, true, false, false); 
+		    try
+		    {
+			pwloop: for (String pwdString:Files.readAllLines(dictFileFCPath.path))
 			{
-			    log(counter + " testing target: \"" + fcPathItem.path.toAbsolutePath().toString() + "\" password: \"" + pwd + "\" result: " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
-			    if (fcPathItem.isDecryptable) { break pwloop; }
-			    counter++;
-			}
-		    }			    
+			    pwd = pwdString;
+			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
+			    messageDigest.update(pwd.getBytes());
+			    byte[] hashBytes = messageDigest.digest();
+			    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
+
+			    finalCrypt.setPwd(pwd);
+			    finalCrypt.setPwdBytes(pwd);
+
+			    targetFCPathList = new FCPathList<FCPath>();
+			    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
+			    pathlistloop: for (FCPath fcPathItem : targetFCPathList)
+			    {
+				log(counter + " testing target: \"" + fcPathItem.path.toAbsolutePath().toString() + "\" password: \"" + pwd + "\" result: " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
+				if (fcPathItem.isDecryptable) { break pwloop; }
+				counter++;
+			    }
+			}			    
+		    }
+		    catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path + ");" + ex.getMessage(), false, true, true, true, false); }
+		    allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
+		    log("\r\nFinished Brute force testing " + (counter - 1) + " / " + lines + " passwords in " + allDataStats.getElapsedTime(allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + " " + allDataStats.getBruteForceThroughPut(counter, allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + "\r\n\r\n", false, true, true, false, false);
 		}
-		catch (IOException ex) { log("Files.readAllLines(" + dictFilePath + ");" + ex.getMessage(), false, true, true, true, false); }
-		allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
-		log("\r\nFinished Brute force testing " + counter + " / " + lines + " passwords in " + allDataStats.getElapsedTime(allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + " " + allDataStats.getBruteForceThroughPut(counter, allDataStats.getAllDataEndEpoch() - allDataStats.getAllDataStartEpoch()) + "\r\n\r\n", false, true, true, false, false);
+		else
+		{
+		    log("\r\nWarning: dictionary file: " + dictFileFCPath.path.toAbsolutePath().toString() + " is not a valid file!\r\n\r\n", false, true, true, false, false);
+		    log(dictFileFCPath.getString() + "\r\n", false, true, true, false, false);
+		}
 	    }
 	    else
 	    {
-		log("Warning: dictionary file: " + dictionaryFilePathString + " is not a valid file!\r\n", false, true, true, false, false);
+		log("\r\nWarning: No valid target files found\r\n\r\n", false, true, true, false, false);
+		log(targetFCPathList.getStats() + "\r\n", false, true, true, false, false);
 	    }
+	    
 	    System.exit(0);
 	}
 	else
 	{
 	    log("\r\nScanning files... ", false, true, true, false, false); 
-    //	   buildTargetSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
-	    Validate.buildSelection(this,			          targetPathList,    keyFCPath,		          targetFCPathList,	    symlink,	    pattern,	     negatePattern, finalCrypt.disabledMAC,         false);
+//	    Validate.buildSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
+	    Validate.buildSelection( this,			      targetPathList,    keyFCPath,		      targetFCPathList,		symlink,	pattern,	 negatePattern, finalCrypt.disabledMAC,         false);
 	    log("Finished Brute force testing \r\n\r\n", false, true, true, false, false);
 	}
 	
 	
 	if ( scan )
 	{
-	    	for (FCPath fcPathItem : targetFCPathList)
-		{
-		    log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
-		}
-		System.exit(0);
+	    for (FCPath fcPathItem : targetFCPathList)
+	    {
+		log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
+	    }
+	    log("=========================================\r\n\r\n", false, true, true, false, false);
+	    log(targetFCPathList.getStats() + "\r\n", false, true, true, false, false);
+	    System.exit(0);
 	}
 	
 /////////////////////////////////////////////// SET BUILD MODES ////////////////////////////////////////////////////
 
-//	if ((keyFCPath != null) && ((keyFCPath.isValidKey) || (keyFCPath.isValidKeyDir)))
-		if  (
-			    ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
-			||  ((keyFCPath != null) && (keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
-		    )
+	if  (
+		    ((keyFCPath != null) && (keyFCPath.isKey) && (keyFCPath.isValidKey))
+		||  ((keyFCPath != null) && (keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+	    )
 	{
 
 // ================================================================================================================================================================================================
@@ -775,16 +785,18 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k \"key_file\" -t \"target_file\"  # Decrypt (Manual Key Mode not recommended)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Mode:\r\n", false, true, false, false, false);
-        log("            <--scan>              -k \"key_dir\"       -t \"target\"	    Print scan results and quit.\r\n", false, true, false, false, false);
-        log("            <--encrypt>           -k \"key_dir\"       -t \"target\"	    Encrypt Targets.\r\n", false, true, false, false, false);
-        log("            <--decrypt>           -k \"key_dir\"       -t \"target\"	    Decrypt Targets.\r\n", false, true, false, false, false);
-        log("            <--create-keydev>     -k \"key_file\"      -t \"target\"	    Create Key Device (only unix).\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            <--scan>              -k \"key_dir\"       -t \"target\"            Print scan results and quit.\r\n", false, true, false, false, false);
+        log("            <--encrypt>           -k \"key_dir\"       -t \"target\"            Encrypt Targets.\r\n", false, true, false, false, false);
+        log("            <--decrypt>           -k \"key_dir\"       -t \"target\"            Decrypt Targets.\r\n", false, true, false, false, false);
+        log("            <--create-keydev>     -k \"key_file\"      -t \"target\"            Create Key Device (only unix).\r\n", false, true, false, false, false);
         log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"	    Create OTP Key File.\r\n", false, true, false, false, false);
         log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\"     Clone Key Device (only unix).\r\n", false, true, false, false, false);
-        log("            [--print-gpt]         -t \"target_device\"			    Print GUID Partition Table.\r\n", false, true, false, false, false);
-        log("            [--delete-gpt]        -t \"target_device\"			    Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
+        log("            [--print-gpt]         -t \"target_device\"                        Print GUID Partition Table.\r\n", false, true, false, false, false);
+        log("            [--delete-gpt]        -t \"target_device\"                        Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
 	log("Options:\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
         log("            [-h] [--help]                                                   Print help page.\r\n", false, true, false, false, false);
         log("            [--password]          -p \'password\'                             Optional password (non-interactive).\r\n", false, true, false, false, false);
         log("            [--password-prompt]   -pp                                       Optional password (safe interactive prompt).\r\n", false, true, false, false, false);

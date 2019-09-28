@@ -14,16 +14,18 @@ Examples:
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k "key_file" -t "target_file"  # Decrypt (Manual Key Mode not recommended)
 
 Mode:
-            <--scan>              -k "key_dir"       -t "target"	    Print scan results and quit.
-            <--encrypt>           -k "key_dir"       -t "target"	    Encrypt Targets.
-            <--decrypt>           -k "key_dir"       -t "target"	    Decrypt Targets.
-            <--create-keydev>     -k "key_file"      -t "target"	    Create Key Device (only unix).
+
+            <--scan>              -k "key_dir"       -t "target"            Print scan results and quit.
+            <--encrypt>           -k "key_dir"       -t "target"            Encrypt Targets.
+            <--decrypt>           -k "key_dir"       -t "target"            Decrypt Targets.
+            <--create-keydev>     -k "key_file"      -t "target"            Create Key Device (only unix).
             <--create-keyfile>    -K "key_file"      -S "Size (bytes)"	    Create OTP Key File.
             <--clone-keydev>      -k "source_device" -t "target_device"     Clone Key Device (only unix).
-            [--print-gpt]         -t "target_device"			    Print GUID Partition Table.
-            [--delete-gpt]        -t "target_device"			    Delete GUID Partition Table (DATA LOSS!).
+            [--print-gpt]         -t "target_device"                        Print GUID Partition Table.
+            [--delete-gpt]        -t "target_device"                        Delete GUID Partition Table (DATA LOSS!).
 
 Options:
+
             [-h] [--help]                                                   Print help page.
             [--password]          -p 'password'                             Optional password (non-interactive).
             [--password-prompt]   -pp                                       Optional password (safe interactive prompt).
@@ -60,4 +62,4 @@ Parameters:
             <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 5.6.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 5.6.1 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
