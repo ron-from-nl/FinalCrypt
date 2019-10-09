@@ -1,186 +1,485 @@
-5.6.1 Improved Brute Force CLUI Validation and Statistics
+Date: 2019-09-28 Version: 5.6.1
 
-5.6.0 Added Brute Force Password Dictionary Scan function
-      This allows users to try to recover a lost password
-      Performance tested approx 1000 passwords per second
-      Brute Force only works on the Command Line Interface
+Improved Brute Force CLUI Validation and Statistics
 
-5.5.1 Fixed Check Update Fail on redirected HTTPS connect
-      Added HTTPS connection to the Check Update function
-      Added HTTPS connection to the Open Website function
-      Added extra links for Check Update and Open Website
-      Check Update is crucial for bugfixes & improvements
+Date: 2019-09-26 Version: 5.6.0
 
-5.5.0 Improved startup and timing graphical user interface
-      More robust Check Update process with new HTTPClient
-      Added human readable filesizes for files in the log
-      Replaced finishing duration from seconds to a clock
-      Fixed incorrect Key Type Image display on selection
-      Fixed incorrect Total Time Clock on short Encryption
-      Added more runtime environment info to header in log
-      Added logging Scan Results on Command Line Interface
+Added Brute Force Password Dictionary Scan function
+This allows users to try to recover a lost password
+Performance tested approx 1000 passwords per second
+Brute Force only works on the Command Line Interface
 
-5.4.5 Removed cloning file attributes Manual Key File
-      Removed cloning file attributes Auto Key File after
-      decrypting, when it is no longer needed and deleted
-      This update prevents unwanted Manual Key File backups
-      My sinsere apologies for the many updates lately, but
-      FinalCrypt has to be reliable and function correctly
+Date: 2019-08-28 Version: 5.5.1
 
-5.4.4 Critical Update!!!
+Fixed Check Update Fail on redirected HTTPS connect
+Added HTTPS connection to the Check Update function
+Added HTTPS connection to the Open Website function
+Added extra links for Check Update and Open Website
+Check Update is crucial for bugfixes & improvements
 
-      Manual Key was deleted as if Auto Key Mode was chosen
-      This update prevents a Manual Key File to be deleted
-      Manual Key Mode should not be used anymore, but still
-      This update is quite urgent, please update immediately
+Date: 2019-08-27 Version: 5.5.0
 
-5.4.3 Enabled Manual Key File Selection in GUIFX again
-      I apologise for temporary inconvenience in update2
-      Please see Update 2 containing many improvements
+Improved startup and timing graphical user interface
+More robust Check Update process with new HTTPClient
+Added human readable filesizes for files in the log
+Replaced finishing duration from seconds to a clock
+Fixed incorrect Key Type Image display on selection
+Fixed incorrect Total Time Clock on short Encryption
+Added more runtime environment info to header in log
+Added logging Scan Results on Command Line Interface
 
-5.4.2 Enabled clone modification time for encrypted files and
-      key files. If both files have cloned mod-time then it's
-      much more backup efficient as the new encrypted file in
-      decrypted form is no different from its backed up file
+Date: 2019-08-25 Version: 5.4.5
 
-      The Working, Home, Documents & Desktop directory can't
-      be selected anymore as the Key Directory, making users
-      actively select the Key Directory for Key Dir awareness
+Removed cloning file attributes Manual Key File
+Removed cloning file attributes Auto Key File after
+decrypting, when it is no longer needed and deleted
+This update prevents unwanted Manual Key File backups
+My sinsere apologies for the many updates lately, but
+FinalCrypt has to be reliable and function correctly
 
-      The Key Directory is now only selected by going INTO the
-      Key Directory. Key Dir Selection is now more uniform
+Date: 2019-08-25 Version: 5.4.4
 
-      Improved Command Line Key Dir/File and Target Validation
-      Replaced UTF8 symbols fixed instability on Ubuntu 19.04
+Critical Update!!!
 
-5.4.1 Disabled clone modification time after encrypting files
-      -Re-encrypting files without modifying them now results
-       in totally different encrypted file and key file pairs
-       Therefor the modification timestamp should also change
-       Differential backup ignores files with unmodified time
+Manual Key was deleted as if Auto Key Mode was chosen
+This update prevents a Manual Key File to be deleted
+Manual Key Mode should not be used anymore, but still
+This update is quite urgent, please update immediately
 
-       Improved User Interrupted key file deletion and logging
-       Fixed file progressbar during the create key file phase
-5.4.0 Re-encryption now forces new Key Creation
-      Decryption also deletes existing key file
+Date: 2019-08-24 Version: 5.4.3
 
-      Disabled animation, sound & voice on first use
-      Removed some UTF8 symbols fixing Linux instability
-5.3.1 Added non interactive print scan results to CLI
-      Corrected print Write / Matched Key Path in CLI
-5.3.0 Added Show Password Tooltip with fontsize 14px
-      Added Print scanresults Command Line Interface
-      Print scanresults notes:
-      FinalCrypt crashes on Ubuntu 19.04 outside JVM
-      due to new font rendering library libpango-1.0
-      This update allows full feature fallback to CLI
-      This bug is reported. Ubuntu 18 is not affected
-5.2.1 Fixed Audio System instability on Linux
-      Added delete button visible on all OSes
-5.2.0 SecureRandom Number Generator extra Secured
-      Decrypt, Remove Keys & Re-encrypt to Secure
-      User delete also deletes matching Key Items
-      Audio System code cleaned up and improved
-      Added Key Match & Key Write User-Printing
-      Added Key Directory Full Path show Tooltip
-5.1.1 New Audio System for better (audio) stability
-      Update is tested & supported on Free/GhostBSD
-5.1.0 Added manual create key discouragement dialog
-      Fixed incorrect printing of "Create Key" path
-      "Create Key" path only prints on user request
-5.0.2 Fixed major Auto-Key I/O Buffer Performance Issue
-5.0.1 Added Pause & Stop during Auto-Key Creation
-5.0.0 Game changing One-Time Pad "Auto Key Mode"
-      encrypt files with 100% One-Time Pad Security
-4.8.0 Major Upgrade Java8-u212 security & stability updates
-      Please UN-Install FinalCrypt before installing v4.8.0
-      The FinalCrypt Windows Portable upgraded to Java8-u201
-      Right click FinalCrypt WinStartMenu remove FinalCrypt
-      Nearly doubled the "Create Key" Write Throughput Perf 
-      Bugfix refreshing directories in both file managers
-      Improved auto resize Info & Dialog Alert Windows
-4.7.1 Added: Click Share on Social Media to Entitle for Free Support.
-4.7.0 Autoscaled password font-size. Quick user-reenabled animations.
-4.6.1 Disabled unmasked password during encryption. Decreased password font size from px 14 to 12.
-4.6.0 Added show / mask password checkbox. Improved mouse-focus password field.
-4.5.0 More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
-4.4.3 Improved sound stability enclosing sound-player in Thread
-4.4.2 Added extra filemanager autoresize columns detailsview.
-4.4.1 Fixed additional filemanager autoresize columns issues. Fixed several filemanager stability issues on OSX.
-4.4.0 Fixed filemanager autoresize column-width. Fixed Apple OSX hanging after encryption.
-4.3.1 Performance of encryption increased 2-10%. More extensive check update release notes. Removed indent release notes Version line
-4.3.0 Added improved check update release notes. Informing about Version, Upgrade and Update
-4.2.1 BugFix hang on scanning bug
-4.2.0 Increased security Password / Key Encryption. Please Decrypt & Encrypt files after install.
-      Added Multi MAC System, Anti Layer Peeling Attack Encryption, Persistant User-Paused Animations
-4.1.2 Fixed openwebsite crash-bug at startup. Fixed systemmonitor led meter location
-4.1.1 Fixed bug causing crash when user clicked website-button during early startup
-4.1.0 As requested: Voice Guidance & Sounds User Muted. Click the new icons in the user guidance display
-4.0.3 Hybrid audio system bypassing libc6 -> libdl.so.2 bug preventing unpredictable startup crashes on Linux.
-4.0.2 Avoiding crash bug in Linux libc6 -> libdl.so.2 by slight load delay first sound at startup (bug reported to Ubuntu / GNU Dev Team)
-4.0.1 Added sound and voice mixing and priority control for better audio experience
-4.0.0 Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
-3.6.2 Downloads from available hosting location. FinalCrypt now 100% multi hosting location
-3.6.1 CheckUpdate from available hosting location. OpenWebsite from available hosting location
-3.6.0 Moved FinalCrypt to a new hosting location. Improved Check_Update being more resilient
-3.5.2 Improved Check Update Online Function. Slightly increased fontsize for files
-3.5.1 Fixed short GUI freeze putting CheckUpdate into the background
-3.5.0 Added System Monitor startup Testing. Added Dynamic I/O Throughput Ceiling
-3.4.1 Fixed Total Elapsed & Remaining-Time Clocks. Fixed the FileChooser refresh directory bug
-3.4.0 Added I/O throughput stats for all WRITE channels. Fixed NON-MAC Mode fileselection bugs (GUI & CLI)
-3.3.2 Corrected throughput calculations and improved cosmetics
-3.3.1 Removed a heavily logging memory logarea print statement
-3.3.0 Replaced the Process Usage Indicator with. Led Level Meters for CPU, Mem & I/O Usage
-3.2.2 Guide Users Attention to User Action. User Guidance Arrows softly flashing
-3.2.1 Minor cosmetic update
-3.2.0 A new Beautiful Look & Feel. Safe and Smooth Transitions
-3.1.0 Build JRE8-u201 & Better Fonts. Please remove FinalCrypt first
-3.0.2 New Interface & User Guidance. Improved user guidance layout for Mac OSX
-3.0.1 New Interface & User Guidance. Improved layout & performance
-3.0.0 An Appealing Modern Design. Easy & Clear User Guidance
-2.9.5 Password usage more intuitive and visible. Command line: Add --print & --no-key-size
-2.9.4 Improved --print option in command line interface. Added --no-key-size option to command line interface
-2.9.3 Fixed Create Keyfile from Command Line Interface. No cmd-line checksum logs on --dry opt
-2.9.2 Improved Cmd-Line logging & param validation. Added right-click copy checksum to clipboard
-2.9.1 Command Line Interrupt Signal Handler. Delete unfinished file on termination. Switched to SHA-256 Hashing Checksums
-2.9.0 Added Key + Password Encryption. Added SHA-1 Checksum logentries
-2.8.2 JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !
-2.8.1 Refined progress logging. Encrypt & Shred Progress
-2.8.0 Improved filemanager usage. Minor logging improvements
-2.7.2 Bugfix: Falsely armed delete buttons. Please update as soon as possible
-2.7.1 Removed GUI(FX) component from rdj.CLUI.Removed deprecated javax.xml dependency
-2.7.0 Added Legacy / Non-MAC Mode. Disables Message Auth. Code
-2.6.3 Fixed unselect key. Added Create OTP Key
-2.6.2 Added Create OTP Key. Automat Update Check
-2.6.1 Added Create OTP Key. Fix OTP Key Size Bug
-2.6.0 Added Create OTP Key. Cipher now called Key
-2.4.3 FileChooser Refresh Update
-2.4.2 Fixed MultiOS GUI bug. Fixed MacOSX busy-bug
-2.4.0 Major Cosmetic GUI Change. Minor fixes filter stats
-2.3.1 Improved Cipher validation. Fixed MacOSX Update Stats
-2.3.0 Added Cipher Checksum SHA-1. Standardized encrypt method
-2.2.1 Fixed print un-rd/wr files. Minor update for printing
-2.2.0 New: Cipher Device Types. Better: Printing, Clocks
-2.1.2 Auto decrypt open file. Fixed desktop open bug
-2.1.1 Auto decrypt open file. Fixed desktop open bug
-2.1.0 Change Target Response
-2.0.0 Better Looks & Feel. Modernized Interface
-1.9.9 Added seperate buttons [Encrypt] & [Decrypt]
-1.9.1 Bugfix Full Message Authentication Code
-1.9.0 Added Full Message Authentication Code
-1.8.4 Better validation & GUI performance
-1.8.3 Improved: Updates, Validation
-1.8.2 Release: Minor update2
-1.8.1 Release: Minor update
-1.8.0 Release: Added Hybrid Message Authentication Code
-1.7.3 Optimized GPT Manager Object
-1.7.2 Removed JavaFX components from CLI. Test r/w permissions on cipher devices
-1.7.1 Added Cross Platform FileSystem Attributes. Added batchfiles to CLI. Added file logging
-1.7.0 Added DryRun mode to CLI. Excluded symlinks
-1.6.0 Added raw Cipher Devices including GUID Partition Table Manager (GPT Tooling)
-1.5.0 Added Secure Delete Files (Shredding)
-1.4.0 Added Globbing Pattern & RegEx file filters
-1.3.0 Added in/excluding *.bit extension filter
-1.2.0 Added Check Update function
-1.1.0 Added recursive delete selected targets
-1.0.0 FinalCrypt first release
+Enabled Manual Key File Selection in GUIFX again
+I apologise for temporary inconvenience in update2
+Please see Update 2 containing many improvements
+
+Date: 2019-08-23 Version: 5.4.2
+
+Enabled clone modification time for encrypted files and
+key files. If both files have cloned mod-time then it's
+much more backup efficient as the new encrypted file in
+decrypted form is no different from its backed up file
+
+The Working, Home, Documents & Desktop directory can't
+be selected anymore as the Key Directory, making users
+actively select the Key Directory for Key Dir awareness
+
+The Key Directory is now only selected by going INTO the
+Key Directory. Key Dir Selection is now more uniform
+
+Improved Command Line Key Dir/File and Target Validation
+Replaced UTF8 symbols fixed instability on Ubuntu 19.04
+
+Date: 2019-08-21 Version: 5.4.1
+
+Disabled clone modification time after encrypting files
+-Re-encrypting files without modifying them now results
+ in totally different encrypted file and key file pairs
+ Therefor the modification timestamp should also change
+ Differential backup ignores files with unmodified time
+
+Improved User Interrupted key file deletion and logging
+Fixed file progressbar during the create key file phase
+
+Date: 2019-08-17 Version: 5.4.0
+
+Re-encryption now forces new Key Creation
+Decryption also deletes existing key file
+
+Disabled animation, sound & voice on first use
+Removed some UTF8 symbols fixing Linux instability
+
+Date: 2019-08-14 Version: 5.3.1
+
+Added non interactive print scan results to CLI
+Corrected print Write / Matched Key Path in CLI
+
+Date: 2019-08-06 Version: 5.3.0
+
+Added Show Password Tooltip with fontsize 14px
+Added Print scanresults Command Line Interface
+Print scanresults notes:
+FinalCrypt crashes on Ubuntu 19.04 outside JVM
+due to new font rendering library libpango-1.0
+This update allows full feature fallback to CLI
+This bug is reported. Ubuntu 18 is not affected
+
+Date: 2019-08-04 Version: 5.2.1
+
+Fixed Audio System instability on Linux
+Added delete button visible on all OSes
+
+Date: 2019-08-03 Version: 5.2.0
+
+SecureRandom Number Generator extra Secured
+Decrypt, Remove Keys & Re-encrypt to Secure
+User delete also deletes matching Key Items
+Audio System code cleaned up and improved
+Added Key Match & Key Write User-Printing
+Added Key Directory Full Path show Tooltip
+
+Date: 2019-07-26 Version: 5.1.1
+
+New Audio System for better (audio) stability
+Update is tested & supported on Free/GhostBSD
+
+Date: 2019-07-17 Version: 5.1.0
+
+Added manual create key discouragement dialog
+Fixed incorrect printing of "Create Key" path
+"Create Key" path only prints on user request
+
+Date: 2019-06-28 Version: 5.0.2
+
+Fixed major Auto-Key I/O Buffer Performance Issue
+
+Date: 2019-06-27 Version: 5.0.1
+
+Added Pause & Stop during Auto-Key Creation
+
+Date: 2019-06-26 Version: 5.0.0
+
+Game changing One-Time Pad "Auto Key Mode"
+encrypt files with 100% One-Time Pad Security
+
+Date: 2019-06-06 Version: 4.8.0
+
+Major Upgrade Java8-u212 security & stability updates
+Please UN-Install FinalCrypt before installing v4.8.0
+The FinalCrypt Windows Portable upgraded to Java8-u201
+Right click FinalCrypt WinStartMenu remove FinalCrypt
+Nearly doubled the "Create Key" Write Throughput Perf 
+Bugfix refreshing directories in both file managers
+Improved auto resize Info & Dialog Alert Windows
+
+Date: 2019-05-28 Version: 4.7.1
+
+Added: Click Share on Social Media to Entitle for Free Support.
+
+Date: 2019-05-14 Version: 4.7.0
+
+Autoscaled password font-size. Quick user-reenabled animations.
+
+Date: 2019-05-10 Version: 4.6.1
+
+Disabled unmasked password during encryption. Decreased password font size from px 14 to 12.
+
+Date: 2019-05-09 Version: 4.6.0
+
+Added show / mask password checkbox. Improved mouse-focus password field.
+
+Date: 2019-05-08 Version: 4.5.0
+
+More clear instructions on password usage. Removed parallel Voice Guidance / Speech.
+
+Date: 2019-05-07 Version: 4.4.3
+
+Improved sound stability enclosing sound-player in Thread
+
+Date: 2019-05-06 Version: 4.4.2
+
+Added extra filemanager autoresize columns detailsview.
+
+Date: 2019-05-06 Version: 4.4.1
+
+Fixed additional filemanager autoresize columns issues. Fixed several filemanager stability issues on OSX.
+
+Date: 2019-05-06 Version: 4.4.0
+
+Fixed filemanager autoresize column-width. Fixed Apple OSX hanging after encryption.
+
+Date: 2019-04-28 Version: 4.3.1
+
+Performance of encryption increased 2-10%. More extensive check update release notes. Removed indent release notes Version line
+
+Date: 2019-04-26 Version: 4.3.0
+
+Added improved check update release notes. Informing about Version, Upgrade and Update
+
+Date: 2019-04-24 Version: 4.2.1
+
+BugFix hang on scanning bug
+
+Date: 2019-04-23 Version: 4.2.0
+
+Increased security Password / Key Encryption. Please Decrypt & Encrypt files after install.
+Added Multi MAC System, Anti Layer Peeling Attack Encryption, Persistant User-Paused Animations
+
+Date: 2019-04-12 Version: 4.1.2
+
+Fixed openwebsite crash-bug at startup. Fixed systemmonitor led meter location
+
+Date: 2019-04-11 Version: 4.1.1
+
+Fixed bug causing crash when user clicked website-button during early startup
+
+Date: 2019-04-06 Version: 4.1.0
+
+As requested: Voice Guidance & Sounds User Muted. Click the new icons in the user guidance display
+
+Date: 2019-03-28 Version: 4.0.3
+
+Hybrid audio system bypassing libc6 -> libdl.so.2 bug preventing unpredictable startup crashes on Linux.
+
+Date: 2019-03-27 Version: 4.0.2
+
+Avoiding crash bug in Linux libc6 -> libdl.so.2 by slight load delay first sound at startup (bug reported to Ubuntu / GNU Dev Team)
+
+Date: 2019-03-26 Version: 4.0.1
+
+Added sound and voice mixing and priority control for better audio experience
+
+Date: 2019-03-26 Version: 4.0.0
+
+Added an astonishing Star Trek Sound Scheme. And amazing futuristic Voice User Guidance
+
+Date: 2019-03-18 Version: 3.6.2
+
+Downloads from available hosting location. FinalCrypt now 100% multi hosting location
+
+Date: 2019-03-17 Version: 3.6.1
+
+CheckUpdate from available hosting location. OpenWebsite from available hosting location
+
+Date: 2019-03-16 Version: 3.6.0
+
+Moved FinalCrypt to a new hosting location. Improved Check_Update being more resilient
+
+Date: 2019-03-13 Version: 3.5.2
+
+Improved Check Update Online Function. Slightly increased fontsize for files
+
+Date: 2019-03-08 Version: 3.5.1
+
+Fixed short GUI freeze putting CheckUpdate into the background
+
+Date: 2019-03-08 Version: 3.5.0
+
+Added System Monitor startup Testing. Added Dynamic I/O Throughput Ceiling
+
+Date: 2019-03-07 Version: 3.4.1
+
+Fixed Total Elapsed & Remaining-Time Clocks. Fixed the FileChooser refresh directory bug
+
+Date: 2019-03-06 Version: 3.4.0
+
+Added I/O throughput stats for all WRITE channels. Fixed NON-MAC Mode fileselection bugs (GUI & CLI)
+
+Date: 2019-03-05 Version: 3.3.2
+
+Corrected throughput calculations and improved cosmetics
+
+Date: 2019-03-04 Version: 3.3.1
+
+Removed a heavily logging memory logarea print statement
+
+Date: 2019-03-04 Version: 3.3.0
+
+Replaced the Process Usage Indicator with. Led Level Meters for CPU, Mem & I/O Usage
+
+Date: 2019-03-03 Version: 3.2.2
+
+Guide Users Attention to User Action. User Guidance Arrows softly flashing
+
+Date: 2019-02-28 Version: 3.2.1
+
+Minor cosmetic update
+
+Date: 2019-02-28 Version: 3.2.0
+
+A new Beautiful Look & Feel. Safe and Smooth Transitions
+
+Date: 2019-02-27 Version: 3.1.0
+
+Build JRE8-u201 & Better Fonts. Please remove FinalCrypt first
+
+Date: 2019-02-26 Version: 3.0.2
+
+New Interface & User Guidance. Improved user guidance layout for Mac OSX
+
+Date: 2019-02-25 Version: 3.0.1
+
+New Interface & User Guidance. Improved layout & performance
+
+Date: 2019-02-22 Version: 3.0.0
+
+An Appealing Modern Design. Easy & Clear User Guidance
+
+Date: 2019-02-20 Version: 2.9.5
+
+Password usage more intuitive and visible. Command line: Add --print & --no-key-size
+
+Date: 2019-02-19 Version: 2.9.4
+
+Improved --print option in command line interface. Added --no-key-size option to command line interface
+
+Date: 2019-02-17 Version: 2.9.3
+
+Fixed Create Keyfile from Command Line Interface. No cmd-line checksum logs on --dry opt
+
+Date: 2019-02-08 Version: 2.9.2
+
+Improved Cmd-Line logging & param validation. Added right-click copy checksum to clipboard
+
+Date: 2019-02-02 Version: 2.9.1
+
+Command Line Interrupt Signal Handler. Delete unfinished file on termination. Switched to SHA-256 Hashing Checksums
+
+Date: 2019-01-21 Version: 2.9.0
+
+Added Key + Password Encryption. Added SHA-1 Checksum logentries
+
+Date: 2019-01-08 Version: 2.8.2
+
+JDK 8u192 Bug Fixes Build. Remove FinalCrypt first !
+
+Date: 2019-01-07 Version: 2.8.1
+
+Refined progress logging. Encrypt & Shred Progress
+
+Date: 2018-12-18 Version: 2.8.0
+
+Improved filemanager usage. Minor logging improvements
+
+Date: 2018-12-01 Version: 2.7.2
+
+Bugfix: Falsely armed delete buttons. Please update as soon as possible
+
+Date: 2018-11-30 Version: 2.7.1
+
+Removed GUI(FX) component from rdj.CLUI.Removed deprecated javax.xml dependency
+
+Date: 2018-11-29 Version: 2.7.0
+
+Added Legacy / Non-MAC Mode. Disables Message Auth. Code
+
+Date: 2018-11-26 Version: 2.6.3
+
+Fixed unselect key. Added Create OTP Key
+
+Date: 2018-11-22 Version: 2.6.2
+
+Added Create OTP Key. Automat Update Check
+
+Date: 2018-11-20 Version: 2.6.1
+
+Added Create OTP Key. Fix OTP Key Size Bug
+
+Date: 2018-11-16 Version: 2.6.0
+
+Added Create OTP Key. Cipher now called Key
+
+Date: 2018-10-14 Version: 2.4.3
+
+FileChooser Refresh Update
+
+Date: 2018-09-23 Version: 2.4.2
+
+Fixed MultiOS GUI bug. Fixed MacOSX busy-bug
+
+Date: 2018-09-02 Version: 2.4.0
+
+Major Cosmetic GUI Change. Minor fixes filter stats
+
+Date: 2018-07-30 Version: 2.3.1
+
+Improved Cipher validation. Fixed MacOSX Update Stats
+
+Date: 2018-07-21 Version: 2.3.0
+
+Added Cipher Checksum SHA-1. Standardized encrypt method
+
+Date: 2018-06-23 Version: 2.2.1
+
+Fixed print un-rd/wr files. Minor update for printing
+
+Date: 2018-06-07 Version: 2.2.0
+
+New: Cipher Device Types. Better: Printing, Clocks
+
+Date: 2018-04-12 Version: 2.1.1
+
+Auto decrypt open file. Fixed desktop open bug
+
+Date: 2018-04-05 Version: 2.1.0
+
+Change Target Response
+
+Date: 2018-04-02 Version: 2.0.0
+
+Better Looks & Feel. Modernized Interface
+
+Date: 2018-03-31 Version: 1.9.9
+
+Added seperate buttons [Encrypt] & [Decrypt]
+
+Date: 2018-03-14 Version: 1.9.1
+
+Bugfix Full Message Authentication Code
+
+Date: 2018-03-12 Version: 1.9.0
+
+Added Full Message Authentication Code
+
+Date: 2018-03-07 Version: 1.8.4
+
+Better validation & GUI performance
+
+Date: 2018-03-05 Version: 1.8.3
+
+Improved: Updates, Validation
+
+Date: 2018-02-28 Version: 1.8.2
+
+Release: Minor update2
+
+Date: 2018-02-24 Version: 1.8.1
+
+Release: Minor update
+
+Date: 2018-02-23 Version: 1.8.0
+
+Release: Added Hybrid Message Authentication Code
+
+Date: 2018-02-18 Version: 1.7.3
+
+Optimized GPT Manager Object
+
+Date: 2018-02-14 Version: 1.7.2
+
+Removed JavaFX components from CLI. Test r/w permissions on cipher devices
+
+Date: 2018-02-03 Version: 1.7.1
+
+Added Cross Platform FileSystem Attributes. Added batchfiles to CLI. Added file logging
+
+Date: 2018-01-28 Version: 1.7.0
+
+Added DryRun mode to CLI. Excluded symlinks
+
+Date: 2018-01-22 Version: 1.6.0
+
+Added raw Cipher Devices including GUID Partition Table Manager (GPT Tooling)
+
+Date: 2017-12-19 Version: 1.5.0
+
+Added Secure Delete Files (Shredding)
+
+Date: 2017-12-14 Version: 1.4.0
+
+Added Globbing Pattern & RegEx file filters
+
+Date: 2017-12-11 Version: 1.3.0
+
+Added in/excluding *.bit extension filter
+
+Date: 2017-12-09 Version: 1.2.0
+
+Added Check Update function
+
+Date: 2017-12-02 Version: 1.1.0
+
+Added recursive delete selected targets
+
+Date: 2017-11-16 Version: 1.0.0
+
+FinalCrypt first release

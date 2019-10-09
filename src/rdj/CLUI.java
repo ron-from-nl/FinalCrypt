@@ -505,7 +505,7 @@ public class CLUI implements UI
 	    log("\r\nScanning files... ", false, true, true, false, false); 
 //	    Validate.buildSelection(UI ui, ArrayList<Path> userSelectedItemsPathList, Path keyPath, ArrayList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,    boolean disabledMAC, boolean status)
 	    Validate.buildSelection( this,			      targetPathList,    keyFCPath,		      targetFCPathList,		symlink,	pattern,	 negatePattern, finalCrypt.disabledMAC,         false);
-	    log("Finished Brute force testing \r\n\r\n", false, true, true, false, false);
+	    log("Finished\r\n\r\n", false, true, true, false, false);
 	}
 	
 	
@@ -790,7 +790,7 @@ public class CLUI implements UI
         log("            <--encrypt>           -k \"key_dir\"       -t \"target\"            Encrypt Targets.\r\n", false, true, false, false, false);
         log("            <--decrypt>           -k \"key_dir\"       -t \"target\"            Decrypt Targets.\r\n", false, true, false, false, false);
         log("            <--create-keydev>     -k \"key_file\"      -t \"target\"            Create Key Device (only unix).\r\n", false, true, false, false, false);
-        log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"	    Create OTP Key File.\r\n", false, true, false, false, false);
+        log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"      Create OTP Key File.\r\n", false, true, false, false, false);
         log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\"     Clone Key Device (only unix).\r\n", false, true, false, false, false);
         log("            [--print-gpt]         -t \"target_device\"                        Print GUID Partition Table.\r\n", false, true, false, false, false);
         log("            [--delete-gpt]        -t \"target_device\"                        Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
