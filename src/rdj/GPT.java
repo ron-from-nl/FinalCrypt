@@ -147,6 +147,21 @@ public class GPT
 	return myByte;
     }
     
+    public static int hex2Integer(String string)
+    {
+	int myInt = 0;
+	string = string.replaceAll("[^A-Za-z0-9]","");
+	if (string.length() == 2)
+	{
+	    myInt = Integer.parseUnsignedInt(string, 16);
+	    return myInt;
+	}
+	else
+	{
+	    return myInt;
+	}
+    }
+    
     public static byte[] hex2Bytes(String string)
     {
 	string = string.replaceAll("[^A-Za-z0-9]",""); byte[] data = new byte[string.length() / 2];

@@ -6,7 +6,7 @@ Date: 2019-09-26 Version: 5.6.0
 
 Added Brute Force Password Dictionary Scan function
 This allows users to try to recover a lost password
-Performance tested approx 1000 passwords per second
+Performance tested maximum 950 passwords per second
 Brute Force only works on the Command Line Interface
 
 Date: 2019-08-28 Version: 5.5.1

@@ -74,23 +74,25 @@ public class Version
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
     private static final String[] WEBSITEURLSTRINGARRAY =		{
-									     "https://www.finalcrypt.org/"								// tested
-									    ,"http://www.finalcrypt.org/"								// tested
-									    ,"https://sourceforge.net/projects/finalcrypt/files/"					// tested
-									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"					// tested
-									    ,"http://finalcrypt.000webhostapp.com/"							// tested
-									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"					// tested
-									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"				// tested
-									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"					// tested
-									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"		// tested
+									     "https://www.finalcrypt.org/"									// tested
+									    ,"http://www.finalcrypt.org/"									// tested
+									    ,"http://finalcrypt.000webhostapp.com/"								// tested
+									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
+									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"						// tested
+									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/files/"						// tested
+									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"						// tested
+									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"					// tested
+									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"						// tested
+									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"			// tested
 									};
 
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
-									     "https://www.finalcrypt.org/VERSION2"							// tested
-									    ,"http://www.finalcrypt.org/VERSION2"							// tested
-									    ,"https://gitlab.com/finalcrypt/finalcrypt/raw/master/src/rdj/VERSION2"			// tested
-									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"		// tested
-									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"	// tested
+									     "https://www.finalcrypt.org/VERSION2"								// tested
+									    ,"http://www.finalcrypt.org/VERSION2"								// tested
+									    ,"https://gitlab.com/finalcrypt/finalcrypt/raw/master/src/rdj/VERSION2"				// tested
+									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"			// tested
+									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"		// tested
+									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/scm/blobs/master/src/rdj/VERSION2?export=raw"	// tested
 									};    
     
     private static       String remoteContent =				"";
