@@ -16,11 +16,8 @@ Homepage: http://www.pango.org/
 
 Compare last two encrypt decrypt sessions
 auto encrypt on exit getDesktop.open(..
-Property parameters version, perf, tally stats: http://../VERSION2?params
-Open Last Key Directory
 Tools Settings
-Backup in stead of Create Key button Files.createLink(link, target);
-key buff en wachtwoord
+Backup Files.createLink(link, target);
 
 =============================== Don't forget ================================
 
