@@ -458,9 +458,10 @@ public class CLUI implements UI
 		    Stats allDataStats = new Stats(); allDataStats.reset();
 		    allDataStats.setAllDataStartNanoTime(); allDataStats.clock();
 
-		    log("\r\nStart Brute force testing " + lines + " passwords...\r\n\r\n", false, true, true, false, false); 
+		    log("\r\nStart Brute Force testing " + lines + " passwords...\r\n\r\n", false, true, true, false, false); 
 		    try
 		    {
+			boolean pwdFound = false;
 			pwloop: for (String pwdString:Files.readAllLines(dictFileFCPath.path))
 			{
 			    pwd = pwdString;
@@ -477,10 +478,18 @@ public class CLUI implements UI
 			    pathlistloop: for (FCPath fcPathItem : targetFCPathList)
 			    {
 				log(counter + " testing target: \"" + fcPathItem.path.toAbsolutePath().toString() + "\" password: \"" + pwd + "\" result: " + fcPathItem.isDecryptable + "\r\n", false, true, true, false, false);
-				if (fcPathItem.isDecryptable) { break pwloop; }
+				if (fcPathItem.isDecryptable) { pwdFound = true; break pwloop; }
 				counter++;
 			    }
-			}			    
+			}
+			if (pwdFound)
+			{
+			    log("\r\nPassword found: \"" + pwd + "\"\r\n", false, true, true, false, false);
+			}
+			else
+			{
+			    log("\r\nPassword not found\r\n", false, true, true, false, false);
+			}
 		    }
 		    catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path + ");" + ex.getMessage(), false, true, true, true, false); }
 		    allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
