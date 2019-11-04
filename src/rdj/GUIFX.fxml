@@ -134,9 +134,9 @@
                                                             </Label>
                                                          </children>
                                                       </AnchorPane>
-                                                      <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                      <AnchorPane onMouseEntered="#keyLabelAnchorOnMouseEntered" onMouseExited="#keyLabelAnchorOnMouseExited" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" text="Create a Manual One-Time Pad Key File" textAlignment="CENTER" textFill="LIGHTGRAY" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="keyLabel" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" text="Create a Manual One-Time Pad Key File" textAlignment="CENTER" textFill="#cfcfcf80" underline="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -1025,7 +1025,7 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="2">
+                                    <AnchorPane GridPane.columnIndex="3">
                                        <children>
                                           <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" minHeight="40.0" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="50.0" prefWidth="80.0" style="-fx-font-size: 14; -fx-text-fill: white;" styleClass="background_bottom" text="Pause" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1037,7 +1037,7 @@
                                           </ToggleButton>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="3">
+                                    <AnchorPane GridPane.columnIndex="4">
                                        <opaqueInsets>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
@@ -1052,12 +1052,8 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4">
-                                       <children>
-                                          <Button fx:id="keyButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutY="-20.0" minHeight="40.0" mnemonicParsing="false" onAction="#keyButtonOnAction" prefHeight="50.0" prefWidth="171.0" styleClass="key_button" text="Create Key File" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="5">
+                                    <AnchorPane GridPane.columnIndex="4" />
+                                    <AnchorPane GridPane.columnIndex="7">
                                        <children>
                                           <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
@@ -1065,22 +1061,6 @@
                                     <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="6">
                                        <children>
                                           <Button fx:id="supportButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-3.0" minHeight="40.0" mnemonicParsing="false" onAction="#supportButtonOnAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Support" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane fx:id="encryptionModeAnchorPane" onMouseClicked="#encryptionModeAnchorPaneOnMouseClicked" GridPane.columnIndex="7">
-                                       <children>
-                                          <ToggleButton fx:id="encryptionModeToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" mouseTransparent="true" onMouseClicked="#encryptionModeToggleButtonOnMouseClicked" prefHeight="50.0" prefWidth="125.0" style="-fx-font-size: 10;" styleClass="background_bottom" text="MAC Mode" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <font>
-                                                <Font size="10.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip fx:id="encryptionModeToolTip">
-                                                   <font>
-                                                      <Font size="12.0" />
-                                                   </font>
-                                                </Tooltip>
-                                             </tooltip>
-                                          </ToggleButton>
                                        </children>
                                     </AnchorPane>
                                  </children>

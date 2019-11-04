@@ -33,7 +33,6 @@ Update file:						manpage
  
 =================================== Done ====================================
 
-Added Brute Force Password Dictionary Scan to Command Line Interface
 
 
 ============================= Source Committed ==============================

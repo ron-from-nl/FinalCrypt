@@ -19,9 +19,9 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 2}
 [Update Notes] =	{}
-[Update Notes] =	{Improved Brute Force CLUI Validation and Statistics}
+[Update Notes] =	{Cleaned up action-buttons to improve usage clarity}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

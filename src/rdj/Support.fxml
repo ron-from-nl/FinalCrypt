@@ -38,7 +38,7 @@
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="202.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Thank you for supporting FinalCrypt!  -  this window won't popup again after sharing when closing" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="202.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-style: italic;" text="Thank you for supporting FinalCrypt!  -  After sharing this window won't popup again" textAlignment="CENTER" textFill="#727272">
                            <font>
                               <Font name="System Italic" size="14.0" />
                            </font>

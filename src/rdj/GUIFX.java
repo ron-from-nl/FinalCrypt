@@ -174,7 +174,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Label unwritableFilesLabel;
     @FXML   private Label hiddenFilesLabel;
     @FXML   private Label targetWarningLabel;
-    @FXML   private Button keyButton;
+//    @FXML   private Button keyButton;
     @FXML   private Label totalTimeLabel;
     @FXML   private Label remainingTimeLabel;
     @FXML   private Label elapsedTimeLabel;
@@ -186,9 +186,9 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Button supportButton;
     @FXML   private Label checksumLabel;
     @FXML   private GridPane dashboardGridPane;
-    @FXML   private ToggleButton encryptionModeToggleButton;
-    @FXML   private Tooltip encryptionModeToolTip;
-    @FXML   private AnchorPane encryptionModeAnchorPane;
+//    @FXML   private ToggleButton encryptionModeToggleButton;
+//    @FXML   private Tooltip encryptionModeToolTip;
+//    @FXML   private AnchorPane encryptionModeAnchorPane;
     @FXML   private PasswordField pwdField;
     @FXML   private Button checkUpdateButton;
     @FXML   private AnchorPane mainAnchorPane;
@@ -295,25 +295,25 @@ public class GUIFX extends Application implements UI, Initializable
 
     private final Timeline UPDATE_CLOCKS_TIMELINE =	new Timeline ( new KeyFrame( Duration.seconds(1), ae -> updateClocks()) );			
 
-    private final Timeline FLASH_MAC_MODE_TIMELINE =	new Timeline
-    (
-	 new KeyFrame(Duration.seconds( 0.0 ), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
-	,new KeyFrame(Duration.seconds( 0.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
-	,new KeyFrame(Duration.seconds( 0.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
-	,new KeyFrame(Duration.seconds( 0.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
-	,new KeyFrame(Duration.seconds( 1.0 ), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
-	,new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
-	,new KeyFrame(Duration.seconds( 1.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText(MAC_OFF);} )
-	,new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));   encryptionModeToggleButton.setText("");} )
-	,new KeyFrame(Duration.seconds( 2.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText("");} )
-    );
+//    private final Timeline FLASH_MAC_MODE_TIMELINE =	new Timeline
+//    (
+//	 new KeyFrame(Duration.seconds( 0.0 ), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
+//	,new KeyFrame(Duration.seconds( 0.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
+//	,new KeyFrame(Duration.seconds( 0.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
+//	,new KeyFrame(Duration.seconds( 0.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
+//	,new KeyFrame(Duration.seconds( 1.0 ), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("WARNING");} )
+//	,new KeyFrame(Duration.seconds( 1.25), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("red")); encryptionModeToggleButton.setText("");} )
+//	,new KeyFrame(Duration.seconds( 1.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText(MAC_OFF);} )
+//	,new KeyFrame(Duration.seconds( 2.50), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));   encryptionModeToggleButton.setText("");} )
+//	,new KeyFrame(Duration.seconds( 2.75), evt -> { encryptionModeToggleButton.setTextFill(Paint.valueOf("white")); encryptionModeToggleButton.setText("");} )
+//    );
     
     private final Timeline PAUSE_TIMELINE = new Timeline(new KeyFrame( Duration.millis(250), ae -> 
     {
 	if ( pauseToggleButton.getText().length() == 0 ) { pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_SYMBOL); } else { pauseToggleButton.setText(""); }
     }));
 
-    private final Timeline AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE = new Timeline( new KeyFrame(Duration.seconds( 8.0), evt -> { disarmDisableMACMode(); } ) );
+//    private final Timeline AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE = new Timeline( new KeyFrame(Duration.seconds( 8.0), evt -> { disarmDisableMACMode(); } ) );
 
     private double focusAngle;
     private double focusDistance;
@@ -468,6 +468,8 @@ public class GUIFX extends Application implements UI, Initializable
     private JComboBox keyPathSelector;
     private int keyPathSelectorPrefered;
     private File keyPathFile;
+    @FXML
+    private Label keyLabel;
 
     @Override
     public void start(Stage stage) throws Exception
@@ -523,9 +525,9 @@ public class GUIFX extends Application implements UI, Initializable
 	UPDATE_CLOCKS_TIMELINE.setCycleCount(Animation.INDEFINITE);
 	UPDATE_CLOCKS_TIMELINE.setDelay(Duration.seconds(1));
 
-	FLASH_MAC_MODE_TIMELINE.setCycleCount(Animation.INDEFINITE);
+//	FLASH_MAC_MODE_TIMELINE.setCycleCount(Animation.INDEFINITE);
 	
-	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.setCycleCount(1);
+//	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.setCycleCount(1);
 
 //	tgtFileDeleteButton = new javax.swing.JButton();
 //      tgtFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
@@ -585,7 +587,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	
-	keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);
+//	keyButton.setTextFill(Color.GREY); keyButton.setDisable(true); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 
 //	=========================================================================================================================================
 //	============================================================= USER GUIDANCE =============================================================
@@ -1068,7 +1070,7 @@ public class GUIFX extends Application implements UI, Initializable
 		keyFileChooserPropertyCheck();
 		// userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 
-		keyButton.setDisable(false);
+//		keyButton.setDisable(false);
 		checkUpdateButton.setDisable(false);
 		supportButton.setDisable(false);
 		// ============================================================================================================================
@@ -1652,7 +1654,11 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManagerLocal = new DeviceManager(this); deviceManagerLocal.start(); deviceManagerLocal.printGPT(targetFCPath);
 		targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);});
+		Platform.runLater(() ->
+		{
+		    encryptButton.setDisable(true); decryptButton.setDisable(true);
+//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+		});
 	    }
 	    else // Not a Device
 	    {
@@ -1687,7 +1693,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    
 		    
 		    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-		    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
+		    Platform.runLater(() ->
+		    {
+			encryptButton.setDisable(true); decryptButton.setDisable(true);
+//			keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+		    });
 		} // Not a device / file or symlink
 	    }
         }
@@ -1711,7 +1721,11 @@ public class GUIFX extends Application implements UI, Initializable
 		tab.getSelectionModel().select(1);
 		DeviceManager deviceManager = new DeviceManager(this); deviceManager.start(); deviceManager.printGPT(keyFCPath);
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
+		Platform.runLater(() ->
+		{
+		    encryptButton.setDisable(true); decryptButton.setDisable(true);
+//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+		});
 	    }
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
 	    else if (Validate.isValidFile(this, "", keyFileChooser.getSelectedFile().toPath(), true,     false,      1L, true,    false,  true))
@@ -1727,14 +1741,17 @@ public class GUIFX extends Application implements UI, Initializable
 		openThread.start();
 		
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
-		Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);
-		keyButton.setDisable(false); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
+		Platform.runLater(() ->
+		{
+		    encryptButton.setDisable(true); decryptButton.setDisable(true);
+//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+		});
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); decryptButton.setDisable(true);
-	    keyButton.setDisable(false); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY);
+//	    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 	}	
         keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to double click file
     }
@@ -1808,7 +1825,7 @@ public class GUIFX extends Application implements UI, Initializable
 //		{
 		    encryptButton.setDisable(true);
 		    decryptButton.setDisable(true);
-		    keyButton.setDisable(true);
+//		    keyButton.setDisable(true);
 		    pauseToggleButton.setDisable(true);
 		    stopButton.setDisable(true);
 
@@ -2382,7 +2399,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		keyButton.setDisable(true);
+//		keyButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 				
@@ -2447,8 +2464,9 @@ public class GUIFX extends Application implements UI, Initializable
 //			    log("1 " + keyFCPath.getString());
 			    createManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Manual Key List:\r\n" + createManualKeyList.getStats());
 			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CREATE_KEYDEV);
-			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
+//			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CREATE_KEYDEV);
+			}
+//			else {  keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); }
 		    }
 		    else if (keyFCPath.type == FCPath.DEVICE)
 		    {
@@ -2456,10 +2474,12 @@ public class GUIFX extends Application implements UI, Initializable
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
 			    cloneManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
-			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CLONE_KEYDEV); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
-			} else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
+			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+//			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CLONE_KEYDEV);
+			}
+//			else {  keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); }
 		    }
-		    else {  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }
+//		    else {  keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); }
 
 //		    Setting Encryption / Decryption Buttons
 		    
@@ -2527,7 +2547,7 @@ public class GUIFX extends Application implements UI, Initializable
 //			}
 //		    }
 		    encryptButton.setDisable(true); decryptButton.setDisable(true);
-		     keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); // Default enabler
+//		    keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); // Default enabler
 		}
 	    }
 	});
@@ -2736,7 +2756,7 @@ public class GUIFX extends Application implements UI, Initializable
     }
 
     @FXML private void keyLabelOnMouseClicked(MouseEvent event)	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); createOTPKeyFile(); }
-    @FXML private void keyButtonOnAction(ActionEvent event)		{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); createOTPKeyFile(); }
+    private void keyButtonOnAction(ActionEvent event)		{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); createOTPKeyFile(); }
     
     synchronized private void createOTPKeyFile()
     {
@@ -2787,49 +2807,58 @@ public class GUIFX extends Application implements UI, Initializable
 		finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 	    });
 
-	    Thread encryptThread = new Thread(new Runnable()
+	    Platform.runLater(() ->
 	    {
-		private DeviceManager deviceManager;
-		@Override
-		@SuppressWarnings({"static-access"})
-		public void run()
-		{
-
-		    if ( keyButton.getText().equals(CREATE_KEY) )
-		    {
-			Platform.runLater(() ->
-			{
-			    new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
-			    createOTPKeyStage = new Stage();
-			    createOTPKey = new CreateOTPKey();
-			    try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
-			    createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
-			});
-		    }
-		    else if	( keyButton.getText().equals(CREATE_KEYDEV) )
-		    {
-			processRunningMode = CREATE_KEYDEV_MODE;
-			tab.getSelectionModel().select(1);
-			processStarted();
-			deviceManager = new DeviceManager(guifx); deviceManager.start();
-			deviceManager.createManualKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-			processFinished(targetFCPathList, false);
-		    }
-		    else if ( keyButton.getText().equals(CLONE_KEYDEV) )
-		    {
-			processRunningMode = CLONE_KEYDEV_MODE;
-			tab.getSelectionModel().select(1);
-			processStarted();
-			deviceManager = new DeviceManager(ui); deviceManager.start();
-			deviceManager.cloneManualKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
-			processFinished(targetFCPathList, false);
-		    } else { new Sound().play(ui, Sound.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
-
-		}
+		new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
+		createOTPKeyStage = new Stage();
+		createOTPKey = new CreateOTPKey();
+		try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+		createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
 	    });
-	    encryptThread.setName("keyDeviceThread");
-	    encryptThread.setDaemon(true);
-	    encryptThread.start();
+
+//	    Thread encryptThread = new Thread(new Runnable()
+//	    {
+//		private DeviceManager deviceManager;
+//		@Override
+//		@SuppressWarnings({"static-access"})
+//		public void run()
+//		{
+//
+//		    if ( keyButton.getText().equals(CREATE_KEY) )
+//		    {
+//			Platform.runLater(() ->
+//			{
+//			    new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
+//			    createOTPKeyStage = new Stage();
+//			    createOTPKey = new CreateOTPKey();
+//			    try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+//			    createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
+//			});
+//		    }
+//		    else if	( keyButton.getText().equals(CREATE_KEYDEV) )
+//		    {
+//			processRunningMode = CREATE_KEYDEV_MODE;
+//			tab.getSelectionModel().select(1);
+//			processStarted();
+//			deviceManager = new DeviceManager(guifx); deviceManager.start();
+//			deviceManager.createManualKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
+//			processFinished(targetFCPathList, false);
+//		    }
+//		    else if ( keyButton.getText().equals(CLONE_KEYDEV) )
+//		    {
+//			processRunningMode = CLONE_KEYDEV_MODE;
+//			tab.getSelectionModel().select(1);
+//			processStarted();
+//			deviceManager = new DeviceManager(ui); deviceManager.start();
+//			deviceManager.cloneManualKeyDevice(keyFCPath, (FCPath) targetFCPathList.get(0));
+//			processFinished(targetFCPathList, false);
+//		    } else { new Sound().play(ui, Sound.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
+//
+//		}
+//	    });
+//	    encryptThread.setName("keyDeviceThread");
+//	    encryptThread.setDaemon(true);
+//	    encryptThread.start();
 	}
 	else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
@@ -2871,8 +2900,8 @@ public class GUIFX extends Application implements UI, Initializable
     {
         Platform.runLater(() ->
 	{
-	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
-	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
+//	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
+//	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 	    
 	    // Clocks
 	    elapsedTimeLabel.setText("00:00:00");
@@ -2923,7 +2952,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    pauseToggleButton.setDisable(false);
 	    stopButton.setDisable(false);
 
-	    keyButton.setDisable(true);
+//	    keyButton.setDisable(true);
 
 	    remainingTimeHeaderLabel.setVisible(true); remainingTimeLabel.setVisible(true);
 	    elapsedTimeHeaderLabel.setVisible(true); elapsedTimeLabel.setVisible(true);
@@ -3047,8 +3076,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    fileProgressBar.setProgress(0); fileProgressBar.setVisible(false);
 	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false);
 	    
-	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
-	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
+//	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
+//	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
 	    
 //	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
 //	    {
@@ -3085,7 +3114,15 @@ public class GUIFX extends Application implements UI, Initializable
 			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 
 			targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-			Platform.runLater(new Runnable(){ @Override public void run() { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); }});
+			Platform.runLater(new Runnable()
+			{
+			    @Override public void run()
+			    {
+				encryptButton.setDisable(true);
+				decryptButton.setDisable(true);
+//				keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+			    }
+			});
 		    }
 		}
 	    });
@@ -3263,7 +3300,8 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    Platform.runLater(() ->
 	    {
-		tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+		if ( tgtFileChooser != null ) { tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); }
+		if ( keyFileChooser != null ) { keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); } // Reldraw FileChoosers
 	    });
 	}
     }
@@ -3298,7 +3336,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); log("Set Read Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unreadableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, false); log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
+	    Platform.runLater(() ->
+	    {
+		encryptButton.setDisable(true); decryptButton.setDisable(true);
+//		keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+	    });
 //	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
@@ -3313,7 +3355,11 @@ public class GUIFX extends Application implements UI, Initializable
 	    /*tab.getSelectionModel().select(1);*/ new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); log("Set Write Attributes:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = unwritableList.iterator(); it.hasNext();) { FCPath fcPath = (FCPath) it.next(); setAttribute(fcPath, true, true); log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); } log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true);  keyButton.setDisable(false);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); });
+	    Platform.runLater(() ->
+	    {
+		encryptButton.setDisable(true); decryptButton.setDisable(true);
+//		keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+	    });
 //	    targetFileChooser.setFileFilter(this.nonFinalCryptFilter); targetFileChooser.setFileFilter(targetFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
@@ -3531,108 +3577,106 @@ public class GUIFX extends Application implements UI, Initializable
 //  ==============================================================================================================
 
 
-    private void disarmDisableMACMode()
-    {
-	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);
-	encryptionModeToggleButton.setDisable(true);
-	encryptionModeToggleButton.setSelected(false);
-	encryptionModeToggleButton.setText(MAC_ON);
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
-	encryptionModeToggleButton.setMouseTransparent(false);
-    }
+//    private void disarmDisableMACMode()
+//    {
+//	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);
+//	encryptionModeToggleButton.setDisable(true);
+//	encryptionModeToggleButton.setSelected(false);
+//	encryptionModeToggleButton.setText(MAC_ON);
+//	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+//	encryptionModeToggleButton.setMouseTransparent(false);
+//    }
     
 //  Enable / Arm Disable-MAC-Mode-Button
-    private void armDisableMACMode()
-    {
-	new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-	encryptionModeToggleButton.setDisable(false);
-	encryptionModeToggleButton.setSelected(false);
-	encryptionModeToggleButton.setText(MAC_OFF_Q);
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
-	encryptionModeToggleButton.setMouseTransparent(false);
-	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
-
-//	Auto disable arming disable MAC Mode
-	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.play();
-    }
+//    private void armDisableMACMode()
+//    {
+//	new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+//	encryptionModeToggleButton.setDisable(false);
+//	encryptionModeToggleButton.setSelected(false);
+//	encryptionModeToggleButton.setText(MAC_OFF_Q);
+//	encryptionModeToggleButton.setTextFill(Paint.valueOf("grey"));
+//	encryptionModeToggleButton.setMouseTransparent(false);
+//	encryptionModeToggleButton.getTooltip().setText("Click to disable MAC Mode! (files will be encrypted without Message Authentication Code Header)");
+//
+////	Auto disable arming disable MAC Mode
+//	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.play();
+//    }
     
 //  Default MAC Mode
-    private void enableMACMode() // Safe Mode
-    {
-	new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-	if ( FLASH_MAC_MODE_TIMELINE != null ) { FLASH_MAC_MODE_TIMELINE.stop(); }
-	encryptionModeToggleButton.setText(MAC_ON);
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
+//    private void enableMACMode() // Safe Mode
+//    {
+//	new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+//	if ( FLASH_MAC_MODE_TIMELINE != null ) { FLASH_MAC_MODE_TIMELINE.stop(); }
+//	encryptionModeToggleButton.setText(MAC_ON);
+//	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
+//
+//	updateFileChoosers(true, true); // to 2 enableMACMode()
+//	FCPath.KEY_SIZE_MIN = FCPath.KEY_SIZE_MIN_DEFAULT;
+//	finalCrypt.disabledMAC = false;
+//	dashboardGridPane.setDisable(false);
+//	encryptionModeToggleButton.setDisable(true);
+//	encryptionModeToggleButton.setMouseTransparent(true);
+//	long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
+//	log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
+//    }
 
-	updateFileChoosers(true, true); // to 2 enableMACMode()
-	FCPath.KEY_SIZE_MIN = FCPath.KEY_SIZE_MIN_DEFAULT;
-	finalCrypt.disabledMAC = false;
-	dashboardGridPane.setDisable(false);
-	encryptionModeToggleButton.setDisable(true);
-	encryptionModeToggleButton.setMouseTransparent(true);
-	long now = Calendar.getInstance().getTimeInMillis(); lastRawModeClicked = now; // Anti DoubleClick missery
-	log("Message Authentication Mode Enabled\r\n", true, true, true, false, false);
-    }
-
-    private void disableMACMode() // Dangerous Mode
-    {
-	new Sound().play(this, Audio.SND_ALARM,Audio.AUDIO_CODEC);
-	if ( AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE != null ) { AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.stop(); }
-
-	encryptionModeToggleButton.setText(MAC_OFF);
-	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
-	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
-
-	updateFileChoosers(true, true); // disableMACMode()
-	FCPath.KEY_SIZE_MIN = 1;
-	finalCrypt.disabledMAC = true;
-	dashboardGridPane.setDisable(true);
-	log("Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false);
-
-	FLASH_MAC_MODE_TIMELINE.play();
-    }
+//    private void disableMACMode() // Dangerous Mode
+//    {
+//	new Sound().play(this, Audio.SND_ALARM,Audio.AUDIO_CODEC);
+//	if ( AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE != null ) { AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.stop(); }
+//
+//	encryptionModeToggleButton.setText(MAC_OFF);
+//	encryptionModeToggleButton.setTextFill(Paint.valueOf("white"));
+//	encryptionModeToggleButton.getTooltip().setText("Click to enable Message Authentication Mode");
+//
+//	updateFileChoosers(true, true); // disableMACMode()
+//	FCPath.KEY_SIZE_MIN = 1;
+//	finalCrypt.disabledMAC = true;
+//	dashboardGridPane.setDisable(true);
+//	log("Warning: MAC Mode Disabled! (files will be encrypted without Message Authentication Code Header)\r\n", true, true, true, false, false);
+//
+//	FLASH_MAC_MODE_TIMELINE.play();
+//    }
         
-    @FXML
-    private void encryptionModeToggleButtonOnMouseClicked(MouseEvent event)
-    {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	if ( ! processRunning )
-	{
-	    Platform.runLater(() ->
-	    {
-		if (! encryptionModeToggleButton.isSelected())	{ enableMACMode(); }
-		else						{ disableMACMode(); }
-	    });
-	} else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
-    }
+//    @FXML private void encryptionModeToggleButtonOnMouseClicked(MouseEvent event)
+//    {
+//	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+//	if ( ! processRunning )
+//	{
+//	    Platform.runLater(() ->
+//	    {
+//		if (! encryptionModeToggleButton.isSelected())	{ enableMACMode(); }
+//		else						{ disableMACMode(); }
+//	    });
+//	} else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
+//    }
 
-    @FXML
-    private void encryptionModeAnchorPaneOnMouseClicked(MouseEvent event)
-    {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	long now = Calendar.getInstance().getTimeInMillis();
-	if ( ! processRunning)
-	{
-	    if ( now - lastRawModeClicked > 1000) // Anti DoubleClick missery
-	    {
-		Platform.runLater(() ->
-		{
-		    if (encryptionModeToggleButton.isDisabled())
-		    {
-			if(event.getButton().equals(MouseButton.PRIMARY))
-			{
-			    if(event.getClickCount() == 2)
-			    {
-				new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-				armDisableMACMode();
-			    }
-			}	
-		    }
-		});
-	    }	
-	}
-	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
-    }
+//    @FXML private void encryptionModeAnchorPaneOnMouseClicked(MouseEvent event)
+//    {
+//	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+//	long now = Calendar.getInstance().getTimeInMillis();
+//	if ( ! processRunning)
+//	{
+//	    if ( now - lastRawModeClicked > 1000) // Anti DoubleClick missery
+//	    {
+//		Platform.runLater(() ->
+//		{
+//		    if (encryptionModeToggleButton.isDisabled())
+//		    {
+//			if(event.getButton().equals(MouseButton.PRIMARY))
+//			{
+//			    if(event.getClickCount() == 2)
+//			    {
+//				new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+//				armDisableMACMode();
+//			    }
+//			}	
+//		    }
+//		});
+//	    }	
+//	}
+//	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
+//    }
 
 
 //  ==============================================================================================================
@@ -3748,5 +3792,22 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	long fontsize = Math.round(field.getWidth() / field.getText().length() * 1.3); if (fontsize > 14) {fontsize =14;} else if (fontsize < 8) {fontsize =8;}
 	field.setStyle("-fx-font-family: monospace; -fx-font-size: " + fontsize + "px;");
+    }
+
+//    @FXML
+//    private void encryptionModeAnchorPaneOnMouseClicked(MouseEvent event)
+//    {
+//    }
+
+    @FXML
+    private void keyLabelAnchorOnMouseExited(MouseEvent event)
+    {
+	keyLabel.setVisible(false);
+    }
+
+    @FXML
+    private void keyLabelAnchorOnMouseEntered(MouseEvent event)
+    {
+	keyLabel.setVisible(true);
     }
 }
