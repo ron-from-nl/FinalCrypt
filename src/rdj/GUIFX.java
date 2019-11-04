@@ -3255,7 +3255,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		if (processRunningMode == ENCRYPT_MODE) { new Sound().play(this, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC); } else { new Sound().play(this, Audio.SND_DECRYPTFILES,Audio.AUDIO_CODEC); }
 		PAUSE_TIMELINE.stop();
-		pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_SYMBOL);
+		pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_DESC);
 		pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
 	    }
         }
