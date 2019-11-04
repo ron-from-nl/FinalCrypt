@@ -1052,15 +1052,14 @@
                                           </Button>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4" />
-                                    <AnchorPane GridPane.columnIndex="7">
-                                       <children>
-                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
                                     <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="6">
                                        <children>
                                           <Button fx:id="supportButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="-3.0" minHeight="40.0" mnemonicParsing="false" onAction="#supportButtonOnAction" prefHeight="50.0" prefWidth="126.0" styleClass="background_bottom" text="Support" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnIndex="7">
+                                       <children>
+                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" layoutX="59.0" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="137.0" styleClass="background_bottom" text="Check Update" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
