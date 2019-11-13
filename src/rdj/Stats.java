@@ -177,8 +177,9 @@ public class Stats
     {
         String returnString = new String();
         double throughput = ( ((double)(items) / (((double)nanosecs / 1000000000.0))) ); // *1000 from mSec to Sec
-        String throughputString = String.format("%.1f", throughput);
-        returnString = "(average: " + getHumanSize(throughput,1,"Passwords") + "/s)\r\n";
+        String throughputString = String.format("%.0f", throughput);
+//        returnString = "(average: " + getHumanSize(throughput,1,"Passwords") + "/s)\r\n";
+        returnString = "(average: " + throughputString + " passwords/sec)\r\n";
         
         return returnString;
     }

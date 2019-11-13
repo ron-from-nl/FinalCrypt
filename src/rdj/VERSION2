@@ -1,4 +1,4 @@
-[Version] =		{5.6.2}
+[Version] =		{5.6.3}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -19,9 +19,10 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 2}
+[Update Notes] =	{Update 3}
 [Update Notes] =	{}
-[Update Notes] =	{Cleaned up action-buttons to improve usage clarity}
+[Update Notes] =	{Brute Force password dictionary testing 10 x faster}
+[Update Notes] =	{Previously: 950 pass/sec. Currently: 9950 pass/sec}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
