@@ -22,10 +22,11 @@
 [Update Notes] =	{Update 4}
 [Update Notes] =	{}
 [Update Notes] =	{Major Update fixed MAC Crib Drag Attack Vulnerability}
-[Update Notes] =	{The vulnerability was limited to the 1st 70 databytes}
+[Update Notes] =	{Only the first 70 data-bytes are Crib Drag Vulnerable}
 [Update Notes] =	{Still FinalCrypt has to be 100% One Time Pad compliant}
-[Update Notes] =	{Also disabled all 0 byte key values to 255 conversion}
+[Update Notes] =	{Also disabled all 0 byte key values to 255 conversions}
 [Update Notes] =	{This major update makes FinalCrypt 100% OTP compliant}
+[Update Notes] =	{Please decrypt en re-encrypt for 100% OTP compliance}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
