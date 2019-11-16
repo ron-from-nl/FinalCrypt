@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 public class FCPath
 {
-    public static	   int	    MAC_SIZE =		    (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2);
+    public static	   int	    MAC_SIZE =		    (FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2);
     public static	   int	    KEY_SIZE_MIN_DEFAULT =  MAC_SIZE;
     public static	   int	    KEY_SIZE_MIN =	    KEY_SIZE_MIN_DEFAULT;
 
@@ -74,6 +74,7 @@ public class FCPath
 
 //    public	    boolean hasFCToken =		    false;
     public	    boolean isEncrypted =		    false;
+    public	    int	    defaultMACVersion =		    3;
     public	    int	    macVersion =		    0;
 //    public	    boolean isAuthenticated =		    false;
     public	    boolean isDecryptable =		    false;    

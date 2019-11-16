@@ -1,4 +1,4 @@
-[Version] =		{5.6.3}
+[Version] =		{5.6.4}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -15,14 +15,17 @@
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Added Brute Force Password Dictionary Scan function}
 [Upgrade Notes] =	{This allows users to try to recover a lost password}
-[Upgrade Notes] =	{Performance testing at max 950 passwords per second}
+[Upgrade Notes] =	{Performance testing at max 9950 passwords per second}
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3}
+[Update Notes] =	{Update 4}
 [Update Notes] =	{}
-[Update Notes] =	{Brute Force password dictionary testing 10 x faster}
-[Update Notes] =	{Previously: 950 pass/sec. Currently: 9950 pass/sec}
+[Update Notes] =	{Major Update fixed MAC Crib Drag Attack Vulnerability}
+[Update Notes] =	{The vulnerability was limited to the 1st 70 databytes}
+[Update Notes] =	{Still FinalCrypt has to be 100% One Time Pad compliant}
+[Update Notes] =	{Also disabled all 0 byte key values to 255 conversion}
+[Update Notes] =	{This major update makes FinalCrypt 100% OTP compliant}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

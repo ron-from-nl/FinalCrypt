@@ -63,23 +63,27 @@ public class FinalCrypt extends Thread
     public boolean processRunning = false;
 
     private boolean targetSourceEnded;
+    // Validate line 124 macVersion
+    // FinalCrypt line 1045 macVersion
 //											        1	  2         3         4         5         6         7
 //										       1234567890123456789012345678901234567890123456789012345678901234567890
     public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V1 = "FinalCrypt - File Encryption Program - Plain Text Authentication Token"; // NEVER EVER CHANGE!!!!!!!!!!!
     public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2 = "FinalCrypt - File Encryption Program - Plain Text Auth Token Version 2"; // NEVER EVER CHANGE!!!!!!!!!!!
+    public static final String FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3 = "FinalCrypt - One Time Pad File Encryption - Plain Text MAC Version 003"; // NEVER EVER CHANGE!!!!!!!!!!!
+    
     private Calendar	startCalendar;
     private Calendar	processProgressCalendar;
     private static double   filesBytesPerMilliSecond = 0;
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //
-    public static final String UTF8_UNFINISHED_SYMBOL =		    "0";
-    public static final String UTF8_UNFINISHED_DESC =		    "Unfinished";
+    public static final String UTF8_UNSUCCEEDED_SYMBOL =		    "U";
+    public static final String UTF8_UNSUCCEEDED_DESC =		    "Unsucceeded";
     
-    public static final String UTF8_UNKNOWN_SYMBOL =		    "½";
-    public static final String UTF8_UNKNOWN_DESC =		    "Unknown";
+    public static final String UTF8_SUCCESSUNKNOWN_SYMBOL =	    "?";
+    public static final String UTF8_SUCCESSUNKNOWN_DESC =	    "Success Unknown";
     
-    public static final String UTF8_FINISHED_SYMBOL =		    "1";
-    public static final String UTF8_FINISHED_DESC =		    "Finished";
+    public static final String UTF8_SUCCEEDED_SYMBOL =		    "S";
+    public static final String UTF8_SUCCEEDED_DESC =		    "Succeeded";
     
     public static final String UTF8_UNENCRYPTABLE_SYMBOL =	    "UE";
     public static final String UTF8_UNENCRYPTABLE_DESC =	    "Unencryptable";
@@ -454,11 +458,11 @@ public class FinalCrypt extends Thread
 					    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 					    if ( deleted )
 					    {
-						ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+						ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 					    }
 					    else
 					    {
-						ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+						ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 					    }
 					}
 					targetSourceEnded = true;
@@ -500,7 +504,7 @@ public class FinalCrypt extends Thread
 				inputEnded = false;
 				
 //				ui.log(UTF8_CLONE_SYMBOL + " \"" + newTargetSourceFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
-				ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			    
 			}
@@ -539,9 +543,9 @@ public class FinalCrypt extends Thread
 			    {				
 				if ( ! test )
 				{
-				    ui.log(UTF8_WRITE_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
+				    ui.log(UTF8_WRITE_SYMBOL + UTF8_MAC_SYMBOL + newTargetSourceFCPath.defaultMACVersion, false, true, true, false, false);
 				    // Add MAC to targetDestinPath
-				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2)); targetDestinMACBuffer.clear();			
+				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND))))
 				    {
 					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(dynamicKeyFCPath.path, newTargetSourceFCPath.macVersion);
@@ -551,7 +555,7 @@ public class FinalCrypt extends Thread
 
 					// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
 				    } catch (IOException ex) { ui.log("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-				    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				    ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
 			    }
 			    else // Decrypted but NOT Encryptable (should not be in the list anyway)
@@ -569,8 +573,8 @@ public class FinalCrypt extends Thread
 			    {
 				if (! test)
 				{
-				    ui.log(UTF8_READ_SYMBOL + UTF8_MAC_SYMBOL, false, true, true, false, false);
-				    ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2))); targetSourceBuffer.clear();
+				    ui.log(UTF8_READ_SYMBOL + UTF8_MAC_SYMBOL + newTargetSourceFCPath.macVersion, false, true, true, false, false);
+				    ByteBuffer targetSourceBuffer = ByteBuffer.allocate(((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2))); targetSourceBuffer.clear();
 				    try (final SeekableByteChannel readTargetSourceChannel = Files.newByteChannel(newTargetSourceFCPath.path, getEnumSet(EnumSet.of(StandardOpenOption.READ))))
 				    {
 					// Fill up inputFileBuffer
@@ -578,8 +582,8 @@ public class FinalCrypt extends Thread
 					readTargetSourceChannel.close();
 					srcMessageDigest.update(targetSourceBuffer); // Build up checksum
 				    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-				    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); // Decrypt skipping MAC bytes at beginning
-				    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2); // Decrypt skipping MAC bytes at beginning
+				    ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
 			    }
 			    else
@@ -610,7 +614,17 @@ public class FinalCrypt extends Thread
 
 		targetSourceEnded = false;
 							    long    readTargetSourceChannelTransfered =  0;
-		long readKeySourceChannelPosition = 0;	    long    readKeySourceChannelTransfered =  0;                
+
+		// MAC3 prevents reuse of first 70 bytes of key on both Binary MAC and 1st 70 bytes of datafile on encrypt
+		long readKeySourceChannelPosition = 0;
+		
+		if ( (encryptMode) || ( (! encryptMode) && ( newTargetSourceFCPath.macVersion == 3 ) ))
+		{
+		    readKeySourceChannelPosition = ((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()) * 2); // Effectively starts at offset byte 140 of keyfile
+		} else { readKeySourceChannelPosition = 0; }
+		
+		long readKeySourceChannelTransfered =  0;                
+		
 		long writeTargetDestChannelPosition = 0;	    writeTargetDestChannelTransfered =   0;
 		long readTargetDestChannelPosition = 0;	    long    readTargetDestChannelTransfered =    0;
 		long writeTargetSourceChannelPosition = 0;  long    writeTargetSourceChannelTransfered = 0;
@@ -631,11 +645,11 @@ public class FinalCrypt extends Thread
 			try { deleted = Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 			if ( deleted )
 			{
-			    ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+			    ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			}
 			else
 			{
-			    ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+			    ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			}
 			if ((encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Only delete key on failed encrypt, never on decryption
 			{
@@ -643,11 +657,11 @@ public class FinalCrypt extends Thread
 			    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 			    if ( deleted )
 			    {
-				ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			    else
 			    {
-				ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+				ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			}
 			targetSourceEnded = true;
@@ -709,7 +723,7 @@ public class FinalCrypt extends Thread
 		    targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();		    
 		} // targetSourceEnded
 
-		ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+		ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 
 //    ==================================================================================================================================================================
 //              Copy inputFilePath attributes to outputFilePath
@@ -763,11 +777,11 @@ public class FinalCrypt extends Thread
 			    try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 			    if ( deleted )
 			    {
-				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			    else
 			    {
-				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			    if (( ! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Only delete key on succesfull decrypt, never on encryption
 			    {
@@ -775,11 +789,11 @@ public class FinalCrypt extends Thread
 				try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 				if ( deleted )
 				{
-				    ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+				    ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
 				else
 				{
-				    ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false);
+				    ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
 			    }
 			    targetSourceEnded = true;
@@ -837,7 +851,7 @@ public class FinalCrypt extends Thread
 			targetDestinBuffer.clear(); targetSourceBuffer.clear(); keySourceBuffer.clear();
 		    }
 
-		    ui.log(UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false);
+		    ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 
 //                  FILE STATUS 
 		    if (verbose)
@@ -864,14 +878,14 @@ public class FinalCrypt extends Thread
 		    if
 		    (
 			    ( newTargetSourceFCPath.size != 0 ) && ( targetDestinSize != 0 )
-			&&  ( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()) * 2 )
+			&&  ( Math.abs(newTargetSourceFCPath.size - targetDestinSize)  == (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()) * 2)
 			||  ( newTargetSourceFCPath.size == targetDestinSize)
 		    )
 		    {
 //			After the shredding stage of the process
 			boolean deleted = false;
 			try { deleted = Files.deleteIfExists(newTargetSourceFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + newTargetSourceFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
+			if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + " ", false, true, true, false, false); }
 
 
 //			Delete the key file after decryption
@@ -879,7 +893,7 @@ public class FinalCrypt extends Thread
 			{
 			    deleted = false;
 			    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + dynamicKeyFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
-			    if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_FINISHED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNFINISHED_SYMBOL + " ", false, true, true, false, false); }
+			    if ( deleted ) { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false); } else { ui.log(UTF8_DELETE_SYMBOL + UTF8_KEY_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false); }
 			}
 		    }
 		    
@@ -921,7 +935,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, dynamicKeyFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
@@ -962,7 +976,7 @@ public class FinalCrypt extends Thread
 “acl:owner”	UserPrincipal
 */
 
-	String statusSymbol = UTF8_FINISHED_SYMBOL;
+	String statusSymbol = UTF8_SUCCEEDED_SYMBOL;
 	ui.log(UTF8_CLONE_SYMBOL + UTF8_ATTRIB_SYMBOL + destSymbol, false, true, true, false, false);
 	
 	attributeViewloop: for (String view:sourcePath.getFileSystem().supportedFileAttributeViews()) // acl basic owner user dos
@@ -1035,8 +1049,9 @@ public class FinalCrypt extends Thread
 	    if (pwd.length() == 0)	{ targetDestinByte = encryptByte(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); }   // no pwd used
 	    else
 	    {
-		if ( macVersion == 1 )  { targetDestinByte = encryptBytePassV1(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V1 (only at decrypt)
-		else			{ targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V2 (default encrypt & decrypt)
+		if	( macVersion == 1 ) { targetDestinByte = encryptBytePassV1(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V1 (only at decrypt)
+		else if ( macVersion == 2 ) { targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V2 (only at decrypt)
+		else			    { targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V3 (default encrypt & decrypt)
 	    }
 		
 	    
@@ -1086,6 +1101,20 @@ public class FinalCrypt extends Thread
 	return	returnByte;
     }
 
+    public static byte encryptBytePassV3(final byte targetSourceByte, byte keySourceByte, int macVersion)
+    {
+	byte returnByte = 0; // Final result to return
+
+	// Leave 0 key byte in tact and do not invert to 255 to fully comply to One Time Pad Rules
+//	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
+	
+	byte transitionalByte = (byte)(keySourceByte ^	    pwdBytes[pwdBytesPos]);	// transitionalByte =	keybyte		XOR sumByte
+	returnByte =		(byte)(targetSourceByte ^   (transitionalByte));	// returnByte =		dataByte	XOR transitionalByte
+	pwdBytesPos++; if ( pwdBytesPos == pwdBytes.length ) { pwdBytesPos = 0; }
+	
+	return	returnByte;
+    }
+
     public static byte encryptByteFastXOR(final byte targetSourceByte, byte keySourceByte)
     {
         byte targetDestinEncryptedByte;
@@ -1114,15 +1143,15 @@ public class FinalCrypt extends Thread
 
     private ByteBuffer createTargetDestinMessageAuthenticationCode(Path keySourcePath, int macVersion) // Tested
     {
-        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); plainTextMACBuffer.clear();
-        ByteBuffer keyBitMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); keyBitMACBuffer.clear();
-        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); encryptedMACBuffer.clear();
+        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); plainTextMACBuffer.clear();
+        ByteBuffer keyBitMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); keyBitMACBuffer.clear();
+        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); encryptedMACBuffer.clear();
 
-	ByteBuffer targetDstMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); targetDstMACBuffer.clear();
+	ByteBuffer targetDstMACBuffer = ByteBuffer.allocate(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2); targetDstMACBuffer.clear();
 	long readKeySourceChannelTransfered = 0;                
 
 	// Create plaint text Buffer
-	plainTextMACBuffer.put(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.getBytes());
+	plainTextMACBuffer.put(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.getBytes());
 	
 	// Create Key Buffer
 	try (final SeekableByteChannel readKeySourceChannel = Files.newByteChannel(keySourcePath, getEnumSet(EnumSet.of(StandardOpenOption.READ))))
@@ -1136,9 +1165,9 @@ public class FinalCrypt extends Thread
 	encryptedMACBuffer = encryptBuffer(plainTextMACBuffer, keyBitMACBuffer, macVersion, false);
 	
 	// Create Target Destin Token Buffer
-	byte[] messageAuthenticationCodeArray = new byte[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2)];
+	byte[] messageAuthenticationCodeArray = new byte[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2)];
 	for (int x = 0; x < plainTextMACBuffer.capacity(); x++) { messageAuthenticationCodeArray[x] = plainTextMACBuffer.array()[x]; }
-	for (int x = 0; x < encryptedMACBuffer.capacity(); x++) { messageAuthenticationCodeArray[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() + x)] = encryptedMACBuffer.array()[x]; }
+	for (int x = 0; x < encryptedMACBuffer.capacity(); x++) { messageAuthenticationCodeArray[(FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() + x)] = encryptedMACBuffer.array()[x]; }
 	targetDstMACBuffer.put(messageAuthenticationCodeArray); targetDstMACBuffer.flip();
 	
 	pwdPos = 0;

@@ -1,23 +1,19 @@
 =================================== Todo ====================================
 
-Problematic frame: C  [libpango-1.0.so.0+0x193e6]
-com.sun.javafx.font.freetype.PangoGlyphLayout 
-
-Package: libpango-1.0-0
-Version: 1.42.4-6ubuntu0.1
-Source: pango1.0
-Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
-Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
-Bugs: https://bugs.launchpad.net/ubuntu/+filebug
-Homepage: http://www.pango.org/
-
-=================================== Doing ===================================
-
-
 Compare last two encrypt decrypt sessions
 auto encrypt on exit getDesktop.open(..
 Tools Settings
 Backup Files.createLink(link, target);
+
+=================================== Doing ===================================
+
+Define new version MAC
+
+Encrypt	Key position forward MAC-SIZE at key reading
+line: 618 
+ 
+Decrypt Key position forward MAC SIZE at key reading
+line: 618
 
 =============================== Don't forget ================================
 

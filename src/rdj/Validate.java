@@ -102,8 +102,8 @@ public class Validate
 	boolean targetSourceHasMAC = false;
 	int macVersion = 0;
 	
-        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); plainTextMACBuffer.clear();
-        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); encryptedMACBuffer.clear();
+        ByteBuffer plainTextMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); plainTextMACBuffer.clear();
+        ByteBuffer encryptedMACBuffer = ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); encryptedMACBuffer.clear();
 	
 	long readTargetSourceChannelTransfered = 0;
 	
@@ -122,6 +122,7 @@ public class Validate
 
 	if	( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V1) )	{ macVersion = 1; targetSourceHasMAC = true; }
 	else if ( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2) )	{ macVersion = 2; targetSourceHasMAC = true; }
+	else if ( plainTextMACString.equals(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3) )	{ macVersion = 3; targetSourceHasMAC = true; }
 	else													{ macVersion = 0; targetSourceHasMAC = false; }
 
 //	return targetSourceHasMAC;
@@ -134,11 +135,11 @@ public class Validate
 	
 	boolean readTargetSourceChannelError =	    false;
 	boolean keyAuthenticatedTargetSource =	    false;
-        ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length() * 2); targetSrcMACBuffer.clear();
-        ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.clear();
-        ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.clear();
-        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); keySourceBuffer.clear();
-        ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); keyDecryptedMACBuffer.clear();
+        ByteBuffer targetSrcMACBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2); targetSrcMACBuffer.clear();
+        ByteBuffer targetPlainTextMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); targetPlainTextMACBuffer.clear();
+        ByteBuffer targetEncryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); targetEncryptedMACBuffer.clear();
+        ByteBuffer keySourceBuffer =		    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); keySourceBuffer.clear();
+        ByteBuffer keyDecryptedMACBuffer =	    ByteBuffer.allocate(FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); keyDecryptedMACBuffer.clear();
 	
 	long readTargetSourceChannelPosition = 0;   long readTargetSourceChannelTransfered = 0;
 	long readKeySourceChannelPosition = 0;	    long readKeySourceChannelTransfered = 0;                
@@ -155,8 +156,8 @@ public class Validate
 	
 	// Encrypted MAC Buffer
 	
-	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),									0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetPlainTextMACBuffer.flip();
-	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V2.length()); targetEncryptedMACBuffer.flip();
+	targetPlainTextMACBuffer.put(targetSrcMACBuffer.array(),									0, FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); targetPlainTextMACBuffer.flip();
+	targetEncryptedMACBuffer.put(targetSrcMACBuffer.array(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length(), FinalCrypt.FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()); targetEncryptedMACBuffer.flip();
 	
 	if ( ! readTargetSourceChannelError )
 	{
