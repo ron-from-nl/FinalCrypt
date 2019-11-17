@@ -74,8 +74,8 @@ public class FCPath
 
 //    public	    boolean hasFCToken =		    false;
     public	    boolean isEncrypted =		    false;
-    public	    int	    defaultMACVersion =		    3;
-    public	    int	    macVersion =		    0;
+    public	    static int	    defaultMACVersion =	    3;
+    public	    int	    macVersion =		    defaultMACVersion;
 //    public	    boolean isAuthenticated =		    false;
     public	    boolean isDecryptable =		    false;    
     public	    boolean isNewDecrypted =		    false;

@@ -314,7 +314,10 @@ public class FinalCrypt extends Thread
 	    MessageDigest dstMessageDigest = null; try { dstMessageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { ui.log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", false, true, true, true, false);}
 	    
 	    FCPath newTargetSourceFCPath = (FCPath) it.next();
-	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);
+	    if (( ! disabledMAC) && (encryptMode)) { newTargetSourceFCPath.macVersion = FCPath.defaultMACVersion; } // Impacts encryptByteNoPass() key 0byte negate MAC <= V2 // Just for EncryptMode
+
+	    FCPath oldTargetSourceFCPath = newTargetSourceFCPath.clone(newTargetSourceFCPath);	    
+	    
 	    Path targetDestinPath = null;
 	    String fileStatusLine = "";
             if (stopPending) { targetSourceEnded = true; break; }
@@ -548,7 +551,7 @@ public class FinalCrypt extends Thread
 				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2)); targetDestinMACBuffer.clear();			
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND))))
 				    {
-					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(dynamicKeyFCPath.path, newTargetSourceFCPath.macVersion);
+					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(dynamicKeyFCPath.path, newTargetSourceFCPath.defaultMACVersion);
 					writeTargetDestChannelTransfered = writeTargetDestinChannel.write(targetDestinMACBuffer); targetDestinMACBuffer.flip();
 					writeTargetDestinChannel.close();
 					dstMessageDigest.update(targetDestinMACBuffer); // Build up checksum
@@ -618,7 +621,7 @@ public class FinalCrypt extends Thread
 		// MAC3 prevents reuse of first 70 bytes of key on both Binary MAC and 1st 70 bytes of datafile on encrypt
 		long readKeySourceChannelPosition = 0;
 		
-		if ( (encryptMode) || ( (! encryptMode) && ( newTargetSourceFCPath.macVersion == 3 ) ))
+		if ( (encryptMode) || ( (! encryptMode) && ( newTargetSourceFCPath.macVersion >= 3 ) )) // 140 bytes key offset since MAC V3 to prevent partial key reusage
 		{
 		    readKeySourceChannelPosition = ((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()) * 2); // Effectively starts at offset byte 140 of keyfile
 		} else { readKeySourceChannelPosition = 0; }
@@ -1046,12 +1049,16 @@ public class FinalCrypt extends Thread
 	    byte targetSourceByte = targetSourceBuffer.get(targetSourceBufferCount);
 	    byte keySourceByte = keySourceBuffer.get(targetSourceBufferCount);
 	    
-	    if (pwd.length() == 0)	{ targetDestinByte = encryptByte(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); }   // no pwd used
+	    if (pwd.length() == 0) // no pwd used
+	    {
+		if (macVersion >= 3)	{ targetDestinByte = encryptByteNoPassV3(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); }    // negated 0 key bytes
+		else			{ targetDestinByte = encryptByteNoPass(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); }  // raw 0 key bytes
+	    }
 	    else
 	    {
 		if	( macVersion == 1 ) { targetDestinByte = encryptBytePassV1(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V1 (only at decrypt)
 		else if ( macVersion == 2 ) { targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V2 (only at decrypt)
-		else			    { targetDestinByte = encryptBytePassV2(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V3 (default encrypt & decrypt)
+		else			    { targetDestinByte = encryptBytePassV3(targetSourceByte, keySourceByte, macVersion); targetDestinBuffer.put(targetDestinByte); } // pwd with MAC_V3 (default encrypt & decrypt)
 	    }
 		
 	    
@@ -1062,12 +1069,23 @@ public class FinalCrypt extends Thread
 	return targetDestinBuffer;
     }
     
-    public static byte encryptByte(final byte targetSourceByte, byte keySourceByte, int macVersion)
+    public static byte encryptByteNoPass(final byte targetSourceByte, byte keySourceByte, int macVersion) // Legacy support MAC <= V2
     {
 	byte returnByte = 0; // Final result to return
 
 	// Only invert / negate 0 key byte in MAC-ON Mode (leave untouched in RAW XOR Mode (MAC-OFF) mode)
 	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
+	
+	returnByte = (byte)(targetSourceByte ^ keySourceByte);
+	return	returnByte;
+    }
+
+    public static byte encryptByteNoPassV3(final byte targetSourceByte, byte keySourceByte, int macVersion)
+    {
+	byte returnByte = 0; // Final result to return
+
+	// Leave 0 key byte in tact and do not invert to 255 to fully comply to One Time Pad Rules
+//	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
 	returnByte = (byte)(targetSourceByte ^ keySourceByte);
 	return	returnByte;
@@ -1108,8 +1126,8 @@ public class FinalCrypt extends Thread
 	// Leave 0 key byte in tact and do not invert to 255 to fully comply to One Time Pad Rules
 //	if (! disabledMAC) { if (keySourceByte == 0) { keySourceByte = (byte)(~keySourceByte & 0xFF); } } // Inverting / negate key 0 bytes (none encryption not allowed in default MAC-Mode)
 	
-	byte transitionalByte = (byte)(keySourceByte ^	    pwdBytes[pwdBytesPos]);	// transitionalByte =	keybyte		XOR sumByte
-	returnByte =		(byte)(targetSourceByte ^   (transitionalByte));	// returnByte =		dataByte	XOR transitionalByte
+	byte transitionalByte = (byte)(targetSourceByte ^ pwdBytes[pwdBytesPos]);   // transitionalByte =   targetSourceByte XOR pwdBytes
+	returnByte =		(byte)(transitionalByte ^ (keySourceByte));	    // returnByte =	    transitionalByte XOR keySourceByte
 	pwdBytesPos++; if ( pwdBytesPos == pwdBytes.length ) { pwdBytesPos = 0; }
 	
 	return	returnByte;
