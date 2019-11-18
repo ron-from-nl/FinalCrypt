@@ -1,10 +1,9 @@
 Date: 2019-11-16 Version: 5.6.4
 
-Major Update fixed MAC Crib Drag Attack Vulnerability
-Only the first 70 data-bytes are Crib Drag Vulnerable
-Still FinalCrypt has to be 100% One Time Pad compliant
-Also disabled all 0 byte key values to 255 conversion
-This major update makes FinalCrypt 100% OTP compliant
+Update fixed the 1st 70 bytes Crib Drag Vulnerability
+Disabled all 0 to 255 byte value inversion of keydata
+Removed Glow & Bloom effects for better GUI response
+Please decrypt en re-encrypt for 100% OTP compliance
 
 Date: 2019-11-13 Version: 5.6.3
 
