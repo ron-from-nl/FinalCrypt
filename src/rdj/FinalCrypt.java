@@ -621,6 +621,7 @@ public class FinalCrypt extends Thread
 		// MAC3 prevents reuse of first 70 bytes of key on both Binary MAC and 1st 70 bytes of datafile on encrypt
 		long readKeySourceChannelPosition = 0;
 		
+		// Line 317 sets unencrypted files to be treated as MACv3
 		if ( (encryptMode) || ( (! encryptMode) && ( newTargetSourceFCPath.macVersion >= 3 ) )) // 140 bytes key offset since MAC V3 to prevent partial key reusage
 		{
 		    readKeySourceChannelPosition = ((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length()) * 2); // Effectively starts at offset byte 140 of keyfile

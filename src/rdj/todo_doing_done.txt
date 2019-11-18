@@ -7,13 +7,8 @@ Backup Files.createLink(link, target);
 
 =================================== Doing ===================================
 
-Define new version MAC
-
-Encrypt	Key position forward MAC-SIZE at key reading
-line: 618 
- 
-Decrypt Key position forward MAC SIZE at key reading
-line: 618
+Legenda
+fadein
 
 =============================== Don't forget ================================
 
@@ -41,3 +36,18 @@ Update file:						manpage
 
 ~/jdk1.8.0_121/bin/javapackager -deploy -native exe -BsystemWide=true -BjvmOptions=-Xmx128m -BjvmOptions=-Xms128m -outdir packages -outfile FinalCrypt -srcdir dist -srcfiles finalcrypt.jar -appclass rdj.GUIFX -name FinalCrypt -title "FinalCrypt Demo"
 
+//		    welcome();
+/*
+Linux:
+${user.home}/.java/.userPrefs/FinalCrypt/prefs.xml
+
+Windows:
+regedit remove HKEY_CURRENT_USER\Software\JavaSoft\Prefs\/Final/Crypt
+
+Mac OSX:
+Mac OS X ~/Library/Preferences in multiple plist files.
+Mac OS X uses the java.util.prefs.MacOSXPreferencesFactory class. See lists.apple.com/archives/java-dev/2010/Jul/msg00056.html
+the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
+See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
+JDK 8 all the items in java.util.prefs:
+*/

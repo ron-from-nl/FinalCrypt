@@ -255,7 +255,7 @@ public class GUIFX extends Application implements UI, Initializable
     private final String ENCRYPTING_FILES =		"Encrypting Files";
     private final String DECRYPTING_FILES =		"Decrypting Files";
 
-    private final String USER_GUID_TEXT_FILL_BASE =	"#504030";// #5A2D0C #663B1B
+    private final String USER_GUID_TEXT_FILL_BASE =	"#706050";// #5A2D0C #663B1B
     private final String USER_GUID_TEXT_FILL_HIGH =	"#BBBBBB";
 
     private final int MAIN_TIMELINE_INTERVAL_PERIOD =	50;
@@ -315,16 +315,16 @@ public class GUIFX extends Application implements UI, Initializable
 
 //    private final Timeline AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE = new Timeline( new KeyFrame(Duration.seconds( 8.0), evt -> { disarmDisableMACMode(); } ) );
 
-    private double focusAngle;
-    private double focusDistance;
-    private double centerX;
-    private double centerY;
-    private double radius;
-    private boolean proportional;
-    private double variable;
-    private double endX;
-    private double startX;
-    private double stepX;
+    private double focusAngle = 0.0;
+    private double focusDistance = 0.0;
+    private double radius = 0.6;
+    private boolean proportional = true;
+    private double endX = 1.55;
+    private double startX = endX; // -0.5
+    private double centerX = endX; // = endX
+    private double centerY = 0.55;
+    private double variable = startX; // = startX
+    private double stepX = 0.02;
     private double fadevar;
     private double blurvar;
 
@@ -1006,8 +1006,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    Version ver = new Version(ui); ver.checkCurrentlyInstalledVersion(ui);
 	    fadeInMessage = Version.getProductName();
-	    userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / fadeInMessage.length() * 1.3) + "px;");
-	    userGuidanceLabel.setText(fadeInMessage);
+//	    userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / fadeInMessage.length() * 1.3) + "px;");
+//	    userGuidanceLabel.setText(fadeInMessage);
 	    textLabelTimeline.play();
 
 	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
@@ -1019,107 +1019,115 @@ public class GUIFX extends Application implements UI, Initializable
 
 //	textLabel Introduction Animation ==========================================================
 
-	    FadeTransition fadeTransition = new FadeTransition(Duration.millis(1500), userGuidanceLabel);
-	    fadeTransition.setFromValue(0.05f);
-	    fadeTransition.setToValue(0.7f);
-	    fadeTransition.setCycleCount(1);
-	    fadeTransition.setAutoReverse(true);
-	    fadeTransition.setDelay(Duration.seconds(1));
-	    fadeTransition.setInterpolator(Interpolator.EASE_OUT);
+	    ScaleTransition scaleTransition1 = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
+	    scaleTransition1.setFromX(0.98f);scaleTransition1.setToX(1.0f);
+	    scaleTransition1.setFromY(0.98f);scaleTransition1.setToY(1.0f);
+	    scaleTransition1.setFromZ(0.98f);scaleTransition1.setToZ(1.0f);
+	    scaleTransition1.setCycleCount(1);
+	    scaleTransition1.setAutoReverse(false);
+	    scaleTransition1.setDelay(Duration.millis(500));
+	    scaleTransition1.setInterpolator(Interpolator.EASE_BOTH);
 
-	    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
-	    scaleTransition.setFromX(0.98f);scaleTransition.setToX(1.0f);
-	    scaleTransition.setFromY(0.98f);scaleTransition.setToY(1.0f);
-	    scaleTransition.setFromZ(0.98f);scaleTransition.setToZ(1.0f);
-	    scaleTransition.setCycleCount(1);
-	    scaleTransition.setAutoReverse(false);
-	    scaleTransition.setDelay(Duration.seconds(1));
-	    scaleTransition.setInterpolator(Interpolator.EASE_BOTH);
+	    userGuidanceLabel.setText("Unbreakable\r\nOne Time Pad"); userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / userGuidanceLabel.getText().length() * 2.0) + "px;");
+	    FadeTransition fadeTransition1 = new FadeTransition(Duration.millis(1500), userGuidanceLabel);
+	    fadeTransition1.setFromValue(0.05f);
+	    fadeTransition1.setToValue(0.7f);
+	    fadeTransition1.setCycleCount(2);
+	    fadeTransition1.setAutoReverse(true);
+	    fadeTransition1.setDelay(Duration.millis(500));
+	    fadeTransition1.setInterpolator(Interpolator.EASE_BOTH);
 
-	    ParallelTransition parallelTransition = new ParallelTransition();
-	    parallelTransition.getChildren().addAll( fadeTransition, scaleTransition );
-	    parallelTransition.setCycleCount(1);
+	    ParallelTransition parallelTransition1 = new ParallelTransition();
+	    parallelTransition1.getChildren().addAll( scaleTransition1, fadeTransition1 );
+	    parallelTransition1.setCycleCount(1);
 
-	    parallelTransition.setOnFinished((ActionEvent actionEvent) ->
+	    parallelTransition1.setOnFinished((ActionEvent actionEvent) ->
 	    {
-		//		    welcome();
-		/*
-		Linux:
-		${user.home}/.java/.userPrefs/FinalCrypt/prefs.xml
+		userGuidanceLabel.setText("");
 
-		Windows:
-		regedit remove HKEY_CURRENT_USER\Software\JavaSoft\Prefs\/Final/Crypt
-
-		Mac OSX:
-		Mac OS X ~/Library/Preferences in multiple plist files.
-		Mac OS X uses the java.util.prefs.MacOSXPreferencesFactory class. See lists.apple.com/archives/java-dev/2010/Jul/msg00056.html
-		the java.util.prefs.MacOSXPreferencesFactory class should be in rt.jar in JDK 1.7 or later.
-		See hg.openjdk.java.net/macosx-port/macosx-port/jdk/file/… for the source code.
-		JDK 8 all the items in java.util.prefs:
-		*/
-
-		// // First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-		String val = prefs.get("Initialized", "Unknown"); if (! val.equals("Yes")) {prefs.put("Initialized", "Yes"); } else {  }
-		// ============================================================================================================================
-		// ================================================== GUI gets Idle here ======================================================
-		// ============================================================================================================================
-		// First time selection Key Directory
-		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-		//		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-		keyFileChooserPropertyCheck();
-		// userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-
-//		keyButton.setDisable(false);
-		checkUpdateButton.setDisable(false);
-		supportButton.setDisable(false);
-		// ============================================================================================================================
+		userGuidanceLabel.setText(Version.getProductName()); userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / userGuidanceLabel.getText().length() * 1.3) + "px;");
+		FadeTransition fadeTransition2 = new FadeTransition(Duration.millis(1000), userGuidanceLabel);
+		fadeTransition2.setFromValue(0.05f);
+		fadeTransition2.setToValue(0.7f);
+		fadeTransition2.setCycleCount(1);
+		fadeTransition2.setAutoReverse(false);
+		fadeTransition2.setDelay(Duration.millis(0));
+		fadeTransition2.setInterpolator(Interpolator.EASE_BOTH);
 
 		
-		disableFileChoosers(false, true);
+		scaleTransition1.setDuration(Duration.millis(1000));
+		scaleTransition1.setDelay(Duration.millis(0));
 		
-		FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
-		sysmonFadeTransition.setFromValue(0.0f);
-		sysmonFadeTransition.setToValue(1.0f);
-		sysmonFadeTransition.setCycleCount(1);
-		sysmonFadeTransition.setAutoReverse(false);
-		sysmonFadeTransition.setDelay(Duration.seconds(0));
-		sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
-		sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
+		ParallelTransition parallelTransition2 = new ParallelTransition();
+		parallelTransition2.getChildren().addAll( scaleTransition1, fadeTransition2 );
+		parallelTransition2.setCycleCount(1);
+
+		parallelTransition2.setOnFinished((ActionEvent actionEvent2) ->
 		{
-		    new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
-			
-		    userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
-		    Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		    // // First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		    String val = prefs.get("Initialized", "Unknown"); if (! val.equals("Yes")) {prefs.put("Initialized", "Yes"); } else {  }
+		    // ============================================================================================================================
+		    // ================================================== GUI gets Idle here ======================================================
+		    // ============================================================================================================================
+		    // First time selection Key Directory
+		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+		    //		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+		    keyFileChooserPropertyCheck();
+		    // userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+
+		    // keyButton.setDisable(false);
+		    checkUpdateButton.setDisable(false);
+		    supportButton.setDisable(false);
+		    // ============================================================================================================================
+
+
+		    disableFileChoosers(false, true);
+
+		    FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
+		    sysmonFadeTransition.setFromValue(0.0f);
+		    sysmonFadeTransition.setToValue(1.0f);
+		    sysmonFadeTransition.setCycleCount(1);
+		    sysmonFadeTransition.setAutoReverse(false);
+		    sysmonFadeTransition.setDelay(Duration.seconds(0));
+		    sysmonFadeTransition.setInterpolator(Interpolator.EASE_OUT);
+		    sysmonFadeTransition.setOnFinished((ActionEvent enableKeyButtonEvent) ->
 		    {
-			displaySystemMonitor(userloadPercTest, "",userMemPercTest, "",throughputPercTest, "");
-			userloadPercTest -= 10.0d; userMemPercTest -= 10.0d; throughputPercTest -= (10.0d);
-		    }));
-		    systemMonitorTestTimeline.setCycleCount(10);
-		    systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) ->
-		    {
-			update_System_Monitor_Enabled = true;
+			new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
+
+			userloadPercTest = 100.0d; userMemPercTest = 100.0d; throughputPercTest = 100d; // IO_THROUGHPUT_CEILING;
+			Timeline systemMonitorTestTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+			{
+			    displaySystemMonitor(userloadPercTest, "",userMemPercTest, "",throughputPercTest, "");
+			    userloadPercTest -= 10.0d; userMemPercTest -= 10.0d; throughputPercTest -= (10.0d);
+			}));
+			systemMonitorTestTimeline.setCycleCount(10);
+			systemMonitorTestTimeline.setOnFinished((ActionEvent actionEvent1) ->
+			{
+			    update_System_Monitor_Enabled = true;
+			});
+			new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
+			systemMonitorTestTimeline.play();
+
 		    });
-		    new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
-		    systemMonitorTestTimeline.play();
-		    
+		    sysmonFadeTransition.play();
+
+    //		Last Update Checked
+		    long updateChecked = 0; // Epoch date
+    //		long updateCheckPeriod = 1000L*20L; // Just to test auto update function
+		    long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
+		    now = Calendar.getInstance().getTimeInMillis(); // Epoch date
+		    val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+		    boolean invalidUpdateCheckedValue = false;
+
+
+
+		    try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
+		    if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
 		});
-		sysmonFadeTransition.play();
-
-//		Last Update Checked
-		long updateChecked = 0; // Epoch date
-//		long updateCheckPeriod = 1000L*20L; // Just to test auto update function
-		long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
-		now = Calendar.getInstance().getTimeInMillis(); // Epoch date
-		val = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
-		boolean invalidUpdateCheckedValue = false;
-		
-
-
-		try { updateChecked = Long.valueOf(val); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
-		if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }
+		parallelTransition2.play();
 	    });
-	    parallelTransition.play();
+	    parallelTransition1.play();
 
 //	    Sound
 	    String val = prefs.get("Sound", "Unknown");

@@ -96,9 +96,6 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowSpan="2" />
                                                    </children>
-                                                   <effect>
-                                                      <Glow level="0.5" />
-                                                   </effect>
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
@@ -186,9 +183,6 @@
                                                       <RowConstraints maxHeight="21.0" minHeight="20.0" prefHeight="21.0" vgrow="SOMETIMES" />
                                                       <RowConstraints maxHeight="20.0" minHeight="19.0" prefHeight="19.0" vgrow="SOMETIMES" />
                                                    </rowConstraints>
-                                                   <effect>
-                                                      <Glow level="0.5" />
-                                                   </effect>
                                                 </GridPane>
                                              </children>
                                           </AnchorPane>
@@ -217,10 +211,7 @@
                               <TextArea fx:id="logTextArea" cache="true" cacheHint="SPEED" editable="false" focusTraversable="false" prefHeight="580.0" prefWidth="1298.0" styleClass="log" text="&#10;&#10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="DejaVu Sans Mono Bold" size="10.0" />
-                                 </font>
-                                 <effect>
-                                    <Glow level="0.5" />
-                                 </effect></TextArea>
+                                 </font></TextArea>
                            </children>
                         </AnchorPane>
                      </content>
@@ -653,9 +644,6 @@
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
-                                             <effect>
-                                                <Bloom threshold="0.1" />
-                                             </effect>
                                           </Label>
                                        </children>
                                     </AnchorPane>
@@ -670,9 +658,6 @@
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
-                                             <effect>
-                                                <Bloom threshold="0.1" />
-                                             </effect>
                                           </Label>
                                        </children>
                                     </AnchorPane>
@@ -687,9 +672,6 @@
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
-                                             <effect>
-                                                <Bloom threshold="0.1" />
-                                             </effect>
                                           </Label>
                                        </children>
                                     </AnchorPane>
@@ -984,9 +966,6 @@
                                     <AnchorPane GridPane.columnIndex="4" GridPane.rowIndex="2" />
                                     <AnchorPane GridPane.columnIndex="5" GridPane.rowIndex="2" />
                                  </children>
-                                 <effect>
-                                    <Glow level="0.5" />
-                                 </effect>
                               </GridPane>
                            </children>
                         </AnchorPane>
@@ -1104,9 +1083,6 @@
                                              <padding>
                                                 <Insets left="5.0" right="5.0" />
                                              </padding>
-                                             <effect>
-                                                <Glow level="0.5" />
-                                             </effect>
                                           </Label>
                                        </children>
                                     </AnchorPane>
@@ -1119,9 +1095,6 @@
                                              <padding>
                                                 <Insets left="5.0" right="5.0" />
                                              </padding>
-                                             <effect>
-                                                <Glow level="0.5" />
-                                             </effect>
                                           </Label>
                                        </children>
                                     </AnchorPane>
