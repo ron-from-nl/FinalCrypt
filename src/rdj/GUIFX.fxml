@@ -825,7 +825,7 @@
                                        <children>
                                           <StackPane maxHeight="135.0" minHeight="135.0" prefHeight="135.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" maxHeight="135.0" minHeight="135.0" onMouseClicked="#userGuidanceLabelOnMouseClicked" opacity="0.5" prefHeight="135.0" prefWidth="580.0" text="FinalCrypt" textAlignment="CENTER" StackPane.alignment="CENTER">
+                                                <Label fx:id="userGuidanceLabel" alignment="CENTER" maxHeight="135.0" minHeight="135.0" onMouseClicked="#userGuidanceLabelOnMouseClicked" opacity="0.5" prefHeight="135.0" prefWidth="580.0" textAlignment="CENTER" StackPane.alignment="CENTER">
                                                    <font>
                                                       <Font size="64.0" />
                                                    </font>
