@@ -453,7 +453,7 @@ public class CLUI implements UI
 		if ( ( dictFileFCPath.exist ) && (dictFileFCPath.isValidFile) && (dictFileFCPath.isReadable) && ( dictFileFCPath.size > 0) )
 		{
 		    bflines = 0;
-		    try { bflines = Files.lines(dictFileFCPath.path).count(); } catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path.toAbsolutePath().toString() + ").size();" + ex.getMessage(), false, true, true, true, false); }
+		    try { bflines = Files.lines(dictFileFCPath.path).count(); } catch (IOException ex) { log("Files.lines(" + dictFileFCPath.path.toAbsolutePath().toString() + ").count();" + ex.getMessage(), false, true, true, true, false); }
 
 		    bfcounter = 1;
 		    bruteForceDataStats = new Stats(); bruteForceDataStats.reset();
@@ -477,7 +477,7 @@ public class CLUI implements UI
          
 		    try
 		    {
-			pwloop: while ((pwdString = bufferedReader.readLine()) != null)
+			pwloop: while ((! pwdFound) && ((pwdString = bufferedReader.readLine()) != null))
 			{
 			    pwd = pwdString;
 			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
