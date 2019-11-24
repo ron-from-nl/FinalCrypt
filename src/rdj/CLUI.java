@@ -19,9 +19,7 @@
 
 package rdj;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
@@ -123,8 +121,8 @@ public class CLUI implements UI
     protected String testAnswer =		"";
     protected FCPath keyFCPath;
     protected FCPath bruteForceFCPathTargetPrint;
-    private int bfcounter;
-    private int bflines;
+    private long bfcounter;
+    private long bflines;
     private Stats bruteForceDataStats;    
     
     public CLUI(String[] args)
@@ -455,7 +453,7 @@ public class CLUI implements UI
 		if ( ( dictFileFCPath.exist ) && (dictFileFCPath.isValidFile) && (dictFileFCPath.isReadable) && ( dictFileFCPath.size > 0) )
 		{
 		    bflines = 0;
-		    try { bflines = Files.readAllLines(dictFileFCPath.path).size(); } catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path.toAbsolutePath().toString() + ").size();" + ex.getMessage(), false, true, true, true, false); }
+		    try { bflines = Files.lines(dictFileFCPath.path).count(); } catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path.toAbsolutePath().toString() + ").size();" + ex.getMessage(), false, true, true, true, false); }
 
 		    bfcounter = 1;
 		    bruteForceDataStats = new Stats(); bruteForceDataStats.reset();
@@ -469,10 +467,17 @@ public class CLUI implements UI
 		    
 		    log("\r\nStart Brute Force testing " + bflines + " passwords...\r\n\r\n", false, true, true, false, false); 
 		    log("Brute Force testing target: \"" + targetFCPathList.get(0).path.toAbsolutePath().toString() + "\" password count: " + 1 + " " + (bfcounter / (bflines / 100 )) + "%\r\n", false, true, false, false, false);
+		    
+		    
+		    String pwdString;
+		    boolean pwdFound = false;
+		    BufferedReader bufferedReader = null;
+		    try { bufferedReader = new BufferedReader(new FileReader(dictFileFCPath.path.toFile())); }
+		    catch (FileNotFoundException ex) { log("Error: new FileReader(" + dictFileFCPath.path.toAbsolutePath().toString() + ");" + ex.getMessage(), false, true, true, true, false); }
+         
 		    try
 		    {
-			boolean pwdFound = false;
-			pwloop: for (String pwdString:Files.readAllLines(dictFileFCPath.path))
+			pwloop: while ((pwdString = bufferedReader.readLine()) != null)
 			{
 			    pwd = pwdString;
 			    MessageDigest messageDigest = null; try { messageDigest = MessageDigest.getInstance(FinalCrypt.HASH_ALGORITHM_NAME); } catch (NoSuchAlgorithmException ex) { log("Error: NoSuchAlgorithmException: MessageDigest.getInstance(\" "+ FinalCrypt.HASH_ALGORITHM_NAME + "\")\r\n", true, true, true, true, false);}
@@ -493,18 +498,19 @@ public class CLUI implements UI
 				if (fcPathItem.isDecryptable) { pwdFound = true; break pwloop; }
 			    }
 			}
-			
-			if ( bruteForceFCPathTargetPrint != null ) { log("Brute Force testing target: \"" + bruteForceFCPathTargetPrint.path.toAbsolutePath().toString() + "\" password count: " + (bfcounter - 1) + " " + (bfcounter / (bflines / 100 )) + "%\r\n", false, true, false, false, false); } 
-			if (pwdFound)
-			{
-			    log("\r\nPassword found: \"" + pwd + "\"\r\n", false, true, false, false, false);
-			}
-			else
-			{
-			    log("\r\nPassword not found\r\n", false, true, false, false, false);
-			}
+		    } catch (IOException ex) { log("Error: bufferedReader.readLine(" + dictFileFCPath.path + ");" + ex.getMessage(), false, true, true, true, false); }
+
+		    
+		    
+		    if ( bruteForceFCPathTargetPrint != null ) { log("Brute Force testing target: \"" + bruteForceFCPathTargetPrint.path.toAbsolutePath().toString() + "\" password count: " + (bfcounter - 1) + " " + (bfcounter / (bflines / 100 )) + "%\r\n", false, true, false, false, false); } 
+		    if (pwdFound)
+		    {
+			log("\r\nPassword found: \"" + pwd + "\"\r\n", false, true, false, false, false);
 		    }
-		    catch (IOException ex) { log("Files.readAllLines(" + dictFileFCPath.path + ");" + ex.getMessage(), false, true, true, true, false); }
+		    else
+		    {
+			log("\r\nPassword not found\r\n", false, true, false, false, false);
+		    }
 		    bruteForceDataStats.setAllDataEndNanoTime(); bruteForceDataStats.clock();
 		    printTimer.cancel(); printTimer.purge();
 		    log("\r\nFinished Brute force testing " + (bfcounter - 1) + " / " + bflines + " passwords in " + bruteForceDataStats.getElapsedTime(bruteForceDataStats.getAllDataEndEpoch() - bruteForceDataStats.getAllDataStartEpoch()) + " " + bruteForceDataStats.getBruteForceThroughPut(bfcounter, bruteForceDataStats.getAllDataEndEpoch() - bruteForceDataStats.getAllDataStartEpoch()) + "\r\n\r\n", false, true, true, false, false);

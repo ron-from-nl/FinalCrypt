@@ -1,3 +1,13 @@
+Date: 2019-11-24 Version: 5.6.5
+
+Fixed Brute Force Dict-Size, Heap-Mem & Performance
+
+This update provides:
+
+Out of heapmem bugfix using a large dictionary file
+Buffered loading of limitless sized dictionary file
+Better Multitasking with sliced up dictionary files
+
 Date: 2019-11-16 Version: 5.6.4
 
 Update fixed the 1st 70 bytes Crib Drag Vulnerability

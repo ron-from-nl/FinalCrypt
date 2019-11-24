@@ -1,4 +1,4 @@
-[Version] =		{5.6.4}
+[Version] =		{5.6.5}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -19,12 +19,15 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 4}
+[Update Notes] =	{Update 5}
 [Update Notes] =	{}
-[Update Notes] =	{Update fixed the 1st 70 bytes Crib Drag Vulnerability}
-[Update Notes] =	{Disabled all 0 to 255 byte value inversion of keydata}
-[Update Notes] =	{Removed Glow & Bloom effects for better GUI response}
-[Update Notes] =	{Please decrypt en re-encrypt for 100% OTP compliance}
+[Update Notes] =	{Fixed Brute Force Dict-Size, Heap-Mem & Performance}
+[Update Notes] =	{}
+[Update Notes] =	{This update provides:}
+[Update Notes] =	{}
+[Update Notes] =	{Out of heapmem bugfix using a large dictionary file}
+[Update Notes] =	{Buffered loading of limitless sized dictionary file}
+[Update Notes] =	{Better Multitasking with sliced up dictionary files}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
