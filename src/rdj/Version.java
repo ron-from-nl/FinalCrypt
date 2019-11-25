@@ -74,8 +74,8 @@ public class Version
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
     private static final String[] WEBSITEURLSTRINGARRAY =		{
-									     "https://www.finalcrypt.org/"									// tested
-									    ,"http://www.finalcrypt.org/"									// tested
+									     "http://www.finalcrypt.org/"									// tested
+									    ,"https://www.finalcrypt.org/"									// tested
 									    ,"http://finalcrypt.000webhostapp.com/"								// tested
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
 									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"						// tested
