@@ -3201,14 +3201,16 @@ public class GUIFX extends Application implements UI, Initializable
 	Platform.runLater(() -> 
 	{
 	    if (updateTargetFC)
-	    {		    
-		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
-		    {
+	    {		   
+		tgtFileChooser.setEnabled(false);
+		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
+		{
 //			tgtFileChooser.rescanCurrentDirectory();
-			tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-			tgtFileChooser.updateUI();
-			tgtFileChooserComponentAlteration(tgtFileChooser, false);
-		    })); timeline.play();
+		    tgtFileChooser.setEnabled(true);
+		    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+		    tgtFileChooser.updateUI();
+		    tgtFileChooserComponentAlteration(tgtFileChooser, false);
+		})); timeline.play();
 //		}
 	    }
 
