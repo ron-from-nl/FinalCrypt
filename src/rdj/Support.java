@@ -84,7 +84,10 @@ public class Support extends Application implements Initializable
         
     private void closeWindow()
     {
-	Stage stage = (Stage) facebookImageView.getScene().getWindow(); stage.close();
+	Platform.runLater(() ->
+	{
+	    Stage stage = (Stage) facebookImageView.getScene().getWindow(); stage.close();
+	});
     }
 
     public static void main(String[] args)
@@ -102,6 +105,7 @@ public class Support extends Application implements Initializable
 	    try {  Desktop.getDesktop().browse(new URI("https://www.facebook.com/share.php?u=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
 	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    closeWindow();
 	});
 	shareThread.setName("shareThread");
 	shareThread.setDaemon(true);
@@ -117,6 +121,7 @@ public class Support extends Application implements Initializable
 	    try {  Desktop.getDesktop().browse(new URI("https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
 	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    closeWindow();
 	});
 	shareThread.setName("shareThread");
 	shareThread.setDaemon(true);
@@ -132,6 +137,7 @@ public class Support extends Application implements Initializable
 	    try {  Desktop.getDesktop().browse(new URI("https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
 	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    closeWindow();
 	});
 	shareThread.setName("shareThread");
 	shareThread.setDaemon(true);
@@ -147,6 +153,7 @@ public class Support extends Application implements Initializable
 	    try {  Desktop.getDesktop().browse(new URI("http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption")); prefs.put("Shared", "Yes"); }
 	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    closeWindow();
 	});
 	shareThread.setName("shareThread");
 	shareThread.setDaemon(true);
@@ -160,6 +167,7 @@ public class Support extends Application implements Initializable
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    Version.openWebSite(guifx);
+	    closeWindow();
 	});
 	shareThread.setName("shareThread");
 	shareThread.setDaemon(true);

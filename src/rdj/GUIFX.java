@@ -255,6 +255,9 @@ public class GUIFX extends Application implements UI, Initializable
     private final String ENCRYPTING_FILES =		"Encrypting Files";
     private final String DECRYPTING_FILES =		"Decrypting Files";
 
+    private final String FINISHED_ENCRYPTING =		"Finished Encrypting";
+    private final String FINISHED_DECRYPTING =		"Finished Decrypting";
+
     private final String USER_GUID_TEXT_FILL_BASE =	"#706050";// #5A2D0C #663B1B
     private final String USER_GUID_TEXT_FILL_HIGH =	"#BBBBBB";
 
@@ -1082,7 +1085,14 @@ public class GUIFX extends Application implements UI, Initializable
 		    // ============================================================================================================================
 
 
-		    disableFileChoosers(false, true);
+		    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
+		    {
+			disableFileChoosers(false, true, true);
+		    }
+		    else
+		    {
+			disableFileChoosers(false, true, true);
+		    }
 
 		    FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), sysMonCanvas);
 		    sysmonFadeTransition.setFromValue(0.0f);
@@ -1181,48 +1191,70 @@ public class GUIFX extends Application implements UI, Initializable
 //        alert.showAndWait();        
     }
     
-    private void disableFileChoosers(boolean param, boolean firsttime)
+    private void disableFileChoosers(boolean param, boolean firsttime, boolean animated)
     {
-	if (param) // disable filechoosers
+	if (! animated)
 	{
-	    keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
-	    
-	    Timeline disableTimeline = new Timeline
-	    (
-		    new KeyFrame(Duration.ZERO,
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.1),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.1)),
-		    new KeyFrame(Duration.seconds(1),
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.5),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.5))
-	    );
-	    disableTimeline.setAutoReverse(false);
-	    disableTimeline.setOnFinished((ActionEvent actionEvent) -> { });
-	    disableTimeline.play();
-	}
-	else // enable filechoosers
-	{
-	    Timeline enableTimeline = new Timeline
-	    (
-		    new KeyFrame(Duration.ZERO,
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.5),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.5)),
-		    new KeyFrame(Duration.seconds(1),
-		    new KeyValue(keyFileFoil.opacityProperty(), 0.1),
-		    new KeyValue(targetFileFoil.opacityProperty(), 0.1))
-	    );
-	    enableTimeline.setAutoReverse(false);
-	    enableTimeline.setOnFinished((ActionEvent actionEvent) ->
+	    if (param) // disable filechoosers
 	    {
 		keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
-		
+		keyFileFoil.setOpacity(0.5);
+		targetFileFoil.setOpacity(0.5);
+	    }
+	    else // enable filechoosers
+	    {
+		keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
+		keyFileFoil.setOpacity(0.1);
+		targetFileFoil.setOpacity(0.1);
 		if (firsttime)
 		{
 //			keyFileChooserPropertyCheck();
 		}
-	    });
-	    enableTimeline.play();
+	    }
 	}
+	else
+	{
+	    if (param) // disable filechoosers
+	    {
+		keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
+
+		Timeline disableTimeline = new Timeline
+		(
+			new KeyFrame(Duration.ZERO,
+			new KeyValue(keyFileFoil.opacityProperty(), 0.1),
+			new KeyValue(targetFileFoil.opacityProperty(), 0.1)),
+			new KeyFrame(Duration.seconds(1),
+			new KeyValue(keyFileFoil.opacityProperty(), 0.5),
+			new KeyValue(targetFileFoil.opacityProperty(), 0.5))
+		);
+		disableTimeline.setAutoReverse(false);
+		disableTimeline.setOnFinished((ActionEvent actionEvent) -> { });
+		disableTimeline.play();
+	    }
+	    else // enable filechoosers
+	    {
+		Timeline enableTimeline = new Timeline
+		(
+			new KeyFrame(Duration.ZERO,
+			new KeyValue(keyFileFoil.opacityProperty(), 0.5),
+			new KeyValue(targetFileFoil.opacityProperty(), 0.5)),
+			new KeyFrame(Duration.seconds(1),
+			new KeyValue(keyFileFoil.opacityProperty(), 0.1),
+			new KeyValue(targetFileFoil.opacityProperty(), 0.1))
+		);
+		enableTimeline.setAutoReverse(false);
+		enableTimeline.setOnFinished((ActionEvent actionEvent) ->
+		{
+		    keyFileSwingNode.setMouseTransparent(param); targetFileSwingNode.setMouseTransparent(param);
+
+		    if (firsttime)
+		    {
+    //			keyFileChooserPropertyCheck();
+		    }
+		});
+		enableTimeline.play();
+	    }
+	}	    
     }
     
     synchronized public void userGuidanceMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright, String audio, int media_Delay)
@@ -1908,7 +1940,7 @@ public class GUIFX extends Application implements UI, Initializable
 			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
 			keyImageView.setOpacity(0.8);
-			filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
+			if ((targetPathList != null) && (targetPathList.size() > 0)) { filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }
 
 			new Sound().play(this, Audio.SND_READY,Audio.AUDIO_CODEC);
 			userGuidanceMessage(SCANNING_FILES, 64, false, false, false, false, Voice.VOI_SCANNING_FILES, 0);
@@ -2943,7 +2975,15 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    processRunning = true;
 	    
-	    disableFileChoosers(true, false);
+	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
+	    {
+		disableFileChoosers(true, false, true);
+	    }
+	    else
+	    {
+		disableFileChoosers(true, false, true);
+	    }
+		
 	    
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
@@ -3049,94 +3089,108 @@ public class GUIFX extends Application implements UI, Initializable
         
     @Override public void processFinished(FCPathList<FCPath> openFCPathList, boolean open)
     {
-        Platform.runLater(() ->
+	Platform.runLater(() ->
 	{
-	    new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+	    fileProgressBar.setProgress(100.0); filesProgressBar.setProgress(100.0);
 
-	    megaBytesPerSecond = 0;
-	    updateSystemMonitor();
-
-	    // Clocks	
-//	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
-	    UPDATE_CLOCKS_TIMELINE.stop();
+	    if ( processRunningMode == ENCRYPT_MODE ) { userGuidanceMessage(FINISHED_ENCRYPTING, 64, false, false, false, false, Voice.VOI_FINISHED_ENCRYPTING, 0); }
+	    if ( processRunningMode == DECRYPT_MODE ) { userGuidanceMessage(FINISHED_DECRYPTING, 64, false, false, false, false, Voice.VOI_FINISHED_DECRYPTING, 0); }
 	    
-	    targetFCPathList = new FCPathList<FCPath>();
-	    
-	    updateDashboard(targetFCPathList);
-	    
-	    disableFileChoosers(false, false);
-	    
-	    encryptButton.setDisable(true);
-	    decryptButton.setDisable(true);
-	    if ( keyFCPath.isValidKey )
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(2000), ae ->
 	    {
-		pwdField.setDisable(false);
-		if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
-		pwdtxtField.setDisable(false);
-		keyImageView.setImage(KEY_FILE_IMAGE);
-		keyImageView.setOpacity(0.8);
-	    }
-	    pauseToggleButton.setDisable(true);
-	    stopButton.setDisable(true);
-	    
-//	    keyButton.setDisable(false);
-	    
-	    fileProgressBar.setProgress(0); fileProgressBar.setVisible(false);
-	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false);
-	    
-//	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
-//	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
-	    
-//	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
-//	    {
-		if ( keyFCPath.isValidKeyDir ) { updateFileChoosers(true, true); } else { updateFileChoosers(true, false); } // if keyfile selected then NO update keyFileChooser keeping key file selected; processFinished()
-//	    }
-	    
-	    processRunningMode = NONE;
-	    processRunning = false;
+		fileProgressBar.setVisible(false);filesProgressBar.setVisible(false);
+		
+		megaBytesPerSecond = 0;
+		updateSystemMonitor();
 
-	    targetFCPathList = new FCPathList<FCPath>();
-	    buildReady(targetFCPathList, false);
+		// Clocks	
+    //	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
+		UPDATE_CLOCKS_TIMELINE.stop();
 
-//	    if (clockUpdated)
-//	    {
-		remainingTimeLabel.setText("00:00:00");
-		totalTimeLabel.setText(elapsedTimeLabel.getText());
-//	    }
+		targetFCPathList = new FCPathList<FCPath>();
+		updateDashboard(targetFCPathList);
 
-//	    The Open selected file when finished section
-
-	    Thread openThread;
-	    openThread = new Thread(() ->
-	    {
-		try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
-		if (open)
+		encryptButton.setDisable(true);
+		decryptButton.setDisable(true);
+		if ( keyFCPath.isValidKey )
 		{
-		    for (Iterator fcPathIterator = openFCPathList.iterator(); fcPathIterator.hasNext();)
-		    {
-			FCPath openFCPath = (FCPath) fcPathIterator.next();
-			Path newPath = Paths.get(openFCPath.path.toAbsolutePath().toString().substring(0, openFCPath.path.toAbsolutePath().toString().lastIndexOf('.')));
-
-			new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-			try { Desktop.getDesktop().open(newPath.toFile()); }
-			catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-
-			targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-			Platform.runLater(new Runnable()
-			{
-			    @Override public void run()
-			    {
-				encryptButton.setDisable(true);
-				decryptButton.setDisable(true);
-//				keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
-			    }
-			});
-		    }
+		    pwdField.setDisable(false);
+		    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(PASSWORD_OPTIONAL); } else { passwordHeaderLabel.setText(PASSWORD_SET); }
+		    pwdtxtField.setDisable(false);
+		    keyImageView.setImage(KEY_FILE_IMAGE);
+		    keyImageView.setOpacity(0.8);
 		}
-	    });
-	    openThread.setName("openThread");
-	    openThread.setDaemon(true);
-	    openThread.start();
+		pauseToggleButton.setDisable(true);
+		stopButton.setDisable(true);
+
+    //	    keyButton.setDisable(false);
+
+
+    //	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
+    //	    encryptionModeAnchorPane.setMouseTransparent(!encryptionModeAnchorPane.isMouseTransparent());
+
+    //	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
+    //	    {
+		    if ( keyFCPath.isValidKeyDir ) { updateFileChoosers(true, true); } else { updateFileChoosers(true, false); } // if keyfile selected then NO update keyFileChooser keeping key file selected; processFinished()
+    //	    }
+
+		processRunningMode = NONE;
+		processRunning = false;
+
+		targetFCPathList = new FCPathList<FCPath>();
+		buildReady(targetFCPathList, false);
+
+    //	    if (clockUpdated)
+    //	    {
+		    remainingTimeLabel.setText("00:00:00");
+		    totalTimeLabel.setText(elapsedTimeLabel.getText());
+    //	    }
+
+    //	    The Open selected file when finished section
+
+		Thread openThread;
+		openThread = new Thread(() ->
+		{
+		    try { Thread.sleep(1000); } catch (InterruptedException ex) {  }
+		    if (open)
+		    {
+			for (Iterator fcPathIterator = openFCPathList.iterator(); fcPathIterator.hasNext();)
+			{
+			    FCPath openFCPath = (FCPath) fcPathIterator.next();
+			    Path newPath = Paths.get(openFCPath.path.toAbsolutePath().toString().substring(0, openFCPath.path.toAbsolutePath().toString().lastIndexOf('.')));
+
+			    new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+			    try { Desktop.getDesktop().open(newPath.toFile()); }
+			    catch (IOException ex) { log("Error: Desktop.getDesktop().open(" + newPath.toFile().getAbsolutePath().toString() + "); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+
+			    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
+			    Platform.runLater(new Runnable()
+			    {
+				@Override public void run()
+				{
+				    encryptButton.setDisable(true);
+				    decryptButton.setDisable(true);
+    //				keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
+				}
+			    });
+			}
+		    }
+		});
+		openThread.setName("openThread");
+		openThread.setDaemon(true);
+		openThread.start();
+
+		new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+
+		if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
+		{
+		    disableFileChoosers(false, false, true);
+		}
+		else
+		{
+		    disableFileChoosers(false, false, true);
+		}
+	    })); timeline.play();
 	});
     }    
     
@@ -3148,7 +3202,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    if (updateTargetFC)
 	    {		    
-		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
 		    {
 //			tgtFileChooser.rescanCurrentDirectory();
 			tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
@@ -3297,7 +3351,7 @@ public class GUIFX extends Application implements UI, Initializable
         String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
         if ( platform.indexOf("mac") != -1 ) // if it is a mac
 	{
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> 
+	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae -> 
 	    {
 		targetFileSwingNode.setContent(tgtFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
 		tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers

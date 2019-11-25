@@ -446,7 +446,8 @@ public class FinalCrypt extends Thread
 
 				ByteBuffer  randomBuffer =	    ByteBuffer.allocate(bufferSize); randomBuffer.clear();
 
-				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+//				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL + " \"" + dynamicKeyFCPath.path.toAbsolutePath() + "\" ", true, false, false, false, false);
+				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL, false, true, true, false, false);
 
 				write1loop: while ( (totalTranfered < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE )) && (! inputEnded ))

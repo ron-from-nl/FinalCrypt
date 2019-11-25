@@ -1,4 +1,4 @@
-[Version] =		{5.6.5}
+[Version] =		{5.6.6}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -19,15 +19,11 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 5}
+[Update Notes] =	{Update 6}
 [Update Notes] =	{}
-[Update Notes] =	{Fixed Brute Force Dict-Size, Heap-Mem & Performance}
-[Update Notes] =	{}
-[Update Notes] =	{This update provides:}
-[Update Notes] =	{}
-[Update Notes] =	{Out of heapmem bugfix using a large dictionary file}
-[Update Notes] =	{Buffered loading of limitless sized dictionary file}
-[Update Notes] =	{Better Multitasking with sliced up dictionary files}
+[Update Notes] =	{Improved Apple OSX stability FinalCrypt User Interface}
+[Update Notes] =	{Support Window now closes on Home / Share button click}
+[Update Notes] =	{No longer printing keypaths on statusbar creating keys}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

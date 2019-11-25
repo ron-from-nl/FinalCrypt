@@ -46,8 +46,15 @@ public class Sound extends Audio
 	    case MP3:		media = new Media(ui.getClass().getResource(audio + ".mp3").toExternalForm());		break;
 	    default:		media = new Media(ui.getClass().getResource(audio + ".wav").toExternalForm());		break;
 	}
-//	playJavaX(ui, media, audio_codec);  // Stops playing spontaniously on all OSes
-	playJavaFX(ui, media, audio_codec); // Plays fast, but crashes often on Linux (libld.so native player issue)
+
+	if  (
+		    ((media.getSource().contains("sounds")) && ((sound_Is_Enabled)))
+		||  ((media.getSource().contains("voice")) && ((voice_Is_Enabled)))
+	    )
+	{
+//	    playJavaX(ui, media, audio_codec);  // Stops playing spontaniously on all OSes
+	    playJavaFX(ui, media, audio_codec); // Plays fast, but crashes often on Linux (libld.so native player issue)
+	}
     }
     
     synchronized public void playJavaX(UI ui, Media media, int audio_codec) // javax.sound.sampled.AudioSystem

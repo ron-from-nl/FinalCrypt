@@ -65,6 +65,8 @@ public class Audio
     public static final String VOI_ENCRYPT_FILES =		    "/rdj/audio/voice/encrypt_files";
     public static final String VOI_ENCRYPTING_FILES =		    "/rdj/audio/voice/encrypting_files";
     public static final String VOI_ENCRYPT_OR_DECRYPT_FILES =	    "/rdj/audio/voice/encrypt_or_decrypt_files";
+    public static final String VOI_FINISHED_DECRYPTING =	    "/rdj/audio/voice/finished_decrypting";
+    public static final String VOI_FINISHED_ENCRYPTING =	    "/rdj/audio/voice/finished_encrypting";
     public static final String VOI_SCANNING_FILES =		    "/rdj/audio/voice/scanning_files";
     public static final String VOI_SELECT_FILES =		    "/rdj/audio/voice/select_files";
     public static final String VOI_SELECT_KEY =			    "/rdj/audio/voice/select_key";
