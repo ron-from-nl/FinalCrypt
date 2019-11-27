@@ -2,12 +2,12 @@
 echo "Select Key Directory" | pico2wave -w /tmp/rontmp.wav; play /tmp/rontmp.wav
 
 export IFS=",";
-export reverb=20; 		# %
+export reverb=20;	# %
 export hfdamping=96; 	# %
 export roomscale=97; 	# %
-export stereodepth=98; # %
+export stereodepth=98;	# %
 export predelay=99; 	# ms
-export wetgain=0; 		# 0dB
+export wetgain=0; 	# 0dB
 
 cat << EOF | while read file speech; do echo "File: ${file} - Speech: ${speech}"; echo "${speech}" | pico2wave -w "${file}.wav" -l en-US; sox "${file}.wav" "${file}.aiff" reverb "${reverb}" "${hfdamping}" "${roomscale}" "${stereodepth}" "${predelay}" "${wetgain}"; rm "${file}.wav"; play "${file}.aiff"; done
 clone_key_device,Clone Key Device
@@ -26,5 +26,7 @@ select_key_directory,Select Key Directory
 voice_disabled,Voice Disabled
 voice_enabled,Voice Enabled
 wrong key or password,Wrong Key or Password
+finished_encrypting,finished encrypting
+finished_decrypting,finished deecrypting
 EOF
 

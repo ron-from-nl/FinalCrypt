@@ -23,7 +23,6 @@ import java.io.*;
 import java.lang.management.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.*;
@@ -46,6 +45,7 @@ public class Version
     private static final String OS_NAME =				System.getProperty("os.name");
     private static final String OS_VERSION =				System.getProperty("os.version");
     private static final String OS_ARCH =				System.getProperty("os.arch");
+    private static final String FILE_ENCODING =				System.getProperty("file.encoding");
 
     private static final int PROCESSORS =				Runtime.getRuntime().availableProcessors();
     private static final long TOT_MEM =				        ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
@@ -160,6 +160,7 @@ public class Version
 	env +=    "OS Architecture:         " + OS_ARCH + "\r\n";
 	env +=    "OS Version:              " + OS_VERSION + "\r\n";
 	env +=    "OS Time:                 " + configuration.getTime() + "\r\n";
+	env +=    "File Encoding:           " + FILE_ENCODING + "\r\n";
 	env += "\r\n";
 	env +=    "Processors:              " + PROCESSORS + "\r\n";
 	env +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1,"Bytes") + "\r\n";
@@ -293,8 +294,9 @@ public class Version
 	String userAgent = "";
 	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " " + connType;
 	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
-	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION + "; ";
-	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION;// + "; ";
+//	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
+	userAgent += ")";
 	return userAgent;
     }
     

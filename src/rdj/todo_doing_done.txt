@@ -7,8 +7,7 @@ Backup Files.createLink(link, target);
 
 =================================== Doing ===================================
 
-Legenda
-fadein
+Blanc Window in Mojave
 
 =============================== Don't forget ================================
 
@@ -20,7 +19,6 @@ Update file:						changelog
 Update file:						manpage
  
 =================================== Done ====================================
-
 
 
 ============================= Source Committed ==============================

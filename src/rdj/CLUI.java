@@ -31,7 +31,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.logging.*;
 import java.util.stream.Collectors;
 import static rdj.GUIFX.getHexString;
 

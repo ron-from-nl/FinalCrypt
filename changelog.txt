@@ -1,3 +1,8 @@
+Date: 2019-11-27 Version: 5.6.7
+
+Fixed (non-latin) UTF8 Font rendering in File Managers
+Chinese chars now render properly on Ubuntu File Mngrs
+
 Date: 2019-11-25 Version: 5.6.6
 
 Improved Apple OSX stability FinalCrypt User Interface

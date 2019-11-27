@@ -66,7 +66,6 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -221,7 +220,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private final int FILE_CHOOSER_FONT_SIZE =		13;
     private final int DELETE_CHOOSER_FONT_SIZE =	11;
-    private final Font FILE_CHOOSER_FONT =		new Font("Liberation Sans",Font.PLAIN,FILE_CHOOSER_FONT_SIZE);
+    private final Font FILE_CHOOSER_FONT =		new Font("Dialog",Font.PLAIN,FILE_CHOOSER_FONT_SIZE);
     private final Font DELETE_CHOOSER_FONT =		new Font("Liberation Sans",Font.PLAIN,DELETE_CHOOSER_FONT_SIZE);
     
     private final int NONE =				0;
@@ -273,6 +272,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final String OS_NAME =			System.getProperty("os.name");
     private final String OS_ARCH =			System.getProperty("os.arch");
     private final String OS_VERSION =			System.getProperty("os.version");
+    private final String FILE_ENCODING =		System.getProperty("file.encoding");
+    
     private final String JAVA_VENDER =			System.getProperty("java.vendor");
     private final String JAVA_VERSION =			System.getProperty("java.version");
     private final String CLASS_VERSION =		System.getProperty("java.class.version");
@@ -565,7 +566,7 @@ public class GUIFX extends Application implements UI, Initializable
         tgtFileChooser.setFocusable(true);
         tgtFileChooser.setFont(FILE_CHOOSER_FONT);
         tgtFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-
+	
         tgtFileChooser.addPropertyChangeListener((java.beans.PropertyChangeEvent evt) -> { targetFileChooserPropertyChange(evt); });
         tgtFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { targetFileChooserActionPerformed(evt); });
         targetFileSwingNode.setContent(tgtFileChooser);
@@ -2614,7 +2615,7 @@ public class GUIFX extends Application implements UI, Initializable
         {
 	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
 //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
-            
+
             if (component instanceof JToggleButton) // Click "details view" ToggleButton
             {
                 if ( ! ((JToggleButton)component).isSelected() )
