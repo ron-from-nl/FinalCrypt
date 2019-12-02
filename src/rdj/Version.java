@@ -180,6 +180,7 @@ public class Version
 	env +=    "User Name:               " + USER_NAME + "\r\n";
 	env +=    "User Home:               " + USER_HOME + "\r\n";
 	env +=    "User Dir:                " + USER_DIR + "\r\n";
+	env +=    "User Agent:              " + getUserAgent("") + "\r\n";
 	env += "\r\n";
 	env +=    "Action Symbols           ";
 	env += FinalCrypt.UTF8_CREATE_SYMBOL + " = " +		FinalCrypt.UTF8_CREATE_DESC + " | ";
@@ -289,10 +290,10 @@ public class Version
 	return returnValue;
     }
     
-    private static String getUserAgent(UI ui, String connType)
+    private static String getUserAgent(String connType)
     {       
 	String userAgent = "";
-	userAgent += Version.getProductName() + "/" + Version.getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " " + connType;
+	userAgent += getProductName() + "/" + getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " " + connType;
 	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
 	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION;// + "; ";
 //	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
@@ -303,7 +304,7 @@ public class Version
     
     public static String httpGetRequest(UI ui, String urlString)
     {
-	String userAgent = getUserAgent(ui, "(HTTP)");
+	String userAgent = getUserAgent("(HTTP)");
 	
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); return null; }
@@ -337,7 +338,7 @@ public class Version
     
     public static String httpsGetRequest(UI ui, String urlString)
     {
-	String userAgent = getUserAgent(ui, "(HTTPS)");
+	String userAgent = getUserAgent("(HTTPS)");
 	
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	

@@ -1,4 +1,4 @@
-[Version] =		{5.6.7}
+[Version] =		{5.6.8}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website and download the latest}
@@ -19,10 +19,12 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 7}
+[Update Notes] =	{Update 8}
 [Update Notes] =	{}
-[Update Notes] =	{Fixed (non-latin) UTF8 Font rendering in File Managers}
-[Update Notes] =	{Chinese chars now render properly on Ubuntu File Mngrs}
+[Update Notes] =	{Major performance improvement on file encryption}
+[Update Notes] =	{Much faster user interface responses and display}
+[Update Notes] =	{Performance increase 700% encrypting small files}
+[Update Notes] =	{Non critical I/O cache enabled on logging system}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

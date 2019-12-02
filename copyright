@@ -1,9 +1,9 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: FinalCrypt
-Source: https://github.com/ron-from-nl/FinalCrypt/releases
+Source: http://www.finalcrypt.org/
 
 Files: *
-Copyright: 2017 Ron de Jong <ronuitzaandam@gmail.com>
+Copyright: 2017 Ron de Jong <ron@finalcrypt.org>
 License: Creative Commons License (CC BY-NC-ND 4.0)
  as published by https://creativecommons.org/licenses/by-nc-nd/4.0/;
  either version 4.0 of the License, or (at your option) any later version.

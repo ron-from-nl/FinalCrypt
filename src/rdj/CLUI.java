@@ -1031,8 +1031,8 @@ public class CLUI implements UI
 
     public void status(String message)		    {  }
     public void log(String message, boolean err)    { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
-    public void logfile(String message)		    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
-    public void errfile(String message)		    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
+    public void logfile(String message)		    { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", false, true, true, false, false); } }
+    public void errfile(String message)		    { try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", false, true, true, false, false); } }
     public void print(String message, boolean err)  { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
     
     public static void main(String[] args) { new CLUI(args); }

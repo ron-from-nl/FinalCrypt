@@ -1,3 +1,10 @@
+Date: 2019-12-02 Version: 5.6.8
+
+Major performance improvement on file encryption
+Much faster user interface responses and display
+Performance increase 700% encrypting small files
+Non critical I/O cache enabled on logging system  
+
 Date: 2019-11-27 Version: 5.6.7
 
 Fixed (non-latin) UTF8 Font rendering in File Managers

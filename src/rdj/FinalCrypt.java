@@ -163,7 +163,17 @@ public class FinalCrypt extends Thread
     private long realtimeBytesProcessed;
     private long totalBytesProcessed;
     
-    public static boolean sync = true;
+    public static boolean sync = false; // false = Best performance
+
+//  blend e 25.8MBps d 48.9MBps sync false
+//  shell e 7.1MBps  d 6.7MBps sync false
+//  googl e 19.1MBps d 28.8MBps sync false
+//  oracl e 22.8MBps d 34.6MBps sync false
+// 
+//  blend e 21.9MBps d 34.6MBps sync true
+//  shell e 1.6MBps d 2.0MBps sync true
+//  googl e 12.5MBps d 16.7MBps sync true
+//  oracl e 14.9MBps d 20.6MBps sync true
 
     public FinalCrypt(UI ui)
     {   

@@ -62,31 +62,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.swing.JFileChooser;
-import javax.swing.JToggleButton;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.lang.management.ManagementFactory;
-import java.nio.ByteBuffer;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.LinkOption;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.PosixFilePermission;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
@@ -120,6 +95,31 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.*;
 import javafx.util.Duration;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.swing.JFileChooser;
+import javax.swing.JToggleButton;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.lang.management.ManagementFactory;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.LinkOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermission;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
@@ -487,14 +487,16 @@ public class GUIFX extends Application implements UI, Initializable
 	        
 //        try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); }
 //        try { UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); } // dead lock on BSD
-        setUserAgentStylesheet(STYLESHEET_MODENA);
-//        setUserAgentStylesheet(STYLESHEET_CASPIAN);
+
+//        setUserAgentStylesheet(STYLESHEET_CASPIAN); // JavaFX2 Stylesheet
+        setUserAgentStylesheet(STYLESHEET_MODENA); // JavaFX8 Stylesheet
 
         this.stage.setScene(scene);
         this.stage.setTitle(Version.getProductName());
         this.stage.setMinWidth(1366);
         this.stage.setMinHeight(700);
         this.stage.setMaximized(true);
+	this.stage.initStyle(StageStyle.DECORATED);
         
 	this.stage.show();
 
@@ -509,7 +511,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if (val.equals("Yes"))		{  }
 	    else				{ prefs.put("Shared", "No"); openSupport(); }	    
 	});
-	
+
 	Platform.runLater(() ->
 	{
 	    version = new Version(ui);
@@ -1481,7 +1483,6 @@ public class GUIFX extends Application implements UI, Initializable
 	content += "This is a development version:    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
 	content += version.getCurrentReleaseString() + "\r\n";
 	content += "=====================================================\r\n\r\n";
-	content += "The latest online stable release: (" + Version.getProductName() + " v" +version.getLatestOnlineOverallVersionString() + ")\r\n";
 	content += "Would you like to download        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 	alert.setContentText(content);
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -2906,29 +2907,32 @@ public class GUIFX extends Application implements UI, Initializable
     
     synchronized private void openSupport()
     {
-        // Needs Threading to early split off from the UI Event Dispatch Thread
-        final GUIFX guifx = this;
-        final UI ui = this;
+	Platform.runLater(() ->
+	{
+	    // Needs Threading to early split off from the UI Event Dispatch Thread
+	    final GUIFX guifx = this;
+	    final UI ui = this;
 
-	Thread pleaseShareThread = new Thread(new Runnable()
-        {
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-		Platform.runLater(() ->
+	    Thread pleaseShareThread = new Thread(new Runnable()
+	    {
+		@Override
+		@SuppressWarnings({"static-access"})
+		public void run()
 		{
-		    new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
-		    supportStage = new Stage();
-		    support = new Support();
-		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: \r\n", true, true, true, true, false); }
-		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
-		});
-            }
-        });
-        pleaseShareThread.setName("pleaseShareThread");
-        pleaseShareThread.setDaemon(true);
-        pleaseShareThread.start();
+		    Platform.runLater(() ->
+		    {
+			new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
+			supportStage = new Stage();
+			support = new Support();
+			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: \r\n", true, true, true, true, false); }
+			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		    });
+		}
+	    });
+	    pleaseShareThread.setName("pleaseShareThread");
+	    pleaseShareThread.setDaemon(true);
+	    pleaseShareThread.start();
+	});
     }
     
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
@@ -3094,6 +3098,9 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    fileProgressBar.setProgress(100.0); filesProgressBar.setProgress(100.0);
 
+	    megaBytesPerSecond = 0;
+	    UPDATE_CLOCKS_TIMELINE.stop();
+
 	    if ( processRunningMode == ENCRYPT_MODE ) { userGuidanceMessage(FINISHED_ENCRYPTING, 64, false, false, false, false, Voice.VOI_FINISHED_ENCRYPTING, 0); }
 	    if ( processRunningMode == DECRYPT_MODE ) { userGuidanceMessage(FINISHED_DECRYPTING, 64, false, false, false, false, Voice.VOI_FINISHED_DECRYPTING, 0); }
 	    
@@ -3101,12 +3108,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		fileProgressBar.setVisible(false);filesProgressBar.setVisible(false);
 		
-		megaBytesPerSecond = 0;
 		updateSystemMonitor();
-
-		// Clocks	
-    //	    if ((processRunningMode == ENCRYPT_MODE)  || (processRunningMode == DECRYPT_MODE)) { UPDATE_CLOCKS_TIMELINE.stop(); }
-		UPDATE_CLOCKS_TIMELINE.stop();
 
 		targetFCPathList = new FCPathList<FCPath>();
 		updateDashboard(targetFCPathList);
@@ -3764,8 +3766,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     public void status(String message)		    { Platform.runLater(() -> { statusLabel.setText(message.replace("\r\n", "")); }); }
     public void log(String message)		    { Platform.runLater(() -> { lineCounter++;  logTextArea.appendText(message); if (lineCounter > 1000) { logTextArea.setText(message); lineCounter = 0; } }); }
-    public void logfile(String message)		    { Platform.runLater(() -> { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }); }
-    public void errfile(String message)		    { Platform.runLater(() -> { new Sound().play(this, Audio.SND_ERROR,Audio.AUDIO_CODEC); try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.SYNC); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }); }
+    public void logfile(String message)		    { Platform.runLater(() -> { try { Files.write(configuration.getLogFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); } catch (IOException ex) { log("Files.write(" + configuration.getLogFilePath() + ")..));", true, true, false, false, false); } }); }
+    public void errfile(String message)		    { Platform.runLater(() -> { new Sound().play(this, Audio.SND_ERROR,Audio.AUDIO_CODEC); try { Files.write(configuration.getErrFilePath(), message.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); } catch (IOException ex) { log("Files.write(" + configuration.getErrFilePath() + ")..));", true, true, false, false, false); } }); }
     public void print(String message,boolean err)   { if ( ! err ) { System.out.print(message); } else { System.err.print(message); } }
     
     public static void main(String[] args)  { launch(args); }
