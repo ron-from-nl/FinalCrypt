@@ -1,7 +1,7 @@
-[Version] =		{5.6.8}
+[Version] =		{5.6.9}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
-[Release Message] =	{Please visit the website and download the latest}
+[Release Message] =	{Please visit the website & download the latest}
 [] = {} ----------------------------------------------------------------
 [Alert Subject] =	{}
 [Alert Message] =	{}
@@ -19,12 +19,11 @@
 [Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 8}
+[Update Notes] =	{Update 9}
 [Update Notes] =	{}
-[Update Notes] =	{Major performance improvement on file encryption}
-[Update Notes] =	{Much faster user interface responses and display}
-[Update Notes] =	{Performance increase 700% encrypting small files}
-[Update Notes] =	{Non critical I/O cache enabled on logging system}
+[Update Notes] =	{Fixed bug that created oversized manual OTP keys}
+[Update Notes] =	{Please see releasenotes of changelog on update 8}
+[Update Notes] =	{Major performance increase of 700% on encryption}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

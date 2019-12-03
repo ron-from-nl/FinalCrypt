@@ -246,8 +246,8 @@ public class CreateOTPKey extends Application implements Initializable
 	filesizeNumber = Long.valueOf(filesizeTextField.getText());
 	Integer selectedIndexAsPower = unitChoiceBox.getSelectionModel().getSelectedIndex();
 	double interimFactor = Math.pow(1024, selectedIndexAsPower);
-//	factor = (new Double(interimFactor)).longValue();
-	factor = (Double.doubleToLongBits(interimFactor));
+	factor = (new Double(interimFactor)).longValue();
+//	factor = (Double.doubleToLongBits(interimFactor));
 	filesizeInBytes = filesizeNumber * factor;
 	if (( filesizeInBytes > 0 ) && ( filesizeInBytes <= Long.MAX_VALUE )) { createButton.setDisable(false); } else { createButton.setDisable(true); }
 	
