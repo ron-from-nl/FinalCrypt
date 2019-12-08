@@ -3675,9 +3675,12 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		Timeline timeline3 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
-		    tgtFileChooser.updateUI();
-		    tgtFileChooserComponentAlteration(tgtFileChooser, true);
-		    tgtFileChooserPropertyCheck(true);
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
+		    {
+			tgtFileChooser.updateUI();
+			tgtFileChooserComponentAlteration(tgtFileChooser, true);
+			tgtFileChooserPropertyCheck(true);
+		    }});
 		})); timeline3.play();
 	    }
 	    
@@ -3685,9 +3688,12 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		Timeline timeline4 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
-		    keyFileChooser.updateUI();
-		    keyFileChooserComponentAlteration(keyFileChooser, true);
-		    keyFileChooserPropertyCheck(true);
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
+		    {
+			keyFileChooser.updateUI();
+			keyFileChooserComponentAlteration(keyFileChooser, true);
+			keyFileChooserPropertyCheck(true);
+		    }});
 		})); timeline4.play();
 	    }
 	});
