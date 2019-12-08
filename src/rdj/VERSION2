@@ -21,8 +21,9 @@
 [Version Notes] =	{Improved file manager behavior & presentation}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
-[Version Notes] =	{If you want language improvements then edit}
-[Version Notes] =	{the translation*.properties files and send me}
+[Version Notes] =	{If you want to improve language then edit}
+[Version Notes] =	{the translation*.properties files in the}
+[Version Notes] =	{finalcrypt.jar archive and send them to me}
 [Version Notes] =	{}
 [Version Notes] =	{Please install needed Languages in settings}
 [Version Notes] =	{More languages? Email to: ron@finalcrypt.org}
