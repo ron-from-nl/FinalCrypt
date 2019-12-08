@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.prefs.*;
 import javafx.application.*;
 import javafx.fxml.FXML;
@@ -32,6 +32,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -45,19 +46,34 @@ public class Support extends Application implements Initializable
     private GUIFX guifx;
     
     public Support controller;
-    
+        
+    @FXML private Label headerLabel;
+    @FXML private Label line1Label;
+    @FXML private Label line2Label;
+    @FXML private Label statusLabel;
+
     @FXML private ImageView facebookImageView;
     @FXML private ImageView twitterImageView;
     @FXML private ImageView linkedInImageView;
     @FXML private ImageView pinterestImageView;
-//    private ImageView instagramImageView;
+    @FXML private ImageView finalcryptImageView;
+
+//  private ImageView instagramImageView;
     
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
-    @FXML
-    private ImageView finalcryptImageView;
+    private ResourceBundle bundle;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception
+    public void switchLanguage(Locale locale, Boolean firstTime)
+    {
+	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
+
+	headerLabel.setText(bundle.getString("Support.headerLabel.text"));	
+	line1Label.setText(bundle.getString("Support.line1Label.text"));	
+	line2Label.setText(bundle.getString("Support.line2Label.text"));	
+	statusLabel.setText(bundle.getString("Support.statusLabel.text"));	
+    }
+
+    @Override  public void start(Stage primaryStage) throws Exception
     {
         loader = new FXMLLoader(getClass().getResource("Support.fxml"));
 	root = loader.load();

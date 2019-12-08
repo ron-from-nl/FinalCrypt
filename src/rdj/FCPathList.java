@@ -57,17 +57,20 @@ public class FCPathList<E> extends ArrayList<E>
     public	    long validDevicesProtectedSize = 0;
     public	    long validPartitions =	    0;
     public	    long validPartitionsSize =	    0;
-    public	    long keyRead =		    0; // number    of Auto Keys selected
-    public	    long keyReadSize =		    0; // size	    of Auto Keys selected
     public	    long keyWrite =		    0; // number    of Auto Keys that needs growing
     public	    long keyWriteSize =		    0; // size	    of Auto Keys that needs growing
+    public	    long keyRead =		    0; // number    of Auto Keys selected
+    public	    long keyReadSize =		    0; // size	    of Auto Keys selected
+    public	    long keyMissing =		    0; // number    of Auto Keys missing
+    public	    long keyMissingSize =	    0; // size	    of Auto Keys missing
 
 // Decrypted Files
     
     public	    long decryptedFiles =	    0; public	    long decryptedFilesSize =		0;
     public	    long encryptableFiles =	    0; public	    long encryptableFilesSize =		0;
-    public	    long matchedAutoKeyFiles =	    0; public	    long matchedAutoKeyFilesSize =		0;
     public	    long writeAutoKeyFiles =	    0; public	    long writeAutoKeyFilesSize =	0;
+    public	    long matchedAutoKeyFiles =	    0; public	    long matchedAutoKeyFilesSize =	0;
+    public	    long unmatchedAutoKeyFiles =    0; public	    long unmatchedAutoKeyFilesSize =	0;
     public	    long newEncryptedFiles =	    0; public	    long newEncryptedFilesSize =	0;
     public	    long encryptRemainingFiles =    0; public	    long encryptRemainingFilesSize =	0;
     public	    long unEncryptableFiles =	    0; public	    long unEncryptableFilesSize =	0;
@@ -119,8 +122,9 @@ public class FCPathList<E> extends ArrayList<E>
 
 		if ( fcPath.isDecrypted )							{ decryptedFiles++;	    decryptedFilesSize += fcPath.size; }
 		if ( fcPath.isEncryptable )						        { encryptableFiles++;	    encryptableFilesSize += fcPath.size; }
-		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles++;	    matchedAutoKeyFilesSize += fcPath.matchedReadAutoKeySize; }
 		if ( fcPath.needsWriteAutoKey )						        { writeAutoKeyFiles++;	    writeAutoKeyFilesSize += fcPath.needsWriteAutoKeySize; }
+		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles++;    matchedAutoKeyFilesSize += fcPath.matchedReadAutoKeySize; }
+		if ( fcPath.unmatchedReadAutoKey )						{ unmatchedAutoKeyFiles++;  unmatchedAutoKeyFilesSize += fcPath.unmatchedReadAutoKeySize; }
 		if ( fcPath.isNewEncrypted )							{ newEncryptedFiles++;	    newEncryptedFilesSize += fcPath.size; }
 //		if ( fcPath.isEncryptable )						        { encryptRemainingFiles++;  encryptRemainingFilesSize += fcPath.size; } // Just here for Remaining stats
 		if ((fcPath.size > 0) && (fcPath.isDecrypted) && (fcPath.isUnEncryptable ))	{ unEncryptableFiles++;	    unEncryptableFilesSize += fcPath.size; }
@@ -169,8 +173,9 @@ public class FCPathList<E> extends ArrayList<E>
 
 		if ( fcPath.isDecrypted )							{ decryptedFiles--;	    decryptedFilesSize -= fcPath.size; }
 		if ( fcPath.isEncryptable )							{ encryptableFiles--;	    encryptableFilesSize -= fcPath.size; }
-		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles--;	    matchedAutoKeyFilesSize -= fcPath.matchedReadAutoKeySize; }
 		if ( fcPath.needsWriteAutoKey )						        { writeAutoKeyFiles--;	    writeAutoKeyFilesSize -= fcPath.needsWriteAutoKeySize; }
+		if ( fcPath.matchedReadAutoKey )						{ matchedAutoKeyFiles--;    matchedAutoKeyFilesSize -= fcPath.matchedReadAutoKeySize; }
+		if ( fcPath.unmatchedReadAutoKey )						{ unmatchedAutoKeyFiles--;  unmatchedAutoKeyFilesSize -= fcPath.unmatchedReadAutoKeySize; }
 		if ( fcPath.isNewEncrypted )							{ newEncryptedFiles--;	    newEncryptedFilesSize -= fcPath.size; }
 		if ( fcPath.isEncryptable )							{ encryptRemainingFiles--;  encryptRemainingFilesSize -= fcPath.size; } // Just here for Remaining stats
 		if ((fcPath.size > 0) && (fcPath.isDecrypted) && (fcPath.isUnEncryptable ))	{ unEncryptableFiles--;	    unEncryptableFilesSize -= fcPath.size; }
@@ -219,8 +224,9 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Valid Devices		: " +	validDevicesProtected + " (" + Validate.getHumanSize(validDevicesProtectedSize,1,"Bytes") + ")\r\n";
 	returnString += "Valid Partitions	: " +	validPartitions + " (" + Validate.getHumanSize(validPartitionsSize,1,"Bytes") + ")\r\n";
 	returnString += "\r\n";
-	returnString += "Key Match		: " +	matchedAutoKeyFiles + " (" + Validate.getHumanSize(matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "Key Write		: " +	writeAutoKeyFiles + " (" + Validate.getHumanSize(writeAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "Key Match		: " +	matchedAutoKeyFiles + " (" + Validate.getHumanSize(matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "Key Missing		: " +	unmatchedAutoKeyFiles + " (" + Validate.getHumanSize(unmatchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "\r\n";
 	returnString += "Decrypted Files 	: " +	decryptedFiles + " (" + Validate.getHumanSize(decryptedFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "Encryptable Files	: " +	encryptableFiles + " (" + Validate.getHumanSize(encryptableFilesSize,1,"Bytes") + ")\r\n";
@@ -259,7 +265,7 @@ public class FCPathList<E> extends ArrayList<E>
 	readableFiles =		    0;
 	writableFiles =		    0;
 	hiddenFiles =		    0;
-	matchingKey =	    0;
+	matchingKey =		    0;
 
 	validPaths =		    0;
 	validPathsSize =	    0;
@@ -271,16 +277,18 @@ public class FCPathList<E> extends ArrayList<E>
 	validDevicesProtectedSize = 0;
 	validPartitions =	    0;
 	validPartitionsSize =	    0;
-	keyRead =		    0;
-	keyReadSize =		    0;
 	keyWrite =		    0;
 	keyWriteSize =		    0;
+	keyRead =		    0;
+	keyReadSize =		    0;
+	keyMissing =		    0;
+	keyMissingSize =	    0;
 
     // Decrypted Files
 
 	decryptedFiles =	0; decryptedFilesSize =		0;
 	encryptableFiles =	0; encryptableFilesSize =	0;
-	writeAutoKeyFiles =	0; writeAutoKeyFilesSize =    0;
+	writeAutoKeyFiles =	0; writeAutoKeyFilesSize =	0;
 	newEncryptedFiles =	0; newEncryptedFilesSize =	0;
 	encryptRemainingFiles =	0; encryptRemainingFilesSize =	0;
 	unEncryptableFiles =    0; unEncryptableFilesSize =	0;

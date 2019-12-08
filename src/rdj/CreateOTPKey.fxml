@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="338.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.CreateOTPKey">
+<AnchorPane id="AnchorPane" prefHeight="338.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.CreateOTPKey">
    <children>
       <StackPane prefHeight="338.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -19,86 +19,86 @@
                <children>
                   <Pane prefHeight="338.0" prefWidth="600.0" style="-fx-background-color: #222222;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <ImageView fx:id="bgImageView" fitHeight="338.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="filenameLabel" layoutX="15.0" layoutY="169.0" prefHeight="48.0" prefWidth="95.0" text="Filename" textFill="WHITE">
+                        <ImageView fx:id="bgImageView" fitHeight="338.0" fitWidth="700.0" pickOnBounds="true" />
+                        <Label fx:id="filenameLabel" layoutX="15.0" layoutY="169.0" prefHeight="48.0" prefWidth="104.0" text="Filename" textFill="WHITE">
                            <font>
-                              <Font size="18.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="filenameTextField" layoutX="119.0" layoutY="174.0" prefHeight="37.0" prefWidth="467.0" promptText="Set Key Filename here">
+                        <TextField fx:id="filenameTextField" layoutX="124.0" layoutY="174.0" prefHeight="37.0" prefWidth="456.0" promptText="Set Key Filename here">
                            <font>
                               <Font size="18.0" />
                            </font></TextField>
-                        <Label fx:id="filesizeLabel" disable="true" layoutX="15.0" layoutY="220.0" prefHeight="37.0" prefWidth="95.0" text="Filesize" textFill="WHITE">
+                        <Label fx:id="filesizeLabel" disable="true" layoutX="15.0" layoutY="220.0" prefHeight="37.0" prefWidth="104.0" text="Filesize" textFill="WHITE">
                            <font>
-                              <Font size="18.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="filesizeTextField" alignment="CENTER_RIGHT" disable="true" layoutX="119.0" layoutY="221.0" prefHeight="37.0" prefWidth="291.0" text="256">
+                        <TextField fx:id="filesizeTextField" alignment="CENTER_RIGHT" disable="true" layoutX="125.0" layoutY="221.0" prefHeight="37.0" prefWidth="309.0" text="256">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </TextField>
-                        <ChoiceBox fx:id="unitChoiceBox" disable="true" layoutX="490.0" layoutY="221.0" prefHeight="37.0" prefWidth="95.0" />
-                        <Label fx:id="untiLabel" alignment="CENTER" disable="true" layoutX="441.0" layoutY="220.0" prefHeight="37.0" prefWidth="41.0" text="Unit" textAlignment="CENTER" textFill="WHITE">
+                        <ChoiceBox fx:id="unitChoiceBox" disable="true" layoutX="591.0" layoutY="221.0" prefHeight="37.0" prefWidth="95.0" />
+                        <Label fx:id="untiLabel" alignment="CENTER" disable="true" layoutX="460.0" layoutY="221.0" prefHeight="37.0" prefWidth="119.0" text="Unit" textAlignment="CENTER" textFill="WHITE">
                            <font>
-                              <Font size="18.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="increaseButton" disable="true" layoutX="415.0" layoutY="221.0" mnemonicParsing="false" onAction="#increaseButtonOnAction" onMousePressed="#increaseButtonOnMousePressed" onMouseReleased="#increaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="20.0" text="↑">
+                        <Button fx:id="increaseButton" disable="true" layoutX="434.0" layoutY="221.0" mnemonicParsing="false" onAction="#increaseButtonOnAction" onMousePressed="#increaseButtonOnMousePressed" onMouseReleased="#increaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="20.0" text="↑">
                            <font>
                               <Font name="System Bold" size="9.0" />
                            </font>
                         </Button>
-                        <Button fx:id="decreaseButton" disable="true" layoutX="415.0" layoutY="241.0" mnemonicParsing="false" onAction="#decreaseButtonOnAction" onMousePressed="#decreaseButtonOnMousePressed" onMouseReleased="#decreaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="20.0" text="↓">
+                        <Button fx:id="decreaseButton" disable="true" layoutX="434.0" layoutY="241.0" mnemonicParsing="false" onAction="#decreaseButtonOnAction" onMousePressed="#decreaseButtonOnMousePressed" onMouseReleased="#decreaseButtonOnMouseReleased" prefHeight="17.0" prefWidth="20.0" text="↓">
                            <font>
                               <Font name="System Bold" size="9.0" />
                            </font>
                         </Button>
-                        <Button fx:id="cancelButton" cancelButton="true" layoutX="15.0" layoutY="270.0" mnemonicParsing="false" onAction="#cancelButtonAction" prefHeight="37.0" prefWidth="95.0" text="Cancel">
+                        <Button fx:id="cancelButton" cancelButton="true" layoutX="15.0" layoutY="270.0" mnemonicParsing="false" onAction="#cancelButtonAction" prefHeight="37.0" prefWidth="104.0" text="Cancel">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="createButton" disable="true" layoutX="491.0" layoutY="270.0" mnemonicParsing="false" onAction="#createButtonAction" prefHeight="37.0" prefWidth="95.0" text="Create">
+                        <Button fx:id="createButton" disable="true" layoutX="591.0" layoutY="270.0" mnemonicParsing="false" onAction="#createButtonAction" prefHeight="37.0" prefWidth="95.0" text="Create">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label fx:id="otpRulesLabel" alignment="CENTER" layoutX="-4.0" layoutY="128.0" onMouseClicked="#otpRulesOnMouseClicked" prefHeight="18.0" prefWidth="600.0" style="-fx-cursor: hand;" text="Click this link to read about how to use Manual One-Time Pad Keys securely" textAlignment="CENTER" textFill="YELLOW" underline="true">
+                        <Label fx:id="otpRulesLabel" alignment="CENTER" layoutX="-4.0" layoutY="128.0" onMouseClicked="#otpRulesOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="Click here to read about how to use Manual One-Time Pad Keys securely" textAlignment="CENTER" textFill="YELLOW" underline="true">
                            <font>
                               <Font name="System Bold Italic" size="13.0" />
                            </font>
                         </Label>
-                        <Label alignment="CENTER" layoutX="-4.0" layoutY="110.0" prefHeight="18.0" prefWidth="600.0" text="Creating Manual OTP Keys is not necessary as FinalCrypt supports Auto Key" textAlignment="CENTER" textFill="RED">
+                        <Label fx:id="otpRulesLabel2" alignment="CENTER" layoutX="-4.0" layoutY="110.0" prefHeight="18.0" prefWidth="707.0" text="Creating Manual OTP Keys isn't needed as FinalCrypt supports Auto Key" textAlignment="CENTER" textFill="RED">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Label>
-                        <Label fx:id="complianceLabel" alignment="CENTER" layoutX="-4.0" layoutY="74.0" onMouseClicked="#complianceLabelOnMouseClicked" prefHeight="18.0" prefWidth="600.0" style="-fx-cursor: hand;" text="FinalCrypt One-time Pad keys comply to FIPS 140-2 and RFC 1750 requirements" textAlignment="CENTER" textFill="#aaaaaa" underline="true">
+                        <Label fx:id="complianceLabel" alignment="CENTER" layoutX="-4.0" layoutY="74.0" onMouseClicked="#complianceLabelOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="FinalCrypt One-time Pad keys comply to FIPS 140-2 and RFC 1750" textAlignment="CENTER" textFill="#aaaaaa" underline="true">
                            <font>
                               <Font name="System Italic" size="14.0" />
                            </font>
                         </Label>
-                        <ProgressBar fx:id="progressBar" disable="true" layoutX="14.0" layoutY="316.0" maxHeight="12.0" minHeight="5.0" prefHeight="12.0" prefWidth="572.0" progress="0.0" />
-                        <Label fx:id="statusLabel1" alignment="CENTER" layoutX="119.0" layoutY="271.0" prefHeight="12.0" prefWidth="364.0" textFill="WHITE">
+                        <ProgressBar fx:id="progressBar" disable="true" layoutX="14.0" layoutY="316.0" maxHeight="12.0" minHeight="5.0" prefHeight="12.0" prefWidth="673.0" progress="0.0" />
+                        <Label fx:id="statusLabel1" alignment="CENTER" layoutX="127.0" layoutY="271.0" prefHeight="12.0" prefWidth="327.0" textFill="WHITE">
                            <font>
                               <Font size="10.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel2" alignment="CENTER" layoutX="119.0" layoutY="289.0" prefHeight="18.0" prefWidth="364.0" textFill="WHITE">
+                        <Label fx:id="statusLabel2" alignment="CENTER" layoutX="127.0" layoutY="289.0" prefHeight="18.0" prefWidth="327.0" textFill="WHITE">
                            <font>
                               <Font size="11.0" />
                            </font>
                         </Label>
                      </children>
                   </Pane>
-                  <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.21" prefHeight="69.0" prefWidth="600.0" style="-fx-background-color: blue;" textAlignment="CENTER" textFill="WHITE">
+                  <Label alignment="CENTER" contentDisplay="CENTER" opacity="0.21" prefHeight="69.0" prefWidth="700.0" style="-fx-background-color: blue;" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="600.0" text="Create One-Time Pad Key file" textAlignment="CENTER" textFill="#e9f4ff">
+                  <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="700.0" text="Create One-Time Pad Key" textAlignment="CENTER" textFill="#e9f4ff" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
                         <Font size="36.0" />
                      </font>

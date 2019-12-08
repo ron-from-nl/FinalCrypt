@@ -40,11 +40,11 @@ public class Sound extends Audio
 	Media media;
 	switch (audio_codec)
 	{
-	    case WAV:		media = new Media(ui.getClass().getResource(audio + ".wav").toExternalForm());		break;
-	    case OGG:		media = new Media(ui.getClass().getResource(audio + ".ogg").toExternalForm());		break;
-	    case AIFF:		media = new Media(ui.getClass().getResource(audio + ".aiff").toExternalForm());		break;
-	    case MP3:		media = new Media(ui.getClass().getResource(audio + ".mp3").toExternalForm());		break;
-	    default:		media = new Media(ui.getClass().getResource(audio + ".wav").toExternalForm());		break;
+	    case WAV:		media = new Media(this.getClass().getResource(audio + ".wav").toExternalForm());		break;
+	    case OGG:		media = new Media(this.getClass().getResource(audio + ".ogg").toExternalForm());		break;
+	    case AIFF:		media = new Media(this.getClass().getResource(audio + ".aiff").toExternalForm());		break;
+	    case MP3:		media = new Media(this.getClass().getResource(audio + ".mp3").toExternalForm());		break;
+	    default:		media = new Media(this.getClass().getResource(audio + ".wav").toExternalForm());		break;
 	}
 
 	if  (

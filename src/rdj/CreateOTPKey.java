@@ -32,10 +32,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.EnumSet;
-import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -82,16 +79,17 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML private Button decreaseButton;
     @FXML private Button cancelButton;
     @FXML private Button createButton;
-    
     @FXML private Label filenameLabel;
     @FXML private Label filesizeLabel;
     @FXML private ProgressBar progressBar;
     @FXML private Label untiLabel;
     @FXML private Label statusLabel1;
     @FXML private Label statusLabel2;
-    public CreateOTPKey controller;
+    @FXML   private Label otpRulesLabel;
+    @FXML   private Label otpRulesLabel2;
     @FXML private Label complianceLabel;
-    
+
+    public CreateOTPKey controller;    
     private Long filesizeNumber;
     private Long factor;
     private Long filesizeInBytes;
@@ -103,10 +101,39 @@ public class CreateOTPKey extends Application implements Initializable
     private long lastThroughputClock;
     private long realtimeBytesProcessed;
     private double realtimeMiBPS;
-    @FXML   private Label otpRulesLabel;
+    private String windowTitle = "Create OTP Key";
+    private String currentDirectory = "Current Directory";
+    private String file = "File";
+    private String fileExists = "File already exists";
+    private String creatingOTPKeyFile = "Creating OTP Key File";
+    private String createdOTPKeyFile = "Created OTP Key File";
+    private ResourceBundle bundle;
+    @FXML   private Label headerLabel;
+    private Message ugMessage;
+
     
-    @Override
-    public void start(Stage primaryStage) throws Exception
+    public void switchLanguage(Locale locale, Boolean firstTime)
+    {
+	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
+
+	headerLabel.setText(bundle.getString("CreateOTPKey.headerLabel.text"));	
+	filenameLabel.setText(bundle.getString("CreateOTPKey.filenameLabel.text"));	
+	filenameTextField.setPromptText(bundle.getString("CreateOTPKey.filenameTextField.prompttext"));	
+	filesizeLabel.setText(bundle.getString("CreateOTPKey.filesizeLabel.text"));	
+	untiLabel.setText(bundle.getString("CreateOTPKey.untiLabel.text"));	
+	cancelButton.setText(bundle.getString("CreateOTPKey.cancelButton.text"));	
+	createButton.setText(bundle.getString("CreateOTPKey.createButton.text"));	
+	otpRulesLabel.setText(bundle.getString("CreateOTPKey.otpRulesLabel.text"));	
+	otpRulesLabel2.setText(bundle.getString("CreateOTPKey.otpRulesLabel2.text"));	
+	complianceLabel.setText(bundle.getString("CreateOTPKey.complianceLabel.text"));
+	currentDirectory=bundle.getString("CreateOTPKey.currentDirectory.text");
+	file=bundle.getString("CreateOTPKey.file.text");
+	fileExists=bundle.getString("CreateOTPKey.fileExists.text");
+	creatingOTPKeyFile=bundle.getString("CreateOTPKey.creatingOTPKeyFile.text");
+	createdOTPKeyFile=bundle.getString("CreateOTPKey.createdOTPKeyFile.text");
+    }
+
+    @Override public void start(Stage primaryStage) throws Exception
     {
         loader = new FXMLLoader(getClass().getResource("CreateOTPKey.fxml"));
 	root = loader.load();
@@ -114,7 +141,7 @@ public class CreateOTPKey extends Application implements Initializable
         scene = new Scene((Parent)loader.getRoot());        
         stage = primaryStage;
         stage.setScene(scene);
-        stage.setTitle("Create OTP Key");
+        stage.setTitle(windowTitle);
 	stage.setResizable(false);
         stage.show();
 	filesizeInBytes = 0L;
@@ -122,8 +149,9 @@ public class CreateOTPKey extends Application implements Initializable
     
     @Override
     public void initialize(URL url, ResourceBundle rb)
-    {
+    {	
 	bgImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/Gardenchurch.jpg")));
+	bgImageView.autosize();
 	unitChoiceBox.getItems().add("Bytes");
 	unitChoiceBox.getItems().add("KiB");
 	unitChoiceBox.getItems().add("MiB");
@@ -140,7 +168,11 @@ public class CreateOTPKey extends Application implements Initializable
 	{
 	    String regex = "[^a-zA-Z0-9\\\\-\\\\_\\\\.\\\\ ]";
 	    if ( filenameTextField.getText().matches(regex) ) { filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); }
-	    else { new Sound().play(guifx, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC); filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); } 
+	    else
+	    {
+		new Sound().play(guifx, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC);
+		filenameTextField.setText(filenameTextField.getText().replaceAll(regex, ""));
+	    } 
 
 	    if (( filenameTextField.getText().length() > 0 ))
 	    {
@@ -154,7 +186,7 @@ public class CreateOTPKey extends Application implements Initializable
 		    unitChoiceBox.setDisable(true);
 		    createButton.setDisable(true);
 		    keyPath = Paths.get(currentDirPath.toAbsolutePath().toString(), filenameTextField.getText());
-		    statusLabel1.setText("File already exists");
+		    statusLabel1.setText(fileExists);
 		    statusLabel2.setText(keyPath.toAbsolutePath().toString());
 //		    calculateOTPKeyFileSize();
 		}
@@ -182,7 +214,7 @@ public class CreateOTPKey extends Application implements Initializable
 		unitChoiceBox.setDisable(true);
 		createButton.setDisable(true);
 		keyPath = null;
-		statusLabel1.setText("Current directory");
+		statusLabel1.setText(currentDirectory);
 		statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
 	    }
 	});
@@ -209,10 +241,11 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	this.guifx = guifx;
 	currentDirPath = curDirPath; 
-	statusLabel1.setText("Current directory");
+	statusLabel1.setText(currentDirectory);
 	statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
 //	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, VOI_CREATE_KEY, 0);
-	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, Voice.VOI_CREATE_KEY, 0);
+	ugMessage = new Message(guifx.create_key, 64, false, false, false, true, Voice.VOI_CREATE_KEY, 0);
+	guifx.userGuidanceMessage(ugMessage);
     }
         
     @FXML   private void increaseButtonOnAction(ActionEvent event) { changeSize(1); }
@@ -255,7 +288,7 @@ public class CreateOTPKey extends Application implements Initializable
 	{
 	    keyPath = Paths.get(currentDirPath.toAbsolutePath().toString(), filenameTextField.getText());
 	    
-	    String status1String = "File";
+	    String status1String = file;
 	    String status2String = keyPath.getParent().toAbsolutePath().toString() + File.separator + keyPath.getFileName().toString();
 	    
 	    if (( filesizeInBytes > 0 ) && ( filesizeInBytes <= Long.MAX_VALUE )) { status1String += " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")"; }
@@ -266,7 +299,7 @@ public class CreateOTPKey extends Application implements Initializable
 	{
 	    if (currentDirPath != null)
 	    {
-		statusLabel1.setText("Current directory");
+		statusLabel1.setText(currentDirectory);
 		statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
 	    }
 	}
@@ -289,7 +322,7 @@ public class CreateOTPKey extends Application implements Initializable
 	keyPath = Paths.get(currentDirPath.toAbsolutePath().toString(), filenameTextField.getText());
 	
 //	Start creating OTP Key file
-	statusLabel1.setText("Creating OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
+	statusLabel1.setText(creatingOTPKeyFile + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
 	statusLabel2.setText(keyPath.toAbsolutePath().toString());
 
 	repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(250), ae -> blinkStatusLabel1() ));
@@ -381,8 +414,9 @@ public class CreateOTPKey extends Application implements Initializable
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); }
 	    Platform.runLater(new Runnable(){ @Override public void run()
 	    {
-		statusLabel1.setText("Created OTP Key File" + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
-		guifx.userGuidanceMessage(guifx.SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+		statusLabel1.setText(createdOTPKeyFile + " (" + Validate.getHumanSize(filesizeInBytes, 1,"Bytes") + ")");
+		ugMessage = new Message(guifx.select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+		guifx.userGuidanceMessage(ugMessage);
 	    }});
 	    
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));

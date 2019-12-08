@@ -1,4 +1,4 @@
-[Version] =		{5.6.9}
+[Version] =		{6.0.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -6,24 +6,23 @@
 [Alert Subject] =	{}
 [Alert Message] =	{}
 [] = {} ================================================================
-[Version Notes] =	{Version 5}
+[Version Notes] =	{Version 6}
 [Version Notes] =	{}
-[Version Notes] =	{New: Auto Key Mode on One-Time Pad Encryption}
+[Version Notes] =	{FinalCrypt goes International with 32 Languages}
+[Version Notes] =	{}
+[Version Notes] =	{Improved User Interface with a better overview}
+[Version Notes] =	{Improved file manager behavior & presentation}
+[Version Notes] =	{Improved UserGuidance, Display & Button Layout}
+[Version Notes] =	{}
+[Version Notes] =	{Issues? Please install Languages in settings}
+[Version Notes] =	{}
+[Version Notes] =	{More languages? Email to: ron@finalcrypt.org}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 6}
-[Upgrade Notes] =	{}
-[Upgrade Notes] =	{Added Brute Force Password Dictionary Scan function}
-[Upgrade Notes] =	{This allows users to try to recover a lost password}
-[Upgrade Notes] =	{Performance testing at max 9950 passwords per second}
-[Upgrade Notes] =	{Brute Force only works on the Command Line Interface}
+[Upgrade Notes] =	{Upgrade 0}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 9}
-[Update Notes] =	{}
-[Update Notes] =	{Fixed bug that created oversized manual OTP keys}
-[Update Notes] =	{Please see releasenotes of changelog on update 8}
-[Update Notes] =	{Major performance increase of 700% on encryption}
+[Update Notes] =	{Update 0}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

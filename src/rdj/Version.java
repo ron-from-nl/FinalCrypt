@@ -62,6 +62,9 @@ public class Version
     private static final String JAVA_VM_NAME =				System.getProperty("java.vm.name");
     private static final String JAVA_RUNTIME_VERSION =			System.getProperty("java.runtime.version");
     
+    private static final String USER_COUNTRY =				System.getProperty("user.country");
+    private static final String USER_LANGUAGE =				System.getProperty("user.language");
+
     private static final String USER_NAME =				System.getProperty("user.name");
     private static final String USER_HOME =				System.getProperty("user.home");
     private static final String USER_DIR =				System.getProperty("user.dir");
@@ -177,6 +180,8 @@ public class Version
 	env +=    "Java_Runtime_Version:    " + JAVA_RUNTIME_VERSION + "\r\n";
 	env +=    "Class Version:           " + CLASS_VERSION + "\r\n";
 	env += "\r\n";
+	env +=    "User Country:            " + USER_COUNTRY + "\r\n";
+	env +=    "User Language:           " + USER_LANGUAGE + "\r\n";
 	env +=    "User Name:               " + USER_NAME + "\r\n";
 	env +=    "User Home:               " + USER_HOME + "\r\n";
 	env +=    "User Dir:                " + USER_DIR + "\r\n";
