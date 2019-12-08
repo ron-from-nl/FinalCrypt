@@ -1,4 +1,4 @@
-Date: 2019-12-14 Version: 6.0.0
+Date: 2019-12-08 Version: 6.0.0
 
 FinalCrypt goes International with 32 Languages
 
