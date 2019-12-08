@@ -596,43 +596,6 @@ public class GUIFX extends Application implements UI, Initializable
     private void switchLanguage(Locale locale, Boolean firstTime)
     {
 	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
-	languageList = FXCollections.observableArrayList
-							("Arabic",
-							 "Bulgarian",
-							 "Chinese",
-							 "Croatian",
-							 "Czech",
-							 "Dutch",
-							 "English",
-							 "Esperanto",
-							 "Farsi",
-							 "French",
-							 "German",
-							 "Greek",
-							 "Hindi",
-							 "Hungarian",
-							 "Icelandic",
-							 "Indonesian",
-							 "Italian",
-							 "Kazakh",
-							 "Latvian",							 
-							 "Malaysian",
-							 "Maltees",
-							 "Norwegian",
-							 "Polish",
-							 "Portugese",
-							 "Romanian",
-							 "Russian",
-							 "Serbian",
-							 "Spanish",
-							 "Swedish",
-							 "Thai",
-							 "Turkish",
-							 "Ukrainian"
-	);
-	
-	selectLanguage.getItems().addAll(languageList);
-//	selectLanguage.getSelectionModel().selectFirst();
 	
 	languageLabel.setText(locale.getDisplayLanguage());
 	userGuidanceLabelToolTip.setText(bundle.getString("GUIFX.userGuidanceLabelToolTip.text"));
@@ -989,6 +952,44 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void welcome()
     {
+	languageList = FXCollections.observableArrayList
+							("Arabic",
+							 "Bulgarian",
+							 "Chinese",
+							 "Croatian",
+							 "Czech",
+							 "Dutch",
+							 "English",
+							 "Esperanto",
+							 "Farsi",
+							 "French",
+							 "German",
+							 "Greek",
+							 "Hindi",
+							 "Hungarian",
+							 "Icelandic",
+							 "Indonesian",
+							 "Italian",
+							 "Kazakh",
+							 "Latvian",							 
+							 "Malaysian",
+							 "Maltees",
+							 "Norwegian",
+							 "Polish",
+							 "Portugese",
+							 "Romanian",
+							 "Russian",
+							 "Serbian",
+							 "Spanish",
+							 "Swedish",
+							 "Thai",
+							 "Turkish",
+							 "Ukrainian"
+	);
+	
+	selectLanguage.getItems().setAll(languageList);
+//	selectLanguage.getSelectionModel().selectFirst();
+
 	prevsval1 = prefs.get("Locale_Language", "Unknown");
 	prevsval2 = prefs.get("Locale_Country", "Unknown");
 	
@@ -4203,7 +4204,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() -> 
 	{
-	    if	((event.getX() >= 225) && (event.getX() <= 235) && (event.getY() >= 110) && (event.getY() <= 125)) // S
+	    if	((event.getX() > ((userGuidanceLabel.getWidth() / 2) - 75)) && (event.getX() < ((userGuidanceLabel.getWidth() / 2) - 45)) && (event.getY() >= 110) && (event.getY() <= 125)) // S
 	    {
 		selectLanguage.setVisible(false);
 		if (Voice.sound_Is_Enabled) // turn sound off
@@ -4219,7 +4220,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    new Sound().play(this, Audio.SND_SOUND_ENABLED,Audio.AUDIO_CODEC);
 		}
 	    }
-	    else if ((event.getX() >= 345) && (event.getX() <= 355) && (event.getY() >= 110) && (event.getY() <= 125)) // V
+	    else if ((event.getX() > ((userGuidanceLabel.getWidth() / 2) + 45)) && (event.getX() < ((userGuidanceLabel.getWidth() / 2) + 75)) && (event.getY() >= 110) && (event.getY() <= 125)) // V
 	    {
 		selectLanguage.setVisible(false);
 		if (Voice.voice_Is_Enabled) // turn voice off
@@ -4235,7 +4236,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    Voice.play(this, Audio.VOI_VOICE_ENABLED,Audio.AUDIO_CODEC);
 		}
 	    }
-	    else if ((event.getX() >= 250) && (event.getX() <= 350) && (event.getY() >= 15) && (event.getY() <= 27)) // Language
+	    else if ((event.getX() > ((userGuidanceLabel.getWidth() / 2) - 75)) && (event.getX() < ((userGuidanceLabel.getWidth() / 2) + 75)) && (event.getY() >= 15) && (event.getY() <= 27)) // Language
 	    {
 		selectLanguage.setVisible(true);
 		new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);

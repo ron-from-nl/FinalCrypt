@@ -838,6 +838,13 @@
                                                          </font>
                                                       </Tooltip>
                                                    </tooltip>
+                                                   <contextMenu>
+                                                      <ContextMenu>
+                                                        <items>
+                                                          <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                                                        </items>
+                                                      </ContextMenu>
+                                                   </contextMenu>
                                                 </Label>
                                                 <ListView fx:id="selectLanguage" maxWidth="150.0" onMouseClicked="#selectLanguageOnMouseClicked" prefHeight="115.0" prefWidth="150.0" visible="false" />
                                              </children>
