@@ -1,3 +1,10 @@
+Date: 2019-12-08 Version: 6.0.1
+
+Fixed startup intro and welcome display order
+Fixed bug crashing on enabled audio at startup
+Fixed large Chinese user-guidance startup text
+Fixed Support Window glyphs in Farsi Language
+
 Date: 2019-12-08 Version: 6.0.0
 
 International new version with 32 Languages
