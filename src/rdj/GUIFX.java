@@ -2942,102 +2942,110 @@ public class GUIFX extends Application implements UI, Initializable
         
     public boolean tgtFileChooserComponentAlteration(Container container, boolean firsttime)
     {
-	Component[] components = container.getComponents();
-        for (Component component : components)
-        {
-	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-//	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
+	if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+	{
+	    Component[] components = container.getComponents();
+	    for (Component component : components)
+	    {
+		if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
+    //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
 
-            if (component instanceof JToggleButton) // Click "details view" ToggleButton
-            {
-		SwingUtilities.invokeLater(new Runnable() { public void run()
+		if (component instanceof JToggleButton) // Click "details view" ToggleButton
 		{
-		    if ( ! ((JToggleButton)component).isSelected() )
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
-			if ( firsttime )
+			if ( ! ((JToggleButton)component).isSelected() )
 			{
-			    TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+			    if ( firsttime )
 			    {
-				tgtFileChooser.setVisible(false);
-				((JToggleButton)component).doClick();
-				tgtFileChooser.setVisible(true);
-			    }};
-			    Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 1000L); // Needs a delay for proper column width
+				TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+				{
+				    tgtFileChooser.setVisible(false);
+				    ((JToggleButton)component).doClick();
+				    tgtFileChooser.setVisible(true);
+				}};
+				Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 1000L); // Needs a delay for proper column width
+			    }
+			    else { ((JToggleButton)component).doClick(); }
 			}
-			else { ((JToggleButton)component).doClick(); }
-		    }
-		}});
-            }
-            if (component instanceof Container) { if( tgtFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
-        }
-        return false;
+		    }});
+		}
+		if (component instanceof Container) { if( tgtFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
+	    }
+	    return false;
+	}
+	return false;
     }
 
     public boolean keyFileChooserComponentAlteration(Container container, boolean firsttime)
     {
-        Component[] components = container.getComponents();
-        for (Component component : components)
-        {
-//	    test("Component: " + component.getClass().getTypeName().toString() + "\r\n");
-	    if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-//	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
-            
-            if (component instanceof JToggleButton) // Click "details view" ToggleButton
-            {
-//		test("test: " + component.getClass().toGenericString() + "\r\n");
-		SwingUtilities.invokeLater(new Runnable() { public void run()
-		{
-		    if ( ! ((JToggleButton)component).isSelected() )
-		    {
-			if ( firsttime )
-			{
-			    TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
-			    {
-				keyFileChooser.setVisible(false);
-				((JToggleButton)component).doClick();
-				keyFileChooser.setVisible(true);
-			    }};
-			    Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
-			}
-			else { ((JToggleButton)component).doClick(); }
-		    }
-		}});
-            }
-            if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
-            if (firsttime)
+	if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+	{
+	    Component[] components = container.getComponents();
+	    for (Component component : components)
 	    {
-		if (component instanceof JComboBox)
+    //	    test("Component: " + component.getClass().getTypeName().toString() + "\r\n");
+		if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
+    //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
+
+		if (component instanceof JToggleButton) // Click "details view" ToggleButton
 		{
-		    keyPathFile = new File(".");
-		    keyPathSelector = (JComboBox) component;
-//		    for (int x=0; x<keyPathSelector.getItemCount(); x++)
-//		    {
-////			test("item: " + b.getItemAt(x) + "\r\n");
-//			String item = keyPathSelector.getItemAt(x).toString();
-//			test("item: " + item + "\r\n");
-//			if ( item.toLowerCase().contains("deze"))
-//			{
-//			    test("YES: " + item + "\r\n");
-////			    keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(x));
-//			    keyPathSelectorPrefered = x;
-////			    keyPathFile = new File(keyPathSelector.getItemAt(x).toString());
-//			    keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
-//			    keyPathFile = keyFileChooser.getCurrentDirectory();
-////			    keyFileChooser.rescanCurrentDirectory();
-//			    break;
-////			    x=keyPathSelector.getItemCount(); break;
-////			    TimerTask keyFileChooserSetPrefDirTask = new TimerTask() { @Override public void run()
-////			    {
-////				keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
-////				keyFileChooser.rescanCurrentDirectory();
-////			    }};
-////			    Timer keyFileChooserSetPrefDirTaskTimer = new java.util.Timer(); keyFileChooserSetPrefDirTaskTimer.schedule(keyFileChooserSetPrefDirTask, 4000L); // Needs a delay for proper column width
-//			}
-//		    }
+    //		test("test: " + component.getClass().toGenericString() + "\r\n");
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
+		    {
+			if ( ! ((JToggleButton)component).isSelected() )
+			{
+			    if ( firsttime )
+			    {
+				TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+				{
+				    keyFileChooser.setVisible(false);
+				    ((JToggleButton)component).doClick();
+				    keyFileChooser.setVisible(true);
+				}};
+				Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
+			    }
+			    else { ((JToggleButton)component).doClick(); }
+			}
+		    }});
+		}
+		if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
+		if (firsttime)
+		{
+		    if (component instanceof JComboBox)
+		    {
+			keyPathFile = new File(".");
+			keyPathSelector = (JComboBox) component;
+    //		    for (int x=0; x<keyPathSelector.getItemCount(); x++)
+    //		    {
+    ////			test("item: " + b.getItemAt(x) + "\r\n");
+    //			String item = keyPathSelector.getItemAt(x).toString();
+    //			test("item: " + item + "\r\n");
+    //			if ( item.toLowerCase().contains("deze"))
+    //			{
+    //			    test("YES: " + item + "\r\n");
+    ////			    keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(x));
+    //			    keyPathSelectorPrefered = x;
+    ////			    keyPathFile = new File(keyPathSelector.getItemAt(x).toString());
+    //			    keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
+    //			    keyPathFile = keyFileChooser.getCurrentDirectory();
+    ////			    keyFileChooser.rescanCurrentDirectory();
+    //			    break;
+    ////			    x=keyPathSelector.getItemCount(); break;
+    ////			    TimerTask keyFileChooserSetPrefDirTask = new TimerTask() { @Override public void run()
+    ////			    {
+    ////				keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
+    ////				keyFileChooser.rescanCurrentDirectory();
+    ////			    }};
+    ////			    Timer keyFileChooserSetPrefDirTaskTimer = new java.util.Timer(); keyFileChooserSetPrefDirTaskTimer.schedule(keyFileChooserSetPrefDirTask, 4000L); // Needs a delay for proper column width
+    //			}
+    //		    }
+		    }
 		}
 	    }
-        }
-        return false;
+	    return false;
+	}
+	return false;
     }
 
     @FXML
@@ -3588,44 +3596,76 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    if (redrawTargetFC)
 	    {		   
-		tgtFileChooser.setEnabled(false);
-		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
+		Timeline timeline1 = new Timeline(new KeyFrame( Duration.millis(500), ae ->
 		{
-//			tgtFileChooser.rescanCurrentDirectory();
-//		    tgtFileChooser.setLocale(selectedLocale);
-		    tgtFileChooser.setEnabled(true);
-		    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-		    tgtFileChooser.updateUI();
-		    tgtFileChooserComponentAlteration(tgtFileChooser, true);
-		})); timeline.play();
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
+		    {
+			tgtFileChooser.setEnabled(false);
+
+			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+			{
+			    tgtFileChooserComponentAlteration(tgtFileChooser, true);
+			}
+			else
+			{
+//			    tgtFileChooser.rescanCurrentDirectory(); // was off
+			    tgtFileChooser.setLocale(selectedLocale);
+			    tgtFileChooser.setEnabled(true);
+			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+			    tgtFileChooser.updateUI();
+			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1000), ae -> 
+			    {
+				targetFileSwingNode.setContent(tgtFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+				tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+			    }
+			    )); timeline.play();
+			}
+		    }});
+		})); timeline1.play();
 //		}
 	    }
 
 	    if ((redrawKeyFC) && (keyFCPath.type == FCPath.DIRECTORY))
 	    {
-//		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
-//		{
-//		    keyFileChooser.setLocale(selectedLocale);
-		    keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter());
-		    keyFileChooser.updateUI();
-		    keyFileChooserComponentAlteration(keyFileChooser, true);
-//		}	    
+		Timeline timeline2 = new Timeline(new KeyFrame( Duration.millis(500), ae ->
+		{
+		    SwingUtilities.invokeLater(new Runnable() { public void run()
+		    {
+			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+			{
+			    keyFileChooserComponentAlteration(keyFileChooser, true);
+			}
+			else
+			{
+//			    tgtFileChooser.rescanCurrentDirectory(); // was off
+			    keyFileChooser.setLocale(selectedLocale);
+			    keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter());
+			    keyFileChooser.updateUI();
+			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1500), ae -> 
+			    {
+				keyFileSwingNode.setContent(keyFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+				keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // Reldraw FileChoosers
+			    }
+			    )); timeline.play();
+			}
+		    }});
+		})); timeline2.play();
 	    }
 	    
 	    if (checkTargetFC)
 	    {
-		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		Timeline timeline3 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
 		    tgtFileChooserPropertyCheck(true);
-		})); timeline.play();
+		})); timeline3.play();
 	    }
 	    
 	    if (checkKeyFC)
 	    {
-		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		Timeline timeline4 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
 		    keyFileChooserPropertyCheck();
-		})); timeline.play();
+		})); timeline4.play();
 	    }
 	});
     }
