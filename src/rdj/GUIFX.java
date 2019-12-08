@@ -4324,7 +4324,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    switchLanguage(selectedLocale, true, true, false);
 
 //	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
-	    switchLanguage(selectedLocale,      selectedLanguageCode,		   false,			true,		   false,		    false);
+	    switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			false);
 
 	    selectLanguage.setVisible(false);
 	});
