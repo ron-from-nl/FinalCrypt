@@ -118,11 +118,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.logging.*;
 import java.util.prefs.*;
 import java.util.stream.Collectors;
 import javafx.collections.*;
-import javafx.scene.input.*;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
@@ -590,11 +588,13 @@ public class GUIFX extends Application implements UI, Initializable
     private ObservableList<String> languageList;
 
     private Message ugMessage;
+    private String selectedLanguageCode = "en";
     
     
     
-    private void switchLanguage(Locale locale, Boolean firstTime)
+    private void switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
     {
+	this.selectedLanguageCode = selectedLanguageCode;
 	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
 	
 	languageLabel.setText(locale.getDisplayLanguage());
@@ -734,18 +734,24 @@ public class GUIFX extends Application implements UI, Initializable
 	targetInfoHeader=bundle.getString("GUIFX.targetInfoHeader.text");
 	targetInfoContent=bundle.getString("GUIFX.targetInfoContent.text");
 
-	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);	
-	if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Again due to Mac OSX
+	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
+	
+	if (writeLanguage)
 	{
-	    if (! firstTime)
-	    {
-		prefs.put("Locale_Language", locale.getLanguage());
-		prefs.put("Locale_Country", locale.getCountry());
-		flushPrefs(prefs);
-		keyFileChooserPropertyCheck();
-	    }
+	    prefs.put("Locale_Language", locale.getLanguage());
+	    prefs.put("Locale_Country", locale.getCountry());
+	    flushPrefs(prefs);
 	}
-
+	
+	if (redrawFileChoosers)
+	{
+	    updateFileChoosers(true, firsttime, false, true, firsttime, false);
+	}
+	
+	if (checkFileChoosers)
+	{
+	    updateFileChoosers(false, firsttime, false, false, firsttime, true);
+	}	
     }
 
     private void flushPrefs(Preferences prefsParam)
@@ -997,8 +1003,10 @@ public class GUIFX extends Application implements UI, Initializable
 	else				 { selectedLocale = new Locale(prevsval1,""); }
 	if (prevsval2.equals("Unknown")) { selectedLocale = Locale.getDefault(); prefs.put("Locale_Country", selectedLocale.getCountry()); flushPrefs(prefs); }
 	else				 { selectedLocale = new Locale(prevsval1,prevsval2); }
-
-	switchLanguage(selectedLocale, false);
+	
+	selectedLanguageCode = selectedLocale.getLanguage();
+//	switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
+	switchLanguage(selectedLocale,      selectedLanguageCode,		   false,			true,		   true,		    false);
 
 	// First time selection Key Directory
 	Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
@@ -1157,7 +1165,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    textLabel Introduction Animation ==========================================================
 
-	    updateFileChoosers(true,true);
+	    updateFileChoosers(true, false, false, true, false, false);
 
 	    ScaleTransition scaleTransition1 = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
 	    scaleTransition1.setFromX(0.98f);scaleTransition1.setToX(1.0f);
@@ -1232,7 +1240,7 @@ public class GUIFX extends Application implements UI, Initializable
 			disableFileChoosers(false, true, true);
 		    }
 
-//		    updateFileChoosers(true,true);
+		    updateFileChoosers(false, false, false, false, false, true);
 
 		    FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), userGuidanceFadePane); // sysMonCanvas 
 		    sysmonFadeTransition.setFromValue(1.0f);
@@ -1582,7 +1590,8 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0); bottomrightLabel.setVisible(bottomrightLabelEnabled);
 	    }
 	    userGuidanceLabel.setOpacity(0);
-	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / ugMessage.message.length() * 1.5) + "px;");
+	    double sizeFactor = 1.5; if (selectedLanguageCode.equalsIgnoreCase("cn")) { sizeFactor = 0.5; } else { sizeFactor = 1.5; }
+	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / ugMessage.message.length() * sizeFactor) + "px;");
 	    userGuidanceLabel.setText(ugMessage.message);
 	    fadevar = 0.0;
 	    Timeline labelTimeline1 = new Timeline(new KeyFrame( Duration.millis(cycleduration), ae -> // Begin fade in
@@ -1858,7 +1867,7 @@ public class GUIFX extends Application implements UI, Initializable
 			log("\r\nDeleting selecttion started\r\n\r\n", true, true, true, false, false);
 			finalCrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
-			updateFileChoosers(true, true); // targetFileDeleteButtonActionPerformed()
+			updateFileChoosers(true, false, true, true, false, true); // targetFileDeleteButtonActionPerformed()
 		    }
 		}
 	    } else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
@@ -1901,7 +1910,7 @@ public class GUIFX extends Application implements UI, Initializable
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
 			//					Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath,    boolean disabledMAC,	boolean report)
 			Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,         false,         path, finalCrypt.disabledMAC,         true);
-			updateFileChoosers(true, true); // keyFileDeleteButtonActionPerformed()
+			updateFileChoosers(true, false, true, true, false, true); // keyFileDeleteButtonActionPerformed()
 		    }
 		}
 	    } else
@@ -2947,7 +2956,12 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if ( firsttime )
 			{
-			    TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run() { tgtFileChooser.setVisible(false); ((JToggleButton)component).doClick(); tgtFileChooser.setVisible(true); }};
+			    TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+			    {
+				tgtFileChooser.setVisible(false);
+				((JToggleButton)component).doClick();
+				tgtFileChooser.setVisible(true);
+			    }};
 			    Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 1000L); // Needs a delay for proper column width
 			}
 			else { ((JToggleButton)component).doClick(); }
@@ -2979,7 +2993,9 @@ public class GUIFX extends Application implements UI, Initializable
 			{
 			    TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
 			    {
-				keyFileChooser.setVisible(false); ((JToggleButton)component).doClick(); keyFileChooser.setVisible(true);
+				keyFileChooser.setVisible(false);
+				((JToggleButton)component).doClick();
+				keyFileChooser.setVisible(true);
 			    }};
 			    Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
 			}
@@ -3493,7 +3509,14 @@ public class GUIFX extends Application implements UI, Initializable
 
     //	    if (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1) // Due to Mac OSX // to 2
     //	    {
-		    if ( keyFCPath.isValidKeyDir ) { updateFileChoosers(true, true); } else { updateFileChoosers(true, false); } // if keyfile selected then NO update keyFileChooser keeping key file selected; processFinished()
+		    if ( keyFCPath.isValidKeyDir )
+		    {
+			updateFileChoosers(true, false, true, true, false, true);
+		    }
+		    else
+		    {
+			updateFileChoosers(true, false, true, false, false, false);
+		    } // if keyfile selected then NO update keyFileChooser keeping key file selected; processFinished()
     //	    }
 
 		processRunningMode = NONE;
@@ -3559,11 +3582,11 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  ================================================= END UPDATE PROGRESS ===========================================================
     
-    public void updateFileChoosers(boolean updateTargetFC, boolean updateKeyFC)
+    public void updateFileChoosers(boolean redrawTargetFC, boolean firstTime1, boolean checkTargetFC, boolean redrawKeyFC, boolean firstTime2, boolean checkKeyFC)
     {
 	Platform.runLater(() -> 
 	{
-	    if (updateTargetFC)
+	    if (redrawTargetFC)
 	    {		   
 		tgtFileChooser.setEnabled(false);
 		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
@@ -3573,28 +3596,37 @@ public class GUIFX extends Application implements UI, Initializable
 		    tgtFileChooser.setEnabled(true);
 		    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
 		    tgtFileChooser.updateUI();
-		    tgtFileChooserComponentAlteration(tgtFileChooser, false);
+		    tgtFileChooserComponentAlteration(tgtFileChooser, true);
 		})); timeline.play();
 //		}
 	    }
 
-	    if ((updateKeyFC) && (keyFCPath.type == FCPath.DIRECTORY))
+	    if ((redrawKeyFC) && (keyFCPath.type == FCPath.DIRECTORY))
 	    {
 //		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 //		{
 //		    keyFileChooser.setLocale(selectedLocale);
 		    keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter());
 		    keyFileChooser.updateUI();
-		    keyFileChooserComponentAlteration(keyFileChooser, false);
+		    keyFileChooserComponentAlteration(keyFileChooser, true);
 //		}	    
 	    }
 	    
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+	    if (checkTargetFC)
 	    {
-		tgtFileChooserPropertyCheck(true);
-		keyFileChooserPropertyCheck();
-	    }));
-	    timeline.play();
+		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		{
+		    tgtFileChooserPropertyCheck(true);
+		})); timeline.play();
+	    }
+	    
+	    if (checkKeyFC)
+	    {
+		Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		{
+		    keyFileChooserPropertyCheck();
+		})); timeline.play();
+	    }
 	});
     }
     
@@ -4256,40 +4288,45 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() -> 
 	{
-	    if	    ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Arabic") )	    { selectedLocale = new Locale("ar",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bulgarian") )  { selectedLocale = new Locale("bg",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Chinese") )    { selectedLocale = new Locale("cn",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Croatian") )   { selectedLocale = new Locale("hr",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Czech") )	    { selectedLocale = new Locale("cz",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Dutch") )	    { selectedLocale = new Locale("nl",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("English") )    { selectedLocale = new Locale("en",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Esperanto") )  { selectedLocale = new Locale("eo",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Farsi") )	    { selectedLocale = new Locale("fa",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("French") )	    { selectedLocale = new Locale("fr",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("German") )	    { selectedLocale = new Locale("de",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Greek") )	    { selectedLocale = new Locale("el",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hindi") )	    { selectedLocale = new Locale("hi",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hungarian") )  { selectedLocale = new Locale("hu",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Icelandic") )  { selectedLocale = new Locale("is",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Indonesian") ) { selectedLocale = new Locale("id",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Italian") )    { selectedLocale = new Locale("it",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Kazakh") )	    { selectedLocale = new Locale("kk",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Latvian") )    { selectedLocale = new Locale("lv",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Malaysian") )  { selectedLocale = new Locale("ms",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Maltees") )    { selectedLocale = new Locale("mt",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Norwegian") )  { selectedLocale = new Locale("no",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Polish") )	    { selectedLocale = new Locale("pl",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Portugese") )  { selectedLocale = new Locale("pt",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )   { selectedLocale = new Locale("rm",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )    { selectedLocale = new Locale("ru",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )    { selectedLocale = new Locale("sr",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )    { selectedLocale = new Locale("es",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )    { selectedLocale = new Locale("sv",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Thai") )	    { selectedLocale = new Locale("th",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Turkish") )    { selectedLocale = new Locale("tr",Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Ukrainian") )  { selectedLocale = new Locale("uk",Locale.getDefault().getCountry()); }
-	    else											    { selectedLocale = new Locale("en",Locale.getDefault().getCountry()); }
-	    switchLanguage(selectedLocale, false); selectLanguage.setVisible(false);
+	    if	    ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Arabic") )	    { selectedLanguageCode = "ar"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bulgarian") )  { selectedLanguageCode = "bg"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Chinese") )    { selectedLanguageCode = "cn"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Croatian") )   { selectedLanguageCode = "hr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Czech") )	    { selectedLanguageCode = "cz"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Dutch") )	    { selectedLanguageCode = "nl"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("English") )    { selectedLanguageCode = "en"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Esperanto") )  { selectedLanguageCode = "eo"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Farsi") )	    { selectedLanguageCode = "fa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("French") )	    { selectedLanguageCode = "fr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("German") )	    { selectedLanguageCode = "de"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Greek") )	    { selectedLanguageCode = "el"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hindi") )	    { selectedLanguageCode = "hi"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hungarian") )  { selectedLanguageCode = "hu"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Icelandic") )  { selectedLanguageCode = "is"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Indonesian") ) { selectedLanguageCode = "id"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Italian") )    { selectedLanguageCode = "it"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Kazakh") )	    { selectedLanguageCode = "kk"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Latvian") )    { selectedLanguageCode = "lv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Malaysian") )  { selectedLanguageCode = "ms"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Maltees") )    { selectedLanguageCode = "mt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Norwegian") )  { selectedLanguageCode = "no"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Polish") )	    { selectedLanguageCode = "pl"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Portugese") )  { selectedLanguageCode = "pt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )   { selectedLanguageCode = "rm"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )    { selectedLanguageCode = "ru"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )    { selectedLanguageCode = "sr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )    { selectedLanguageCode = "es"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )    { selectedLanguageCode = "sv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Thai") )	    { selectedLanguageCode = "th"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Turkish") )    { selectedLanguageCode = "tr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Ukrainian") )  { selectedLanguageCode = "uk"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else											    { selectedLanguageCode = "en"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+//	    switchLanguage(selectedLocale, true, true, false);
+
+//	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
+	    switchLanguage(selectedLocale,      selectedLanguageCode,		   false,			true,		   false,		    false);
+
+	    selectLanguage.setVisible(false);
 	});
     }
     

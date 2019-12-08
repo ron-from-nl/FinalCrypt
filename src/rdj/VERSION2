@@ -1,4 +1,4 @@
-[Version] =		{6.0.0}
+[Version] =		{6.0.1}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -32,7 +32,12 @@
 [Upgrade Notes] =	{Upgrade 0}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
+[Update Notes] =	{}
+[Update Notes] =	{Fixed startup intro and welcome display order}
+[Update Notes] =	{Fixed bug crashing on enabled audio at startup}
+[Update Notes] =	{Fixed large Chinese user-guidance startup text}
+[Update Notes] =	{Fixed Support Window glyphs in Farsi Language}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

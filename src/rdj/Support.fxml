@@ -38,9 +38,9 @@
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="205.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 22; -fx-font-style: italic;" text="Thank you for sharing - Together we are strong" textAlignment="CENTER" textFill="#727272">
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="205.0" maxHeight="25.0" maxWidth="690.0" minHeight="25.0" minWidth="670.0" prefHeight="25.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 22;" text="Thank you for sharing - Together we are strong" textAlignment="CENTER" textFill="#727272">
                            <font>
-                              <Font name="System Italic" size="18.0" />
+                              <Font size="18.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER" layoutY="145.0" maxHeight="60.0" maxWidth="690.0" minHeight="60.0" minWidth="670.0" prefHeight="60.0" prefWidth="690.0">

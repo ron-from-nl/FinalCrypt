@@ -459,7 +459,7 @@ public class CreateOTPKey extends Application implements Initializable
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    new Sound().play(guifx, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
-	    guifx.updateFileChoosers(true, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
+	    guifx.updateFileChoosers(true, false, true, true, false, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
 	    Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();		
 	}});
     }
