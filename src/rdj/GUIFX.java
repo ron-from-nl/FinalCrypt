@@ -1165,6 +1165,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    textLabel Introduction Animation ==========================================================
 
+//	    keyFileChooserComponentAlteration(keyFileChooser, true);
+//	    tgtFileChooserComponentAlteration(tgtFileChooser, true);
 	    updateFileChoosers(true, false, false, true, false, false);
 
 	    ScaleTransition scaleTransition1 = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
@@ -1240,7 +1242,8 @@ public class GUIFX extends Application implements UI, Initializable
 			disableFileChoosers(false, true, true);
 		    }
 
-		    updateFileChoosers(false, false, false, false, false, true);
+//		    keyFileChooser.updateUI();
+		    updateFileChoosers(false, false, true, false, false, true);
 
 		    FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), userGuidanceFadePane); // sysMonCanvas 
 		    sysmonFadeTransition.setFromValue(1.0f);
@@ -2088,11 +2091,7 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
 	{
-//	    remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-//	    elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-//	    totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
 	    new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-//	    play(SND_BUTTON, AUDIO_CODEC);
 	    tgtFileChooserPropertyCheck(true);
 	}
 	else if (evt.getPropertyName().equals("directoryChanged"))
@@ -2118,50 +2117,39 @@ public class GUIFX extends Application implements UI, Initializable
 //	test("Prop: " + evt.getPropertyName() + "\r\n");
 	if ((!processRunning ) && (evt.getPropertyName().equals("SelectedFilesChangedProperty")))
 	{
-//	    remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-//	    elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-//	    totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
 	    new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-//	    play(SND_BUTTON, AUDIO_CODEC);	    
-	    keyFileChooserPropertyCheck();
+	    keyFileChooserPropertyCheck(false);
 	}
 	else if (evt.getPropertyName().equals("directoryChanged"))
 	{
+//	    test("Path: " + keyFileChooser.getCurrentDirectory().getAbsolutePath() + "\r\n");
 	    if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 	    {
 		keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter()); keyFileChooser.updateUI(); keyFileChooserComponentAlteration(keyFileChooser, false);
 	    }	    
 	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 	    {
-		keyFileChooserPropertyCheck();
-//		    test("Path: " + keyFileChooser.getCurrentDirectory().getAbsolutePath() + "\r\n");
+		keyFileChooserPropertyCheck(true);
 	    })); timeline.play();
 	}
     }
     
-    synchronized private void tgtFileChooserPropertyCheck(boolean status)
+    synchronized private void tgtFileChooserPropertyCheck(boolean controlled)
     {
 	Platform.runLater(() -> 
 	{
 	    if ((!processRunning ))
 	    {
 		MySimpleFCFileVisitor.running = false;		    
-//		Platform.runLater(() -> 
-//		{
-		    encryptButton.setDisable(true);
-		    decryptButton.setDisable(true);
-//		    keyButton.setDisable(true);
-		    pauseToggleButton.setDisable(true);
-		    stopButton.setDisable(true);
-		    enableClocks(false, false); 
+		encryptButton.setDisable(true);
+		decryptButton.setDisable(true);
+//		keyButton.setDisable(true);
+		pauseToggleButton.setDisable(true);
+		stopButton.setDisable(true);
+		enableClocks(false, false); 
 
-		    fileProgressBar.setProgress(0);
-		    filesProgressBar.setProgress(0);
-
-    //		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-    //		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-    //		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
-//		});
+		fileProgressBar.setProgress(0);
+		filesProgressBar.setProgress(0);
 
 		ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
 //		tgtFileDeleteButton.setEnabled(false);
@@ -2273,7 +2261,7 @@ public class GUIFX extends Application implements UI, Initializable
 	});
     }
     
-    synchronized private void keyFileChooserPropertyCheck() // getFCPath, checkModeReady
+    synchronized private void keyFileChooserPropertyCheck(boolean controlled) // getFCPath, checkModeReady
     {
         Platform.runLater(() ->
 	{
@@ -2960,9 +2948,14 @@ public class GUIFX extends Application implements UI, Initializable
 			    {
 				TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
 				{
+//				    tgtFileChooser.setEnabled(false);
+
 				    tgtFileChooser.setVisible(false);
 				    ((JToggleButton)component).doClick();
 				    tgtFileChooser.setVisible(true);
+
+//				    tgtFileChooser.updateUI(); // messes detailsview up
+//				    tgtFileChooser.setEnabled(true);
 				}};
 				Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 1000L); // Needs a delay for proper column width
 			    }
@@ -2999,9 +2992,14 @@ public class GUIFX extends Application implements UI, Initializable
 			    {
 				TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
 				{
+//				    keyFileChooser.setEnabled(false);
+				    
 				    keyFileChooser.setVisible(false);
 				    ((JToggleButton)component).doClick();
 				    keyFileChooser.setVisible(true);
+				    
+//				    keyFileChooser.updateUI(); // messes detailsview up
+//				    keyFileChooser.setEnabled(true);
 				}};
 				Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
 			    }
@@ -3590,33 +3588,42 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  ================================================= END UPDATE PROGRESS ===========================================================
     
-    public void updateFileChoosers(boolean redrawTargetFC, boolean firstTime1, boolean checkTargetFC, boolean redrawKeyFC, boolean firstTime2, boolean checkKeyFC)
+    public void updateFileChoosers(boolean redrawTargetFC, boolean firsttime, boolean checkTargetFC, boolean redrawKeyFC, boolean firstTime2, boolean checkKeyFC)
     {
 	Platform.runLater(() -> 
 	{
 	    if (redrawTargetFC)
 	    {		   
-		Timeline timeline1 = new Timeline(new KeyFrame( Duration.millis(500), ae ->
+		Timeline timeline1 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
-			tgtFileChooser.setEnabled(false);
-
 			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 			{
+//			    tgtFileChooser.setEnabled(false);
+//			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+//			    tgtFileChooser.setLocale(selectedLocale);
+//			    if (! firsttime) { tgtFileChooser.updateUI(); }  // updates locale & triggers propchange
+//			    tgtFileChooser.repaint();
+//			    tgtFileChooser.revalidate();
+//			    tgtFileChooser.rescanCurrentDirectory(); // was off resets view
 			    tgtFileChooserComponentAlteration(tgtFileChooser, true);
+//			    tgtFileChooser.setEnabled(true);
 			}
 			else
 			{
-//			    tgtFileChooser.rescanCurrentDirectory(); // was off
-			    tgtFileChooser.setLocale(selectedLocale);
-			    tgtFileChooser.setEnabled(true);
-			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-			    tgtFileChooser.updateUI();
-			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1000), ae -> 
+//			    tgtFileChooser.setEnabled(false);
+//			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+//			    tgtFileChooser.setLocale(selectedLocale);
+//			    if (! firsttime) { tgtFileChooser.updateUI(); }  // updates locale & triggers propchange
+//			    tgtFileChooser.repaint();
+//			    tgtFileChooser.revalidate();
+//			    tgtFileChooser.rescanCurrentDirectory(); // was off resets view
+			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae -> 
 			    {
 				targetFileSwingNode.setContent(tgtFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-				tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+				tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
+//				tgtFileChooser.setEnabled(false);
 			    }
 			    )); timeline.play();
 			}
@@ -3627,24 +3634,36 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    if ((redrawKeyFC) && (keyFCPath.type == FCPath.DIRECTORY))
 	    {
-		Timeline timeline2 = new Timeline(new KeyFrame( Duration.millis(500), ae ->
+		Timeline timeline2 = new Timeline(new KeyFrame( Duration.millis(200), ae ->
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
 			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 			{
+//			    keyFileChooser.setEnabled(false);
+//			    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+//			    keyFileChooser.setLocale(selectedLocale);
+//			    if (! firsttime) { keyFileChooser.updateUI(); } // updates locale & triggers propchange
+//			    keyFileChooser.repaint();
+//			    keyFileChooser.revalidate();
+//			    keyFileChooser.rescanCurrentDirectory(); // was off resets view
 			    keyFileChooserComponentAlteration(keyFileChooser, true);
+//			    keyFileChooser.setEnabled(true);
 			}
 			else
 			{
-//			    tgtFileChooser.rescanCurrentDirectory(); // was off
-			    keyFileChooser.setLocale(selectedLocale);
-			    keyFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter());
-			    keyFileChooser.updateUI();
-			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1500), ae -> 
+//			    keyFileChooser.setEnabled(false);
+//			    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
+//			    keyFileChooser.setLocale(selectedLocale);
+//			    if (! firsttime) { keyFileChooser.updateUI(); } // updates locale & triggers propchange
+//			    keyFileChooser.repaint();
+//			    keyFileChooser.revalidate();
+//			    keyFileChooser.rescanCurrentDirectory(); // was off resets view
+			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1000), ae -> 
 			    {
 				keyFileSwingNode.setContent(keyFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-				keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // Reldraw FileChoosers
+				keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // Reldraw FileChoosers
+//				keyFileChooser.setEnabled(true);
 			    }
 			    )); timeline.play();
 			}
@@ -3656,6 +3675,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		Timeline timeline3 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
+		    tgtFileChooser.updateUI();
+		    tgtFileChooserComponentAlteration(tgtFileChooser, true);
 		    tgtFileChooserPropertyCheck(true);
 		})); timeline3.play();
 	    }
@@ -3664,7 +3685,9 @@ public class GUIFX extends Application implements UI, Initializable
 	    {
 		Timeline timeline4 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
 		{
-		    keyFileChooserPropertyCheck();
+		    keyFileChooser.updateUI();
+		    keyFileChooserComponentAlteration(keyFileChooser, true);
+		    keyFileChooserPropertyCheck(true);
 		})); timeline4.play();
 	    }
 	});
