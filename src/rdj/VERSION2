@@ -10,12 +10,21 @@
 [Version Notes] =	{}
 [Version Notes] =	{FinalCrypt goes International with 32 Languages}
 [Version Notes] =	{}
-[Version Notes] =	{Improved User Interface with a better overview}
+[Version Notes] =	{Arabic,Bulgarian,Chinese,Croatian,Czech,Dutch}
+[Version Notes] =	{English,Esperanto,Farsi,French,German,Greek}
+[Version Notes] =	{Hindi,Hungarian,Icelandic,Indonesian,Italian}
+[Version Notes] =	{Kazakh,Latvian,Malaysian,Maltees,Norwegian}
+[Version Notes] =	{Polish,Portugese,Romanian,Russian,Serbian}
+[Version Notes] =	{Spanish,Swedish,Thai,Turkish,Ukrainian}
+[Version Notes] =	{}
+[Version Notes] =	{Improved User Interface with better overview}
 [Version Notes] =	{Improved file manager behavior & presentation}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
-[Version Notes] =	{Issues? Please install Languages in settings}
+[Version Notes] =	{If you want language improvements then edit}
+[Version Notes] =	{the translation*.properties files and send me}
 [Version Notes] =	{}
+[Version Notes] =	{Please install needed Languages in settings}
 [Version Notes] =	{More languages? Email to: ron@finalcrypt.org}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
@@ -27,3 +36,4 @@
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
 [] = {} ============================================= GUIFX 1546 ===============================================
+
