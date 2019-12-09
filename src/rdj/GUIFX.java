@@ -3497,6 +3497,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    UPDATE_CLOCKS_TIMELINE.stop();
 
 	    updateDashboard(targetFCPathList);
+	    targetFCPathList = new FCPathList<FCPath>();
 
 	    if ( processRunningMode == ENCRYPT_MODE ) { ugMessage = new Message(finished_encrypting, 64, false, false, false, false, Voice.VOI_FINISHED_ENCRYPTING, 0); userGuidanceMessage(ugMessage); }
 	    if ( processRunningMode == DECRYPT_MODE ) { ugMessage = new Message(finished_decrypting, 64, false, false, false, false, Voice.VOI_FINISHED_DECRYPTING, 0); userGuidanceMessage(ugMessage); }
@@ -3505,7 +3506,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    {		
 		fileProgressBar.setVisible(false);filesProgressBar.setVisible(false);
 		
-		targetFCPathList = new FCPathList<FCPath>();
+//		targetFCPathList = new FCPathList<FCPath>();
 		updateDashboard(targetFCPathList);
 		
 		updateSystemMonitor();
@@ -3653,6 +3654,8 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
+			tgtFileChooser.setFileFilter(nonFinalCryptFilter);
+			tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
 			tgtFileChooser.updateUI();
 			tgtFileChooserComponentAlteration(tgtFileChooser, true);
 			tgtFileChooserPropertyCheck(true);
