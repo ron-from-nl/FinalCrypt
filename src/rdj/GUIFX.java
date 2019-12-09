@@ -1267,7 +1267,9 @@ public class GUIFX extends Application implements UI, Initializable
 			    update_System_Monitor_Enabled = true;
 			});
 			new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
-			systemMonitorTestTimeline.play();			
+			systemMonitorTestTimeline.play();
+			
+			regrabFCFocusOnOSX(500);
 		    });
 		    sysmonFadeTransition.play();
 
@@ -1308,6 +1310,21 @@ public class GUIFX extends Application implements UI, Initializable
 	});	
     }
     
+    private void regrabFCFocusOnOSX(int delay)
+    {
+	if (System.getProperty("os.name").toLowerCase().indexOf("mac") > -1) // Again due to Mac OSX
+	{
+	    Timeline keyFCFocusline = new Timeline(new KeyFrame( Duration.millis(delay), ae -> 
+	    {
+		SwingUtilities.invokeLater(new Runnable() { public void run()
+		{
+		    keyFileSwingNode.setContent(keyFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
+		    keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // Reldraw FileChoosers
+		}});
+	    }
+	    )); keyFCFocusline.play();
+	}
+    }
     private void displaySystemMonitor(double usrLoadPercParam, String userLoadString, double usedMemPercParam, String usedMemString, double throughPercParam, String throughputString)
     {
 	Platform.runLater(() ->
@@ -3599,32 +3616,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 			{
-//			    tgtFileChooser.setEnabled(false);
-//			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-//			    tgtFileChooser.setLocale(selectedLocale);
-//			    if (! firsttime) { tgtFileChooser.updateUI(); }  // updates locale & triggers propchange
-//			    tgtFileChooser.repaint();
-//			    tgtFileChooser.revalidate();
-//			    tgtFileChooser.rescanCurrentDirectory(); // was off resets view
 			    tgtFileChooserComponentAlteration(tgtFileChooser, true);
-//			    tgtFileChooser.setEnabled(true);
 			}
 			else
 			{
-//			    tgtFileChooser.setEnabled(false);
-//			    tgtFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-//			    tgtFileChooser.setLocale(selectedLocale);
-//			    if (! firsttime) { tgtFileChooser.updateUI(); }  // updates locale & triggers propchange
-//			    tgtFileChooser.repaint();
-//			    tgtFileChooser.revalidate();
-//			    tgtFileChooser.rescanCurrentDirectory(); // was off resets view
-			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(500), ae -> 
-			    {
-				targetFileSwingNode.setContent(tgtFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-				tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
-//				tgtFileChooser.setEnabled(false);
-			    }
-			    )); timeline.play();
+			    regrabFCFocusOnOSX(2000);
 			}
 		    }});
 		})); timeline1.play();
@@ -3639,32 +3635,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 			{
-//			    keyFileChooser.setEnabled(false);
-//			    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-//			    keyFileChooser.setLocale(selectedLocale);
-//			    if (! firsttime) { keyFileChooser.updateUI(); } // updates locale & triggers propchange
-//			    keyFileChooser.repaint();
-//			    keyFileChooser.revalidate();
-//			    keyFileChooser.rescanCurrentDirectory(); // was off resets view
 			    keyFileChooserComponentAlteration(keyFileChooser, true);
-//			    keyFileChooser.setEnabled(true);
 			}
 			else
 			{
-//			    keyFileChooser.setEnabled(false);
-//			    keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter());
-//			    keyFileChooser.setLocale(selectedLocale);
-//			    if (! firsttime) { keyFileChooser.updateUI(); } // updates locale & triggers propchange
-//			    keyFileChooser.repaint();
-//			    keyFileChooser.revalidate();
-//			    keyFileChooser.rescanCurrentDirectory(); // was off resets view
-			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(1000), ae -> 
-			    {
-				keyFileSwingNode.setContent(keyFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-				keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); // Reldraw FileChoosers
-//				keyFileChooser.setEnabled(true);
-			    }
-			    )); timeline.play();
+//			    regrabFCFocusOnOSX(200);
 			}
 		    }});
 		})); timeline2.play();
@@ -3672,7 +3647,9 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    if (checkTargetFC)
 	    {
-		Timeline timeline3 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		int osTiming = 0;
+		if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) { osTiming = 500; } else { osTiming = 1500; }
+		Timeline timeline3 = new Timeline(new KeyFrame( Duration.millis(osTiming), ae ->
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
@@ -3685,7 +3662,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 	    if (checkKeyFC)
 	    {
-		Timeline timeline4 = new Timeline(new KeyFrame( Duration.millis(100), ae ->
+		Timeline timeline4 = new Timeline(new KeyFrame( Duration.millis(500), ae ->
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
@@ -3818,12 +3795,7 @@ public class GUIFX extends Application implements UI, Initializable
         String platform = System.getProperty("os.name").toLowerCase(); // Due to a nasty JFileChooser focus issue on Mac
         if ( platform.indexOf("mac") != -1 ) // if it is a mac
 	{
-	    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae -> 
-	    {
-		targetFileSwingNode.setContent(tgtFileChooser); // Delay setting this JFileChooser avoiding a simultanious key and target JFileChooser focus conflict causing focus to endlessly flipflop between the two JFileChoosers
-		tgtFileChooser.setVisible(false); tgtFileChooser.setVisible(true); keyFileChooser.setVisible(false); keyFileChooser.setVisible(true); // Reldraw FileChoosers
-	    }
-	    )); timeline.play();
+	    regrabFCFocusOnOSX(100);
 	}
 	else
 	{
