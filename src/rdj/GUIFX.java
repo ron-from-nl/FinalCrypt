@@ -750,7 +750,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	if (checkFileChoosers)
 	{
-	    updateFileChoosers(false, firsttime, false, false, firsttime, true);
+	    updateFileChoosers(false, firsttime, true, false, firsttime, true);
 	}	
     }
 
@@ -1242,7 +1242,6 @@ public class GUIFX extends Application implements UI, Initializable
 			disableFileChoosers(false, true, true);
 		    }
 
-//		    keyFileChooser.updateUI();
 		    updateFileChoosers(false, false, true, false, false, true);
 
 		    FadeTransition sysmonFadeTransition = new FadeTransition(Duration.millis(2000), userGuidanceFadePane); // sysMonCanvas 
@@ -4393,7 +4392,7 @@ public class GUIFX extends Application implements UI, Initializable
 //	    switchLanguage(selectedLocale, true, true, false);
 
 //	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
-	    switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			false);
+	    switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			true);
 
 	    selectLanguage.setVisible(false);
 	});

@@ -22,28 +22,27 @@
               <tabs>
                 <Tab fx:id="encryptTab" closable="false" onSelectionChanged="#encryptTabSelectionChanged" text="Encrypt">
                      <content>
-                        <GridPane>
+                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                           <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="500.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="500.0" />
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="500.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <AnchorPane minWidth="500.0" GridPane.vgrow="ALWAYS">
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="500.0" GridPane.vgrow="ALWAYS">
                                  <children>
-                                    <VBox prefHeight="601.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top" VBox.vgrow="NEVER">
+                                          <AnchorPane maxHeight="50.0" maxWidth="1.7976931348623157E308" minHeight="50.0" prefHeight="50.0" styleClass="background_top" VBox.vgrow="NEVER">
                                              <children>
-                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" prefHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="32.0" layoutY="50.0" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="799.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                   <columnConstraints>
                                                       <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="181.0" minWidth="11.0" prefWidth="100.0" />
-                                                    <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="438.0" minWidth="253.0" prefWidth="344.0" />
-                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="181.0" minWidth="37.0" prefWidth="181.0" />
-                                                      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="92.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                                                    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="457.0" />
+                                                      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
                                                   </columnConstraints>
                                                   <rowConstraints>
                                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -66,7 +65,7 @@
                                                          </children></AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2">
                                                          <children>
-                                                            <Label fx:id="targetLabel1" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="targetLabel1" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select items to encrypt or decrypt" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
@@ -75,7 +74,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label fx:id="targetLabel2" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="438.0" style="-fx-font-size: 11;" styleClass="text_color_standard" text="Hold down [Control] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="targetLabel2" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="20.0" prefWidth="438.0" style="-fx-font-size: 11;" styleClass="text_color_standard" text="Hold down [Control] / [Shift] to select more items" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
                                                                </font>
@@ -84,7 +83,7 @@
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
                                                          <children>
-                                                            <Label fx:id="targetInfoLabel" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="114.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="targetInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#targetInfoLabelClicked" prefHeight="40.0" prefWidth="114.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <cursor>
                                                                   <Cursor fx:constant="HAND" />
                                                                </cursor>
@@ -92,9 +91,7 @@
                                                                   <Font name="Open Sans Italic" size="18.0" />
                                                                </font>
                                                             </Label>
-                                                         </children>
-                                                      </AnchorPane>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowSpan="2" />
+                                                         </children></AnchorPane>
                                                    </children>
                                                 </GridPane>
                                              </children>
@@ -113,41 +110,28 @@
                                     </VBox>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane focusTraversable="true" minWidth="500.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                              <AnchorPane focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="500.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                                  <children>
-                                    <VBox prefHeight="601.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane maxHeight="50.0" minHeight="50.0" minWidth="500.0" prefHeight="50.0" prefWidth="500.0" styleClass="background_top" VBox.vgrow="NEVER">
+                                          <AnchorPane maxHeight="50.0" maxWidth="1.7976931348623157E308" minHeight="50.0" prefHeight="50.0" styleClass="background_top" VBox.vgrow="NEVER">
                                              <children>
-                                                <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" prefHeight="50.0" prefWidth="649.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="769.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2" />
-                                                      <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="2">
+                                                      <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="1">
                                                          <children>
-                                                            <Label fx:id="keyLabel1" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad Key Dir" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="keyLabel1" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad Key Dir" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="18.0" />
                                                                </font>
                                                             </Label>
                                                          </children>
                                                       </AnchorPane>
-                                                      <AnchorPane onMouseEntered="#keyLabelAnchorOnMouseEntered" onMouseExited="#keyLabelAnchorOnMouseExited" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                      <AnchorPane onMouseEntered="#keyLabelAnchorOnMouseEntered" onMouseExited="#keyLabelAnchorOnMouseExited" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                          <children>
-                                                            <Label fx:id="keyLabel" alignment="CENTER_RIGHT" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" text="Create a Manual One-Time Pad Key File" textAlignment="CENTER" textFill="#cfcfcf80" underline="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label fx:id="keyLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyLabelOnMouseClicked" prefHeight="20.0" prefWidth="296.0" style="-fx-font-size: 11;" text="Create a Manual One-Time Pad Key File" textAlignment="CENTER" textFill="#cfcfcf80" underline="true" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font name="Open Sans" size="12.0" />
-                                                               </font>
-                                                               <cursor>
-                                                                  <Cursor fx:constant="HAND" />
-                                                               </cursor>
-                                                            </Label>
-                                                         </children>
-                                                      </AnchorPane>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowSpan="2">
-                                                         <children>
-                                                            <Label fx:id="keyInfoLabel" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" translateX="10.0" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                               <font>
-                                                                  <Font name="Open Sans Italic" size="18.0" />
                                                                </font>
                                                                <cursor>
                                                                   <Cursor fx:constant="HAND" />
@@ -171,13 +155,23 @@
                                                             </Button>
                                                          </children>
                                                       </AnchorPane>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowSpan="2">
+                                                         <children>
+                                                            <Label fx:id="keyInfoLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" onMouseClicked="#keyInfoLabelClicked" prefHeight="40.0" prefWidth="30.0" style="-fx-font-family: FreeSans; -fx-font-size: 18;" text="info" textAlignment="CENTER" textFill="LIGHTBLUE" underline="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <font>
+                                                                  <Font name="Open Sans Italic" size="18.0" />
+                                                               </font>
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor>
+                                                            </Label>
+                                                         </children>
+                                                      </AnchorPane>
                                                    </children>
                                                    <columnConstraints>
-                                                      <ColumnConstraints halignment="RIGHT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="183.0" minWidth="38.0" prefWidth="108.0" />
-                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="325.0" minWidth="206.0" prefWidth="250.0" />
-                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="210.0" minWidth="34.0" prefWidth="181.0" />
-                                                      <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="100.0" />
+                                                      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+                                                      <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="471.0" />
+                                                      <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                                                    </columnConstraints>
                                                    <rowConstraints>
                                                       <RowConstraints maxHeight="21.0" minHeight="20.0" prefHeight="21.0" vgrow="SOMETIMES" />
