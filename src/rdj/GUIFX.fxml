@@ -537,7 +537,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="7">
                                        <children>
-                                          <Label fx:id="keyMissingSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" prefHeight="15.0" prefWidth="90.0" styleClass="dashboard_generic" text="0 Bytes" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyMissingSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" prefHeight="15.0" prefWidth="90.0" styleClass="dashboard_generic" text="0 Bytes" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -661,7 +661,7 @@
                                              </font></Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="13" GridPane.columnSpan="2">
+                                    <AnchorPane GridPane.columnIndex="13" GridPane.columnSpan="3">
                                        <children>
                                           <Label fx:id="passwordHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="15.0" prefWidth="112.0" styleClass="dashboard_generic" translateX="-60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
@@ -674,9 +674,9 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane layoutX="10.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="6">
+                                    <AnchorPane layoutX="10.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="6">
                                        <children>
-                                          <Label fx:id="keyMatchNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" text="Matching Keys" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyMatchNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" text="Matching Keys" textFill="#aaaaaa" translateX="30.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -685,7 +685,7 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="83.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="6">
                                        <children>
-                                          <Label fx:id="keyReadLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" onMouseClicked="#keyReadLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyReadLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" onMouseClicked="#keyReadLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
                                                 <Tooltip fx:id="keyReadLabelToolTip" text="Click to list matching keys">
                                                    <font>
@@ -701,7 +701,7 @@
                                     </AnchorPane>
                                     <AnchorPane layoutX="156.0" layoutY="70.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="6">
                                        <children>
-                                          <Label fx:id="keyReadSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" text="0 Bytes" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyReadSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -880,7 +880,7 @@
                                                       <Insets />
                                                    </HBox.margin>
                                                 </StackPane>
-                                                <CheckBox fx:id="showPasswordCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showPasswordCheckBoxOnAction" text="CheckBox" textAlignment="CENTER" visible="false" HBox.hgrow="NEVER">
+                                                <CheckBox fx:id="showPasswordCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#showPasswordCheckBoxOnAction" styleClass="dashboard_generic" textAlignment="CENTER" visible="false" HBox.hgrow="NEVER">
                                                    <tooltip>
                                                       <Tooltip fx:id="showPasswordCheckBoxToolTip" text="Show / Mask Password">
                                                          <font>
@@ -900,9 +900,9 @@
                                        <GridPane.margin>
                                           <Insets left="5.0" right="5.0" />
                                        </GridPane.margin></AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="5">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="keyWriteNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="6.0" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="Create Keys" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyWriteNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutY="6.0" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="Create Keys" textFill="#aaaaaa" translateX="30.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -911,7 +911,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="keyWriteLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#keyWriteLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyWriteLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#keyWriteLabelOnMouseClicked" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
                                                 <Tooltip fx:id="keyWriteLabelToolTip" text="Click to list create keys">
                                                    <font>
@@ -927,7 +927,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="15" GridPane.rowIndex="5">
                                        <children>
-                                          <Label fx:id="keyWriteSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-5.0" layoutY="3.0" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" text="0 Bytes" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyWriteSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-5.0" layoutY="3.0" prefHeight="15.0" prefWidth="86.0" styleClass="dashboard_generic" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font></Label>
@@ -935,9 +935,9 @@
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="4" GridPane.rowIndex="2" />
                                     <AnchorPane GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="13" GridPane.rowIndex="7">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="12" GridPane.columnSpan="2" GridPane.rowIndex="7">
                                        <children>
-                                          <Label fx:id="keyMissingNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" text="Missing Keys" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyMissingNameLabel" alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="8.0" prefHeight="15.0" prefWidth="85.0" styleClass="dashboard_generic" text="Missing Keys" textFill="#aaaaaa" translateX="30.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
@@ -946,7 +946,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="14" GridPane.rowIndex="7">
                                        <children>
-                                          <Label fx:id="keyMissingLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#keyMissingLabelOnMouseClicked" prefHeight="15.0" prefWidth="91.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" translateX="-60.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="keyMissingLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="5.0" onMouseClicked="#keyMissingLabelOnMouseClicked" prefHeight="15.0" prefWidth="91.0" styleClass="dashboard_generic" textFill="#aaaaaa" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="10.0" />
                                              </font>
