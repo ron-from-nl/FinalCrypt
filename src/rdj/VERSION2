@@ -38,7 +38,8 @@
 [Update Notes] =	{Fixed bug crashing on enabled audio at startup}
 [Update Notes] =	{Fixed large Chinese user-guidance startup text}
 [Update Notes] =	{Fixed Support Window glyphs in Farsi Language}
-[Update Notes] =	{Fixed Apple bug that hangs GUI by File-Manager}
+[Update Notes] =	{Fixed Apple OSX bug hanging GUI by FileManager}
+[Update Notes] =	{Improved internationalization GUI realignments}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
