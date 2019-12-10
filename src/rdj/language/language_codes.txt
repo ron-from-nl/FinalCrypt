@@ -1,3 +1,10 @@
+Advice: Translate the translation.properties file with Google Translation
+Split into two chunks lines: 1-70 & 71-143 and translate in two browser tabs
+Click the copy button at the bottom and paste it in a translation_***.properties file
+Replace " \ r \ n" with "\r\n" replace " = " with "=" search " =" and correct
+Correct the rest of the language where necessary and send file to ron@finalcrypt.org
+At the next release I'll include your translation. Thank you very much for translating!
+
 File (ISO 639-2 lang-code)  Language
 ==========================  =================
 translation.properties	    Enlish (Default)
