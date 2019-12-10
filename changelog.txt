@@ -1,6 +1,6 @@
 Date: 2019-12-10 Version: 6.0.3
 
-Language corrections & updates of 46 languages
+Language corrections & updates of 45 languages
 Removed duo latin lines on non latin languages
 
 Add/correct language? Download, Edit & Mail me

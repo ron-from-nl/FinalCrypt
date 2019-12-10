@@ -981,7 +981,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    "Punjabi",
 	    "Romanian",
 	    "Russian",
-	    "Serbian",
 	    "Slovenian",
 	    "Spanish",
 	    "Swedish",
@@ -4350,7 +4349,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Punjabi") )	    { selectedLanguageCode = "pan"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )	    { selectedLanguageCode = "rum"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )	    { selectedLanguageCode = "rus"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )	    { selectedLanguageCode = "srp"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Slovenian") )	    { selectedLanguageCode = "slv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )	    { selectedLanguageCode = "spa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )	    { selectedLanguageCode = "swe"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }

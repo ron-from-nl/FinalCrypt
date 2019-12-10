@@ -45,7 +45,6 @@ translation_por.properties  Portugese
 translation_pan.properties  Punjabi
 translation_rum.properties  Romanian
 translation_rus.properties  Russian
-translation_srp.properties  Serbian
 translation_spa.properties  Spanish
 translation_swe.properties  Swedish
 translation_tam.properties  Tamil
