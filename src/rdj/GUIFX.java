@@ -585,6 +585,8 @@ public class GUIFX extends Application implements UI, Initializable
 
     private Message ugMessage;
     private String selectedLanguageCode = "en";
+    @FXML
+    private Tooltip passwordHeaderLabelToolTip;
     
     
     
@@ -655,6 +657,7 @@ public class GUIFX extends Application implements UI, Initializable
 	totalTimeHeaderLabel.setText(bundle.getString("GUIFX.totalTimeHeaderLabel.text"));
 	password_enter=bundle.getString("GUIFX.password_enter.text");
 	password_optional=bundle.getString("GUIFX.password_optional.text");
+	passwordHeaderLabelToolTip.setText(bundle.getString("GUIFX.passwordHeaderLabelToolTip.text"));
 	password_set=bundle.getString("GUIFX.password_set.text");
 	select_key_dir=bundle.getString("GUIFX.select_key_dir.text");
 	select_files=bundle.getString("GUIFX.select_files.text");
@@ -667,7 +670,7 @@ public class GUIFX extends Application implements UI, Initializable
 	decrypting_files=bundle.getString("GUIFX.decrypting_files.text");
 	finished_encrypting=bundle.getString("GUIFX.finished_encrypting.text");
 	finished_decrypting=bundle.getString("GUIFX.finished_decrypting.text");
-	
+	create_key=bundle.getString("GUIFX.create_key.text");
 	cpu_workload=bundle.getString("GUIFX.cpu_workload.text");
 	storage_io_throughput=bundle.getString("GUIFX.storage_io_throughput.text");
 	language_is=bundle.getString("GUIFX.language_is.text");
@@ -979,6 +982,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    "Romanian",
 	    "Russian",
 	    "Serbian",
+	    "Slovenian",
 	    "Spanish",
 	    "Swedish",
 	    "Tamil",
@@ -4347,6 +4351,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )	    { selectedLanguageCode = "rum"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )	    { selectedLanguageCode = "rus"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )	    { selectedLanguageCode = "srp"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Slovenian") )	    { selectedLanguageCode = "slv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )	    { selectedLanguageCode = "spa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )	    { selectedLanguageCode = "swe"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Tamil") )		    { selectedLanguageCode = "tam"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }

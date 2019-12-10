@@ -9,6 +9,8 @@ Backup Files.createLink(link, target);
 
 Blanc Window in Mojave
 
+Remove double latin lines
+
 =============================== Don't forget ================================
 
 Disable test messages					UI.test()

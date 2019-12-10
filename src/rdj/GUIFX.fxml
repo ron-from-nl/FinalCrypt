@@ -665,7 +665,7 @@
                                        <children>
                                           <Label fx:id="passwordHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" prefHeight="15.0" prefWidth="112.0" styleClass="dashboard_generic" translateX="-60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="An optional password can be set after selecting a valid key">
+                                                <Tooltip fx:id="passwordHeaderLabelToolTip" text="An optional password can be set after selecting a valid key">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>

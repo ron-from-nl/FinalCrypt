@@ -1,4 +1,4 @@
-[Version] =		{6.0.2}
+[Version] =		{6.0.3}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -16,11 +16,14 @@
 [Upgrade Notes] =	{Upgrade 0}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 2}
+[Update Notes] =	{Update 3}
 [Update Notes] =	{}
-[Update Notes] =	{This update adds up to a total of 45 languages}
+[Update Notes] =	{Language corrections & updates of 46 languages}
+[Update Notes] =	{Removed duo latin lines on non latin languages}
+[Update Notes] =	{}
 [Update Notes] =	{Add/correct language? Download, Edit & Mail me}
 [Update Notes] =	{Languages files can be found in the sourcecode}
+[Update Notes] =	{Languages files can be edited with Netbeans.org}
 [Update Notes] =	{Location in the sourcecode: (src/rdj/language)}
 [Update Notes] =	{Sourcecode click [Support] [Home] [SourceCode]}
 [] = {} --------------------------------------------------------------------------------------------------------
