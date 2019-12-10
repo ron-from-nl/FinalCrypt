@@ -67,7 +67,7 @@
                         </Button>
                         <Label fx:id="otpRulesLabel" alignment="CENTER" layoutX="-4.0" layoutY="128.0" onMouseClicked="#otpRulesOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="Click here to read about how to use Manual One-Time Pad Keys securely" textAlignment="CENTER" textFill="YELLOW" underline="true">
                            <font>
-                              <Font name="System Bold Italic" size="13.0" />
+                              <Font name="System Bold" size="13.0" />
                            </font>
                         </Label>
                         <Label fx:id="otpRulesLabel2" alignment="CENTER" layoutX="-4.0" layoutY="110.0" prefHeight="18.0" prefWidth="707.0" text="Creating Manual OTP Keys isn't needed as FinalCrypt supports Auto Key" textAlignment="CENTER" textFill="RED">
@@ -77,7 +77,7 @@
                         </Label>
                         <Label fx:id="complianceLabel" alignment="CENTER" layoutX="-4.0" layoutY="74.0" onMouseClicked="#complianceLabelOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="FinalCrypt One-time Pad keys comply to FIPS 140-2 and RFC 1750" textAlignment="CENTER" textFill="#aaaaaa" underline="true">
                            <font>
-                              <Font name="System Italic" size="14.0" />
+                              <Font size="14.0" />
                            </font>
                         </Label>
                         <ProgressBar fx:id="progressBar" disable="true" layoutX="14.0" layoutY="316.0" maxHeight="12.0" minHeight="5.0" prefHeight="12.0" prefWidth="673.0" progress="0.0" />

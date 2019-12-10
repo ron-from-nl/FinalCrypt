@@ -244,7 +244,7 @@ public class CreateOTPKey extends Application implements Initializable
 	statusLabel1.setText(currentDirectory);
 	statusLabel2.setText(currentDirPath.toAbsolutePath().toString());
 //	guifx.userGuidanceMessage(guifx.CREATE_KEY, 64, false, false, false, true, VOI_CREATE_KEY, 0);
-	ugMessage = new Message(guifx.create_key, 64, false, false, false, true, Voice.VOI_CREATE_KEY, 0);
+	ugMessage = new Message(guifx.create_key, 64, false, false, false, false, Voice.VOI_CREATE_KEY, 0);
 	guifx.userGuidanceMessage(ugMessage);
     }
         

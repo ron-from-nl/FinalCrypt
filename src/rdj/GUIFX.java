@@ -500,10 +500,6 @@ public class GUIFX extends Application implements UI, Initializable
     private double userLoadPerc;
     private GraphicsContext sysmon;
     private int sysmonOffSetX;
-//    private File curTgtDir;
-//    private File curKeyDir;
-//    private File upTgtDir;
-//    private File upKeyDir;
     private boolean update_System_Monitor_Enabled;
     private double userloadPercTest;
     private double userMemPercTest;
@@ -818,22 +814,10 @@ public class GUIFX extends Application implements UI, Initializable
 	
 //	AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE.setCycleCount(1);
 
-//	tgtFileDeleteButton = new javax.swing.JButton();
-//      tgtFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
-//      tgtFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
-//      tgtFileDeleteButton.setEnabled(false);
 	tgtFileDeleteButton2.setDisable(true);
-//      tgtFileDeleteButton.setToolTipText("Delete selected item(s)");
-//      tgtFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { targetFileDeleteButtonActionPerformed(evt); });
 	tgtDetailViewButton = new JToggleButton();
 	
-//        keyFileDeleteButton = new javax.swing.JButton();
-//        keyFileDeleteButton.setFont(DELETE_CHOOSER_FONT); // NOI18N
-//        keyFileDeleteButton.setText("Delete"); // X🗑❌❎⛔ (no utf8)
-//        keyFileDeleteButton.setEnabled(false);
         keyFileDeleteButton2.setDisable(true);
-//        keyFileDeleteButton.setToolTipText("Delete selected item");
-//        keyFileDeleteButton.addActionListener((java.awt.event.ActionEvent evt) -> { keyFileDeleteButtonActionPerformed(evt); });
 	keyDetailViewButton = new JToggleButton();
         
 //      Create filefilters        
@@ -876,8 +860,6 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
 	
-//	keyButton.setTextFill(Color.GREY); keyButton.setDisable(true); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
-
 //	=========================================================================================================================================
 //	============================================================= USER GUIDANCE =============================================================
 //	textLabel RadialGradient Animation =========================================================
@@ -952,45 +934,59 @@ public class GUIFX extends Application implements UI, Initializable
 //	sysmon.setFill(Color.valueOf("#58781F"));
 	sysmon.setFill(Color.valueOf("#888888"));
 	sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
-
+	
 	welcome();	
     }
     
     private void welcome()
     {
 	languageList = FXCollections.observableArrayList
-							("Arabic",
-							 "Bulgarian",
-							 "Chinese",
-							 "Croatian",
-							 "Czech",
-							 "Dutch",
-							 "English",
-							 "Esperanto",
-							 "Farsi",
-							 "French",
-							 "German",
-							 "Greek",
-							 "Hindi",
-							 "Hungarian",
-							 "Icelandic",
-							 "Indonesian",
-							 "Italian",
-							 "Kazakh",
-							 "Latvian",							 
-							 "Malaysian",
-							 "Maltees",
-							 "Norwegian",
-							 "Polish",
-							 "Portugese",
-							 "Romanian",
-							 "Russian",
-							 "Serbian",
-							 "Spanish",
-							 "Swedish",
-							 "Thai",
-							 "Turkish",
-							 "Ukrainian"
+	(
+	    "Arabic",
+	    "Bengali",
+	    "Bulgarian",
+	    "Chinese",
+	    "Croatian",
+	    "Czech",
+	    "Danish",
+	    "Dutch",
+	    "English",
+	    "Esperanto",
+	    "Farsi",
+	    "Finnish",
+	    "French",
+	    "Frisian (western)",
+	    "German",
+	    "Greek",
+	    "Hebrew",
+	    "Hindi",
+	    "Hungarian",
+	    "Icelandic",
+	    "Indonesian",
+	    "Japanese",
+	    "Javanese",
+	    "Italian",
+	    "Kazakh",
+	    "Korean",
+	    "Latvian",							 
+	    "Malaysian",
+	    "Maltees",
+	    "Marathi",
+	    "Norwegian",
+	    "Polish",
+	    "Portugese",
+	    "Punjabi",
+	    "Romanian",
+	    "Russian",
+	    "Serbian",
+	    "Spanish",
+	    "Swedish",
+	    "Tamil",
+	    "Thai",
+	    "Turkish",
+	    "Ukrainian",
+	    "Urdu",
+	    "Vietnamese"
 	);
 	
 	selectLanguage.getItems().setAll(languageList);
@@ -1165,8 +1161,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    
 //	    textLabel Introduction Animation ==========================================================
 
-//	    keyFileChooserComponentAlteration(keyFileChooser, true);
-//	    tgtFileChooserComponentAlteration(tgtFileChooser, true);
 	    updateFileChoosers(true, false, false, true, false, false);
 
 	    ScaleTransition scaleTransition1 = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
@@ -1193,7 +1187,6 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    parallelTransition1.setOnFinished((ActionEvent actionEvent) ->
 	    {
-		
 		userGuidanceLabel.setText("");
 
 		userGuidanceLabel.setText(Version.getProductName()); userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / userGuidanceLabel.getText().length() * 1.3) + "px;");
@@ -1222,10 +1215,6 @@ public class GUIFX extends Application implements UI, Initializable
 
 		    // // First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		    prevsval1 = prefs.get("Initialized", "Unknown"); if (! prevsval1.equals("Yes")) {prefs.put("Initialized", "Yes"); flushPrefs(prefs); } else {  }
-		    // ============================================================================================================================
-		    // ================================================== GUI gets Idle here ======================================================
-		    // ============================================================================================================================
-		    // userGuidanceMessage(SELECT_KEY_DIR, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 
 		    // keyButton.setDisable(false);
 		    checkUpdateButton.setDisable(false);
@@ -1559,7 +1548,6 @@ public class GUIFX extends Application implements UI, Initializable
 	}	    
     }
     
-//    synchronized public void userGuidanceMessage(String message, int fontsize, boolean bottomleft, boolean topleft, boolean topright, boolean bottomright, String audio, int media_Delay)
     synchronized public void userGuidanceMessage(Message ugMessage)
     {
 	bottomleftLabelEnabled = ugMessage.bottomleft; topleftLabelEnabled = ugMessage.topleft; toprightLabelEnabled = ugMessage.topright; bottomrightLabelEnabled = ugMessage.bottomright;
@@ -1609,7 +1597,13 @@ public class GUIFX extends Application implements UI, Initializable
 		bottomrightLabel.setOpacity(0); bottomrightLabel.setVisible(bottomrightLabelEnabled);
 	    }
 	    userGuidanceLabel.setOpacity(0);
-	    double sizeFactor = 1.5; if (selectedLanguageCode.equalsIgnoreCase("cn")) { sizeFactor = 0.5; } else { sizeFactor = 1.5; }
+	    
+	    double sizeFactor = 1.5;
+	    if (selectedLanguageCode.equalsIgnoreCase("chi"))	    { sizeFactor = 0.5; }
+	    else if (selectedLanguageCode.equalsIgnoreCase("jpn"))   { sizeFactor = 0.7; }
+	    else if (selectedLanguageCode.equalsIgnoreCase("kor"))   { sizeFactor = 0.7; }
+	    else						    { sizeFactor = 1.5; }
+	    
 	    userGuidanceLabel.setStyle("-fx-font-size: " + Math.round(userGuidanceLabel.getWidth() / ugMessage.message.length() * sizeFactor) + "px;");
 	    userGuidanceLabel.setText(ugMessage.message);
 	    fadevar = 0.0;
@@ -2001,7 +1995,6 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
-//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 		});
 	    }
 	    else // Not a Device
@@ -2040,7 +2033,6 @@ public class GUIFX extends Application implements UI, Initializable
 		    Platform.runLater(() ->
 		    {
 			encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
-//			keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 		    });
 		} // Not a device / file or symlink
 	    }
@@ -2068,7 +2060,6 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
-//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 		});
 	    }
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
@@ -2088,14 +2079,12 @@ public class GUIFX extends Application implements UI, Initializable
 		Platform.runLater(() ->
 		{
 		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
-//		    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 		});
 	    }
         }
 	else
 	{
 	    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
-//	    keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false);
 	}	
         keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to double click file
     }
@@ -2159,7 +2148,6 @@ public class GUIFX extends Application implements UI, Initializable
 		MySimpleFCFileVisitor.running = false;		    
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-//		keyButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
 		enableClocks(false, false); 
@@ -2168,7 +2156,6 @@ public class GUIFX extends Application implements UI, Initializable
 		filesProgressBar.setProgress(0);
 
 		ArrayList<Path> targetPathList = new ArrayList<>(); targetPathList.clear();
-//		tgtFileDeleteButton.setEnabled(false);
 		tgtFileDeleteButton2.setDisable(true);
 
 		// En/Disable FileChooser deletebutton
@@ -2182,12 +2169,10 @@ public class GUIFX extends Application implements UI, Initializable
 			) 
 		   )
 		{
-//		    tgtFileDeleteButton.setEnabled(true);
 		    tgtFileDeleteButton2.setDisable(false);
 		}
 		else
 		{
-//		    tgtFileDeleteButton.setEnabled(false);
 		    tgtFileDeleteButton2.setDisable(true);
 		}
 
@@ -2220,34 +2205,30 @@ public class GUIFX extends Application implements UI, Initializable
 		    updateDashboardTaskTimer.schedule(updateDashboardTask, 250L, 250L);
 
 		    // Scanning animation on main progressbar
-//		    Platform.runLater(() ->
-//		    {
-			showPasswordCheckBox.setVisible(true);
-			if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-			pwdField.setDisable(true);
-			pwdtxtField.setDisable(true);
-			pwdField.setVisible(! showPasswordCheckBox.isSelected());
-			pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    showPasswordCheckBox.setVisible(true);
+		    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
+		    pwdField.setDisable(true);
+		    pwdtxtField.setDisable(true);
+		    pwdField.setVisible(! showPasswordCheckBox.isSelected());
+		    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
-			keyImageView.setOpacity(0.8);
-			if ((targetPathList != null) && (targetPathList.size() > 0)) { filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }
+		    keyImageView.setOpacity(0.8);
+		    if ((targetPathList != null) && (targetPathList.size() > 0)) { filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }
 
-			new Sound().play(this, Audio.SND_READY,Audio.AUDIO_CODEC);
-			
-			ugMessage = new Message(scanning_files, 64, false, false, false, false, Voice.VOI_SCANNING_FILES, 0);
-//			userGuidanceMessage(scanning_files, 64, false, false, false, false, Voice.VOI_SCANNING_FILES, 0);
-			userGuidanceMessage(ugMessage);
+		    new Sound().play(this, Audio.SND_READY,Audio.AUDIO_CODEC);
 
-			Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> // Give scanner a little time to stop
+		    ugMessage = new Message(scanning_files, 64, false, false, false, false, Voice.VOI_SCANNING_FILES, 0);
+		    userGuidanceMessage(ugMessage);
+
+		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> // Give scanner a little time to stop
+		    {
+			Thread buildSelectionThread = new Thread(() -> // Relaxed interruptable thread
 			{
-			    Thread buildSelectionThread = new Thread(() -> // Relaxed interruptable thread
-			    {
-	//				 buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,	   boolean disabledMAC, boolean status)
-				Validate.buildSelection(ui,		 targetPathList,	keyFCPath,	     targetFCPathList2,		symlink,	pattern,	 negatePattern,	finalCrypt.disabledMAC,		false);
-			    }); buildSelectionThread.setName("buildSelectionThread"); buildSelectionThread.setDaemon(true); buildSelectionThread.start();
-			})); timeline.play();
-//		    });
+    //				 buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,	   boolean disabledMAC, boolean status)
+			    Validate.buildSelection(ui,		 targetPathList,	keyFCPath,	     targetFCPathList2,		symlink,	pattern,	 negatePattern,	finalCrypt.disabledMAC,		false);
+			}); buildSelectionThread.setName("buildSelectionThread"); buildSelectionThread.setDaemon(true); buildSelectionThread.start();
+		    })); timeline.play();
 		}
 		else // No valid selection on both FileChoosers
 		{		
@@ -2258,7 +2239,6 @@ public class GUIFX extends Application implements UI, Initializable
 			)
 		    {
 			ugMessage = new Message(select_files, 64, false, true, false, false, Voice.VOI_SELECT_FILES, 0);
-//			userGuidanceMessage(select_files, 64, false, true, false, false, Voice.VOI_SELECT_FILES, 0);
 			userGuidanceMessage(ugMessage);
 		    }
 		    else
@@ -2266,7 +2246,6 @@ public class GUIFX extends Application implements UI, Initializable
 			new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
 			ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			userGuidanceMessage(ugMessage);
-//			userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			userGuidanceMessage(ugMessage);
 		    }
 
@@ -2312,65 +2291,86 @@ public class GUIFX extends Application implements UI, Initializable
 		fileProgressBar.setProgress(0);
 		filesProgressBar.setProgress(0);
 
-//		remainingTimeHeaderLabel.setVisible(false); remainingTimeLabel.setVisible(false);
-//		elapsedTimeHeaderLabel.setVisible(false); elapsedTimeLabel.setVisible(false);
-//		totalTimeHeaderLabel.setVisible(false); totalTimeLabel.setVisible(false);
 
-		});
+	    });
 
-		// En/Disable FileChooser deletebutton
-		if (
-			(keyFileChooser != null) &&
-			(keyFileChooser.getSelectedFile() != null) &&
-			(
-			    (Files.isRegularFile( keyFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
-			    (Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
-			) 
-		   )
-		{
+	    // En/Disable FileChooser deletebutton
+	    if (
+		    (keyFileChooser != null) &&
+		    (keyFileChooser.getSelectedFile() != null) &&
+		    (
+			(Files.isRegularFile( keyFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
+			(Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
+		    ) 
+	       )
+	    {
 //		    keyFileDeleteButton.setEnabled(true);
-		    keyFileDeleteButton2.setDisable(false);
+		keyFileDeleteButton2.setDisable(false);
+	    }
+	    else
+	    {
+//		    keyFileDeleteButton.setEnabled(false);
+		keyFileDeleteButton2.setDisable(true);
+	    }
+
+	    // Set Buffer Size
+	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+
+	    // Validate KeyFile
+	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
+	    {
+		Path keyPath;
+		if ( ! Files.isDirectory(keyFileChooser.getSelectedFiles()[0].toPath()))
+		{
+		    keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
 		}
 		else
 		{
-//		    keyFileDeleteButton.setEnabled(false);
-		    keyFileDeleteButton2.setDisable(true);
+		    keyPath = keyFileChooser.getCurrentDirectory().toPath();
 		}
-
-		// Set Buffer Size
-		finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
-
-		// Validate KeyFile
-		if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
-		{
-		    Path keyPath;
-		    if ( ! Files.isDirectory(keyFileChooser.getSelectedFiles()[0].toPath()))
-		    {
-			keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
-		    }
-		    else
-		    {
-			keyPath = keyFileChooser.getCurrentDirectory().toPath();
-		    }
-    //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
 //		    Platform.runLater(() -> 
 //		    {
-			if ((keyFCPath.isValidKey)) // Valid Key
-			{
-			    String keyitem = "";
-			    if (keyFCPath.type == FCPath.FILE)		    { keyitem = file; }
-			    else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
-			    else					    { keyitem = FCPath.getTypeString(keyFCPath.type); }
-			    
-			    new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
-			    keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + keyitem);
-			    keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
-			    checksumLabel.setTextFill(Color.WHITESMOKE); checksumHeader.setText(""); checksumLabel.setText("");
-			    if ( checksumTooltip != null )  { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
+		    if ((keyFCPath.isValidKey)) // Valid Key
+		    {
+			String keyitem = "";
+			if (keyFCPath.type == FCPath.FILE)		    { keyitem = file; }
+			else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
+			else					    { keyitem = FCPath.getTypeString(keyFCPath.type); }
 
-			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
+			new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
+			keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + keyitem);
+			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
+			checksumLabel.setTextFill(Color.WHITESMOKE); checksumHeader.setText(""); checksumLabel.setText("");
+			if ( checksumTooltip != null )  { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
+
+			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
+
+			showPasswordCheckBox.setVisible(true);
+			if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
+			pwdField.setVisible(! showPasswordCheckBox.isSelected());
+			pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+			pwdField.setDisable(false);
+			pwdtxtField.setDisable(false);
+			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+
+			keyImageView.setImage(KEY_FILE_IMAGE);
+			keyImageView.setOpacity(0.8);
+
+			tgtFileChooserPropertyCheck(true);
+		    }
+		    else // Not Valid Key
+		    {
+			if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+			{
+			    keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key +" " + directory);
+			    keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
+//				keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
+
+			    checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 
 			    showPasswordCheckBox.setVisible(true);
 			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
@@ -2380,146 +2380,122 @@ public class GUIFX extends Application implements UI, Initializable
 			    pwdtxtField.setDisable(false);
 			    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
-			    keyImageView.setImage(KEY_FILE_IMAGE);
+			    keyImageView.setImage(KEY_MAP_IMAGE);
 			    keyImageView.setOpacity(0.8);
 
 			    tgtFileChooserPropertyCheck(true);
 			}
-			else // Not Valid Key
-			{
-			    if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
-			    {
-				keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key +" " + directory);
-				keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
-//				keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
-				keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
-
-				checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-
-				showPasswordCheckBox.setVisible(true);
-				if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-				pwdField.setVisible(! showPasswordCheckBox.isSelected());
-				pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-				pwdField.setDisable(false);
-				pwdtxtField.setDisable(false);
-				finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
-
-				keyImageView.setImage(KEY_MAP_IMAGE);
-				keyImageView.setOpacity(0.8);
-
-				tgtFileChooserPropertyCheck(true);
-			    }
-			    else
-			    {
-				String keyitem = "";
-				if (keyFCPath.type == FCPath.FILE)		{ keyitem = file; }
-				else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
-				else						{ keyitem = FCPath.getTypeString(keyFCPath.type); }
-				
-				new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
-				keyHeaderLabel.setTextFill(Color.ORANGE); keyHeaderLabel.setText(key + " " + keyitem);
-				keyNameLabel.setTextFill(Color.ORANGE); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
-				if (keyFCPath.type != FCPath.FILE)	{ keyHeaderLabel.setTextFill(Color.ORANGERED); }
-				else				{ keyHeaderLabel.setTextFill(Color.ORANGE); }
-				if (keyFCPath.type != FCPath.DIRECTORY)
-				{
-				    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
-				}
-				checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-
-				if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
-
-				showPasswordCheckBox.setVisible(true);
-				if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-				pwdField.setVisible(! showPasswordCheckBox.isSelected());
-				pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-				pwdField.setDisable(false);
-				pwdtxtField.setDisable(false);			
-
-				if (keyFCPath.type == FCPath.DIRECTORY) { keyImageView.setImage(KEY_MAP_IMAGE); } else { keyImageView.setImage(KEY_FILE_IMAGE); }
-				keyImageView.setOpacity(0.2);
-
-				ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-//				userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-				userGuidanceMessage(ugMessage);
-
-				targetFCPathList = new FCPathList<FCPath>();
-				buildReady(targetFCPathList, false);
-			    }			
-			}
-//		    });
-
-		    // Checksum Calculation
-		    if ((keyFCPath.isValidKey)) // Valid Key
-		    {
-			if ( keyFCPath.size < (1024L * 1024L * 1024L * 1L) )
-			{
-//			    Platform.runLater(() -> 
-//			    {			    
-				checksumLabel.setTextFill(Color.WHITESMOKE);
-				checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(calculating + "...");
-				Tooltip.uninstall(checksumLabel, checksumTooltip);
-				calculateChecksum();
-//			    });
-			}
 			else
 			{
-//			    Platform.runLater(() -> 
-//			    {
-				checksumLabel.setTextFill(Color.WHITESMOKE);
-				checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(click_for_checksum);
-				Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			    });
-			}
-		    }
-		}
-		else // No Items Selected
-		{
-//		    log("CC Sel Not Valid\r\n");
-		    MySimpleFCFileVisitor.running = false;
-//		    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-
-		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-//					 getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-
-		    if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
-		    {
-//			Platform.runLater(() ->
-//			{
-			    keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + directory);
-			    keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
-			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
-			    checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-			    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { tgtFileChooserPropertyCheck(true); })); timeline.play();
-//			});
-		    }
-		    else
-		    {
-//			Platform.runLater(() ->
-//			{
 			    String keyitem = "";
-			    if (keyFCPath.type == FCPath.FILE)		{ keyitem = file; }
+			    if (keyFCPath.type == FCPath.FILE)		    { keyitem = file; }
 			    else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
-			    else						{ keyitem = FCPath.getTypeString(keyFCPath.type); }
-			    
+			    else					    { keyitem = FCPath.getTypeString(keyFCPath.type); }
+
 			    new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
 			    keyHeaderLabel.setTextFill(Color.ORANGE); keyHeaderLabel.setText(key + " " + keyitem);
 			    keyNameLabel.setTextFill(Color.ORANGE); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
 			    if (keyFCPath.type != FCPath.FILE)	{ keyHeaderLabel.setTextFill(Color.ORANGERED); }
-			    else					{ keyHeaderLabel.setTextFill(Color.ORANGE); }
-			    if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
+			    else				{ keyHeaderLabel.setTextFill(Color.ORANGE); }
+			    if (keyFCPath.type != FCPath.DIRECTORY)
+			    {
+				if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
+			    }
 			    checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-//
+
+			    if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
+
+			    showPasswordCheckBox.setVisible(true);
+			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
+			    pwdField.setVisible(! showPasswordCheckBox.isSelected());
+			    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+			    pwdField.setDisable(false);
+			    pwdtxtField.setDisable(false);			
+
+			    if (keyFCPath.type == FCPath.DIRECTORY) { keyImageView.setImage(KEY_MAP_IMAGE); } else { keyImageView.setImage(KEY_FILE_IMAGE); }
+			    keyImageView.setOpacity(0.2);
+
 			    ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-//			    userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+//				userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			    userGuidanceMessage(ugMessage);
 
 			    targetFCPathList = new FCPathList<FCPath>();
-			    buildReady(targetFCPathList, true);
-//			});
+			    buildReady(targetFCPathList, false);
+			}			
+		    }
+//		    });
+
+		// Checksum Calculation
+		if ((keyFCPath.isValidKey)) // Valid Key
+		{
+		    if ( keyFCPath.size < (1024L * 1024L * 1024L * 1L) )
+		    {
+//			    Platform.runLater(() -> 
+//			    {			    
+			    checksumLabel.setTextFill(Color.WHITESMOKE);
+			    checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(calculating + "...");
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+			    calculateChecksum();
+//			    });
+		    }
+		    else
+		    {
+//			    Platform.runLater(() -> 
+//			    {
+			    checksumLabel.setTextFill(Color.WHITESMOKE);
+			    checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(click_for_checksum);
+			    Tooltip.uninstall(checksumLabel, checksumTooltip);
+//			    });
 		    }
 		}
+	    }
+	    else // No Items Selected
+	    {
+//		    log("CC Sel Not Valid\r\n");
+		MySimpleFCFileVisitor.running = false;
+//		    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
+
+		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+//					 getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+
+		if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+		{
+//			Platform.runLater(() ->
+//			{
+			keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + directory);
+			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
+			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
+			checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+			Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { tgtFileChooserPropertyCheck(true); })); timeline.play();
+//			});
+		}
+		else
+		{
+//			Platform.runLater(() ->
+//			{
+			String keyitem = "";
+			if (keyFCPath.type == FCPath.FILE)		{ keyitem = file; }
+			else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
+			else						{ keyitem = FCPath.getTypeString(keyFCPath.type); }
+
+			new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
+			keyHeaderLabel.setTextFill(Color.ORANGE); keyHeaderLabel.setText(key + " " + keyitem);
+			keyNameLabel.setTextFill(Color.ORANGE); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
+			if (keyFCPath.type != FCPath.FILE)	{ keyHeaderLabel.setTextFill(Color.ORANGERED); }
+			else					{ keyHeaderLabel.setTextFill(Color.ORANGE); }
+			if ( keyFCPath.size < FCPath.KEY_SIZE_MIN ) { keySizeLabel.setTextFill(Color.ORANGERED); } else { keySizeLabel.setTextFill(Color.ORANGE); } keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
+			checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
+//
+			ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+//			    userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+			userGuidanceMessage(ugMessage);
+
+			targetFCPathList = new FCPathList<FCPath>();
+			buildReady(targetFCPathList, true);
+//			});
+		}
+	    }
 	    }
 	});
     }
@@ -4318,10 +4294,13 @@ public class GUIFX extends Application implements UI, Initializable
 	    }
 	    else // Animation
 	    {
-		selectLanguage.setVisible(false);
 		new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-		animation_Is_Enabled = ! animation_Is_Enabled;
-		if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); flushPrefs(prefs); new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); load_High_MS_Passed = 0.0; load_Low_MS_Passed = LOAD_LOW_MS_TIMEOUT; } else { prefs.put("Animated", "Disabled"); new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
+		if (selectLanguage.isVisible()) { selectLanguage.setVisible(false); }
+		else
+		{
+		    animation_Is_Enabled = ! animation_Is_Enabled;
+		    if (animation_Is_Enabled) { prefs.put("Animated", "Enabled"); flushPrefs(prefs); new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC); load_High_MS_Passed = 0.0; load_Low_MS_Passed = LOAD_LOW_MS_TIMEOUT; } else { prefs.put("Animated", "Disabled"); new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
+		}
 	    }
 	});
     }
@@ -4331,39 +4310,52 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() -> 
 	{
-	    if	    ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Arabic") )	    { selectedLanguageCode = "ar"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bulgarian") )  { selectedLanguageCode = "bg"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Chinese") )    { selectedLanguageCode = "cn"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Croatian") )   { selectedLanguageCode = "hr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Czech") )	    { selectedLanguageCode = "cz"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Dutch") )	    { selectedLanguageCode = "nl"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("English") )    { selectedLanguageCode = "en"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Esperanto") )  { selectedLanguageCode = "eo"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Farsi") )	    { selectedLanguageCode = "fa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("French") )	    { selectedLanguageCode = "fr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("German") )	    { selectedLanguageCode = "de"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Greek") )	    { selectedLanguageCode = "el"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hindi") )	    { selectedLanguageCode = "hi"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hungarian") )  { selectedLanguageCode = "hu"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Icelandic") )  { selectedLanguageCode = "is"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Indonesian") ) { selectedLanguageCode = "id"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Italian") )    { selectedLanguageCode = "it"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Kazakh") )	    { selectedLanguageCode = "kk"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Latvian") )    { selectedLanguageCode = "lv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Malaysian") )  { selectedLanguageCode = "ms"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Maltees") )    { selectedLanguageCode = "mt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Norwegian") )  { selectedLanguageCode = "no"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Polish") )	    { selectedLanguageCode = "pl"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Portugese") )  { selectedLanguageCode = "pt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )   { selectedLanguageCode = "rm"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )    { selectedLanguageCode = "ru"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )    { selectedLanguageCode = "sr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )    { selectedLanguageCode = "es"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )    { selectedLanguageCode = "sv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Thai") )	    { selectedLanguageCode = "th"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Turkish") )    { selectedLanguageCode = "tr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Ukrainian") )  { selectedLanguageCode = "uk"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else											    { selectedLanguageCode = "en"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    if	    ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Arabic") )		    { selectedLanguageCode = "ara"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bengali") )	    { selectedLanguageCode = "ben"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bulgarian") )	    { selectedLanguageCode = "bul"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Chinese") )	    { selectedLanguageCode = "chi"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Croatian") )	    { selectedLanguageCode = "hrv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Czech") )		    { selectedLanguageCode = "cze"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Danish") )		    { selectedLanguageCode = "dan"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Dutch") )		    { selectedLanguageCode = "dut"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("English") )	    { selectedLanguageCode = "eng"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Esperanto") )	    { selectedLanguageCode = "epo"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Farsi") )		    { selectedLanguageCode = "per"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Finnish") )	    { selectedLanguageCode = "fin"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("French") )		    { selectedLanguageCode = "fre"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Frisian (western)") )  { selectedLanguageCode = "fry"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("German") )		    { selectedLanguageCode = "ger"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Greek") )		    { selectedLanguageCode = "gre"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hebrew") )		    { selectedLanguageCode = "heb"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hindi") )		    { selectedLanguageCode = "hin"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hungarian") )	    { selectedLanguageCode = "hun"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Icelandic") )	    { selectedLanguageCode = "ice"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Indonesian") )	    { selectedLanguageCode = "ind"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Japanese") )	    { selectedLanguageCode = "jpn"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Javanese") )	    { selectedLanguageCode = "jav"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Italian") )	    { selectedLanguageCode = "ita"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Kazakh") )		    { selectedLanguageCode = "kaz"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Korean") )		    { selectedLanguageCode = "kor"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Latvian") )	    { selectedLanguageCode = "lav"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Malaysian") )	    { selectedLanguageCode = "may"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Maltees") )	    { selectedLanguageCode = "mlt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Marathi") )	    { selectedLanguageCode = "mar"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Norwegian") )	    { selectedLanguageCode = "nor"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Polish") )		    { selectedLanguageCode = "pol"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Portugese") )	    { selectedLanguageCode = "por"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Punjabi") )	    { selectedLanguageCode = "pan"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )	    { selectedLanguageCode = "rum"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )	    { selectedLanguageCode = "rus"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Serbian") )	    { selectedLanguageCode = "srp"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )	    { selectedLanguageCode = "spa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )	    { selectedLanguageCode = "swe"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Tamil") )		    { selectedLanguageCode = "tam"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Thai") )		    { selectedLanguageCode = "tha"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Turkish") )	    { selectedLanguageCode = "tur"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Ukrainian") )	    { selectedLanguageCode = "ukr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Urdu") )		    { selectedLanguageCode = "urd"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Vietnamese") )	    { selectedLanguageCode = "vie"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
+	    else												    { selectedLanguageCode = "eng"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 //	    switchLanguage(selectedLocale, true, true, false);
 
 //	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
