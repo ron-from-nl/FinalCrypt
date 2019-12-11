@@ -1,4 +1,8 @@
-Date: 2019-12-10 Version: 6.0.3
+Date: 2019-12-12 Version: 6.1.0
+
+Graphical user-interface restyled & simplyfied
+The user-interface now only shows relevant info
+Less destraction and more focus to what you do
 
 Language corrections & updates of 45 languages
 Removed duo latin lines on non latin languages
@@ -9,13 +13,14 @@ Languages files can be edited with Netbeans.org
 Location in the sourcecode: (src/rdj/language)
 Sourcecode click [Support] [Home] [SourceCode]
 
+Date: 2019-12-10 Version: 6.0.3
+
+Language corrections & updates of 45 languages
+Removed duo latin lines on non latin languages
+
 Date: 2019-12-10 Version: 6.0.2
 
 This update adds up to a total of 45 languages
-Add/correct language? Download, Edit & Mail me
-Languages files can be found in the sourcecode
-Location in the sourcecode: (src/rdj/language)
-Sourcecode click [Support] [Home] [SourceCode]
 
 Date: 2019-12-09 Version: 6.0.1
 

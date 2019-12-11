@@ -320,6 +320,14 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
     private boolean	 animation_Is_Enabled =		true;
     
+//    private final Color DIM =				Color.DIMGREY;
+//    private final Color	INFO =				Color.LIGHTGREY;
+    private final Color DIM =				Color.DIMGREY;
+    private final Color	INFO =				Color.LIGHTGREY;
+    private final Color	NOTICE =			Color.YELLOW;
+    private final Color	ALERT =				Color.ORANGE;
+    private final Color	WARNING =			Color.RED;
+    
     private final String OS_NAME =			System.getProperty("os.name");
     private final String OS_ARCH =			System.getProperty("os.arch");
     private final String OS_VERSION =			System.getProperty("os.version");
@@ -587,6 +595,8 @@ public class GUIFX extends Application implements UI, Initializable
     private String selectedLanguageCode = "en";
     @FXML
     private Tooltip passwordHeaderLabelToolTip;
+    private int tgtToggleButtonCounter;
+    private int keyToggleButtonCounter;
     
     
     
@@ -806,6 +816,9 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+	showDashboard(false);
+	enableClocks(false, true, true); 
+	
 	logTextArea.setText(""); // clear before starting so UTF8 test symbols can stay in GUIFX.fxml
 //	TIMELINE INITIALIZATION
 	
@@ -1677,47 +1690,62 @@ public class GUIFX extends Application implements UI, Initializable
     {
 //        Platform.runLater(() ->
 //	{
-	    version = new Version(ui);
-	    version.checkCurrentlyInstalledVersion(GUIFX.this);
-	    version.checkLatestOnlineVersion(GUIFX.this);
-	    prefs.putLong("Update Checked", now); flushPrefs(prefs); 
-	    String[] lines = version.getUpdateStatus().split("\r\n");
-	    for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
-
-//	    Just for testing purposes (uncomment)
-//	    alertCurrentVersionIsUp2Date();
-//	    alertCurrentVersionCanBeUpdated();
-//	    alertCurrentVersionIsDevelopement();
-//	    alertlatestVersionUnknown();
-//	    latestAlertMessage();
-////	    currentAlertMessage(); // Should never be tested and used in production
-	    
-	    if (version.latestVersionIsKnown())
+	    Thread pleaseShareThread = new Thread(new Runnable()
 	    {
-		if (( ! version.versionIsDifferent() ) && ( userActivated ))		    { alertCurrentVersionIsUp2Date(); }
-		else { if (version.versionCanBeUpdated())				    { alertCurrentVersionCanBeUpdated(); }
-		       else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
-	    }
-	    else									    { alertlatestVersionUnknown(); }
+		@Override
+		@SuppressWarnings({"static-access"})
+		public void run()
+		{
+		    Platform.runLater(() ->
+		    {
+version = new Version(ui);
+			version.checkCurrentlyInstalledVersion(GUIFX.this);
+			version.checkLatestOnlineVersion(GUIFX.this);
+			prefs.putLong("Update Checked", now); flushPrefs(prefs); 
+			String[] lines = version.getUpdateStatus().split("\r\n");
+			for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
 
-//	    After all check update processing comes an optional alert	    
-	    if (
-		    ( true ) // Leave to "true" to enable online alerts
-		    && ( version.getLatestAlertSubjectString() != null)
-		    && ( ! version.getLatestAlertSubjectString().isEmpty())
-		    && ( version.getLatestAlertString() != null)
-		    && ( ! version.getLatestAlertString().isEmpty())
-		)   // Only display Alert in VERSION2 file
-	    { latestAlertMessage(); }
-	    
-	    if (
-		    ( false ) // Leave to "false" Only set to true to test an alert
-		    && ( version.getCurrentAlertSubjectString() != null)
-		    && ( ! version.getCurrentAlertSubjectString().isEmpty())
-		    && ( version.getCurrentAlertString() != null)
-		    && ( ! version.getCurrentAlertString().isEmpty())
-		)   // Only display Alert in VERSION2 file
-	    { currentAlertMessage(); }
+			// Just for testing purposes (uncomment)
+			// alertCurrentVersionIsUp2Date();
+			// alertCurrentVersionCanBeUpdated();
+			// alertCurrentVersionIsDevelopement();
+			// alertlatestVersionUnknown();
+			// latestAlertMessage();
+			//// currentAlertMessage(); // Should never be tested and used in production
+
+			if (version.latestVersionIsKnown())
+			{
+			    if (( ! version.versionIsDifferent() ) && ( userActivated ))		    { alertCurrentVersionIsUp2Date(); }
+			    else { if (version.versionCanBeUpdated())				    { alertCurrentVersionCanBeUpdated(); }
+				   else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
+			}
+			else									    { alertlatestVersionUnknown(); }
+
+	    //	    After all check update processing comes an optional alert	    
+			if (
+				( true ) // Leave to "true" to enable online alerts
+				&& ( version.getLatestAlertSubjectString() != null)
+				&& ( ! version.getLatestAlertSubjectString().isEmpty())
+				&& ( version.getLatestAlertString() != null)
+				&& ( ! version.getLatestAlertString().isEmpty())
+			    )   // Only display Alert in VERSION2 file
+			{ latestAlertMessage(); }
+
+			if (
+				( false ) // Leave to "false" Only set to true to test an alert
+				&& ( version.getCurrentAlertSubjectString() != null)
+				&& ( ! version.getCurrentAlertSubjectString().isEmpty())
+				&& ( version.getCurrentAlertString() != null)
+				&& ( ! version.getCurrentAlertString().isEmpty())
+			    )   // Only display Alert in VERSION2 file
+			{ currentAlertMessage(); }
+		    });
+					}
+	    });
+	    pleaseShareThread.setName("pleaseShareThread");
+	    pleaseShareThread.setDaemon(true);
+	    pleaseShareThread.start();
+
 //	});
     }
     
@@ -1997,7 +2025,8 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
 		Platform.runLater(() ->
 		{
-		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+		    encryptButton.setDisable(true);
+		    decryptButton.setDisable(true);
 		});
 	    }
 	    else // Not a Device
@@ -2035,14 +2064,16 @@ public class GUIFX extends Application implements UI, Initializable
 		    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
 		    Platform.runLater(() ->
 		    {
-			encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+			encryptButton.setDisable(true);
+			decryptButton.setDisable(true);
 		    });
 		} // Not a device / file or symlink
 	    }
         }
 	else // No items selected
 	{
-	    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+	    encryptButton.setDisable(true);
+	    decryptButton.setDisable(true);
 	}
 	tgtFileChooser.setFileFilter(nonFinalCryptFilter); tgtFileChooser.setFileFilter(tgtFileChooser.getAcceptAllFileFilter()); // Resets rename due to doucle click file		
     }                                                
@@ -2062,7 +2093,8 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() ->
 		{
-		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+		    encryptButton.setDisable(true);
+		    decryptButton.setDisable(true);
 		});
 	    }
 //					  ui	cll path				       isKey    device  minsize  symlink  writable status
@@ -2081,13 +2113,15 @@ public class GUIFX extends Application implements UI, Initializable
 		targetFCPathList = new FCPathList<FCPath>(); this.updateDashboard(targetFCPathList);
 		Platform.runLater(() ->
 		{
-		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+		    encryptButton.setDisable(true);
+		    decryptButton.setDisable(true);
 		});
 	    }
         }
 	else
 	{
-	    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+	    encryptButton.setDisable(true);
+	    decryptButton.setDisable(true);
 	}	
         keyFileChooser.setFileFilter(nonFinalCryptFilter); keyFileChooser.setFileFilter(keyFileChooser.getAcceptAllFileFilter()); // Resets rename due to double click file
     }
@@ -2153,7 +2187,6 @@ public class GUIFX extends Application implements UI, Initializable
 		decryptButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
-		enableClocks(false, false); 
 
 		fileProgressBar.setProgress(0);
 		filesProgressBar.setProgress(0);
@@ -2201,28 +2234,28 @@ public class GUIFX extends Application implements UI, Initializable
 	//		Get Globbing Pattern String
 		    pattern = "glob:*"; // try { pattern = getSelectedPatternFromFileChooser( targetFileChooser.getFileFilter()); } catch (ClassCastException exc) {  }
 
-		    // UPdate Dashboard during buildSelection
+		    showKeyPanel(true);
+
+		    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
+		    pwdField.setDisable(true);
+		    pwdtxtField.setDisable(true);
+		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    keyImageView.setOpacity(0.8);
 
 		    updateDashboardTask = new TimerTask() { @Override public void run() { updateDashboard(targetFCPathList2); }};
 		    updateDashboardTaskTimer = new java.util.Timer();
 		    updateDashboardTaskTimer.schedule(updateDashboardTask, 250L, 250L);
 
 		    // Scanning animation on main progressbar
-		    showPasswordCheckBox.setVisible(true);
-		    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-		    pwdField.setDisable(true);
-		    pwdtxtField.setDisable(true);
-		    pwdField.setVisible(! showPasswordCheckBox.isSelected());
-		    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
-		    keyImageView.setOpacity(0.8);
 		    if ((targetPathList != null) && (targetPathList.size() > 0)) { filesProgressBar.setVisible(true); filesProgressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS); }
 
 		    new Sound().play(this, Audio.SND_READY,Audio.AUDIO_CODEC);
 
 		    ugMessage = new Message(scanning_files, 64, false, false, false, false, Voice.VOI_SCANNING_FILES, 0);
 		    userGuidanceMessage(ugMessage);
+
+		    showDashboard(true);
 
 		    Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> // Give scanner a little time to stop
 		    {
@@ -2248,9 +2281,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			new Sound().play(this, Audio.SND_SELECTINVALID,Audio.AUDIO_CODEC);
 			ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-			userGuidanceMessage(ugMessage);
-			userGuidanceMessage(ugMessage);
+			userGuidanceMessage(ugMessage);			
 		    }
+
+		    showDashboard(false);
+		    enableClocks(false, false, false);
 
 		    targetFCPathList = new FCPathList<FCPath>();
 		    buildReady(targetFCPathList, false);
@@ -2259,89 +2294,95 @@ public class GUIFX extends Application implements UI, Initializable
 	});
     }
     
+    private void showKeyPanel(boolean show)
+    {
+	passwordHeaderLabel.setVisible(show);
+	if (show)
+	{
+	    pwdField.setVisible(! showPasswordCheckBox.isSelected());
+	    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+	}
+	else
+	{
+	    pwdField.setVisible(show);
+	    pwdtxtField.setVisible(show);
+	}
+
+	keyHeaderLabel.setVisible(show);
+	keyNameLabel.setVisible(show);
+	keySizeHeaderLabel.setVisible(show);
+	keySizeLabel.setVisible(show);
+	checksumLabel.setVisible(show);
+	checksumHeader.setVisible(show);
+	showPasswordCheckBox.setVisible(show);
+	keyImageView.setVisible(show);
+    }
+    
     synchronized private void keyFileChooserPropertyCheck(boolean controlled) // getFCPath, checkModeReady
     {
         Platform.runLater(() ->
 	{
-	    keyHeaderLabel.setTextFill(Color.GREY); keyHeaderLabel.setText("");
-	    keyNameLabel.setTextFill(Color.GREY); keyNameLabel.setText(""); keyNameLabelTooltip.setText("");
-	    keySizeLabel.setTextFill(Color.GREY); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
-	    checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText("");
-	    if ( checksumTooltip != null ) { checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip); }
-	    
-	    showPasswordCheckBox.setVisible(true);
-	    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-	    pwdField.setVisible(! showPasswordCheckBox.isSelected());
-	    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
-	    pwdField.setDisable(false);
-	    pwdtxtField.setDisable(false);
-	    
-	    keyImageView.setImage(KEY_MAP_IMAGE);
-	    keyImageView.setOpacity(0.2);
 
-	    keyWriteNameLabel.setVisible(true); keyWriteLabel.setVisible(true); keyWriteSizeLabel.setVisible(true);
-	    keyMatchNameLabel.setVisible(true); keyReadLabel.setVisible(true); keyReadSizeLabel.setVisible(true);
-	    keyMissingNameLabel.setVisible(true); keyMissingLabel.setVisible(true); keyMissingSizeLabel.setVisible(true);
-//	});
-
-	keySourceChecksumReadEnded = true;
-	keySourceChecksumReadCanceled = true;
+	    keySourceChecksumReadEnded = true;
+	    keySourceChecksumReadCanceled = true;
 	
-	if (!processRunning)
-	{
-	    Platform.runLater(() -> 
+	    if (!processRunning)
 	    {
-		fileProgressBar.setProgress(0);
-		filesProgressBar.setProgress(0);
-
-
-	    });
-
-	    // En/Disable FileChooser deletebutton
-	    if (
-		    (keyFileChooser != null) &&
-		    (keyFileChooser.getSelectedFile() != null) &&
-		    (
-			(Files.isRegularFile( keyFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
-			(Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
-		    ) 
-	       )
-	    {
-//		    keyFileDeleteButton.setEnabled(true);
-		keyFileDeleteButton2.setDisable(false);
-	    }
-	    else
-	    {
-//		    keyFileDeleteButton.setEnabled(false);
-		keyFileDeleteButton2.setDisable(true);
-	    }
-
-	    // Set Buffer Size
-	    finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
-
-	    // Validate KeyFile
-	    if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
-	    {
-		Path keyPath;
-		if ( ! Files.isDirectory(keyFileChooser.getSelectedFiles()[0].toPath()))
+		Platform.runLater(() -> 
 		{
-		    keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
+		    fileProgressBar.setProgress(0);
+		    filesProgressBar.setProgress(0);
+
+
+		});
+
+		// En/Disable FileChooser deletebutton
+		if (
+			(keyFileChooser != null) &&
+			(keyFileChooser.getSelectedFile() != null) &&
+			(
+			    (Files.isRegularFile( keyFileChooser.getSelectedFile().toPath(), LinkOption.NOFOLLOW_LINKS)) ||
+			    (Files.isDirectory(keyFileChooser.getSelectedFile().toPath()))
+			) 
+		   )
+		{
+    //		    keyFileDeleteButton.setEnabled(true);
+		    keyFileDeleteButton2.setDisable(false);
 		}
 		else
 		{
-		    keyPath = keyFileChooser.getCurrentDirectory().toPath();
+    //		    keyFileDeleteButton.setEnabled(false);
+		    keyFileDeleteButton2.setDisable(true);
 		}
-//				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
-//		    Platform.runLater(() -> 
-//		    {
+		// Set Buffer Size
+		finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+
+		// Validate KeyFile
+		if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
+		{
+		    Path keyPath;
+		    if ( ! Files.isDirectory(keyFileChooser.getSelectedFiles()[0].toPath()))
+		    {
+			keyPath = keyFileChooser.getSelectedFiles()[0].toPath();
+		    }
+		    else
+		    {
+			keyPath = keyFileChooser.getCurrentDirectory().toPath();
+		    }
+    //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+
+    //  ============================================================================================================================
+    //  ============================================== Validate Key Selected =======================================================
+    //  ============================================================================================================================
+
 		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
 			String keyitem = "";
-			if (keyFCPath.type == FCPath.FILE)		    { keyitem = file; }
+			if (keyFCPath.type == FCPath.FILE)		{ keyitem = file; }
 			else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
-			else					    { keyitem = FCPath.getTypeString(keyFCPath.type); }
+			else						{ keyitem = FCPath.getTypeString(keyFCPath.type); }
 
 			new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
 			keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + keyitem);
@@ -2351,16 +2392,15 @@ public class GUIFX extends Application implements UI, Initializable
 
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText("Size "); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1,"Bytes"));
 
-			showPasswordCheckBox.setVisible(true);
 			if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-			pwdField.setVisible(! showPasswordCheckBox.isSelected());
-			pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
 			pwdField.setDisable(false);
 			pwdtxtField.setDisable(false);
 			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
 			keyImageView.setImage(KEY_FILE_IMAGE);
 			keyImageView.setOpacity(0.8);
+
+//			showKeyPanel(true);
 
 			tgtFileChooserPropertyCheck(true);
 		    }
@@ -2370,21 +2410,21 @@ public class GUIFX extends Application implements UI, Initializable
 			{
 			    keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key +" " + directory);
 			    keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
-//				keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
+    //				keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeLabel.setText(Validate.getHumanSize(keyFCPath.size,1));
 			    keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
 
 			    checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
-
-			    showPasswordCheckBox.setVisible(true);
+			    
 			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-			    pwdField.setVisible(! showPasswordCheckBox.isSelected());
-			    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
 			    pwdField.setDisable(false);
 			    pwdtxtField.setDisable(false);
 			    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
 
 			    keyImageView.setImage(KEY_MAP_IMAGE);
 			    keyImageView.setOpacity(0.8);
+
+			    showKeyPanel(false);
+			    showDashboard(false);
 
 			    tgtFileChooserPropertyCheck(true);
 			}
@@ -2408,10 +2448,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 			    if ( keyFCPath != null ) { keyFCPath.isValidKey = false; }
 
-			    showPasswordCheckBox.setVisible(true);
+			    showKeyPanel(false);
+			    showDashboard(false);
+
 			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
-			    pwdField.setVisible(! showPasswordCheckBox.isSelected());
-			    pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
 			    pwdField.setDisable(false);
 			    pwdtxtField.setDisable(false);			
 
@@ -2419,64 +2459,54 @@ public class GUIFX extends Application implements UI, Initializable
 			    keyImageView.setOpacity(0.2);
 
 			    ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
-//				userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
+    //				userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			    userGuidanceMessage(ugMessage);
+			    enableClocks(false, false, false);
 
 			    targetFCPathList = new FCPathList<FCPath>();
 			    buildReady(targetFCPathList, false);
 			}			
 		    }
-//		    });
 
-		// Checksum Calculation
-		if ((keyFCPath.isValidKey)) // Valid Key
-		{
-		    if ( keyFCPath.size < (1024L * 1024L * 1024L * 1L) )
+		    // Checksum Calculation
+		    if ((keyFCPath.isValidKey)) // Valid Key
 		    {
-//			    Platform.runLater(() -> 
-//			    {			    
+			if ( keyFCPath.size < (1024L * 1024L * 1024L * 1L) )
+			{
 			    checksumLabel.setTextFill(Color.WHITESMOKE);
 			    checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(calculating + "...");
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
 			    calculateChecksum();
-//			    });
-		    }
-		    else
-		    {
-//			    Platform.runLater(() -> 
-//			    {
+			}
+			else
+			{
 			    checksumLabel.setTextFill(Color.WHITESMOKE);
 			    checksumHeader.setText(checksum + " (" + FinalCrypt.HASH_ALGORITHM_NAME + ")"); checksumLabel.setText(click_for_checksum);
 			    Tooltip.uninstall(checksumLabel, checksumTooltip);
-//			    });
+			}
 		    }
 		}
-	    }
-	    else // No Items Selected
-	    {
-//		    log("CC Sel Not Valid\r\n");
-		MySimpleFCFileVisitor.running = false;
-//		    try { Thread.sleep(100); } catch (InterruptedException ex) {  }
-
-		Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
-//					 getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
-
-		if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+		else // No Items Selected
 		{
-//			Platform.runLater(() ->
-//			{
+    //		    log("CC Sel Not Valid\r\n");
+		    MySimpleFCFileVisitor.running = false;
+
+		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
+    //					 getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
+		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+
+		    if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
+		    {
 			keyHeaderLabel.setTextFill(Color.GREENYELLOW); keyHeaderLabel.setText(key + " " + directory);
 			keyNameLabel.setTextFill(Color.GREENYELLOW); keyNameLabel.setText(keyFCPath.path.toAbsolutePath().toString()); keyNameLabelTooltip.setText(keyFCPath.path.toAbsolutePath().toString());
 			keySizeLabel.setTextFill(Color.GREENYELLOW); keySizeHeaderLabel.setText(""); keySizeLabel.setText("");
 			checksumLabel.setTextFill(Color.GREY); checksumHeader.setText(""); checksumLabel.setText(""); checksumTooltip.setText(""); Tooltip.uninstall(checksumLabel, checksumTooltip);
 			Timeline timeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> { tgtFileChooserPropertyCheck(true); })); timeline.play();
-//			});
-		}
-		else
-		{
-//			Platform.runLater(() ->
-//			{
+			
+			    showKeyPanel(true);
+		    }
+		    else
+		    {
 			String keyitem = "";
 			if (keyFCPath.type == FCPath.FILE)		{ keyitem = file; }
 			else if (keyFCPath.type == FCPath.DIRECTORY)    { keyitem = directory; }
@@ -2493,12 +2523,15 @@ public class GUIFX extends Application implements UI, Initializable
 			ugMessage = new Message(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 //			    userGuidanceMessage(select_key_dir, 64, false, false, true, false, Voice.VOI_SELECT_KEY_DIRECTORY, 0);
 			userGuidanceMessage(ugMessage);
+			
+			enableClocks(false, false, false);
+			showKeyPanel(false);
+			showDashboard(false);
 
 			targetFCPathList = new FCPathList<FCPath>();
 			buildReady(targetFCPathList, true);
-//			});
+		    }
 		}
-	    }
 	    }
 	});
     }
@@ -2617,6 +2650,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    filesProgressBar.setProgress(0); filesProgressBar.setVisible(false); pwdField.setDisable(false); pwdtxtField.setDisable(false);
 	});
+	
 	if (updateDashboardTaskTimer != null) { updateDashboardTaskTimer.cancel(); updateDashboardTaskTimer.purge(); }
 	MySimpleFCFileVisitor.running = false;
 	isCalculatingCheckSum = false;
@@ -2624,7 +2658,9 @@ public class GUIFX extends Application implements UI, Initializable
 	if (fcPathListParam.size() > 0)
 	{
 //	    test("buildReady > 0\r\n");
+	    showDashboard(true);
 	    updateDashboard(fcPathListParam);
+	    
 	    checkModeReady(fcPathListParam,validBuild);
 	}
 	else
@@ -2632,99 +2668,117 @@ public class GUIFX extends Application implements UI, Initializable
 //	    test("buildReady == 0\r\n");
 	    fcPathListParam.clearStats();
 	    encryptableList = new FCPathList<FCPath>();
+	    showDashboard(false);
 	    updateDashboard(fcPathListParam);
+	    
 	    checkModeReady(fcPathListParam,validBuild);
 	}
 //	if ( validBuild ) { textLabelBlurMessage("FinalCrypt", 500); }
     }
 
+    private void showDashboard(boolean on)
+    {
+	Platform.runLater(() -> 
+	{
+	    targetWarningNameLabel.setVisible(on); targetWarningNameLabel.setText("");
+	    emptyFilesHeaderLabel.setVisible(on); emptyFilesLabel.setVisible(on);
+	    symlinkFilesHeaderLabel.setVisible(on); symlinkFilesLabel.setVisible(on);
+	    unreadableFilesHeaderLabel.setVisible(on); unreadableFilesLabel.setVisible(on);
+	    unwritableFilesHeaderLabel.setVisible(on); unwritableFilesLabel.setVisible(on);
+	    hiddenFilesHeaderLabel.setVisible(on); hiddenFilesLabel.setVisible(on);
+	    totalFilesNameLabel.setVisible(on); totalFilesLabel.setVisible(on); filesSizeLabel.setVisible(on);
+	    invalidFilesNameLabel.setVisible(on); invalidFilesLabel.setVisible(on); invalidFilesSizeLabel.setVisible(on);
+	    targetUnencryptedNameLabel.setVisible(on); decryptedLabel.setVisible(on); decryptedSizeLabel.setVisible(on);
+	    targetEncryptableNameLabel.setVisible(on); encryptableLabel.setVisible(on); encryptableSizeLabel.setVisible(on);
+	    targetUnencryptableNameLabel.setVisible(on); unencryptableLabel.setVisible(on); unencryptableSizeLabel.setVisible(on);
+	    targetEncryptedNameLabel.setVisible(on); encryptedLabel.setVisible(on); encryptedSizeLabel.setVisible(on);
+	    targetDecryptableNameLabel.setVisible(on); decryptableLabel.setVisible(on); decryptableSizeLabel.setVisible(on);
+	    targetUndecryptableNameLabel.setVisible(on); undecryptableLabel.setVisible(on); undecryptableSizeLabel.setVisible(on);
+	    keyWriteNameLabel.setVisible(on); keyWriteLabel.setVisible(on); keyWriteSizeLabel.setVisible(on);
+	    keyMatchNameLabel.setVisible(on); keyReadLabel.setVisible(on); keyReadSizeLabel.setVisible(on);
+	    keyMissingNameLabel.setVisible(on); keyMissingLabel.setVisible(on); keyMissingSizeLabel.setVisible(on);
+	});
+    }
+    
     private void updateDashboard(FCPathList<FCPath> targetFCPathList)
     {
 //	test(s + "\r\n" + targetFCPathList.getStats());
 	Platform.runLater(() -> 
 	{
 	    // Skipping / Info Column
-	    if ( (targetFCPathList.emptyFiles > 0) || (targetFCPathList.symlinkFiles > 0)  || (targetFCPathList.unreadableFiles > 0) || (targetFCPathList.unwritableFiles > 0))
-	    { targetWarningNameLabel.setTextFill(Color.ORANGE); targetWarningNameLabel.setText(skipping); } else { targetWarningNameLabel.setTextFill(Color.GRAY); targetWarningNameLabel.setText("Invalid"); }
-	    
-	    if ( targetFCPathList.emptyFiles > 0 )	    { emptyFilesLabel.setTextFill(Color.ORANGE); } else { emptyFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.symlinkFiles > 0 )	    { symlinkFilesLabel.setTextFill(Color.ORANGE); } else { symlinkFilesLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unreadableFiles > 0 )	    { unreadableFilesLabel.setTextFill(Color.ORANGE); } else { unreadableFilesLabel.setTextFill(Color.GRAY); }
-//	    if ( targetFCPathList.unreadableFilesSize > 0 ) { unreadableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unreadableFilesSizeLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.unwritableFiles > 0 )	    { unwritableFilesLabel.setTextFill(Color.ORANGE); } else { unwritableFilesLabel.setTextFill(Color.GRAY); }
-//	    if ( targetFCPathList.unwritableFilesSize > 0 ) { unwritableFilesSizeLabel.setTextFill(Color.ORANGE); } else { unwritableFilesSizeLabel.setTextFill(Color.GRAY); }
-	    if ( targetFCPathList.hiddenFiles > 0 )	    { hiddenFilesLabel.setTextFill(Color.YELLOW); } else { hiddenFilesLabel.setTextFill(Color.GRAY); }
-//	    if ( targetFCPathList.hiddenFilesSize > 0 )	    { hiddenFilesSizeLabel.setTextFill(Color.YELLOW); } else { hiddenFilesSizeLabel.setTextFill(Color.GRAY); }
-	    
+	    if
+	    (
+//		    (targetFCPathList.emptyFiles > 0)
+//		||  (targetFCPathList.symlinkFiles > 0)
+		    (targetFCPathList.unreadableFiles > 0)
+		||  (targetFCPathList.unwritableFiles > 0)
+	    )
+	    { targetWarningNameLabel.setTextFill(ALERT); targetWarningNameLabel.setText(skipping); } else { targetWarningNameLabel.setTextFill(DIM); targetWarningNameLabel.setText(""); }
+	    	    
+	    if ( targetFCPathList.emptyFiles > 0 )	    { emptyFilesHeaderLabel.setTextFill(INFO); emptyFilesLabel.setTextFill(INFO); } else { emptyFilesHeaderLabel.setTextFill(DIM); emptyFilesLabel.setTextFill(DIM); }
 	    emptyFilesLabel.setText(Long.toString(targetFCPathList.emptyFiles));
+
+	    if ( targetFCPathList.symlinkFiles > 0 )	    { symlinkFilesHeaderLabel.setTextFill(INFO); symlinkFilesLabel.setTextFill(INFO); } else { symlinkFilesHeaderLabel.setTextFill(DIM); symlinkFilesLabel.setTextFill(DIM); }
 	    symlinkFilesLabel.setText(Long.toString(targetFCPathList.symlinkFiles));
+
+	    if ( targetFCPathList.unreadableFiles > 0 ) { unreadableFilesHeaderLabel.setTextFill(INFO); unreadableFilesLabel.setTextFill(ALERT); } else { unreadableFilesHeaderLabel.setTextFill(DIM); unreadableFilesLabel.setTextFill(DIM); }
 	    unreadableFilesLabel.setText(Long.toString(targetFCPathList.unreadableFiles));
 	    unreadableFilesLabel.getTooltip().setText(click_to_list_unreadable_files + " (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1,bytes) + ")");
-//	    unreadableFilesSizeLabel.setText("Click to list unreadable files (" + Validate.getHumanSize(targetFCPathList.unreadableFilesSize,1,"Bytes") + ")");
+
+	    if ( targetFCPathList.unwritableFiles > 0 ) { unwritableFilesHeaderLabel.setTextFill(INFO); unwritableFilesLabel.setTextFill(ALERT); } else { unwritableFilesHeaderLabel.setTextFill(DIM); unwritableFilesLabel.setTextFill(DIM); }
 	    unwritableFilesLabel.setText(Long.toString(targetFCPathList.unwritableFiles));
 	    unwritableFilesLabel.getTooltip().setText(click_to_list_unwritable_files + " (" + Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1,bytes) + ")");
-//	    unwritableFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unwritableFilesSize,1,"Bytes"));
+
+	    if ( targetFCPathList.hiddenFiles > 0 ) { hiddenFilesHeaderLabel.setTextFill(INFO); hiddenFilesLabel.setTextFill(INFO); } else { hiddenFilesHeaderLabel.setTextFill(DIM); hiddenFilesLabel.setTextFill(DIM); }
 	    hiddenFilesLabel.setText(Long.toString(targetFCPathList.hiddenFiles));
 	    hiddenFilesLabel.getTooltip().setText(click_to_list_hidden_files + " (" + Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1,bytes) + ")");
-//	    hiddenFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.hiddenFilesSize,1,"Bytes"));
 
-//	    Decrypted Column
+//	    Totals Column
+	    if ( targetFCPathList.files > 0 ) { totalFilesNameLabel.setTextFill(INFO); totalFilesLabel.setTextFill(INFO); filesSizeLabel.setTextFill(INFO); } else { totalFilesNameLabel.setTextFill(DIM); totalFilesLabel.setTextFill(DIM); filesSizeLabel.setTextFill(DIM); }
+	    totalFilesLabel.setText(Long.toString(targetFCPathList.files));
+	    filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1,bytes));
+
+//	    Invalid Column
+	    if ( (targetFCPathList.files - targetFCPathList.validFiles) > 0 ) { invalidFilesNameLabel.setTextFill(INFO); invalidFilesLabel.setTextFill(INFO); invalidFilesSizeLabel.setTextFill(INFO); } else { invalidFilesNameLabel.setTextFill(DIM); invalidFilesLabel.setTextFill(DIM); invalidFilesSizeLabel.setTextFill(DIM); }
+	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
+	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1,bytes));
+
+//	    Unencrypted Column
+	    if ( targetFCPathList.decryptedFiles > 0 ) { targetUnencryptedNameLabel.setTextFill(INFO); decryptedLabel.setTextFill(INFO); decryptedSizeLabel.setTextFill(INFO); } else { targetUnencryptedNameLabel.setTextFill(DIM); decryptedLabel.setTextFill(DIM); decryptedSizeLabel.setTextFill(DIM); }
 	    decryptedLabel.setText(Long.toString(targetFCPathList.decryptedFiles));
 	    decryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptedFilesSize,1,bytes));
 
+//	    Encryptable Column
+	    if ( targetFCPathList.encryptableFiles > 0 ) { targetEncryptableNameLabel.setTextFill(INFO); encryptableLabel.setTextFill(INFO); encryptableSizeLabel.setTextFill(INFO); } else { targetEncryptableNameLabel.setTextFill(DIM); encryptableLabel.setTextFill(DIM); encryptableSizeLabel.setTextFill(DIM); }
 	    encryptableLabel.setText(Long.toString(targetFCPathList.encryptableFiles));
 	    encryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptableFilesSize,1,bytes));
 
-//	    newEncryptedLabel.setText(Long.toString(targetFCPathList.newEncryptedFiles));
-//	    newEncryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newEncryptedFilesSize,1,bytes));
-	    
-//	    encryptRemainingLabel.setText(Long.toString(targetFCPathList.encryptRemainingFiles));
-//	    encryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptRemainingFilesSize,1,bytes));
-
-	    if ( targetFCPathList.unEncryptableFiles > 0 ) { unencryptableLabel.setTextFill(Color.RED); unencryptableSizeLabel.setTextFill(Color.RED); } else { unencryptableLabel.setTextFill(Color.valueOf("LIGHTGREY")); unencryptableSizeLabel.setTextFill(Color.valueOf("LIGHTGREY")); }
+	    if ( targetFCPathList.unEncryptableFiles > 0 ) { targetUnencryptableNameLabel.setTextFill(INFO); unencryptableLabel.setTextFill(WARNING); unencryptableSizeLabel.setTextFill(WARNING); } else { targetUnencryptableNameLabel.setTextFill(DIM); unencryptableLabel.setTextFill(DIM); unencryptableSizeLabel.setTextFill(DIM); }
 	    unencryptableLabel.setText(Long.toString(targetFCPathList.unEncryptableFiles));
 	    unencryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unEncryptableFilesSize,1,bytes));
 
 //	    Encrypted Column
+	    if ( targetFCPathList.encryptedFiles > 0 ) { targetEncryptedNameLabel.setTextFill(INFO); encryptedLabel.setTextFill(INFO); encryptedSizeLabel.setTextFill(INFO); } else { targetEncryptedNameLabel.setTextFill(DIM); encryptedLabel.setTextFill(DIM); encryptedSizeLabel.setTextFill(DIM); }
 	    encryptedLabel.setText(Long.toString(targetFCPathList.encryptedFiles));
 	    encryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.encryptedFilesSize,1,bytes));
 
+	    if ( targetFCPathList.decryptableFiles > 0 ) { targetDecryptableNameLabel.setTextFill(INFO); decryptableLabel.setTextFill(INFO); decryptableSizeLabel.setTextFill(INFO); } else { targetDecryptableNameLabel.setTextFill(DIM); decryptableLabel.setTextFill(DIM); decryptableSizeLabel.setTextFill(DIM); }
 	    decryptableLabel.setText(Long.toString(targetFCPathList.decryptableFiles));
 	    decryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptableFilesSize,1,bytes));
 
-//	    newDecryptedLabel.setText(Long.toString(targetFCPathList.newDecryptedFiles));
-//	    newDecryptedSizeLabel.setText(Validate.getHumanSize(targetFCPathList.newDecryptedFilesSize,1,bytes));
-	    
-//	    decryptRemainingLabel.setText(Long.toString(targetFCPathList.decryptRemainingFiles));
-//	    decryptRemainingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.decryptRemainingFilesSize,1,bytes));
-
-	    if ( targetFCPathList.unDecryptableFiles > 0 ) { undecryptableLabel.setTextFill(Color.RED); undecryptableSizeLabel.setTextFill(Color.RED); } else { undecryptableLabel.setTextFill(Color.valueOf("LIGHTGREY")); undecryptableSizeLabel.setTextFill(Color.valueOf("LIGHTGREY")); }
+	    if ( targetFCPathList.unDecryptableFiles > 0 ) { targetUndecryptableNameLabel.setTextFill(INFO); undecryptableLabel.setTextFill(WARNING); undecryptableSizeLabel.setTextFill(WARNING); } else { targetUndecryptableNameLabel.setTextFill(DIM); undecryptableLabel.setTextFill(DIM); undecryptableSizeLabel.setTextFill(DIM); }
 	    undecryptableLabel.setText(Long.toString(targetFCPathList.unDecryptableFiles));
 	    undecryptableSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unDecryptableFilesSize,1,bytes));
 
-//	    Totals Column
-	    totalFilesLabel.setText(Long.toString(targetFCPathList.files));
-	    filesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize,1,bytes));
-
-//	    validFilesLabel.setText(Long.toString(targetFCPathList.validFiles));
-//	    validFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validFilesSize,1,bytes));
-
-	    invalidFilesLabel.setText(Long.toString(targetFCPathList.files - targetFCPathList.validFiles));
-	    invalidFilesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.filesSize - targetFCPathList.validFilesSize,1,bytes));
-
-//	    validDevicesLabel.setText(Long.toString(targetFCPathList.validDevices));
-//	    validDevicesSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validDevicesSize,1,bytes));
-//
-//	    validPartitionsLabel.setText(Long.toString(targetFCPathList.validPartitions));
-//	    validPartitionsSizeLabel.setText(Validate.getHumanSize(targetFCPathList.validPartitionsSize,1,bytes));
-
+	    if ( targetFCPathList.writeAutoKeyFiles > 0 ) { keyWriteNameLabel.setTextFill(INFO); keyWriteLabel.setTextFill(INFO); keyWriteSizeLabel.setTextFill(INFO); } else { keyWriteNameLabel.setTextFill(DIM); keyWriteLabel.setTextFill(DIM); keyWriteSizeLabel.setTextFill(DIM); }
 	    keyWriteLabel.setText(Long.toString(targetFCPathList.writeAutoKeyFiles));
 	    keyWriteSizeLabel.setText(Validate.getHumanSize(targetFCPathList.writeAutoKeyFilesSize,1,bytes));
 
+	    if ( targetFCPathList.matchedAutoKeyFiles > 0 ) { keyMatchNameLabel.setTextFill(INFO); keyReadLabel.setTextFill(INFO); keyReadSizeLabel.setTextFill(INFO); } else { keyMatchNameLabel.setTextFill(DIM); keyReadLabel.setTextFill(DIM); keyReadSizeLabel.setTextFill(DIM); }
 	    keyReadLabel.setText(Long.toString(targetFCPathList.matchedAutoKeyFiles));
 	    keyReadSizeLabel.setText(Validate.getHumanSize(targetFCPathList.matchedAutoKeyFilesSize,1,bytes));
 
-	    if ( targetFCPathList.unmatchedAutoKeyFiles > 0 ) { keyMissingLabel.setTextFill(Color.RED); keyMissingSizeLabel.setTextFill(Color.RED); } else { keyMissingLabel.setTextFill(Color.valueOf("LIGHTGREY")); keyMissingSizeLabel.setTextFill(Color.valueOf("LIGHTGREY")); }
+	    if ( targetFCPathList.unmatchedAutoKeyFiles > 0 ) { keyMissingNameLabel.setTextFill(Color.LIGHTGREY); keyMissingLabel.setTextFill(WARNING); keyMissingSizeLabel.setTextFill(WARNING); } else { keyMissingNameLabel.setTextFill(DIM); keyMissingLabel.setTextFill(DIM); keyMissingSizeLabel.setTextFill(DIM); }
 	    keyMissingLabel.setText(Long.toString(targetFCPathList.unmatchedAutoKeyFiles));
 	    keyMissingSizeLabel.setText(Validate.getHumanSize(targetFCPathList.unmatchedAutoKeyFilesSize,1,bytes));
 
@@ -2739,7 +2793,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    decryptButton.setDisable(true);
 	    pauseToggleButton.setDisable(true);
 	    stopButton.setDisable(true);
-	    enableClocks(false, false); 
 	});
     }
     synchronized private void checkModeReady(FCPathList<FCPath> targetFCPathList, boolean validBuild)
@@ -2753,7 +2806,6 @@ public class GUIFX extends Application implements UI, Initializable
 //		keyButton.setDisable(true);
 		pauseToggleButton.setDisable(true);
 		stopButton.setDisable(true);
-		enableClocks(false, false); 
 				
 		if ((keyFCPath != null) && ((keyFCPath.isValidKey) || ((keyFCPath.type == FCPath.DIRECTORY ) && (keyFCPath.isValidKeyDir))))
 		{
@@ -2767,9 +2819,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
-			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true); enableClocks(true, false);
-			
-		    } else { encryptButton.setDisable(true); encryptableList = null; }
+			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+//			enableClocks(true, false, false); 
+		    }
+		    else
+		    {
+			encryptButton.setDisable(true); encryptableList = null;
+		    }
 		    
 		    if (targetFCPathList.newEncryptedFiles > 0)	    { newEncryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewEncrypted); } else { newEncryptedList = null; }
 //		    if (targetFCPathList.encryptRemainingFiles > 0) { encryptRemainingList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.); } else { encryptRemainingList = null; }
@@ -2784,8 +2840,13 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
-			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true); enableClocks(true, false);
-		    } else { decryptButton.setDisable(true); decryptableList = null; }
+			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+//			enableClocks(true, false, false);
+		    }
+		    else
+		    {
+			decryptButton.setDisable(true); decryptableList = null;
+		    }
 		    if (targetFCPathList.newDecryptedFiles > 0)	    { newDecryptedList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isNewDecrypted); } else { newDecryptedList = null; }
 //		    if (targetFCPathList.decryptRemainingFiles > 0) { decryptRemainingList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.); } else { decryptRemainingList = null; }
 		    if (targetFCPathList.unDecryptableFiles > 0)    { undecryptableList = filter(targetFCPathList,(FCPath fcPath) -> (fcPath.isUnDecryptable) && (fcPath.isEncrypted) && (fcPath.size > 0)); } else { undecryptableList = null; }
@@ -2902,7 +2963,8 @@ public class GUIFX extends Application implements UI, Initializable
 //			    else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))    { userGuidanceMessage(EN_DECRYPT_FILES, 64, true, false, false, false, MP3_VOI_ENCRYPT_OR_DECRYPT_FILES, 0); }
 //			}
 //		    }
-		    encryptButton.setDisable(true); enableClocks(false, false); decryptButton.setDisable(true);
+		    encryptButton.setDisable(true);
+		    decryptButton.setDisable(true);
 //		    keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); // Default enabler
 		}
 	    }
@@ -2923,123 +2985,149 @@ public class GUIFX extends Application implements UI, Initializable
 	return list.stream().filter(criteria).collect(Collectors.<FCPath>toList());
     }
         
-    public boolean tgtFileChooserComponentAlteration(Container container, boolean firsttime)
+    public void tgtFileChooserComponentAlteration(Container container, boolean firsttime)
     {
+	tgtToggleButtonCounter = 0;
 	if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 	{
+	    if ( firsttime )
+	    {
+		SwingUtilities.invokeLater(new Runnable() { public void run()
+		{
+//		    test("tgt firsttime\r\n");
+//		    tgtFileChooser.setEnabled(false);
+		    tgtFileChooser.setVisible(false);
+		    tgtFileChooser.setVisible(true);
+//		    tgtFileChooser.updateUI(); // messes detailsview up
+//		    tgtFileChooser.setEnabled(true);
+		}});
+	    }
+
 	    Component[] components = container.getComponents();
 	    for (Component component : components)
 	    {
+//		test("component:" + component.getName() + "\r\n");
 		if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-    //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.tgtFileDeleteButton); } } // Add Delete button
 
 		if (component instanceof JToggleButton) // Click "details view" ToggleButton
 		{
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
-			if ( ! ((JToggleButton)component).isSelected() )
+//			test("tbutton: " + tgtToggleButtonCounter + "\r\n");
+			if (( tgtToggleButtonCounter == 1 ) && ( ! ((JToggleButton)component).isSelected() ))
 			{
-			    if ( firsttime )
-			    {
-				TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
-				{
-//				    tgtFileChooser.setEnabled(false);
-
-				    tgtFileChooser.setVisible(false);
-				    ((JToggleButton)component).doClick();
-				    tgtFileChooser.setVisible(true);
-
-//				    tgtFileChooser.updateUI(); // messes detailsview up
-//				    tgtFileChooser.setEnabled(true);
-				}};
-				Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer(); targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 1000L); // Needs a delay for proper column width
-			    }
-			    else { ((JToggleButton)component).doClick(); }
+//			    test("tbutton scheduled\r\n");
+			    TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run() {((JToggleButton)component).doClick();}};
+			    Timer targetFileChoosershowDetailsTaskTimer = new java.util.Timer();
+			    targetFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 100L); // Needs a delay for proper column width
 			}
+		    tgtToggleButtonCounter++;
 		    }});
 		}
-		if (component instanceof Container) { if( tgtFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
+//		    if (component instanceof Container) { if( tgtFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
+		tgtFileChooserComponentAlteration((Container) component, false);
 	    }
-	    return false;
 	}
-	return false;
     }
 
-    public boolean keyFileChooserComponentAlteration(Container container, boolean firsttime)
+    public void keyFileChooserComponentAlteration(Container container, boolean firsttime)
     {
+	keyToggleButtonCounter = 0;
 	if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
 	{
+	    if ( firsttime )
+	    {
+		SwingUtilities.invokeLater(new Runnable() { public void run()
+		{
+//		    test("key firsttime\r\n");
+//		    tgtFileChooser.setEnabled(false);
+		    keyFileChooser.setVisible(false);
+		    keyFileChooser.setVisible(true);
+//		    tgtFileChooser.updateUI(); // messes detailsview up
+//		    tgtFileChooser.setEnabled(true);
+		}});
+	    }
+
 	    Component[] components = container.getComponents();
 	    for (Component component : components)
 	    {
-    //	    test("Component: " + component.getClass().getTypeName().toString() + "\r\n");
+//		test("component:" + component.getName() + "\r\n");
 		if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
-    //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
 
 		if (component instanceof JToggleButton) // Click "details view" ToggleButton
 		{
-    //		test("test: " + component.getClass().toGenericString() + "\r\n");
 		    SwingUtilities.invokeLater(new Runnable() { public void run()
 		    {
-			if ( ! ((JToggleButton)component).isSelected() )
+//			test("tbutton: " + tgtToggleButtonCounter + "\r\n");
+			if (( keyToggleButtonCounter == 1 ) && ( ! ((JToggleButton)component).isSelected() ))
 			{
-			    if ( firsttime )
-			    {
-				TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
-				{
-//				    keyFileChooser.setEnabled(false);
-				    
-				    keyFileChooser.setVisible(false);
-				    ((JToggleButton)component).doClick();
-				    keyFileChooser.setVisible(true);
-				    
-//				    keyFileChooser.updateUI(); // messes detailsview up
-//				    keyFileChooser.setEnabled(true);
-				}};
-				Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
-			    }
-			    else { ((JToggleButton)component).doClick(); }
+//			    test("tbutton scheduled\r\n");
+			    TimerTask tgtFileChoosershowDetailsTask = new TimerTask() { @Override public void run() {((JToggleButton)component).doClick();}};
+			    Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer();
+			    keyFileChoosershowDetailsTaskTimer.schedule(tgtFileChoosershowDetailsTask, 100L); // Needs a delay for proper column width
 			}
+		    keyToggleButtonCounter++;
 		    }});
 		}
-		if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
-		if (firsttime)
-		{
-		    if (component instanceof JComboBox)
-		    {
-			keyPathFile = new File(".");
-			keyPathSelector = (JComboBox) component;
-    //		    for (int x=0; x<keyPathSelector.getItemCount(); x++)
-    //		    {
-    ////			test("item: " + b.getItemAt(x) + "\r\n");
-    //			String item = keyPathSelector.getItemAt(x).toString();
-    //			test("item: " + item + "\r\n");
-    //			if ( item.toLowerCase().contains("deze"))
-    //			{
-    //			    test("YES: " + item + "\r\n");
-    ////			    keyFileChooser.setCurrentDirectory((File) keyPathSelector.getItemAt(x));
-    //			    keyPathSelectorPrefered = x;
-    ////			    keyPathFile = new File(keyPathSelector.getItemAt(x).toString());
-    //			    keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
-    //			    keyPathFile = keyFileChooser.getCurrentDirectory();
-    ////			    keyFileChooser.rescanCurrentDirectory();
-    //			    break;
-    ////			    x=keyPathSelector.getItemCount(); break;
-    ////			    TimerTask keyFileChooserSetPrefDirTask = new TimerTask() { @Override public void run()
-    ////			    {
-    ////				keyPathSelector.setSelectedIndex(keyPathSelectorPrefered);
-    ////				keyFileChooser.rescanCurrentDirectory();
-    ////			    }};
-    ////			    Timer keyFileChooserSetPrefDirTaskTimer = new java.util.Timer(); keyFileChooserSetPrefDirTaskTimer.schedule(keyFileChooserSetPrefDirTask, 4000L); // Needs a delay for proper column width
-    //			}
-    //		    }
-		    }
-		}
+//		    if (component instanceof Container) { if( tgtFileChooserComponentAlteration((Container) component, firsttime) ) { return false; } }
+		keyFileChooserComponentAlteration((Container) component, false);
 	    }
-	    return false;
 	}
-	return false;
     }
+
+//    public boolean keyFileChooserComponentAlteration(Container container, boolean firsttime)
+//    {
+//	keyToggleButtonCounter = 0;
+//	if ( (System.getProperty("os.name").toLowerCase().indexOf("mac") == -1)) // Again due to Mac OSX
+//	{
+//	    Component[] components = container.getComponents();
+//	    for (Component component : components)
+//	    {
+//    //	    test("Component: " + component.getClass().getTypeName().toString() + "\r\n");
+//		if(component instanceof Container) { component.setFont(FILE_CHOOSER_FONT); }
+//    //	    if ((component instanceof JButton)) { if (((JButton) component).getActionCommand().equalsIgnoreCase("New Folder")) { component.getParent().add(this.keyFileDeleteButton); } } // Add Delete button
+//
+//		if (component instanceof JToggleButton) // Click "details view" ToggleButton
+//		{
+//    //		test("test: " + component.getClass().toGenericString() + "\r\n");
+//		    SwingUtilities.invokeLater(new Runnable() { public void run()
+//		    {
+//			if ( ! ((JToggleButton)component).isSelected() )
+//			{
+////			    if ( firsttime )
+//			    if ( keyToggleButtonCounter == 1 )
+//			    {
+//				TimerTask keyFileChoosershowDetailsTask = new TimerTask() { @Override public void run()
+//				{
+////				    keyFileChooser.setEnabled(false);
+//				    
+//				    keyFileChooser.setVisible(false);
+//				    ((JToggleButton)component).doClick();
+//				    keyFileChooser.setVisible(true);
+//				    
+////				    keyFileChooser.updateUI(); // messes detailsview up
+////				    keyFileChooser.setEnabled(true);
+//				}};
+//				Timer keyFileChoosershowDetailsTaskTimer = new java.util.Timer(); keyFileChoosershowDetailsTaskTimer.schedule(keyFileChoosershowDetailsTask, 500L); // Needs a delay for proper column width
+//			    }
+//			    else { ((JToggleButton)component).doClick(); }
+//			}
+//		    }});
+//		}
+//		if (component instanceof Container) { if( keyFileChooserComponentAlteration((Container) component, firsttime)) { return false; } }
+//		if (firsttime)
+//		{
+//		    if (component instanceof JComboBox)
+//		    {
+//			keyPathFile = new File(".");
+//			keyPathSelector = (JComboBox) component;
+//		    }
+//		}
+//	    }
+//	    return false;
+//	}
+//	return false;
+//    }
 
     @FXML
     private void encryptButtonAction(ActionEvent event)
@@ -3182,21 +3270,17 @@ public class GUIFX extends Application implements UI, Initializable
 
 //		pwdField.setText("");
 		pwdField.setDisable(true);
-		pwdField.setVisible(false);
+
+		showKeyPanel(false);
+		showDashboard(false);
 
 //		pwdtxtField.setText("");
 		pwdtxtField.setDisable(true);
-		pwdtxtField.setVisible(false);
 
-		showPasswordCheckBox.setVisible(pwdField.isVisible());
 //		keyImageView.setImage(KEY_FILE_IMAGE);
 		keyImageView.setOpacity(0.8);
 
 		finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
-		
-		keyWriteNameLabel.setVisible(false); keyWriteLabel.setVisible(false); keyWriteSizeLabel.setVisible(false);
-		keyMatchNameLabel.setVisible(false); keyReadLabel.setVisible(false); keyReadSizeLabel.setVisible(false);
-		keyMissingNameLabel.setVisible(false); keyMissingLabel.setVisible(false); keyMissingSizeLabel.setVisible(false);
 	    });
 
 	    Platform.runLater(() ->
@@ -3348,20 +3432,12 @@ public class GUIFX extends Application implements UI, Initializable
 	    pwdField.setDisable(true);
 	    pwdtxtField.setDisable(true);
 	    
-//		pwdField.setVisible(false);
-//	        pwdtxtField.setVisible(pwdField.isVisible()); showPasswordCheckBox.setVisible(pwdField.isVisible());
-//		keyImageView.setOpacity(0.2);
-
 	    pauseToggleButton.setDisable(false);
 	    stopButton.setDisable(false);
 	    
-	    enableClocks(true, true); 
+	    enableClocks(true, true, true); 
 
 //	    keyButton.setDisable(true);
-
-	    remainingTimeHeaderLabel.setVisible(true); remainingTimeLabel.setVisible(true);
-	    elapsedTimeHeaderLabel.setVisible(true); elapsedTimeLabel.setVisible(true);
-	    totalTimeHeaderLabel.setVisible(true); totalTimeLabel.setVisible(true);
 
 	    filesProgressBar.setProgress(0.0); filesProgressBar.setVisible(true);
 	    fileProgressBar.setProgress(0.0); fileProgressBar.setVisible(true);
@@ -3420,26 +3496,33 @@ public class GUIFX extends Application implements UI, Initializable
 	});
     }
 
-    private void enableClocks(Boolean on, Boolean reset)
+    private void enableClocks(boolean show, boolean on, boolean reset)
     {
-	if (on)
+        Platform.runLater(() ->
 	{
-	    elapsedTimeHeaderLabel.setTextFill(Color.LIGHTGREY); elapsedTimeLabel.setTextFill(Color.LIGHTGREY);
-	    remainingTimeHeaderLabel.setTextFill(Color.LIGHTGREY); remainingTimeLabel.setTextFill(Color.LIGHTGREY);
-	    totalTimeHeaderLabel.setTextFill(Color.LIGHTGREY); totalTimeLabel.setTextFill(Color.LIGHTGREY);
-	}
-	else
-	{
-	    elapsedTimeHeaderLabel.setTextFill(Color.GREY); elapsedTimeLabel.setTextFill(Color.GREY);
-	    remainingTimeHeaderLabel.setTextFill(Color.GREY); remainingTimeLabel.setTextFill(Color.GREY);
-	    totalTimeHeaderLabel.setTextFill(Color.GREY); totalTimeLabel.setTextFill(Color.GREY);
-	}
-	if (reset)
-	{
-	    elapsedTimeLabel.setText("00:00:00");
-	    remainingTimeLabel.setText("00:00:00");
-	    totalTimeLabel.setText("00:00:00");
-	}
+	    elapsedTimeHeaderLabel.setVisible(show); elapsedTimeLabel.setVisible(show);
+	    remainingTimeHeaderLabel.setVisible(show); remainingTimeLabel.setVisible(show);
+	    totalTimeHeaderLabel.setVisible(show); totalTimeLabel.setVisible(show);
+
+	    if (on)
+	    {
+		elapsedTimeHeaderLabel.setTextFill(INFO); elapsedTimeLabel.setTextFill(INFO);
+		remainingTimeHeaderLabel.setTextFill(INFO); remainingTimeLabel.setTextFill(INFO);
+		totalTimeHeaderLabel.setTextFill(INFO); totalTimeLabel.setTextFill(INFO);
+	    }
+	    else
+	    {
+		elapsedTimeHeaderLabel.setTextFill(DIM); elapsedTimeLabel.setTextFill(DIM);
+		remainingTimeHeaderLabel.setTextFill(DIM); remainingTimeLabel.setTextFill(DIM);
+		totalTimeHeaderLabel.setTextFill(DIM); totalTimeLabel.setTextFill(DIM);
+	    }
+	    if (reset)
+	    {
+		elapsedTimeLabel.setText("00:00:00");
+		remainingTimeLabel.setText("00:00:00");
+		totalTimeLabel.setText("00:00:00");
+	    }
+	});
     }
     
     @Override public void processProgress(int fileProgressPercent, int filesProgressPercent, long bytesTotalParam, long bytesProcessedParam, double bytesPerMiliSecondParam)
@@ -3470,6 +3553,11 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	Platform.runLater(() ->
 	{
+	    encryptButton.setDisable(true);
+	    decryptButton.setDisable(true);
+	    pauseToggleButton.setDisable(true);
+	    stopButton.setDisable(true);
+	    
 	    fileProgressBar.setProgress(100.0); filesProgressBar.setProgress(100.0);
 
 	    megaBytesPerSecond = 0;
@@ -3490,8 +3578,6 @@ public class GUIFX extends Application implements UI, Initializable
 		
 		updateSystemMonitor();
 
-		encryptButton.setDisable(true);
-		decryptButton.setDisable(true);
 		if ( keyFCPath.isValidKey )
 		{
 		    pwdField.setDisable(false);
@@ -3500,10 +3586,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    keyImageView.setImage(KEY_FILE_IMAGE);
 		    keyImageView.setOpacity(0.8);
 		}
-		pauseToggleButton.setDisable(true);
-		stopButton.setDisable(true);
 
-    //	    keyButton.setDisable(false);
 
 
     //	    encryptionModeToggleButton.setMouseTransparent(!encryptionModeToggleButton.isMouseTransparent());
@@ -3531,7 +3614,7 @@ public class GUIFX extends Application implements UI, Initializable
     //	    {
 		remainingTimeLabel.setText("00:00:00");
 		totalTimeLabel.setText(elapsedTimeLabel.getText());
-		enableClocks(false, false);
+		enableClocks(false, false, false);
     //	    }
 
     //	    The Open selected file when finished section
@@ -3673,21 +3756,6 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setResizable(true);
         String infotext = new String();
         infotext =  keyInfoContent;
-//        infotext += "Your Key Directory holds your One Time Pad Keys\r\n";
-//        infotext += "which are automatically created and selected\r\n";
-//        infotext += "Select a Key Directory on an external (USB) drive\r\n";
-//        infotext += "\r\n";
-//        infotext += "An optional password enforces extra encryption\r\n";
-//        infotext += "so lost / stolen key files can't unlock your data\r\n";
-//        infotext += "\r\n";
-//        infotext += "=================================================\r\n";
-//        infotext += "\r\n";
-//        infotext += "Backup your encrypted files AND keys together as pairs\r\n";
-//        infotext += "Keep your backups offline on external (USB) drives too\r\n";
-//        infotext += "\r\n";
-//        infotext += "Please keep in mind that without your key files (and\r\n";
-//        infotext += "optional password) decrypting your data is impossible!\r\n";
-//        infotext += "\r\n";
         alert.setContentText(infotext);
 	new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -3711,13 +3779,6 @@ public class GUIFX extends Application implements UI, Initializable
         alert.setResizable(true);
         String infotext = new String();
         infotext  = targetInfoContent;
-//        infotext += "Hold down [Ctrl] / [Shift] to select multiple items.\r\n";
-//        infotext += "\r\n";
-//        infotext += "Encrypted files get the \".bit\" extension added.\r\n";
-//        infotext += "Decrypted files get the \".bit\" extension removed.\r\n";
-//        infotext += "\r\n";
-//        infotext += "Original files are securely deleted after encryption.\r\n";
-//        infotext += "\r\n";
         alert.setContentText(infotext);
 	new Sound().play(this, Audio.SND_MESSAGE,Audio.AUDIO_CODEC);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -3770,7 +3831,11 @@ public class GUIFX extends Application implements UI, Initializable
 
     @FXML private void copyrightLabelOnMouseClicked(MouseEvent event)	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/ }
 
-    @FXML private void checkUpdateButtonOnAction(ActionEvent event) { Platform.runLater(() -> { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); checkUpdate( true ); }); }
+    @FXML private void checkUpdateButtonOnAction(ActionEvent event)
+    {
+	Platform.runLater(() -> { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); });
+	Platform.runLater(() -> { checkUpdate( true ); });
+    }
 
     @FXML private void encryptTabSelectionChanged(Event event)
     {
@@ -3825,7 +3890,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    unreadableList.stream().map((fcPath) -> { setAttribute(fcPath, true, false); return fcPath; }).forEachOrdered((fcPath) -> { log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); });
 	    log("\r\n", false, true, false, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); enableClocks(false, true); decryptButton.setDisable(true); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); });
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
     }
@@ -3841,7 +3906,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    unwritableList.stream().map((fcPath) -> { setAttribute(fcPath, true, true);	return fcPath; }).forEachOrdered((fcPath) -> { log(fcPath.path.toAbsolutePath().toString() + "\r\n", false, true, true, false, false); });
 	    log("\r\n", false, true, true, false, false);
 	    targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
-	    Platform.runLater(() -> { encryptButton.setDisable(true); enableClocks(false, true); decryptButton.setDisable(true); });
+	    Platform.runLater(() -> { encryptButton.setDisable(true); decryptButton.setDisable(true); });
 	}
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); }
     }
@@ -4359,7 +4424,6 @@ public class GUIFX extends Application implements UI, Initializable
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Urdu") )		    { selectedLanguageCode = "urd"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Vietnamese") )	    { selectedLanguageCode = "vie"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
 	    else												    { selectedLanguageCode = "eng"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-//	    switchLanguage(selectedLocale, true, true, false);
 
 //	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
 	    switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			true);
@@ -4377,7 +4441,8 @@ public class GUIFX extends Application implements UI, Initializable
 	}
 	else
 	{
-	    pwdField.setText(pwdtxtField.getText()); pwdtxtFieldTooltip.setText(pwdtxtField.getText()); }
+	    pwdField.setText(pwdtxtField.getText()); pwdtxtFieldTooltip.setText(pwdtxtField.getText());
+	}
 	setFont(pwdField);setFont(pwdtxtField);
 	pwdField.setVisible(! showPasswordCheckBox.isSelected());
 	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());

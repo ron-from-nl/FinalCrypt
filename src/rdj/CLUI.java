@@ -1068,13 +1068,7 @@ class UsageReaderTimeoutThread extends Thread
 
     @Override public void run()
     {
-        try {
-            Thread.sleep(3000);
-//	    System.exit(0);
-//            Robot robot = new Robot();
-//            robot.keyPress(KeyEvent.VK_ENTER);
-//            robot.keyRelease(KeyEvent.VK_ENTER);
-        } catch(Exception e) { }
+        try { Thread.sleep(3000); } catch(Exception e) { }
     }
 
 }
@@ -1201,13 +1195,7 @@ class TestListReaderTimeoutThread extends Thread
 
     @Override public void run()
     {
-        try {
-            Thread.sleep(3000);
-//	    System.exit(0);
-//            Robot robot = new Robot();
-//            robot.keyPress(KeyEvent.VK_ENTER);
-//            robot.keyRelease(KeyEvent.VK_ENTER);
-        } catch(Exception e) { }
+        try { Thread.sleep(3000); } catch(Exception e) { }
 	if ( clui.testListAborted ) { clui.log("\r\n\r\n", false, true, false, false, false); System.exit(0); }
     }
 

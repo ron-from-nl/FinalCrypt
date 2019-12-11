@@ -26,64 +26,68 @@
 
 .background_top
 {
-    /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/
+/*        -fx-background-image: url('/rdj/images/1.jpg');
+	-fx-background-size: cover;*/
     -fx-background-color:
         linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%),
         linear-gradient(#020b02, #3a3a3a),
         linear-gradient(#9d9e9d 0%, #6b6a6b 20%, #343534 80%, #242424 100%),
         linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%),
-        linear-gradient(#606060 0%, #505050 53%, #404040 54%, #303030 100%);
+        linear-gradient(#383838 0%, #383838 53%, #383838 54%, #383838 100%); /* main panel 2 5 */
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
     -fx-font-family: "Liberation Sans";
-    /*-fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
-                1, 0.0 , 0 , 1);*/
 }
 
 .background_bottom
 {
-    /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/
+/*        -fx-background-image: url('/rdj/images/1.jpg');
+	-fx-background-size: cover;*/
     -fx-background-color:
         linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%),
         linear-gradient(#020b02, #3a3a3a),
         linear-gradient(#9d9e9d 0%, #6b6a6b 20%, #343534 80%, #242424 100%),
         linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%),
-        linear-gradient(#404040 0%, #303030 53%, #303030 54%, #202020 100%);
+        linear-gradient(#181818 0%, #181818 53%, #181818 54%, #181818 100%);
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-text-fill: white;
     -fx-font-family: "Liberation Sans";
-    /*-fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
-                1, 0.0 , 0 , 1);*/
 }
 
-.key_button
+.primary_key_button
 {
     /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/
     -fx-background-color:
-        linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%),
+        linear-gradient(#585858 0%, #232723 25%, #373837 75%, #656565 100%),
         linear-gradient(#020b02, #3a3a3a),
         linear-gradient(#9d9e9d 0%, #6b6a6b 20%, #343534 80%, #242424 100%),
         linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%),
-        linear-gradient(#404040 0%, #303030 53%, #303030 54%, #202020 100%);
+        linear-gradient(#444444 0%, #333333 53%, #333333 54%, #252525 100%);
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
     -fx-font-family: "Liberation Sans";
-    /*-fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.2) ,
-                1, 0.0 , 0 , 1);*/
+    -fx-text-fill: #dddddd;
+}
+
+.secondary_key_button
+{
+    /*    -fx-background-image: url('../../shared-resources/fxmldemoImages/CoarseGrid.png');*/
+    -fx-background-color:
+        linear-gradient(#585858 0%, #232723 25%, #373837 75%, #656565 100%),
+        linear-gradient(#020b02, #3a3a3a),
+        linear-gradient(#7d7e7d 0%, #5b5a5b 20%, #303030 80%, #202020 100%),
+        linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%),
+        linear-gradient(#444444 0%, #333333 53%, #333333 54%, #252525 100%);
+    -fx-background-insets: 0,1,4,5,6;
+    -fx-background-radius: 9,8,5,4,3;
+    -fx-padding: 15 30 15 30;
+    -fx-font-family: "Liberation Sans";
+    -fx-text-fill: #aaaaaa;
 }
 
 .background_dark
@@ -94,7 +98,7 @@
         ,linear-gradient(#020b02, #3a3a3a)
         ,linear-gradient(#9d9e9d 0%, #6b6a6b 20%, #343534 80%, #242424 100%)
         ,linear-gradient(#8a8a8a 0%, #6b6a6b 20%, #343534 80%, #262626 100%)
-        ,linear-gradient(#252525 0%, #202020 50%, #101010 51%, #000000 100%)
+        ,linear-gradient(#151515 0%, #101010 50%, #050505 51%, #000000 100%) /* main display panel */
 	;
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
@@ -145,7 +149,7 @@
 .dashboard_generic
 {
     -fx-font-family: "Liberation Sans";
-    -fx-text-fill: lightgray;
+    -fx-text-fill: dimgrey;
     -fx-font-size: 10px;
 }
 

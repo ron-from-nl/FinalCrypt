@@ -495,7 +495,19 @@ public class Validate
 		if (disabledMAC)    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN )					&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 		else		    { if (( exist ) && ( size >= FCPath.KEY_SIZE_MIN ) && ( size >= FCPath.MAC_SIZE )	&& ( readable ) )   { isValid = true; isValidKey = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
 	    }
-	    else	    { if (( exist ) && ( size >  0 ) && ( readable )   && ( writable ))	    { isValid = true; } else { isValid = false; isUnEncryptable = true; isUnDecryptable = true; } }
+	    else
+	    {
+		if (( exist ) && ( size >  0 ) && ( readable )   && ( writable ))
+		{
+		    isValid = true; 
+		}
+		else
+		{
+		    isValid = false; isUnEncryptable = true; isUnDecryptable = true;
+		    if (! readable) { isUnEncryptable = true; isUnDecryptable = true; }
+		    if (! writable) { isUnEncryptable = true; isUnDecryptable = true; }
+		}
+	    }
 	    
 	    // File validity
 	    if (( isValid ) && ( type == FCPath.FILE ))								{ isValidFile = true; } else { isEncryptable = false; isUnEncryptable = true; isDecryptable = false; isUnDecryptable = true; }
@@ -538,7 +550,6 @@ public class Validate
 			    unmatchedReadAutoKey = true;
 			    unmatchedReadAutoKeySize = (size + FCPath.MAC_SIZE);
 			}
-			
 		    }
 		    else
 		    {

@@ -1,4 +1,4 @@
-[Version] =		{6.0.3}
+[Version] =		{6.1.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -13,10 +13,14 @@
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 0}
+[Upgrade Notes] =	{Upgrade 1}
+[Upgrade Notes] =	{}
+[Upgrade Notes] =	{Graphical User-Interface restyled & simplyfied}
+[Upgrade Notes] =	{The user-interface now only shows relevant info}
+[Upgrade Notes] =	{Less destraction and more focus to what you do}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
 [Update Notes] =	{Language corrections & updates of 45 languages}
 [Update Notes] =	{Removed duo latin lines on non latin languages}
