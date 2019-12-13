@@ -1,4 +1,4 @@
-[Version] =		{6.1.0}
+[Version] =		{6.1.1}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -20,10 +20,10 @@
 [Upgrade Notes] =	{Less destraction and more focus to what you do}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{Language corrections & updates of 45 languages}
-[Update Notes] =	{Removed duo latin lines on non latin languages}
+[Update Notes] =	{Translation keys are now Google Translate Safe}
+[Update Notes] =	{Manual translation corrections of 20 languages}
 [Update Notes] =	{}
 [Update Notes] =	{Add/correct language? Download, Edit & Mail me}
 [Update Notes] =	{Languages files can be found in the sourcecode}

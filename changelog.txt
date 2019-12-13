@@ -1,11 +1,7 @@
-Date: 2019-12-12 Version: 6.1.0
+Date: 2019-12-13 Version: 6.1.1
 
-Graphical user-interface restyled & simplyfied
-The user-interface now only shows relevant info
-Less destraction and more focus to what you do
-
-Language corrections & updates of 45 languages
-Removed duo latin lines on non latin languages
+Translation keys are now Google Translate Safe
+Manual translation corrections of 20 languages
 
 Add/correct language? Download, Edit & Mail me
 Languages files can be found in the sourcecode
@@ -13,7 +9,11 @@ Languages files can be edited with Netbeans.org
 Location in the sourcecode: (src/rdj/language)
 Sourcecode click [Support] [Home] [SourceCode]
 
-Date: 2019-12-10 Version: 6.0.3
+Date: 2019-12-12 Version: 6.1.0
+
+Graphical user-interface restyled & simplyfied
+The user-interface now only shows relevant info
+Less destraction and more focus to what you do
 
 Language corrections & updates of 45 languages
 Removed duo latin lines on non latin languages

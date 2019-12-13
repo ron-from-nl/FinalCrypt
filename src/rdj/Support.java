@@ -67,10 +67,10 @@ public class Support extends Application implements Initializable
     {
 	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
 
-	headerLabel.setText(bundle.getString("Support.headerLabel.text"));	
-	line1Label.setText(bundle.getString("Support.line1Label.text"));	
-	line2Label.setText(bundle.getString("Support.line2Label.text"));	
-	statusLabel.setText(bundle.getString("Support.statusLabel.text"));	
+	headerLabel.setText(bundle.getString("142"));	
+	line1Label.setText(bundle.getString("143"));	
+	line2Label.setText(bundle.getString("144"));	
+	statusLabel.setText(bundle.getString("145"));	
     }
 
     @Override  public void start(Stage primaryStage) throws Exception

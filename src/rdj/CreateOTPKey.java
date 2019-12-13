@@ -116,21 +116,21 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
 
-	headerLabel.setText(bundle.getString("CreateOTPKey.headerLabel.text"));	
-	filenameLabel.setText(bundle.getString("CreateOTPKey.filenameLabel.text"));	
-	filenameTextField.setPromptText(bundle.getString("CreateOTPKey.filenameTextField.prompttext"));	
-	filesizeLabel.setText(bundle.getString("CreateOTPKey.filesizeLabel.text"));	
-	untiLabel.setText(bundle.getString("CreateOTPKey.untiLabel.text"));	
-	cancelButton.setText(bundle.getString("CreateOTPKey.cancelButton.text"));	
-	createButton.setText(bundle.getString("CreateOTPKey.createButton.text"));	
-	otpRulesLabel.setText(bundle.getString("CreateOTPKey.otpRulesLabel.text"));	
-	otpRulesLabel2.setText(bundle.getString("CreateOTPKey.otpRulesLabel2.text"));	
-	complianceLabel.setText(bundle.getString("CreateOTPKey.complianceLabel.text"));
-	currentDirectory=bundle.getString("CreateOTPKey.currentDirectory.text");
-	file=bundle.getString("CreateOTPKey.file.text");
-	fileExists=bundle.getString("CreateOTPKey.fileExists.text");
-	creatingOTPKeyFile=bundle.getString("CreateOTPKey.creatingOTPKeyFile.text");
-	createdOTPKeyFile=bundle.getString("CreateOTPKey.createdOTPKeyFile.text");
+	headerLabel.setText(bundle.getString("012"));	
+	filenameLabel.setText(bundle.getString("008"));	
+	filenameTextField.setPromptText(bundle.getString("009"));	
+	filesizeLabel.setText(bundle.getString("010"));	
+	untiLabel.setText(bundle.getString("015"));	
+	cancelButton.setText(bundle.getString("001"));	
+	createButton.setText(bundle.getString("003"));	
+	otpRulesLabel.setText(bundle.getString("014"));	
+	otpRulesLabel2.setText(bundle.getString("013"));	
+	complianceLabel.setText(bundle.getString("002"));
+	currentDirectory=bundle.getString("006");
+	file=bundle.getString("011");
+	fileExists=bundle.getString("007");
+	creatingOTPKeyFile=bundle.getString("005");
+	createdOTPKeyFile=bundle.getString("004");
     }
 
     @Override public void start(Stage primaryStage) throws Exception

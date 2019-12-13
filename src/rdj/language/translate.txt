@@ -1,9 +1,20 @@
-Advice: Translate the translation.properties file with Google Translation
-Split into two chunks lines: 1-70 & 71-143 and translate in two browser tabs
-Click the copy button at the bottom and paste it in a translation_***.properties file
-Replace " \ r \ n" with "\r\n" replace " = " with "=" search " =" and correct
-Correct the rest of the language where necessary and send file to ron@finalcrypt.org
+Instruction:
+
+Download and use http://netbeans.org/ to edit the "translation_***.properties" files
+Download the FinalCrypt SourceCode: https://www.finalcrypt.org/downloads/other/finalcrypt_sourcecode.zip
+Extract the FinalCrypt SourceCode zip file
+Go into to the FinalCrypt/src/rdj/language directory and copy the "translation.properties" to say "translation_swa.properties" (Swahili Example)
+Install and open Netbeans and open the "translation.properties"  and "translation_swa.properties" files
+Translate the default English "translation.properties" file with the Google Translation website
+Copy and paste the contents of "translation.properties" into Google Translation (in two chunks as Goole can't handle all 145 lines at once)
+Paste the english text on the left side and select language: "Enlish".
+Select your target language on the right side and click the copy button at the bottom
+Paste the translated content in your target "translation_swa.properties" file
+Replace " \ r \ n" with "\r\n" replace " = " with "=" search " =" and also correct ("\r\n" represent line spaces) 
+Correct here and there and send the "translation_swa.properties" file to ron@finalcrypt.org
 At the next release I'll include your translation. Thank you very much for translating!
+
+In case you want to correct an existing translation file then see the below file table
 
 File (ISO 639-2 lang-code)  Language
 ==========================  =================
@@ -45,6 +56,7 @@ translation_por.properties  Portugese
 translation_pan.properties  Punjabi
 translation_rum.properties  Romanian
 translation_rus.properties  Russian
+translation_slv.properties  Slovenian
 translation_spa.properties  Spanish
 translation_swe.properties  Swedish
 translation_tam.properties  Tamil
