@@ -2400,7 +2400,7 @@ version = new Version(ui);
 			keyImageView.setImage(KEY_FILE_IMAGE);
 			keyImageView.setOpacity(0.8);
 
-//			showKeyPanel(true);
+			showKeyPanel(true);
 
 			tgtFileChooserPropertyCheck(true);
 		    }
