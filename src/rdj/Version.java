@@ -198,6 +198,7 @@ public class Version
 	env += FinalCrypt.UTF8_CLONE_SYMBOL + " = " +		FinalCrypt.UTF8_CLONE_DESC + " | ";
 	env += FinalCrypt.UTF8_DELETE_SYMBOL + " = " +		FinalCrypt.UTF8_DELETE_DESC + " | ";
 	env += FinalCrypt.UTF8_PAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_PAUSE_DESC + " | ";
+	env += FinalCrypt.UTF8_UNPAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_UNPAUSE_DESC + " | ";
 	env += FinalCrypt.UTF8_STOP_SYMBOL + " = " +		FinalCrypt.UTF8_STOP_DESC + " ";
 	env += "\r\n";
 	env +=    "Data   Symbols           ";

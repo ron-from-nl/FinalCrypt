@@ -3689,6 +3689,8 @@ version = new Version(ui);
 	{
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
+	    encryptButton.setStyle(" -fx-text-fill: white; ");
+	    decryptButton.setStyle(" -fx-text-fill: white; ");
 	    
 	    // Pause	090
 	    // Stop	102
@@ -3953,7 +3955,7 @@ version = new Version(ui);
 		    PAUSE_TIMELINE.play();
 		    megaBytesPerSecond = 0d;
 		}
-		else
+		else // process is not pausing
 		{
 		    if (!unPauseToStop)
 		    {
@@ -3980,14 +3982,15 @@ version = new Version(ui);
 		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 		finalCrypt.setStopPending(true);
 //		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
+		if (processPausing) { pause(true); }
 	    }
 	    else
 	    {
 		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 		DeviceController.setStopPending(true);
 //		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
+		if (processPausing) { pause(true); }
 	    }
-	    if (processPausing) { pause(true); }
 	});
     }
 

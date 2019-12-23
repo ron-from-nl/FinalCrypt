@@ -137,9 +137,11 @@ public class FinalCrypt extends Thread
     public static final String UTF8_DELETE_DESC =		    "Delete";
 
     public static final String UTF8_PAUSE_SYMBOL =		    "PS";
+    public static final String UTF8_UNPAUSE_SYMBOL =		    "UP";
     public static final String UTF8_STOP_SYMBOL =		    "ST";
 
     public static final String UTF8_PAUSE_DESC =		    "Pause";
+    public static final String UTF8_UNPAUSE_DESC =		    "UnPause";
     public static final String UTF8_STOP_DESC =			    "Stop";
 
     public static boolean disabledMAC = false; // Disable Message Authentication Mode DANGEROUS
@@ -1225,7 +1227,19 @@ public class FinalCrypt extends Thread
     
     public boolean getPausing()					    { return pausing; }
     public boolean getStopPending()				    { return stopPending; }
-    public void setPausing(boolean val)				    { pausing = val; if (pausing) {filesBytesPerMilliSecond = 0;}}
+    public void setPausing(boolean val)
+    {
+	pausing = val;
+	if (pausing)
+	{
+	    filesBytesPerMilliSecond = 0;
+	    ui.log(" " + UTF8_PAUSE_SYMBOL, false, true, true, false, false);
+	}
+	else
+	{
+	    ui.log(" " + UTF8_UNPAUSE_SYMBOL + " ", false, true, true, false, false);
+	}
+    }
     public void setStopPending(boolean val)			    { stopPending = val; }
     
     public void setPwd(String pwdParam)				    { pwd = pwdParam; }
