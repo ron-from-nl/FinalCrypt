@@ -13,18 +13,11 @@
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-
-FinalCrypt now supports 65 languages based on ISO639 standards implementation   
-Improved language selection by mouse and keyboard (including quick jump keys)
-Cleaner User Interface by removing 4/6 buttons using 2 multi-function buttons
-Fixed FinalCrypt not Exiting (kept running in the background after close app)
-
 [Upgrade Notes] =	{Upgrade 2}
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{FinalCrypt now supports 65 languages based on ISO639}
 [Upgrade Notes] =	{Improved language selection with keyboard navigation}
 [Upgrade Notes] =	{Cleaner User Interface with 2 Multi-Function Buttons}
-[Upgrade Notes] =	{}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 0}
