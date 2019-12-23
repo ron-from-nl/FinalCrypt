@@ -3232,8 +3232,8 @@ version = new Version(ui);
 		    {
 			encrypt(targetFCPathList, encryptableList, keyFCPath);
 		    }
-		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ pause(false); }
-		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ stop(false); }
+		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ pauseProcess(false); }
+		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ stopProcess(); }
 		}
 	    });
 	    encryptThread.setName("encryptThread");
@@ -3287,17 +3287,12 @@ version = new Version(ui);
 		@SuppressWarnings({"static-access"})
 		public void run()
 		{
-		    // Pause	090
-		    // Stop	102
-		    // Encrypt	050
-		    // Decrypt	039
-
 		    if	(! processRunning)
 		    {
 			decrypt(targetFCPathList, decryptableList, keyFCPath, false);
 		    }
-		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ stop(false); }
-		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ pause(false); }
+		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ stopProcess(); }
+		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ pauseProcess(false); }
 		}
 	    });
 	    encryptThread.setName("decryptThread");
@@ -3935,18 +3930,17 @@ version = new Version(ui);
 
 //    private void pauseToggleButtonAction(ActionEvent event) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); pause(); }
     
-    private void pause(boolean unPauseToStop)
+    private void pauseProcess(boolean unPauseToStop)
     {
-	Platform.runLater(() ->
+	if (processRunning)
 	{
-	    if (processRunning)
-	    {
-		processPausing = ! processPausing;
-		if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE))
-    //	    { finalCrypt.setPausing(pauseToggleButton.isSelected()); } else { DeviceController.setPausing(pauseToggleButton.isSelected()); }
-		{ finalCrypt.setPausing(processPausing); } else { DeviceController.setPausing(processPausing); }
+	    // Atomic
+	    processPausing = ! processPausing;
+	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalCrypt.setPausing(processPausing); } else { DeviceController.setPausing(processPausing); }
 
-    //	    if ( pauseToggleButton.isSelected() )
+	    // UI
+	    Platform.runLater(() ->
+	    {
 		if ( processPausing )
 		{
 		    new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
@@ -3964,34 +3958,34 @@ version = new Version(ui);
 		    PAUSE_TIMELINE.stop();
 		    if	(processRunningMode == ENCRYPT_MODE) { encryptButton.setText(getPauseDescription()); encryptButton.setStyle(" -fx-text-fill: white; "); }
 		    else if (processRunningMode == DECRYPT_MODE) { decryptButton.setText(getPauseDescription()); decryptButton.setStyle(" -fx-text-fill: white; "); }
-
-    //		pauseToggleButton.setText(getPauseDescription()); pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
 		}
-	    }
-	});
+	    });
+	}
     }
     
 //    private void stopButtonAction(ActionEvent event) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); stop(false); }
     
-    private void stop(boolean stopAndExit)
+    private void stopProcess()
     {
-	Platform.runLater(() ->
+	if (processRunning)
 	{
-	    if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
+	    if (((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
 	    {
-		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 		finalCrypt.setStopPending(true);
-//		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
-		if (processPausing) { pause(true); }
+		if (processPausing) { pauseProcess(true); }
 	    }
 	    else
 	    {
-		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 		DeviceController.setStopPending(true);
-//		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
-		if (processPausing) { pause(true); }
+		if (processPausing) { pauseProcess(true); }
 	    }
-	});
+
+	    // UI
+	    Platform.runLater(() ->
+	    {
+		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+	    });
+	}
     }
 
     @FXML private void authorLabelOnMouseClicked(MouseEvent event)

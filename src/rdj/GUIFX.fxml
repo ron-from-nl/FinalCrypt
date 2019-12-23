@@ -1050,9 +1050,9 @@
                               <GridPane alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" maxHeight="15.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="15.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1206.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                   <ColumnConstraints hgrow="NEVER" maxWidth="175.0" minWidth="175.0" percentWidth="0.0" prefWidth="175.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
-                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -1070,7 +1070,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
+                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="3" GridPane.hgrow="NEVER">
                                        <children>
                                           <Label fx:id="authorLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#authorLabelOnMouseClicked" onMouseEntered="#authorLabelOnMouseEntered" onMouseExited="#authorLabelOnMouseExited" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="author" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1085,7 +1085,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                        <children>
                                           <Label fx:id="supportLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="28.0" layoutY="3.0" onMouseClicked="#supportLabelOnMouseClicked" onMouseEntered="#supportLabelOnMouseEntered" onMouseExited="#supportLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Support" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1097,7 +1097,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                                        <children>
                                           <Label fx:id="updateLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="34.0" layoutY="3.0" onMouseClicked="#updateLabelOnMouseClicked" onMouseEntered="#updateLabelOnMouseEntered" onMouseExited="#updateLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Update" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
