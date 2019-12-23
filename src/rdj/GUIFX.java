@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 import java.util.prefs.Preferences;
@@ -102,6 +101,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JToggleButton;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.lang.management.ManagementFactory;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.LinkOption;
@@ -110,13 +110,8 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+import java.util.Timer;
 import java.util.function.Predicate;
 import java.util.prefs.*;
 import java.util.stream.Collectors;
@@ -139,9 +134,9 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Label statusLabel;    
     @FXML   private SwingNode keyFileSwingNode;
     @FXML   private Object root;
-    @FXML   private ToggleButton pauseToggleButton;
-    @FXML   private Button stopButton;
-    @FXML   private Label copyrightLabel;
+//    private ToggleButton pauseToggleButton;
+//    private Button stopButton;
+    @FXML   private Label authorLabel;
     @FXML   private SwingNode targetFileSwingNode;
     @FXML   private Button decryptButton;
     @FXML   private Label keyNameLabel;
@@ -180,11 +175,11 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Label unreadableFilesHeaderLabel;
     @FXML   private Label unwritableFilesHeaderLabel;
     @FXML   private Label hiddenFilesHeaderLabel;
-    @FXML   private Button supportButton;
+//    private Button supportButton;
     @FXML   private Label checksumLabel;
     @FXML   private GridPane dashboardGridPane;
     @FXML   private PasswordField pwdField;
-    @FXML   private Button checkUpdateButton;
+//    private Button checkUpdateButton;
     @FXML   private AnchorPane mainAnchorPane;
     @FXML   private Label checksumHeader;
     @FXML   private ImageView keyImageView;
@@ -219,7 +214,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Tooltip pwdtxtFieldTooltip;
     @FXML   private Label keyLabel;
     @FXML   private Label languageLabel;
-    @FXML   private Tooltip sysMonTooltip1;
     @FXML   private Pane userGuidanceFadePane;
     @FXML   private Tooltip tgtFileDeleteButton2ToolTip;
     @FXML   private Label targetLabel2;
@@ -255,6 +249,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Tooltip keyReadLabelToolTip;
     @FXML   private Tooltip keyWriteLabelToolTip;
     @FXML   private ListView<String> selectLanguage;
+    @FXML   private Tooltip passwordHeaderLabelToolTip;
 //    @FXML   private ToggleButton encryptionModeToggleButton;
 //    @FXML   private Tooltip encryptionModeToolTip;
 //    @FXML   private AnchorPane encryptionModeAnchorPane;
@@ -273,6 +268,8 @@ public class GUIFX extends Application implements UI, Initializable
     private final int CREATE_KEYDEV_MODE =		3;
     private final int CLONE_KEYDEV_MODE	=		4;
     private int processRunningMode =			NONE;
+    
+    private boolean processPausing =			false;
 
     private String welcome_to =				"Welcome to";
     private String introFadeInLine1 =			"Onbreakable";
@@ -374,7 +371,14 @@ public class GUIFX extends Application implements UI, Initializable
     
     private final Timeline PAUSE_TIMELINE = new Timeline(new KeyFrame( Duration.millis(250), ae -> 
     {
-	if ( pauseToggleButton.getText().length() == 0 ) { pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_DESC); } else { pauseToggleButton.setText(""); }
+	if	(processRunningMode == ENCRYPT_MODE)
+	{
+	    if ( encryptButton.getText().length() == 0 ) {  encryptButton.setText(getPauseDescription()); } else { encryptButton.setText(""); }
+	}
+	else if (processRunningMode == DECRYPT_MODE)
+	{
+	    if ( decryptButton.getText().length() == 0 ) {  decryptButton.setText(getPauseDescription()); } else { decryptButton.setText(""); }
+	}
     }));
 
 //    private final Timeline AUTO_DISABLE_ARMING_MAC_MODE_TIMELINE = new Timeline( new KeyFrame(Duration.seconds( 8.0), evt -> { disarmDisableMACMode(); } ) );
@@ -592,20 +596,32 @@ public class GUIFX extends Application implements UI, Initializable
     private ObservableList<String> languageList;
 
     private Message ugMessage;
-    private String selectedLanguageCode = "en";
-    @FXML
-    private Tooltip passwordHeaderLabelToolTip;
+    private String selectedLanguageCode = "eng";
     private int tgtToggleButtonCounter;
     private int keyToggleButtonCounter;
+    public static LanguageList languagesList;
+//    private ArrayList<String> languageNamesList;    
+    @FXML
+    private Tooltip languageLabelTooltip;
+    private String pauseDescription;
+    private String stopDescription;
+    @FXML
+    private Label supportLabel;
+    @FXML
+    private Label updateLabel;
     
+    private String getPauseDescription() { return pauseDescription; }
+    private String getStopDescription() { return stopDescription; }
     
-    
+    @SuppressWarnings("empty-statement")
     private void switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
     {
-	this.selectedLanguageCode = selectedLanguageCode;
 	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
-	
-	languageLabel.setText(locale.getDisplayLanguage());
+
+	languageLabel.setText(getLanguageName((LanguageList<Language>) languagesList, selectedLanguageCode));
+//	languageLabel.setText(locale.getDisplayLanguage());
+//	languageLabel.setText(selectedLanguageCode);//
+
 	userGuidanceLabelToolTip.setText(bundle.getString("133"));
 	tgtFileDeleteButton2.setText(bundle.getString("119"));	
 	encryptTab.setText(bundle.getString("053"));
@@ -652,10 +668,12 @@ public class GUIFX extends Application implements UI, Initializable
 	keyMissingLabelToolTip.setText(bundle.getString("075"));
 	encryptButton.setText(bundle.getString("050"));
 	decryptButton.setText(bundle.getString("039"));
-	pauseToggleButton.setText(bundle.getString("090"));
-	stopButton.setText(bundle.getString("102"));
-	supportButton.setText(bundle.getString("104"));
-	checkUpdateButton.setText(bundle.getString("023"));
+//	pauseToggleButton.setText(bundle.getString("090"));
+//	stopButton.setText(bundle.getString("102"));
+//	supportButton.setText(bundle.getString("104"));
+//	checkUpdateButton.setText(bundle.getString("023"));
+	supportLabel.setText(bundle.getString("104"));
+	updateLabel.setText(bundle.getString("023"));
 	welcome_to=bundle.getString("137");
 	introFadeInLine1=bundle.getString("062");
 	introFadeInLine2=bundle.getString("063");
@@ -742,31 +760,22 @@ public class GUIFX extends Application implements UI, Initializable
 	keyInfoContent=bundle.getString("069");
 	targetInfoHeader=bundle.getString("111");
 	targetInfoContent=bundle.getString("110");
+	
+	pauseDescription=bundle.getString("090");
+	stopDescription=bundle.getString("102");
 
 	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
 	
-	if (writeLanguage)
-	{
-	    prefs.put("Locale_Language", locale.getLanguage());
-	    prefs.put("Locale_Country", locale.getCountry());
-	    flushPrefs(prefs);
-	}
-	
-	if (redrawFileChoosers)
-	{
-	    updateFileChoosers(true, firsttime, false, true, firsttime, false);
-	}
-	
-	if (checkFileChoosers)
-	{
-	    updateFileChoosers(false, firsttime, true, false, firsttime, true);
-	}	
+	if (writeLanguage)	{  prefs.put("Locale_Language", locale.getLanguage()); prefs.put("Locale_Country", locale.getCountry()); flushPrefs(prefs); }
+	if (redrawFileChoosers)	{  updateFileChoosers(true, firsttime, false, true, firsttime, false); }
+	if (checkFileChoosers)	{ updateFileChoosers(false, firsttime, true, false, firsttime, true); }	
     }
 
     private void flushPrefs(Preferences prefsParam)
     {
 	try { prefsParam.flush(); } catch (BackingStoreException ex) { log("Error: flushPrefs(..) " + ex.getMessage() + "\r\n", true, true, true, true ,false); }
     }
+    
     @Override
     public void start(Stage stage) throws Exception
     {
@@ -794,14 +803,57 @@ public class GUIFX extends Application implements UI, Initializable
 
 	this.stage.setOnCloseRequest((WindowEvent e) ->
 	{
-	    if ( Audio.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
-	    	    
-//	    Shared
-	    String val = prefs.get("Shared", "Unknown");
-	    if (val.equals("Unknown"))		{ prefs.put("Shared", "No"); openSupport(); flushPrefs(prefs); }
-	    else if (val.equals("No"))		{ openSupport(); }
-	    else if (val.equals("Yes"))		{  }
-	    else				{ prefs.put("Shared", "No"); openSupport(); flushPrefs(prefs); }	    
+	    Platform.runLater(() ->
+	    {
+		if ( Audio.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
+
+//		Shared
+		String val = prefs.get("Shared", "Unknown");
+		if (val.equals("Unknown"))
+		{
+		    prefs.put("Shared", "No");
+		    flushPrefs(prefs);
+		    
+//		    openSupport("setOnCloseRequest", selectedLocale, true);
+
+		    supportStage = new Stage();
+		    support = new Support();
+		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		    support.controller.switchLanguage(selectedLocale);
+		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		    supportStage.show();
+		    support.controller.setExitAppOnClose(true);
+
+		}
+		else if (val.equals("No"))
+		{
+//		    openSupport("setOnCloseRequest",selectedLocale, true);
+		    
+		    supportStage = new Stage();
+		    support = new Support();
+		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		    support.controller.switchLanguage(selectedLocale);
+		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		    supportStage.show();
+		    support.controller.setExitAppOnClose(true);
+		}
+		else if (val.equals("Yes"))		{ System.exit(0); }
+		else
+		{
+		    prefs.put("Shared", "No");
+		    flushPrefs(prefs);
+
+//		    openSupport("setOnCloseRequest",selectedLocale, true);
+
+		    supportStage = new Stage();
+		    support = new Support();
+		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+		    support.controller.switchLanguage(selectedLocale);
+		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+		    supportStage.show();
+		    support.controller.setExitAppOnClose(true);
+		}
+	    });
 	});
 
 	Platform.runLater(() ->
@@ -951,82 +1003,105 @@ public class GUIFX extends Application implements UI, Initializable
 	sysmon.setFill(Color.valueOf("#888888"));
 	sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
 	
-	welcome();	
+	Platform.runLater(() ->
+	{
+	    welcome();	
+	});
     }
     
-    private void welcome()
+    private ArrayList<String> getInstalledLanguageNamesList(LanguageList<Language> languageList, boolean sparse)
     {
-	languageList = FXCollections.observableArrayList
-	(
-	    "Arabic",
-	    "Bengali",
-	    "Bulgarian",
-	    "Chinese",
-	    "Croatian",
-	    "Czech",
-	    "Danish",
-	    "Dutch",
-	    "English",
-	    "Esperanto",
-	    "Farsi",
-	    "Finnish",
-	    "French",
-	    "Frisian (western)",
-	    "German",
-	    "Greek",
-	    "Hebrew",
-	    "Hindi",
-	    "Hungarian",
-	    "Icelandic",
-	    "Indonesian",
-	    "Japanese",
-	    "Javanese",
-	    "Italian",
-	    "Kazakh",
-	    "Korean",
-	    "Latvian",							 
-	    "Malaysian",
-	    "Maltees",
-	    "Marathi",
-	    "Norwegian",
-	    "Polish",
-	    "Portugese",
-	    "Punjabi",
-	    "Romanian",
-	    "Russian",
-	    "Slovenian",
-	    "Spanish",
-	    "Swedish",
-	    "Tamil",
-	    "Thai",
-	    "Turkish",
-	    "Ukrainian",
-	    "Urdu",
-	    "Vietnamese"
-	);
+	ArrayList<String> languageNamesList = new ArrayList<String>();
 	
-	selectLanguage.getItems().setAll(languageList);
-//	selectLanguage.getSelectionModel().selectFirst();
+	// Only add installed languages to the languageNameList
+	for (Iterator it = languageList.iterator(); it.hasNext();)
+	{
+	    Language language = (Language) it.next();
+	    if (language.installed)
+	    {
+		if (sparse)
+		{
+		    languageNamesList.add(language.languageNameEnglishList.get(0));
+		}
+		else
+		{
+		    for (String name: language.languageNameEnglishList ) { languageNamesList.add(name); }
+		}
+	    }
+	}
+	
+	// Sort the languageNameList
+	Collections.sort(languageNamesList, new Comparator<String>() { @Override  public int compare(String name1, String name2) { return  name1.compareTo(name2); } });
+		
+	return languageNamesList;
+    }
+
+    private String getLanguageName(LanguageList<Language> languageList, String languageCode)
+    {	
+	String languageName = "English";
+	for (Iterator it = languageList.iterator(); it.hasNext();)
+	{
+	    Language language = (Language) it.next();
+	    if (language.installed)
+	    {
+		if	(languageCode.toLowerCase().equalsIgnoreCase(language.iso639_2B))   { languageName = language.languageNameEnglishList.get(0); break; }
+		else if (languageCode.toLowerCase().equalsIgnoreCase(language.iso639_2T))   { languageName = language.languageNameEnglishList.get(0); break; }
+		else if (languageCode.toLowerCase().equalsIgnoreCase(language.iso639_1))    { languageName = language.languageNameEnglishList.get(0); break; }
+	    }
+	}
+	return languageName;
+    }
+
+    private void welcome()
+    {		
+	languagesList = new LanguageList(this); // Defines all known & installed Languages from the iso639.txt file
+//	languageNamesList = new ArrayList<String>(); // Just a list to sort the languagename for the choicebox
+//
+	// Fill the choicebox with the sorted languageNameList
+	for (String name: getInstalledLanguageNamesList((LanguageList<Language>) languagesList, false)) { selectLanguage.getItems().add(name); }
+	
+	// Only use this line to print all installed languages when new languages have been added
+//	for (String name: getInstalledLanguageNamesList((LanguageList<Language>) languagesList, false)) { test(name + ", "); } test("\r\nNumber of installed Languages: " + getInstalledLanguageNamesList((LanguageList<Language>)languagesList, true).size() + "\r\n");
 
 	prevsval1 = prefs.get("Locale_Language", "Unknown");
 	prevsval2 = prefs.get("Locale_Country", "Unknown");
 	
-	if (prevsval1.equals("Unknown")) { selectedLocale = Locale.getDefault(); prefs.put("Locale_Language", selectedLocale.getLanguage()); flushPrefs(prefs); }
-	else				 { selectedLocale = new Locale(prevsval1,""); }
-	if (prevsval2.equals("Unknown")) { selectedLocale = Locale.getDefault(); prefs.put("Locale_Country", selectedLocale.getCountry()); flushPrefs(prefs); }
-	else				 { selectedLocale = new Locale(prevsval1,prevsval2); }
+	if (prevsval1.equals("Unknown"))
+	{
+	    selectedLocale = new Locale("eng","");
+	    prefs.put("Locale_Language", "eng"); flushPrefs(prefs);
+	    selectedLanguageCode = "eng";
+	}
+	else
+	{
+	    selectedLocale = new Locale(prevsval1,"");
+	    selectedLanguageCode = selectedLocale.getLanguage();
+	}
 	
-	selectedLanguageCode = selectedLocale.getLanguage();
+	if (prevsval2.equals("Unknown"))
+	{
+	    selectedLocale = Locale.getDefault(); prefs.put("Locale_Country", selectedLocale.getCountry()); flushPrefs(prefs);
+	}
+	else
+	{
+	    selectedLocale = new Locale(prevsval1,prevsval2);
+	}
+	
 //	switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
 	switchLanguage(selectedLocale,      selectedLanguageCode,		   false,			true,		   true,		    false);
+	
+	supportStage = new Stage();
+	support = new Support();
+	try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	support.controller.switchLanguage(selectedLocale);
+	support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
 
 	// First time selection Key Directory
 	Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
 	//		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-	keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+	keyFCPath = Validate.getFCPath( this,		 "",	keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
 
 	
-
 	targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
         configuration = new Configuration(ui);
         version = new Version(ui);
@@ -1081,7 +1156,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    bottomleftLabel.setText(arrows.substring(6, 8));
 	}
 	
-        copyrightLabel.setText("Copyright: " + Version.getCopyright() + " " + Version.getAuthor());
+        authorLabel.setText("Author: " + Version.getAuthor());
 //	log(getRuntimeEnvironment(), false, true, true, false ,false);
 	log(Version.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
 
@@ -1165,6 +1240,7 @@ public class GUIFX extends Application implements UI, Initializable
 		
 	checksumTooltip = new Tooltip("");
 	checksumTooltip.setFont(javafx.scene.text.Font.font("Liberation Mono", FontWeight.NORMAL, FontPosture.REGULAR, 13));
+	
 
 // No GDK Error
 	Platform.runLater(() ->
@@ -1179,50 +1255,50 @@ public class GUIFX extends Application implements UI, Initializable
 
 	    updateFileChoosers(true, false, false, true, false, false);
 
-	    ScaleTransition scaleTransition1 = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
-	    scaleTransition1.setFromX(0.98f);scaleTransition1.setToX(1.0f);
-	    scaleTransition1.setFromY(0.98f);scaleTransition1.setToY(1.0f);
-	    scaleTransition1.setFromZ(0.98f);scaleTransition1.setToZ(1.0f);
-	    scaleTransition1.setCycleCount(1);
-	    scaleTransition1.setAutoReverse(false);
-	    scaleTransition1.setDelay(Duration.millis(500));
-	    scaleTransition1.setInterpolator(Interpolator.EASE_BOTH);
+	    ScaleTransition scaleIntroTransition = new ScaleTransition(Duration.millis(1500), userGuidanceLabel);
+	    scaleIntroTransition.setFromX(0.98f);scaleIntroTransition.setToX(1.0f);
+	    scaleIntroTransition.setFromY(0.98f);scaleIntroTransition.setToY(1.0f);
+	    scaleIntroTransition.setFromZ(0.98f);scaleIntroTransition.setToZ(1.0f);
+	    scaleIntroTransition.setCycleCount(1);
+	    scaleIntroTransition.setAutoReverse(false);
+	    scaleIntroTransition.setDelay(Duration.millis(500));
+	    scaleIntroTransition.setInterpolator(Interpolator.EASE_BOTH);
 
 	    userGuidanceLabel.setText(introFadeInLine1 + "\r\n" + introFadeInLine2); userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / userGuidanceLabel.getText().length() * 2.0) + "px;");
-	    FadeTransition fadeTransition1 = new FadeTransition(Duration.millis(1500), userGuidanceLabel);
-	    fadeTransition1.setFromValue(0.05f);
-	    fadeTransition1.setToValue(0.7f);
-	    fadeTransition1.setCycleCount(2);
-	    fadeTransition1.setAutoReverse(true);
-	    fadeTransition1.setDelay(Duration.millis(500));
-	    fadeTransition1.setInterpolator(Interpolator.EASE_BOTH);
+	    FadeTransition fadeInIntroTransition = new FadeTransition(Duration.millis(1500), userGuidanceLabel);
+	    fadeInIntroTransition.setFromValue(0.05f);
+	    fadeInIntroTransition.setToValue(0.7f);
+	    fadeInIntroTransition.setCycleCount(2);
+	    fadeInIntroTransition.setAutoReverse(true);
+	    fadeInIntroTransition.setDelay(Duration.millis(500));
+	    fadeInIntroTransition.setInterpolator(Interpolator.EASE_BOTH);
 
-	    ParallelTransition parallelTransition1 = new ParallelTransition();
-	    parallelTransition1.getChildren().addAll( scaleTransition1, fadeTransition1 );
-	    parallelTransition1.setCycleCount(1);
+	    ParallelTransition parallelIntroTransition = new ParallelTransition();
+	    parallelIntroTransition.getChildren().addAll( scaleIntroTransition, fadeInIntroTransition );
+	    parallelIntroTransition.setCycleCount(1);
 
-	    parallelTransition1.setOnFinished((ActionEvent actionEvent) ->
+	    parallelIntroTransition.setOnFinished((ActionEvent actionEvent) ->
 	    {
 		userGuidanceLabel.setText("");
 
 		userGuidanceLabel.setText(Version.getProductName()); userGuidanceLabel.setStyle("-fx-font-size: " + (userGuidanceLabel.getWidth() / userGuidanceLabel.getText().length() * 1.3) + "px;");
-		FadeTransition fadeTransition2 = new FadeTransition(Duration.millis(1000), userGuidanceLabel);
-		fadeTransition2.setFromValue(0.05f);
-		fadeTransition2.setToValue(0.7f);
-		fadeTransition2.setCycleCount(1);
-		fadeTransition2.setAutoReverse(false);
-		fadeTransition2.setDelay(Duration.millis(0));
-		fadeTransition2.setInterpolator(Interpolator.EASE_BOTH);
+		FadeTransition fadeInIntro2Transition = new FadeTransition(Duration.millis(1000), userGuidanceLabel);
+		fadeInIntro2Transition.setFromValue(0.05f);
+		fadeInIntro2Transition.setToValue(0.7f);
+		fadeInIntro2Transition.setCycleCount(1);
+		fadeInIntro2Transition.setAutoReverse(false);
+		fadeInIntro2Transition.setDelay(Duration.millis(0));
+		fadeInIntro2Transition.setInterpolator(Interpolator.EASE_BOTH);
 
 		
-		scaleTransition1.setDuration(Duration.millis(1000));
-		scaleTransition1.setDelay(Duration.millis(0));
+		scaleIntroTransition.setDuration(Duration.millis(1000));
+		scaleIntroTransition.setDelay(Duration.millis(0));
 		
-		ParallelTransition parallelTransition2 = new ParallelTransition();
-		parallelTransition2.getChildren().addAll( scaleTransition1, fadeTransition2 );
-		parallelTransition2.setCycleCount(1);
+		ParallelTransition parallelIntro2Transition = new ParallelTransition();
+		parallelIntro2Transition.getChildren().addAll( scaleIntroTransition, fadeInIntro2Transition );
+		parallelIntro2Transition.setCycleCount(1);
 
-		parallelTransition2.setOnFinished((ActionEvent actionEvent2) ->
+		parallelIntro2Transition.setOnFinished((ActionEvent actionEvent2) ->
 		{		    
 //		    try { root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"), getBundle(Locale.getDefault())); }
 //		    try { root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"), ResourceBundle.getBundle("rdj.language.GUIFX_nl_NL", locale_nl_NL)); }
@@ -1233,8 +1309,11 @@ public class GUIFX extends Application implements UI, Initializable
 		    prevsval1 = prefs.get("Initialized", "Unknown"); if (! prevsval1.equals("Yes")) {prefs.put("Initialized", "Yes"); flushPrefs(prefs); } else {  }
 
 		    // keyButton.setDisable(false);
-		    checkUpdateButton.setDisable(false);
-		    supportButton.setDisable(false);
+//		    checkUpdateButton.setDisable(false);
+//		    supportButton.setDisable(false);
+
+		    supportLabel.setDisable(false);
+		    updateLabel.setDisable(false);
 		    // ============================================================================================================================
 
 
@@ -1288,9 +1367,9 @@ public class GUIFX extends Application implements UI, Initializable
 		    try { updateChecked = Long.valueOf(prevsval1); } catch (NumberFormatException e) { invalidUpdateCheckedValue = true; }
 		    if ( invalidUpdateCheckedValue ) { Platform.runLater(() -> { checkUpdate(false); }); } else { if (now - updateChecked >= updateCheckPeriod) { Platform.runLater(() -> { checkUpdate(false); }); } }		    
 		});
-		parallelTransition2.play();
+		parallelIntro2Transition.play();
 	    });
-	    parallelTransition1.play();
+	    parallelIntroTransition.play();
 
 //	    Sound
 	    prevsval1 = prefs.get("Sound", "Unknown");
@@ -2185,8 +2264,8 @@ version = new Version(ui);
 		MySimpleFCFileVisitor.running = false;		    
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
-		pauseToggleButton.setDisable(true);
-		stopButton.setDisable(true);
+//		pauseToggleButton.setDisable(true);
+//		stopButton.setDisable(true);
 
 		fileProgressBar.setProgress(0);
 		filesProgressBar.setProgress(0);
@@ -2791,8 +2870,8 @@ version = new Version(ui);
 	{
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
-	    pauseToggleButton.setDisable(true);
-	    stopButton.setDisable(true);
+//	    pauseToggleButton.setDisable(true);
+//	    stopButton.setDisable(true);
 	});
     }
     synchronized private void checkModeReady(FCPathList<FCPath> targetFCPathList, boolean validBuild)
@@ -2804,8 +2883,8 @@ version = new Version(ui);
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
 //		keyButton.setDisable(true);
-		pauseToggleButton.setDisable(true);
-		stopButton.setDisable(true);
+//		pauseToggleButton.setDisable(true);
+//		stopButton.setDisable(true);
 				
 		if ((keyFCPath != null) && ((keyFCPath.isValidKey) || ((keyFCPath.type == FCPath.DIRECTORY ) && (keyFCPath.isValidKeyDir))))
 		{
@@ -2819,7 +2898,8 @@ version = new Version(ui);
 		    {
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
-			encryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			encryptButton.setDisable(false);
+//			pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			enableClocks(true, false, false); 
 		    }
 		    else
@@ -2840,7 +2920,8 @@ version = new Version(ui);
 		    {
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
-			decryptButton.setDisable(false); pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+			decryptButton.setDisable(false);
+//			pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			enableClocks(true, false, false);
 		    }
 		    else
@@ -2878,7 +2959,7 @@ version = new Version(ui);
 			{
 //			    log("1 " + keyFCPath.getString());
 			    createManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE); // log("Create Manual Key List:\r\n" + createManualKeyList.getStats());
-			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+//			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CREATE_KEYDEV);
 			}
 //			else {  keyButton.setDisable(true);  keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); }
@@ -2889,7 +2970,7 @@ version = new Version(ui);
 			if ((targetFCPathList.validDevices > 0) && (targetFCPathList.matchingKey == 0))
 			{
 			    cloneManualKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.DEVICE && fcPath.path.compareTo(keyFCPath.path) != 0); // log("Clone Key List:\r\n" + cloneKeyList.getStats());
-			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
+//			    pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			    keyButton.setDisable(false); keyButton.setTextFill(Color.WHITE); keyButton.setText(CLONE_KEYDEV);
 			}
 //			else {  keyButton.setDisable(true); keyButton.setTextFill(Color.GREY); keyButton.setText(CREATE_KEY); keyButton.setVisible(false); }
@@ -3132,20 +3213,34 @@ version = new Version(ui);
     @FXML
     private void encryptButtonAction(ActionEvent event)
     {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-        Thread encryptThread = new Thread(new Runnable()
-        {
-            private DeviceManager deviceManager;
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-		encrypt(targetFCPathList, encryptableList, keyFCPath);
-            }
-        });
-        encryptThread.setName("encryptThread");
-        encryptThread.setDaemon(true);
-        encryptThread.start();
+	Platform.runLater(() ->
+	{
+	    new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    Thread encryptThread = new Thread(new Runnable()
+	    {
+		private DeviceManager deviceManager;
+		@Override
+		@SuppressWarnings({"static-access"})
+		public void run()
+		{
+		    // Pause	090
+		    // Stop	102
+		    // Encrypt	050
+		    // Decrypt	039
+
+		    if	(! processRunning)
+		    {
+			encrypt(targetFCPathList, encryptableList, keyFCPath);
+		    }
+		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ pause(false); }
+		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ stop(false); }
+		}
+	    });
+	    encryptThread.setName("encryptThread");
+	    encryptThread.setDaemon(true);
+	    encryptThread.start();
+	});
+
     }
 
     private void encrypt(FCPathList<FCPath> targetSourceFCPathList, FCPathList<FCPath> filteredTargetSourceFCPathList, FCPath keySourceFCPath) // Only run within thread
@@ -3182,20 +3277,34 @@ version = new Version(ui);
     @FXML
     private void decryptButtonAction(ActionEvent event)
     {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-        Thread encryptThread = new Thread(new Runnable()
-        {
-            private DeviceManager deviceManager;
-            @Override
-            @SuppressWarnings({"static-access"})
-            public void run()
-            {
-		decrypt(targetFCPathList, decryptableList, keyFCPath, false);
-            }
-        });
-        encryptThread.setName("decryptThread");
-        encryptThread.setDaemon(true);
-        encryptThread.start();
+	Platform.runLater(() ->
+	{
+	    new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    Thread encryptThread = new Thread(new Runnable()
+	    {
+		private DeviceManager deviceManager;
+		@Override
+		@SuppressWarnings({"static-access"})
+		public void run()
+		{
+		    // Pause	090
+		    // Stop	102
+		    // Encrypt	050
+		    // Decrypt	039
+
+		    if	(! processRunning)
+		    {
+			decrypt(targetFCPathList, decryptableList, keyFCPath, false);
+		    }
+		    else if ((processRunning) && (processRunningMode == ENCRYPT_MODE))	{ stop(false); }
+		    else if ((processRunning) && (processRunningMode == DECRYPT_MODE))	{ pause(false); }
+		}
+	    });
+	    encryptThread.setName("decryptThread");
+	    encryptThread.setDaemon(true);
+	    encryptThread.start();
+	});
+
     }
 
     private void decrypt(FCPathList<FCPath> targetSourceFCPathList, FCPathList<FCPath> filteredTargetSourceFCPathList, FCPath keySourceFCPath, boolean open) // Only run within thread | open opens targets after decryption
@@ -3289,7 +3398,7 @@ version = new Version(ui);
 		createOTPKeyStage = new Stage();
 		createOTPKey = new CreateOTPKey();
 		
-		try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { System.err.println(ex.getMessage()); }
+		try { createOTPKey.start(createOTPKeyStage); } catch (Exception ex) { log("Error: Exception: createOTPKey.start(createOTPKeyStage); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 		createOTPKey.controller.switchLanguage(selectedLocale, false);
 		createOTPKey.controller.setCurrentDir(keyFileChooser.getCurrentDirectory().toPath().toAbsolutePath(), guifx); // Parse parameters onto global controller references always through controller
 	    });
@@ -3341,7 +3450,7 @@ version = new Version(ui);
 	else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
     
-    synchronized private void openSupport()
+    synchronized private void openSupport(String caller, Locale selectedLocale, boolean exitAppOnClose)
     {
 	Platform.runLater(() ->
 	{
@@ -3357,12 +3466,17 @@ version = new Version(ui);
 		{
 		    Platform.runLater(() ->
 		    {
+//			test("Caller: " + caller + " exitAppOnClose " + exitAppOnClose + "\r\n");
+			
 			new Sound().play(ui, Sound.SND_OPEN,Audio.AUDIO_CODEC);
 			supportStage = new Stage();
 			support = new Support();
-			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: \r\n", true, true, true, true, false); }
-			support.controller.switchLanguage(selectedLocale, false);
+			
+			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			support.controller.switchLanguage(selectedLocale);
 			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+			supportStage.show();
+			support.controller.setExitAppOnClose(exitAppOnClose);
 		    });
 		}
 	    });
@@ -3424,16 +3538,35 @@ version = new Version(ui);
 	    }
 		
 	    
-	    encryptButton.setDisable(true);
-	    decryptButton.setDisable(true);
+//	    encryptButton.setDisable(true);
+//	    decryptButton.setDisable(true);
+
+	    // Pause	090
+	    // Stop	102
+	    // Encrypt	050
+	    // Decrypt	039
+	    
+	    if	    (processRunningMode == ENCRYPT_MODE)
+	    {
+		encryptButton.setText(bundle.getString("090"));
+		decryptButton.setText(bundle.getString("102"));
+	    }
+	    else if (processRunningMode == DECRYPT_MODE)
+	    {
+		encryptButton.setText(bundle.getString("102"));
+		decryptButton.setText(bundle.getString("090"));
+	    }
+	    encryptButton.setDisable(false);
+	    decryptButton.setDisable(false);
+
 	    tgtFileDeleteButton2.setDisable(true);
 	    keyFileDeleteButton2.setDisable(true);
 	    
 	    pwdField.setDisable(true);
 	    pwdtxtField.setDisable(true);
 	    
-	    pauseToggleButton.setDisable(false);
-	    stopButton.setDisable(false);
+//	    pauseToggleButton.setDisable(false);
+//	    stopButton.setDisable(false);
 	    
 	    enableClocks(true, true, true); 
 
@@ -3487,7 +3620,8 @@ version = new Version(ui);
 	    
 	    elapsedTimeLabel.setText(elapsedTimeString);
 	    
-	    if (!pauseToggleButton.isSelected())
+//	    if (!pauseToggleButton.isSelected())
+	    if (!processPausing)
 	    {
 		remainingTimeLabel.setText(remainingTimeString);
 		totalTimeLabel.setText(totalTimeString);	    
@@ -3555,8 +3689,16 @@ version = new Version(ui);
 	{
 	    encryptButton.setDisable(true);
 	    decryptButton.setDisable(true);
-	    pauseToggleButton.setDisable(true);
-	    stopButton.setDisable(true);
+	    
+	    // Pause	090
+	    // Stop	102
+	    // Encrypt	050
+	    // Decrypt	039
+	    
+	    processRunning = false;
+	    	    
+//	    pauseToggleButton.setDisable(true);
+//	    stopButton.setDisable(true);
 	    
 	    fileProgressBar.setProgress(100.0); filesProgressBar.setProgress(100.0);
 
@@ -3617,7 +3759,10 @@ version = new Version(ui);
 		enableClocks(false, false, false);
     //	    }
 
-    //	    The Open selected file when finished section
+		encryptButton.setText(bundle.getString("050"));
+		decryptButton.setText(bundle.getString("039"));
+
+		//	    The Open selected file when finished section
 
 		Thread openThread;
 		openThread = new Thread(() ->
@@ -3786,52 +3931,82 @@ version = new Version(ui);
 	if (alert.getResult() == ButtonType.OK) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
 
-    @FXML private void pauseToggleButtonAction(ActionEvent event)
+//    private void pauseToggleButtonAction(ActionEvent event) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); pause(); }
+    
+    private void pause(boolean unPauseToStop)
     {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	Platform.runLater(() ->
+	{
+	    if (processRunning)
+	    {
+		processPausing = ! processPausing;
+		if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE))
+    //	    { finalCrypt.setPausing(pauseToggleButton.isSelected()); } else { DeviceController.setPausing(pauseToggleButton.isSelected()); }
+		{ finalCrypt.setPausing(processPausing); } else { DeviceController.setPausing(processPausing); }
 
-        if (processRunning)
-        {
-	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalCrypt.setPausing(pauseToggleButton.isSelected()); } else { DeviceController.setPausing(pauseToggleButton.isSelected()); }
-	    if ( pauseToggleButton.isSelected() )
-	    {
-		new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
-		pauseToggleButton.setStyle(" -fx-text-fill: orange; -fx-font-size: 14; ");
-		PAUSE_TIMELINE.play();
-		megaBytesPerSecond = 0d;
+    //	    if ( pauseToggleButton.isSelected() )
+		if ( processPausing )
+		{
+		    new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+		    if	(processRunningMode == ENCRYPT_MODE) { encryptButton.setStyle(" -fx-text-fill: orange; "); }
+		    else if (processRunningMode == DECRYPT_MODE) { decryptButton.setStyle(" -fx-text-fill: orange; "); }
+		    PAUSE_TIMELINE.play();
+		    megaBytesPerSecond = 0d;
+		}
+		else
+		{
+		    if (!unPauseToStop)
+		    {
+			if  (processRunningMode == ENCRYPT_MODE) { new Sound().play(this, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC); } else { new Sound().play(this, Audio.SND_DECRYPTFILES,Audio.AUDIO_CODEC); }
+		    }
+		    PAUSE_TIMELINE.stop();
+		    if	(processRunningMode == ENCRYPT_MODE) { encryptButton.setText(getPauseDescription()); encryptButton.setStyle(" -fx-text-fill: white; "); }
+		    else if (processRunningMode == DECRYPT_MODE) { decryptButton.setText(getPauseDescription()); decryptButton.setStyle(" -fx-text-fill: white; "); }
+
+    //		pauseToggleButton.setText(getPauseDescription()); pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
+		}
 	    }
-	    else
-	    {
-		if (processRunningMode == ENCRYPT_MODE) { new Sound().play(this, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC); } else { new Sound().play(this, Audio.SND_DECRYPTFILES,Audio.AUDIO_CODEC); }
-		PAUSE_TIMELINE.stop();
-		pauseToggleButton.setText(FinalCrypt.UTF8_PAUSE_DESC);
-		pauseToggleButton.setStyle(" -fx-text-fill: white; -fx-font-size: 14; ");
-	    }
-        }
+	});
     }
     
-    @FXML
-    private void stopButtonAction(ActionEvent event) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); stop(false); }
+//    private void stopButtonAction(ActionEvent event) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); stop(false); }
     
     private void stop(boolean stopAndExit)
     {
-        if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
-        {
-	    new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-            finalCrypt.setStopPending(true);
-            if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
-        }
-        else
-        {
-	    new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-            DeviceController.setStopPending(true);
-            if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
-        }
+	Platform.runLater(() ->
+	{
+	    if ((processRunning) && ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
+	    {
+		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+		finalCrypt.setStopPending(true);
+//		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
+	    }
+	    else
+	    {
+		new Sound().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
+		DeviceController.setStopPending(true);
+//		if (pauseToggleButton.isSelected()) { pauseToggleButton.fire(); }
+	    }
+	    if (processPausing) { pause(true); }
+	});
     }
 
-    @FXML private void copyrightLabelOnMouseClicked(MouseEvent event)	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/ }
+    @FXML private void authorLabelOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+//	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/
+	Thread openAuthorThread; openAuthorThread = new Thread(() ->
+	{
+	    try {  Desktop.getDesktop().browse(new URI("https://www.finalcrypt.org/faq.php#P1")); }
+	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	});
+	openAuthorThread.setName("openAuthorThread");
+	openAuthorThread.setDaemon(true);
+	openAuthorThread.start();
+    }
 
-    @FXML private void checkUpdateButtonOnAction(ActionEvent event)
+    private void checkUpdateButtonOnAction(ActionEvent event)
     {
 	Platform.runLater(() -> { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); });
 	Platform.runLater(() -> { checkUpdate( true ); });
@@ -4146,11 +4321,11 @@ version = new Version(ui);
 	else { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);}
     }
 
-    @FXML private void supportButtonOnAction(ActionEvent event)
+    private void supportButtonOnAction(ActionEvent event)
     {
 	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-	openSupport();
+	openSupport("supportButtonOnAction",selectedLocale, false);
     }
 
     private void setAttribute(FCPath fcPath, boolean read, boolean write)
@@ -4297,7 +4472,11 @@ version = new Version(ui);
 //  End Message Authentication Mode
 //  ==============================================================================================================
 
-    @Override public void test(String message) { log(message, true, true, true, false, false); }
+    @Override public void test(String message)
+    {
+	log(message, true, true, true, false, false);
+//	if ( message != null ) { log(message, true, true, true, false, false); } else {  }
+    }
 
     @Override synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
     {
@@ -4357,7 +4536,11 @@ version = new Version(ui);
 	    }
 	    else if ((event.getX() > ((userGuidanceLabel.getWidth() / 2) - 75)) && (event.getX() < ((userGuidanceLabel.getWidth() / 2) + 75)) && (event.getY() >= 15) && (event.getY() <= 27)) // Language
 	    {
+		// Select Language
 		selectLanguage.setVisible(true);
+		selectLanguage.getSelectionModel().select(getLanguageName((LanguageList<Language>) languagesList, selectedLanguageCode));
+		selectLanguage.scrollTo(getLanguageName((LanguageList<Language>) languagesList, selectedLanguageCode));
+		selectLanguage.requestFocus();
 		new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	    }
 	    else // Animation
@@ -4373,65 +4556,96 @@ version = new Version(ui);
 	});
     }
 
-    @FXML
-    private void selectLanguageOnMouseClicked(MouseEvent event)
+    @FXML private void selectLanguageOnMouseClicked(MouseEvent event)
     {
 	Platform.runLater(() -> 
 	{
-	    if	    ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Arabic") )		    { selectedLanguageCode = "ara"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bengali") )	    { selectedLanguageCode = "ben"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Bulgarian") )	    { selectedLanguageCode = "bul"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Chinese") )	    { selectedLanguageCode = "chi"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Croatian") )	    { selectedLanguageCode = "hrv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Czech") )		    { selectedLanguageCode = "cze"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Danish") )		    { selectedLanguageCode = "dan"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Dutch") )		    { selectedLanguageCode = "dut"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("English") )	    { selectedLanguageCode = "eng"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Esperanto") )	    { selectedLanguageCode = "epo"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Farsi") )		    { selectedLanguageCode = "per"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Finnish") )	    { selectedLanguageCode = "fin"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("French") )		    { selectedLanguageCode = "fre"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Frisian (western)") )  { selectedLanguageCode = "fry"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("German") )		    { selectedLanguageCode = "ger"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Greek") )		    { selectedLanguageCode = "gre"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hebrew") )		    { selectedLanguageCode = "heb"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hindi") )		    { selectedLanguageCode = "hin"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Hungarian") )	    { selectedLanguageCode = "hun"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Icelandic") )	    { selectedLanguageCode = "ice"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Indonesian") )	    { selectedLanguageCode = "ind"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Japanese") )	    { selectedLanguageCode = "jpn"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Javanese") )	    { selectedLanguageCode = "jav"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Italian") )	    { selectedLanguageCode = "ita"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Kazakh") )		    { selectedLanguageCode = "kaz"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Korean") )		    { selectedLanguageCode = "kor"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Latvian") )	    { selectedLanguageCode = "lav"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Malaysian") )	    { selectedLanguageCode = "may"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Maltees") )	    { selectedLanguageCode = "mlt"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Marathi") )	    { selectedLanguageCode = "mar"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Norwegian") )	    { selectedLanguageCode = "nor"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Polish") )		    { selectedLanguageCode = "pol"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Portugese") )	    { selectedLanguageCode = "por"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Punjabi") )	    { selectedLanguageCode = "pan"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Romanian") )	    { selectedLanguageCode = "rum"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Russian") )	    { selectedLanguageCode = "rus"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Slovenian") )	    { selectedLanguageCode = "slv"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Spanish") )	    { selectedLanguageCode = "spa"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Swedish") )	    { selectedLanguageCode = "swe"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Tamil") )		    { selectedLanguageCode = "tam"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Thai") )		    { selectedLanguageCode = "tha"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Turkish") )	    { selectedLanguageCode = "tur"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Ukrainian") )	    { selectedLanguageCode = "ukr"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Urdu") )		    { selectedLanguageCode = "urd"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else if ( selectLanguage.getSelectionModel().getSelectedItem().equalsIgnoreCase("Vietnamese") )	    { selectedLanguageCode = "vie"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-	    else												    { selectedLanguageCode = "eng"; selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry()); }
-
-//	    switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
-	    switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			true);
-
-	    selectLanguage.setVisible(false);
+	    boolean langOK = false;
+	    outerloop: for (Iterator it = languagesList.iterator(); it.hasNext();)
+	    {
+		Language language = (Language) it.next();
+		if (language.installed)
+		{
+		    innerloop: for (String name: language.languageNameEnglishList )
+		    {
+			if ( selectLanguage.getSelectionModel().getSelectedItem().equals(name) )
+			{
+//			    test("Matched: " + selectLanguage.getSelectionModel().getSelectedItem().toString() + "\r\n");			    
+			    if	    ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_2B + ".properties") != null )	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); switchLanguage(language.iso639_2B); langOK = true; break outerloop; }
+			    else if ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_2T + ".properties") != null )	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); switchLanguage(language.iso639_2T); langOK = true; break outerloop; }
+			    else if ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_1 + ".properties") != null )	{ new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); switchLanguage(language.iso639_1);  langOK = true; break outerloop; }
+			}
+		    }
+		}
+	    }
+	    if (! langOK) { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); switchLanguage("eng"); langOK = true; } // Falling back to english
 	});
     }
     
+    @FXML private void selectLanguageOnKeyPressed(KeyEvent event)
+    {
+	Platform.runLater(() -> 
+	{
+	    if (event.getText().matches("[a-zA-Z]"))
+	    {
+		new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+		for (String name: getInstalledLanguageNamesList((LanguageList<Language>) languagesList, false))
+		{
+    //		test("name: " + name + " char: " + event.getText().toLowerCase() + " name0: " + name.substring(0, 1).toLowerCase() + "\r\n");
+		    if (event.getText().toLowerCase().matches("[" + name.substring(0, 1).toLowerCase() + "]"))
+		    {
+			selectLanguage.getSelectionModel().select(name);
+			selectLanguage.scrollTo(name);
+			break;
+		    }
+		}
+	    }
+	    else if ((event.getCode() == KeyCode.ESCAPE))
+	    {
+		new Sound().play(this, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC);
+		selectLanguage.setVisible(false);
+	    }
+	    else if (
+			(event.getCode() == KeyCode.DOWN) || (event.getCode() == KeyCode.UP)
+		     || (event.getCode() == KeyCode.PAGE_UP) || (event.getCode() == KeyCode.PAGE_DOWN)
+		     || (event.getCode() == KeyCode.HOME) || (event.getCode() == KeyCode.END)
+		    )
+	    {
+		new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    }
+	    else if (event.getCode() == KeyCode.ENTER)
+	    {
+		boolean langOK = false;
+		outerloop: for (Iterator it = languagesList.iterator(); it.hasNext();)
+		{
+		    Language language = (Language) it.next();
+		    if (language.installed)
+		    {
+			innerloop: for (String name: language.languageNameEnglishList )
+			{
+			    if ( selectLanguage.getSelectionModel().getSelectedItem().equals(name) )
+			    {
+				if	    ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_2B + ".properties") != null )	{ new Sound().play(this, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC); switchLanguage(language.iso639_2B); langOK = true; break outerloop; }
+				else if ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_2T + ".properties") != null )	{ new Sound().play(this, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC); switchLanguage(language.iso639_2T); langOK = true; break outerloop; }
+				else if ( this.getClass().getResource("/rdj/language/translation_" + language.iso639_1 + ".properties") != null )	{ new Sound().play(this, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC); switchLanguage(language.iso639_1);  langOK = true; break outerloop; }
+			    }
+			}
+		    }
+		}
+		if (! langOK) { new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); switchLanguage("eng"); langOK = true; } // Falling back to english
+	    }
+	});
+    }
+
+    private void switchLanguage(String iso639)
+    {
+	selectLanguage.setVisible(false);
+	selectedLanguageCode = iso639;
+	selectedLocale = new Locale(selectedLanguageCode,Locale.getDefault().getCountry());
+
+//	switchLanguage(Locale locale, String selectedLanguageCode, boolean writeLanguage, boolean redrawFileChoosers, boolean firsttime, boolean checkFileChoosers)
+	switchLanguage(selectedLocale,      selectedLanguageCode,			true,			    true,	      false,			true);
+    }
     
     @FXML private void showPasswordCheckBoxOnAction(ActionEvent event)
     {
@@ -4531,5 +4745,56 @@ version = new Version(ui);
     @FXML  private void keyLabelAnchorOnMouseEntered(MouseEvent event)
     {
 	keyLabel.setVisible(true);
+    }
+
+    @FXML
+    private void supportLabelOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	openSupport("supportButtonOnAction",selectedLocale, false);
+    }
+
+    @FXML
+    private void updateLabelOnMouseClicked(MouseEvent event)
+    {
+	Platform.runLater(() -> { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); });
+	Platform.runLater(() -> { checkUpdate( true ); });
+    }
+
+    @FXML
+    private void supportLabelOnMouseEntered(MouseEvent event)
+    {
+	Platform.runLater(() -> { supportLabel.setTextFill(Color.WHITE); });
+    }
+
+    @FXML
+    private void supportLabelOnMouseExited(MouseEvent event)
+    {
+	Platform.runLater(() -> { supportLabel.setTextFill(Color.GREY); });
+    }
+
+    @FXML
+    private void updateLabelOnMouseEntered(MouseEvent event)
+    {
+	Platform.runLater(() -> { updateLabel.setTextFill(Color.WHITE); });
+    }
+
+    @FXML
+    private void updateLabelOnMouseExited(MouseEvent event)
+    {
+	Platform.runLater(() -> { updateLabel.setTextFill(Color.GREY); });
+    }
+
+    @FXML
+    private void authorLabelOnMouseEntered(MouseEvent event)
+    {
+	Platform.runLater(() -> { authorLabel.setTextFill(Color.WHITE); });
+    }
+    
+    @FXML
+    private void authorLabelOnMouseExited(MouseEvent event)
+    {
+	Platform.runLater(() -> { authorLabel.setTextFill(Color.GREY); });
     }
  }

@@ -3,7 +3,7 @@ Upstream-Name: FinalCrypt
 Source: http://www.finalcrypt.org/
 
 Files: *
-Copyright: 2017 Ron de Jong <ron@finalcrypt.org>
+CC BY-NC-ND 4.0: 2017 Ron de Jong <ron@finalcrypt.org>
 License: Creative Commons License (CC BY-NC-ND 4.0)
  as published by https://creativecommons.org/licenses/by-nc-nd/4.0/;
  either version 4.0 of the License, or (at your option) any later version.

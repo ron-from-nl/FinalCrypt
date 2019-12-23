@@ -1,3 +1,10 @@
+Date: 2019-12-23 Version: 6.2.0
+
+FinalCrypt now supports 65 languages based on ISO639
+Improved language selection with keyboard navigation
+Cleaner User Interface with 2 Multi-Function Buttons
+Fixed FinalCrypt not Exiting on closing application
+
 Date: 2019-12-13 Version: 6.1.1
 
 Translation keys are now Google Translate Safe

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2018 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Common License
@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.logging.*;
 
 public class Configuration
 {    
@@ -81,15 +82,15 @@ public class Configuration
         String.format("%02d", currentTimeCalendar.get(Calendar.MINUTE)) + ":" +
         String.format("%02d", currentTimeCalendar.get(Calendar.SECOND));
         
-        dataDirPath =   Paths.get(System.getProperty("user.home"), ".finalcrypt");
-        logDirPath =    Paths.get(dataDirPath.toString(),"log");
-        logFilePath =   Paths.get(logDirPath.toString(),"finalcrypt_" + timeStampString+ ".log");
-        errorFilePath = Paths.get(logDirPath.toString(),"finalcrypt_" + timeStampString+ ".err");
+        dataDirPath =	    Paths.get(System.getProperty("user.home"), ".finalcrypt");
+        logDirPath =	    Paths.get(dataDirPath.toString(),"log");
+        logFilePath =	    Paths.get(logDirPath.toString(),"finalcrypt_" + timeStampString+ ".log");
+        errorFilePath =	    Paths.get(logDirPath.toString(),"finalcrypt_" + timeStampString+ ".err");
 
         boolean missingDirsDetected = false;
         boolean missingCriticalDirsDetected = false;
-        if (Files.notExists(dataDirPath)) { try { Files.createDirectory(dataDirPath); println("Action:  Config: Creating missing directory: " + dataDirPath); } catch (IOException ex) { ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
-        if (Files.notExists(logDirPath)) { try { Files.createDirectory(logDirPath); println("Action:  Config: Creating missing directory: " + logDirPath); } catch (IOException ex) { ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
+        if (Files.notExists(dataDirPath))	{ try { Files.createDirectory(dataDirPath); println("Action:  Config: Creating missing directory: " + dataDirPath); } catch (IOException ex)		{ ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
+        if (Files.notExists(logDirPath))	{ try { Files.createDirectory(logDirPath); println("Action:  Config: Creating missing directory: " + logDirPath); } catch (IOException ex)		{ ui.log("Error: Files.createDirectory(" + dataDirPath + ");: " + ex.getMessage(), true, true, true, false, false); } }
     }
 
     // Just the getters and setters

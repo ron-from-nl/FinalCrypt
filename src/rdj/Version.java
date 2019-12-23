@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -37,10 +37,10 @@ public class Version
     private static final String PRODUCTNAME =				"FinalCrypt";
     private static       String fcInterface =				"";
     private static final String AUTHOR =				"Ron de Jong";
-    private static final String AUTHOREMAIL =				"ronuitzaandam@gmail.com";
+    private static final String AUTHOREMAIL =				"ron@finalcrypt.org";
     private static final String EMAIL =					"info@finalcrypt.org";
     private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
-    private static final String COPYRIGHT =				"© 2017-" + Calendar.getInstance().get(Calendar.YEAR);
+    private static final String LICENSE_DESCRIPTION =			"License 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     
     private static final String OS_NAME =				System.getProperty("os.name");
     private static final String OS_VERSION =				System.getProperty("os.version");
@@ -153,8 +153,8 @@ public class Version
 	env +=    "Welcome to:              " + PRODUCTNAME + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
 	env += "\r\n";
 	env +=    "Interface:               " + fcInterface + "\r\n";
-	env +=    "Email:                   " + EMAIL + "\r\n";
-	env +=    "Copyright:               " + COPYRIGHT + " " + AUTHOR + "\r\n";
+	env +=    "Author:                  " + AUTHOR + "\r\n";
+	env +=    "Email:                   " + AUTHOREMAIL + "\r\n";
 	env +=    "Logfiles:                " + configuration.getLogDirPath().toString() + "\r\n";
 	env +=    "Command line:            java -cp finalcrypt.jar rdj/CLUI --help\r\n";
 	env +=    "License:                 " + LICENSE + "\r\n";
@@ -532,16 +532,16 @@ public class Version
 	}
     }
     
-    public boolean latestVersionIsKnown()   { return latestVersionIsKnown; }    
-    public boolean versionIsDifferent()     { if ((latestVersionIsKnown) && ( currentVersionTotal != latestVersionTotal )) { return true; } else { return false; } }
-    public boolean versionCanBeUpdated()    { if ((latestVersionIsKnown) && ( currentVersionTotal < latestVersionTotal ))  { return true; } else { return false; } }
-    public boolean versionIsDevelopment()   { if ((latestVersionIsKnown) && ( currentVersionTotal > latestVersionTotal ))  { return true; } else { return false; } }    
+    public boolean latestVersionIsKnown()	    { return latestVersionIsKnown; }    
+    public boolean versionIsDifferent()		    { if ((latestVersionIsKnown) && ( currentVersionTotal != latestVersionTotal )) { return true; } else { return false; } }
+    public boolean versionCanBeUpdated()	    { if ((latestVersionIsKnown) && ( currentVersionTotal < latestVersionTotal ))  { return true; } else { return false; } }
+    public boolean versionIsDevelopment()	    { if ((latestVersionIsKnown) && ( currentVersionTotal > latestVersionTotal ))  { return true; } else { return false; } }    
 
-    public static String getCopyright()     { return COPYRIGHT; }
-    public static String getLicense()	    { return LICENSE; }
-    public static String getAuthor()        { return AUTHOR; }
-    public static String getAuthorEmail()   { return AUTHOREMAIL; }
-    public static String getEmail()	    { return EMAIL; }
-    public static String getProductName()   { return PRODUCTNAME; }
-    public static String getCompany()       { return COMPANYNAME; }
+    public static String getLicenseDescription()    { return LICENSE_DESCRIPTION; }
+    public static String getLicense()		    { return LICENSE; }
+    public static String getAuthor()		    { return AUTHOR; }
+    public static String getAuthorEmail()	    { return AUTHOREMAIL; }
+    public static String getEmail()		    { return EMAIL; }
+    public static String getProductName()	    { return PRODUCTNAME; }
+    public static String getCompany()		    { return COMPANYNAME; }
 }

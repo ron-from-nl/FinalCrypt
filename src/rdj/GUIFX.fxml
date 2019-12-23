@@ -526,7 +526,6 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                                        <children>
                                           <Label fx:id="invalidFilesSizeLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-7.0" layoutY="1.0" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0 Bytes" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -799,7 +798,7 @@
                                                 </Label>
                                                 <Label fx:id="languageLabel" alignment="CENTER" layoutX="182.0" layoutY="105.0" maxHeight="20.0" maxWidth="150.0" minHeight="20.0" minWidth="150.0" onMouseClicked="#sysMonLabelOnMouseClicked" prefHeight="20.0" prefWidth="150.0" text="English" textAlignment="CENTER" textFill="#8d7e75" StackPane.alignment="TOP_CENTER">
                                                    <tooltip>
-                                                      <Tooltip fx:id="sysMonTooltip1" autoHide="true" text="userLoad (X%) I/O (MiB/S)">
+                                                      <Tooltip fx:id="languageLabelTooltip" autoHide="true" text="Select Language">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -840,7 +839,7 @@
                                                       </ContextMenu>
                                                    </contextMenu>
                                                 </Label>
-                                                <ListView fx:id="selectLanguage" maxWidth="150.0" onMouseClicked="#selectLanguageOnMouseClicked" prefHeight="115.0" prefWidth="150.0" visible="false" />
+                                                <ListView fx:id="selectLanguage" maxWidth="150.0" onKeyPressed="#selectLanguageOnKeyPressed" onMouseClicked="#selectLanguageOnMouseClicked" prefHeight="115.0" prefWidth="150.0" visible="false" />
                                              </children>
                                           </StackPane>
                                        </children>
@@ -975,7 +974,7 @@
                         </AnchorPane>
                         <AnchorPane minHeight="50.0" minWidth="700.0" prefHeight="41.0" prefWidth="800.0">
                            <children>
-                              <GridPane prefHeight="50.0" prefWidth="1540.0" style="-fx-background-color: #020202;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <GridPane prefHeight="50.0" prefWidth="1540.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.57" />
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.57" />
@@ -1000,32 +999,11 @@
                                   <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="40.0" valignment="CENTER" vgrow="NEVER" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane GridPane.columnSpan="3">
-                                       <children>
-                                          <ToggleButton fx:id="pauseToggleButton" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#pauseToggleButtonAction" prefHeight="50.0" prefWidth="257.0" style="-fx-font-size: 14;" styleClass="secondary_key_button" text="Pause" textAlignment="CENTER" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <font>
-                                                <Font name="Open Sans" size="18.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Pause" />
-                                             </tooltip>
-                                          </ToggleButton>
-                                       </children>
-                                    </AnchorPane>
+                                    <AnchorPane GridPane.columnSpan="3" />
                                     <AnchorPane GridPane.columnIndex="3" GridPane.columnSpan="3">
                                        <opaqueInsets>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </opaqueInsets>
-                                       <children>
-                                          <Button fx:id="stopButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#stopButtonAction" prefHeight="50.0" prefWidth="257.0" style="-fx-font-size: 14;" styleClass="secondary_key_button" text="Stop" textAlignment="CENTER" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <font>
-                                                <Font name="Open Sans" size="18.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Stop" />
-                                             </tooltip>
-                                          </Button>
-                                       </children>
                                     </AnchorPane>
                                     <AnchorPane GridPane.columnIndex="6" GridPane.columnSpan="3">
                                        <children>
@@ -1043,16 +1021,6 @@
                                                 <Font name="Open Sans" size="18.0" />
                                              </font>
                                           </Button>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane layoutX="1126.0" layoutY="10.0" GridPane.columnIndex="12" GridPane.columnSpan="3">
-                                       <children>
-                                          <Button fx:id="supportButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#supportButtonOnAction" prefHeight="50.0" prefWidth="257.0" style="-fx-font-size: 14;" styleClass="secondary_key_button" text="Support" textAlignment="CENTER" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="15" GridPane.columnSpan="3">
-                                       <children>
-                                          <Button fx:id="checkUpdateButton" alignment="CENTER" contentDisplay="CENTER" disable="true" focusTraversable="false" mnemonicParsing="false" onAction="#checkUpdateButtonOnAction" prefHeight="50.0" prefWidth="257.0" style="-fx-font-size: 14;" styleClass="secondary_key_button" text="Check Update" textAlignment="CENTER" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -1077,12 +1045,14 @@
                               </AnchorPane>
                            </children>
                         </StackPane>
-                        <AnchorPane maxHeight="15.0" maxWidth="1.7976931348623157E308" minHeight="15.0" mouseTransparent="true" prefHeight="15.0" prefWidth="1237.0">
+                        <AnchorPane maxHeight="15.0" maxWidth="1.7976931348623157E308" minHeight="15.0" prefHeight="15.0" prefWidth="1237.0">
                            <children>
                               <GridPane alignment="BASELINE_LEFT" cache="true" cacheHint="SPEED" maxHeight="15.0" maxWidth="1.7976931348623157E308" minHeight="25.0" prefHeight="15.0" prefWidth="1327.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="866.0" />
-                                  <ColumnConstraints hgrow="NEVER" maxWidth="378.0" minWidth="175.0" percentWidth="0.0" prefWidth="234.0" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1206.0" />
+                                  <ColumnConstraints hgrow="NEVER" maxWidth="175.0" minWidth="175.0" percentWidth="0.0" prefWidth="175.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -1102,13 +1072,40 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
                                        <children>
-                                          <Label fx:id="copyrightLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#copyrightLabelOnMouseClicked" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="copyright" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="authorLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#authorLabelOnMouseClicked" onMouseEntered="#authorLabelOnMouseEntered" onMouseExited="#authorLabelOnMouseExited" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="author" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font name="Open Sans" size="12.0" />
                                              </font>
                                              <padding>
                                                 <Insets left="5.0" right="5.0" />
                                              </padding>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                       <children>
+                                          <Label fx:id="supportLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="28.0" layoutY="3.0" onMouseClicked="#supportLabelOnMouseClicked" onMouseEntered="#supportLabelOnMouseEntered" onMouseExited="#supportLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Support" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
+                                       <children>
+                                          <Label fx:id="updateLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="34.0" layoutY="3.0" onMouseClicked="#updateLabelOnMouseClicked" onMouseEntered="#updateLabelOnMouseEntered" onMouseExited="#updateLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Update" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
                                           </Label>
                                        </children>
                                     </AnchorPane>

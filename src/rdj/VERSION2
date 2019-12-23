@@ -1,4 +1,4 @@
-[Version] =		{6.1.1}
+[Version] =		{6.2.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -13,23 +13,23 @@
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 1}
+
+FinalCrypt now supports 65 languages based on ISO639 standards implementation   
+Improved language selection by mouse and keyboard (including quick jump keys)
+Cleaner User Interface by removing 4/6 buttons using 2 multi-function buttons
+Fixed FinalCrypt not Exiting (kept running in the background after close app)
+
+[Upgrade Notes] =	{Upgrade 2}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{Graphical User-Interface restyled & simplified}
-[Upgrade Notes] =	{The user-interface now only shows relevant info}
-[Upgrade Notes] =	{Less distraction and more focus on what you do}
+[Upgrade Notes] =	{FinalCrypt now supports 65 languages based on ISO639}
+[Upgrade Notes] =	{Improved language selection with keyboard navigation}
+[Upgrade Notes] =	{Cleaner User Interface with 2 Multi-Function Buttons}
+[Upgrade Notes] =	{}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{Translation keys are now Google Translate Safe}
-[Update Notes] =	{Manual translation corrections of 20 languages}
-[Update Notes] =	{}
-[Update Notes] =	{Add/correct language? Download, Edit & Mail me}
-[Update Notes] =	{Languages files can be found in the sourcecode}
-[Update Notes] =	{Languages files can be edited with Netbeans.org}
-[Update Notes] =	{Location in the sourcecode: (src/rdj/language)}
-[Update Notes] =	{Sourcecode click [Support] [Home] [SourceCode]}
+[Update Notes] =	{Fixed FinalCrypt not Exiting on closing application}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

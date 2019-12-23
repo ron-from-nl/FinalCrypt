@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
  * 
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -35,7 +35,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 public class Support extends Application implements Initializable
 {
@@ -44,6 +44,7 @@ public class Support extends Application implements Initializable
     private Scene scene;
     private FXMLLoader loader;
     private GUIFX guifx;
+    private boolean exitAppOnClose = false;
     
     public Support controller;
         
@@ -63,14 +64,39 @@ public class Support extends Application implements Initializable
     private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private ResourceBundle bundle;
 
-    public void switchLanguage(Locale locale, Boolean firstTime)
+//    public Support(boolean exitAppOnClose)
+//    {
+//	this.exitAppOnClose = exitAppOnClose;
+//    }
+    public void switchLanguage(Locale locale)
     {
-	bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
+	if (locale != null)
+	{
+	    bundle = ResourceBundle.getBundle("rdj.language.translation", locale);
+	    headerLabel.setText(bundle.getString("142"));	
+	    line1Label.setText(bundle.getString("143"));	
+	    line2Label.setText(bundle.getString("144"));	
+	    statusLabel.setText(bundle.getString("145"));	
+	}
+    }
+    
+    public void setExitAppOnClose(boolean exitAppOnClose)
+    {
+	this.exitAppOnClose = exitAppOnClose;
+//	System.out.println("Support set: exitAppOnClose " + exitAppOnClose + "\r\n");
 
-	headerLabel.setText(bundle.getString("142"));	
-	line1Label.setText(bundle.getString("143"));	
-	line2Label.setText(bundle.getString("144"));	
-	statusLabel.setText(bundle.getString("145"));	
+	Stage stage = (Stage) facebookImageView.getScene().getWindow();
+	stage.setOnCloseRequest((WindowEvent e) ->
+	{
+	    Platform.runLater(() ->
+	    {
+		if ( exitAppOnClose )
+		{
+//		    System.out.println("Support exitAppOnClose\r\n");
+		    System.exit(0);
+		}
+	    });
+	});
     }
 
     @Override  public void start(Stage primaryStage) throws Exception
@@ -83,7 +109,19 @@ public class Support extends Application implements Initializable
         stage.setScene(scene);
         stage.setTitle(Version.getProductName() + " Support");
 	stage.setResizable(false);
-        stage.show();
+//        stage.show();
+	
+	stage.setOnCloseRequest((WindowEvent e) ->
+	{
+	    Platform.runLater(() ->
+	    {
+		if ( exitAppOnClose )
+		{
+//		    System.out.println("Support exitAppOnClose\r\n");
+		    System.exit(0);
+		}
+	    });
+	});
     }
     
     @Override
@@ -103,6 +141,7 @@ public class Support extends Application implements Initializable
 	Platform.runLater(() ->
 	{
 	    Stage stage = (Stage) facebookImageView.getScene().getWindow(); stage.close();
+	    if (exitAppOnClose) { System.exit(0); }
 	});
     }
 

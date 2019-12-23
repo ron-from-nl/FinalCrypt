@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -867,7 +867,7 @@ public class CLUI implements UI
         log("            <[-t \"file/dir\"]>                                               Target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
         log("            <[-b \"batchfile\"]>                                              Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);
     }
 
@@ -951,7 +951,7 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - Copyright: " + Version.getCopyright() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(0);
     }
 

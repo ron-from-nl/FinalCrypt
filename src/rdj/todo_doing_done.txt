@@ -8,12 +8,16 @@ Backup Files.createLink(link, target);
 =================================== Doing ===================================
 
 Blanc Window in Mojave
-
-Remove double latin lines
+Overrule intro animation delay
+Pauze Encrypt knoppen combineren
+Support Update knoppen verstoppen
+Log Command examples
+User Action Wizzard
 
 =============================== Don't forget ================================
 
 Disable test messages					UI.test()
+Update Languages on FAQ					GUIFX line 980
 Set version						nbproject/project.properties application.implementation.version=1.2.3
 Set version on file:					Version
 Set version on file:					Version2
@@ -22,6 +26,10 @@ Update file:						manpage
  
 =================================== Done ====================================
 
+FinalCrypt now supports 65 languages based on ISO639 standards implementation   
+Improved language selection by mouse and keyboard (including quick jump keys)
+Cleaner User Interface by removing 4/6 buttons using 2 multi-function buttons
+Fixed FinalCrypt not Exiting (kept running in the background after close app)
 
 ============================= Source Committed ==============================
 

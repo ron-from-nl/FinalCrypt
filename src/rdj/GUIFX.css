@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2018 Ron de Jong (ronuitzaandam@gmail.com).
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Common License
@@ -70,7 +70,7 @@
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
-    -fx-font-family: "Liberation Sans";
+    /*-fx-font-family: "Liberation Sans";*/
     -fx-text-fill: #dddddd;
 }
 
@@ -86,7 +86,7 @@
     -fx-background-insets: 0,1,4,5,6;
     -fx-background-radius: 9,8,5,4,3;
     -fx-padding: 15 30 15 30;
-    -fx-font-family: "Liberation Sans";
+    /*-fx-font-family: "Liberation Sans";*/
     -fx-text-fill: #aaaaaa;
 }
 
