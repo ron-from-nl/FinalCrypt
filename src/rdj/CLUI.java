@@ -539,10 +539,7 @@ public class CLUI implements UI
 	
 	if ( scan )
 	{
-	    for (FCPath fcPathItem : targetFCPathList)
-	    {
-		log(fcPathItem.getString() + "\r\n", false, true, true, false, false);
-	    }
+	    if (verbose) { for (FCPath fcPathItem : targetFCPathList) { log(fcPathItem.getString() + "\r\n", false, true, true, false, false); } }
 	    log("=========================================\r\n\r\n", false, true, true, false, false);
 	    log(targetFCPathList.getStats() + "\r\n", false, true, true, false, false);
 	    System.exit(0);

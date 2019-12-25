@@ -28,7 +28,9 @@
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 0}
 [Update Notes] =	{}
-[Update Notes] =	{See Upgrade}
+[Update Notes] =	{Fixed I/O integrity flaw (reveiled in stress tests)}
+[Update Notes] =	{This bug is hard to trigger, but could damage files}
+[Update Notes] =	{This update fixed the issue in extreme stress tests}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

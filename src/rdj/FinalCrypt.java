@@ -551,6 +551,7 @@ public class FinalCrypt extends Thread
 
 		if (! disabledMAC) // Be carefull: TRUE value is highly dangerous
 		{
+		    while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
 		    if (encryptMode) // During encryption the MAC has to be created
 		    {
 			if ( newTargetSourceFCPath.isDecrypted) // Target has NO Token, Decrypted
@@ -597,7 +598,7 @@ public class FinalCrypt extends Thread
 					readTargetSourceChannel.read(targetSourceBuffer); targetSourceBuffer.flip();
 					readTargetSourceChannel.close();
 					srcMessageDigest.update(targetSourceBuffer); // Build up checksum
-				    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+				    } catch (IOException ex) { ui.log(" Error: IOException: Files.newByteChannel(newTargetSourceFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 				    readTargetSourceChannelPosition = (FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2); // Decrypt skipping MAC bytes at beginning
 				    ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
@@ -654,6 +655,7 @@ public class FinalCrypt extends Thread
 		
 		while (( ! targetSourceEnded ) && ( ! test ))
 		{
+		    while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
 //                  Delete broken outputFile and keep original
 //		    At the encryption stage of the process
 		    if (stopPending)
@@ -701,7 +703,7 @@ public class FinalCrypt extends Thread
 			readTargetSourceStat.setFileEndEpoch(); readTargetSourceStat.clock();
 			readTargetSourceStat.addFileBytesProcessed(readTargetSourceChannelTransfered / 2);
 //			allDataStats.addAllDataBytesProcessed("rd src", readTargetSourceChannelTransfered / 2);
-		    } catch (IOException ex) { ui.log("Error: readTargetSourceChannel = Files.newByteChannel(..) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+		    } catch (IOException ex) { ui.log(" Error: IOException: Files.newByteChannel(newTargetSourceFCPath) " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 //                            ui.log("readTargetSourceChannelTransfered: " + readTargetSourceChannelTransfered + " targetSourceBuffer.limit(): " + Integer.toString(targetSourceBuffer.limit()) + "\r\n");
 
 		    if ( readTargetSourceChannelTransfered != -1 )

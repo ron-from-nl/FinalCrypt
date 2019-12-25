@@ -10,6 +10,10 @@ This update is particular for all ICT professionals
 
 FinalCrypt now supports 75 languages (homepage FAQ)
 
+Fixed I/O integrity flaw (reveiled in stress tests)
+This bug is hard to trigger, but could damage files
+This update fixed the issue in extreme stress tests
+
 Date: 2019-12-23 Version: 6.2.0
 
 FinalCrypt now supports 65 languages based on ISO639

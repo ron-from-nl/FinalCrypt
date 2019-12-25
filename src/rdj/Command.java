@@ -20,30 +20,33 @@ package rdj;
 
 public class Command
 {
-    public static String command = Version.getCommandLine();
-    public static String modeEncrypt = "--encrypt";
-    public static String modeDecrypt = "--decrypt";    
-    public static String pwdOption = "";
-    public static String options = "";
-    public static String keyParam = "";
-    public static String tgtParams = "";
+    public static String command =	Version.getCommandLine();
+    public static String scanMode =	"--scan";
+    public static String encryptMode =	"--encrypt";
+    public static String decryptMode =	"--decrypt";    
+    public static String pwdOption =	"";
+    public static String options =	"";
+    public static String keyParam =	"";
+    public static String tgtParams =	"";
     
     public static String getCommandLine(boolean encrypt, boolean decrypt)
     {
 	String result = "";
 	
-	if (encrypt) { result += compileCommandLine(modeEncrypt) + "\r\n"; }
-	if (decrypt) { result += compileCommandLine(modeDecrypt) + "\r\n"; }
+	if	((!encrypt) && (!decrypt)) { result += compileCommandLine(scanMode) + "\r\n"; }
+	else if ((!encrypt) && ( decrypt)) { result += compileCommandLine(decryptMode) + "\r\n"; }
+	else if (( encrypt) && (!decrypt)) { result += compileCommandLine(encryptMode) + "\r\n"; }
+	else if (( encrypt) && ( decrypt)) { result += compileCommandLine(encryptMode) + "\r\n"; result += compileCommandLine(decryptMode) + "\r\n"; }
 	
 	return result;	
     }
     
-    private static String compileCommandLine(String modeEncrypt)
+    private static String compileCommandLine(String runningMode)
     {
 	String result = "";
 
 	if ( command.length() > 0 )	{ result += command + " "; }
-	if ( modeEncrypt.length() > 0 ) { result += modeEncrypt + " "; }
+	if ( runningMode.length() > 0 )	{ result += runningMode + " "; }
 	if ( pwdOption.length() > 0 )	{ result += pwdOption + " "; }
 	if ( options.length() > 0 )	{ result += options + " "; }
 	if ( keyParam.length() > 0 )	{ result += keyParam + " "; }

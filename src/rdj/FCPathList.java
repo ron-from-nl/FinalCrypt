@@ -224,11 +224,7 @@ public class FCPathList<E> extends ArrayList<E>
 	returnString += "Valid Devices		: " +	validDevicesProtected + " (" + Validate.getHumanSize(validDevicesProtectedSize,1,"Bytes") + ")\r\n";
 	returnString += "Valid Partitions	: " +	validPartitions + " (" + Validate.getHumanSize(validPartitionsSize,1,"Bytes") + ")\r\n";
 	returnString += "\r\n";
-	returnString += "Key Write		: " +	writeAutoKeyFiles + " (" + Validate.getHumanSize(writeAutoKeyFilesSize,1,"Bytes") + ")\r\n";
-	returnString += "Key Match		: " +	matchedAutoKeyFiles + " (" + Validate.getHumanSize(matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
-	returnString += "Key Missing		: " +	unmatchedAutoKeyFiles + " (" + Validate.getHumanSize(unmatchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
-	returnString += "\r\n";
-	returnString += "Decrypted Files 	: " +	decryptedFiles + " (" + Validate.getHumanSize(decryptedFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "Unencrypted Files	: " +	decryptedFiles + " (" + Validate.getHumanSize(decryptedFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "Encryptable Files	: " +	encryptableFiles + " (" + Validate.getHumanSize(encryptableFilesSize,1,"Bytes") + ")\r\n";
 //	returnString += "New Encrypted Files 	: " +	newEncryptedFiles + " (" + Validate.getHumanSize(newEncryptedFilesSize,1,"Bytes") + ")\r\n";
 //	returnString += "Encrypt Remaining Files : " +	encryptRemainingFiles + " (" + Validate.getHumanSize(encryptRemainingFilesSize,1,"Bytes") + ")\r\n";
@@ -239,6 +235,10 @@ public class FCPathList<E> extends ArrayList<E>
 //	returnString += "New Decrypted Files	: " +	newDecryptedFiles + " (" + Validate.getHumanSize(newDecryptedFilesSize,1,"Bytes") + ")\r\n";
 //	returnString += "Decrypt Remaining Files : " +	decryptRemainingFiles + " (" + Validate.getHumanSize(decryptRemainingFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "UnDecryptable Files	: " +	unDecryptableFiles + " (" + Validate.getHumanSize(unDecryptableFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "\r\n";
+	returnString += "Create Keys		: " +	writeAutoKeyFiles + " (" + Validate.getHumanSize(writeAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "Match Keys		: " +	matchedAutoKeyFiles + " (" + Validate.getHumanSize(matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	returnString += "Missing Keys		: " +	unmatchedAutoKeyFiles + " (" + Validate.getHumanSize(unmatchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	returnString += "\r\n";
 //	returnString += "File  Valid Keys	: " +	filesValidKey + "\r\n"; // Targets can't be keys (only match keypaths)
 
