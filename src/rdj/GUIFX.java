@@ -4858,10 +4858,5 @@ version = new Version(ui);
     {
 	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); tab.getSelectionModel().select(1); log("Command-line (DOS Prompt / Terminal) command:\r\n\r\n", false, true, true, false, false);
 	log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false);
-	
-//	if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{  }
-//	else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false); }
-//	else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false); }
-//	else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false); }
     }
  }
