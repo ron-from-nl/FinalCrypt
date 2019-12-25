@@ -1,3 +1,10 @@
+Date: 2019-12-25 Version: 6.3.1
+
+Added file-changes detection skipping to next file
+If the selected files changed by any other process
+then it will be detected and skip to the next file
+With the new Print Command this update is critical
+
 Date: 2019-12-25 Version: 6.3.0
 
 Added "Click to print Command(-line)" button to GUI

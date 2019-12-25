@@ -1,4 +1,4 @@
-[Version] =		{6.3.0}
+[Version] =		{6.3.1}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,11 +26,12 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0}
+[Update Notes] =	{Update 1}
 [Update Notes] =	{}
-[Update Notes] =	{Fixed I/O integrity flaw (reveiled in stress tests)}
-[Update Notes] =	{This bug is hard to trigger, but could damage files}
-[Update Notes] =	{This update fixed the issue in extreme stress tests}
+[Update Notes] =	{Added file-changes detection skipping to next file}
+[Update Notes] =	{If the selected files changed by any other process}
+[Update Notes] =	{then it will be detected and skip to the next file}
+[Update Notes] =	{With the new Print Command this update is critical}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

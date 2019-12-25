@@ -372,13 +372,16 @@ public class FinalCrypt extends Thread
 		    if (extension.equals(bit_extension))	{ targetDestinPath = Paths.get(newTargetSourceFCPath.path.toAbsolutePath().toString().substring(0, newTargetSourceFCPath.path.toAbsolutePath().toString().lastIndexOf('.'))); }
 		    else					{ targetDestinPath = newTargetSourceFCPath.path.resolveSibling(newTargetSourceFCPath.path.getFileName().toString() + bit_extension); }
 		}
+		
 //		ui.log("newTargetSourceFCPath: " + newTargetSourceFCPath.path.toAbsolutePath().toString() + "\r\n", true, true, true, false, false);
 //		ui.log("targetDestinPath:      " + targetDestinPath.toAbsolutePath().toString() + "\r\n", true, true, true, false, false);
 		
 //		End of enxtension codeblock ===================================================================================================================================================================
 
 //		At the start of the encryption process
-		try { Files.deleteIfExists(targetDestinPath); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(targetDestinPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+
+		if (!Files.exists(newTargetSourceFCPath.path))	{ ui.log("Warning: Old Target no longer exists: " +	newTargetSourceFCPath.path.toAbsolutePath().toString() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+		if (Files.exists(targetDestinPath))		{ ui.log("Warning: New Target exists but shouldn't: " +	targetDestinPath.toAbsolutePath().toString() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
 
 		// Get and set the stats
 //		    allDataStats.setFileBytesTotal(targetSourceSize);
@@ -563,6 +566,7 @@ public class FinalCrypt extends Thread
 				    ui.log(UTF8_WRITE_SYMBOL + UTF8_MAC_SYMBOL + newTargetSourceFCPath.defaultMACVersion, false, true, true, false, false);
 				    // Add MAC to targetDestinPath
 				    ByteBuffer targetDestinMACBuffer = ByteBuffer.allocate((FINALCRYPT_PLAIN_TEXT_MESSAGE_AUTHENTICATION_CODE_V3.length() * 2)); targetDestinMACBuffer.clear();			
+				    
 				    try (final SeekableByteChannel writeTargetDestinChannel = Files.newByteChannel(targetDestinPath, getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND))))
 				    {
 					targetDestinMACBuffer = createTargetDestinMessageAuthenticationCode(dynamicKeyFCPath.path, newTargetSourceFCPath.defaultMACVersion);
@@ -571,7 +575,9 @@ public class FinalCrypt extends Thread
 					dstMessageDigest.update(targetDestinMACBuffer); // Build up checksum
 
 					// wrteTargetDestinStat.addFileBytesProcessed(writeTargetDestChannelTransfered);
-				    } catch (IOException ex) { ui.log("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+				    }
+				    catch (IOException ex)	{ ui.log("\r\nError: Add Token writeTargetDestinChannel Abort Encrypting: " + targetDestinPath.toString() + " " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
+//				    finally			{ writeTargetDestinChannel.close(); }
 				    ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 				}
 			    }
