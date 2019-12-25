@@ -19,7 +19,7 @@ Mode:
             <--encrypt>           -k "key_dir"       -t "target"            Encrypt Targets.
             <--decrypt>           -k "key_dir"       -t "target"            Decrypt Targets.
             <--create-keydev>     -k "key_file"      -t "target"            Create Key Device (only unix).
-            <--create-keyfile>    -K "key_file"      -S "Size (bytes)"	    Create OTP Key File.
+            <--create-keyfile>    -K "key_file"      -S "Size (bytes)"      Create OTP Key File.
             <--clone-keydev>      -k "source_device" -t "target_device"     Clone Key Device (only unix).
             [--print-gpt]         -t "target_device"                        Print GUID Partition Table.
             [--delete-gpt]        -t "target_device"                        Delete GUID Partition Table (DATA LOSS!).
@@ -62,4 +62,4 @@ Parameters:
             <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 6.2.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019
+FinalCrypt 6.3.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2019

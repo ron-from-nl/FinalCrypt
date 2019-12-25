@@ -1,3 +1,15 @@
+Date: 2019-12-25 Version: 6.3.0
+
+Added "Click to print Command(-line)" button to GUI
+Command-line commands can be used to fully automate
+Select your Key Dir & Files like you would normally
+Show / hide password influences the printed command
+The Print Command button will appear at lower right
+The printed command is equivalent to the GUI action
+This update is particular for all ICT professionals
+
+FinalCrypt now supports 75 languages (homepage FAQ)
+
 Date: 2019-12-23 Version: 6.2.0
 
 FinalCrypt now supports 65 languages based on ISO639
@@ -9,12 +21,6 @@ Date: 2019-12-13 Version: 6.1.1
 
 Translation keys are now Google Translate Safe
 Manual translation corrections of 20 languages
-
-Add/correct language? Download, Edit & Mail me
-Languages files can be found in the sourcecode
-Languages files can be edited with Netbeans.org
-Location in the sourcecode: (src/rdj/language)
-Sourcecode click [Support] [Home] [SourceCode]
 
 Date: 2019-12-12 Version: 6.1.0
 

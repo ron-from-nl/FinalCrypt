@@ -35,6 +35,7 @@ public class Version
     private UI ui;
     private static final String COMPANYNAME =				"Private Person";
     private static final String PRODUCTNAME =				"FinalCrypt";
+    private static final String COMMANDLINE =				"java -cp " + PRODUCTNAME.toLowerCase() + ".jar rdj.CLUI";
     private static       String fcInterface =				"";
     private static final String AUTHOR =				"Ron de Jong";
     private static final String AUTHOREMAIL =				"ron@finalcrypt.org";
@@ -156,7 +157,7 @@ public class Version
 	env +=    "Author:                  " + AUTHOR + "\r\n";
 	env +=    "Email:                   " + AUTHOREMAIL + "\r\n";
 	env +=    "Logfiles:                " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:            java -cp finalcrypt.jar rdj/CLUI --help\r\n";
+	env +=    "Command line:            " + COMMANDLINE + " --help\r\n";
 	env +=    "License:                 " + LICENSE + "\r\n";
 	env += "\r\n";
 	env +=    "OS Name:                 " + OS_NAME + "\r\n";
@@ -544,5 +545,6 @@ public class Version
     public static String getAuthorEmail()	    { return AUTHOREMAIL; }
     public static String getEmail()		    { return EMAIL; }
     public static String getProductName()	    { return PRODUCTNAME; }
+    public static String getCommandLine()	    { return COMMANDLINE; }
     public static String getCompany()		    { return COMPANYNAME; }
 }

@@ -1052,7 +1052,9 @@
                                   <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1206.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
-                                  <ColumnConstraints hgrow="NEVER" maxWidth="175.0" minWidth="175.0" percentWidth="0.0" prefWidth="175.0" />
+                                  <ColumnConstraints hgrow="NEVER" maxWidth="150.0" minWidth="150.0" percentWidth="0.0" prefWidth="150.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="10.0" minWidth="10.0" percentWidth="0.0" prefWidth="10.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="20.0" minWidth="20.0" percentWidth="0.0" prefWidth="20.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
@@ -1106,6 +1108,25 @@
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5">
+                                       <children>
+                                          <Label fx:id="commandLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="-35.0" onMouseClicked="#commandLabelOnMouseClicked" onMouseEntered="#commandLabelOnMouseEntered" onMouseExited="#commandLabelOnMouseExited" prefHeight="20.0" prefWidth="65.0" style="-fx-border-radius: 5; -fx-border-color: GREY;" styleClass="text_color_low" text="&gt;_" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip fx:id="commandLabelToolTip" text="Command example">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip>
                                           </Label>
                                        </children>
                                     </AnchorPane>

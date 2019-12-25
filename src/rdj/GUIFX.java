@@ -609,6 +609,10 @@ public class GUIFX extends Application implements UI, Initializable
     private Label supportLabel;
     @FXML
     private Label updateLabel;
+    @FXML
+    private Label commandLabel;
+    @FXML
+    private Tooltip commandLabelToolTip;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -763,6 +767,8 @@ public class GUIFX extends Application implements UI, Initializable
 	
 	pauseDescription=bundle.getString("090");
 	stopDescription=bundle.getString("102");
+	
+	commandLabelToolTip.setText(bundle.getString("146"));
 
 	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
 	
@@ -2305,8 +2311,12 @@ version = new Version(ui);
 		{
 		    Validate.bytesCount = 0;
 
+//		    if (pwdField.getText().length() > 0) { if (pwdtxtField.isVisible()) { Command.pwdOption = "-p \"" + pwdtxtField.getText() + "\""; } else { Command.pwdOption = "-pp"; } }
+		    Command.keyParam = "-k " + "\"" + keyFCPath.path.toAbsolutePath().toString() + "\"";
+		    Command.tgtParams = "";
+
 		    // Gather User Selection in list
-		    for (File file:tgtFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); }
+		    for (File file:tgtFileChooser.getSelectedFiles()) { targetPathList.add(file.toPath()); Command.tgtParams +="-t \"" + file + "\" "; } // Keep space
 //		    test("list: " + targetPathList.size() + "\r\n");
 
 
@@ -2880,6 +2890,8 @@ version = new Version(ui);
 	{
 	    if (!processRunning)
 	    {
+		commandLabel.setDisable(true); commandLabel.setVisible(!commandLabel.isDisable());
+		
 		encryptButton.setDisable(true);
 		decryptButton.setDisable(true);
 //		keyButton.setDisable(true);
@@ -2899,6 +2911,7 @@ version = new Version(ui);
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			encryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isEncryptable);
 			encryptButton.setDisable(false);
+			commandLabel.setDisable(false); commandLabel.setVisible(!commandLabel.isDisable());
 //			pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			enableClocks(true, false, false); 
 		    }
@@ -2921,6 +2934,7 @@ version = new Version(ui);
 			new Sound().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
 			decryptButton.setDisable(false);
+			commandLabel.setDisable(false); commandLabel.setVisible(!commandLabel.isDisable());
 //			pauseToggleButton.setDisable(true); stopButton.setDisable(true);
 //			enableClocks(true, false, false);
 		    }
@@ -3566,6 +3580,8 @@ version = new Version(ui);
 	    enableClocks(true, true, true); 
 
 //	    keyButton.setDisable(true);
+
+	    commandLabel.setDisable(true); commandLabel.setVisible(!commandLabel.isDisable());
 
 	    filesProgressBar.setProgress(0.0); filesProgressBar.setVisible(true);
 	    fileProgressBar.setProgress(0.0); fileProgressBar.setVisible(true);
@@ -4657,6 +4673,7 @@ version = new Version(ui);
 	setFont(pwdField);setFont(pwdtxtField);
 	pwdField.setVisible(! showPasswordCheckBox.isSelected());
 	pwdtxtField.setVisible(showPasswordCheckBox.isSelected());
+	if (pwdField.getText().length() > 0) { if (pwdtxtField.isVisible()) { Command.pwdOption = "-p \"" + pwdtxtField.getText() + "\""; } else { Command.pwdOption = "-pp"; } } else { Command.pwdOption = ""; }
     }
 
     @FXML  private void pwdFieldOnMouseClicked(MouseEvent event)
@@ -4688,6 +4705,7 @@ version = new Version(ui);
 	    buildReady(targetFCPathList, false);
 	    settingPassword = true;
 	}
+	if (pwdField.getText().length() > 0) { if (pwdtxtField.isVisible()) { Command.pwdOption = "-p \"" + pwdtxtField.getText() + "\""; } else { Command.pwdOption = "-pp"; } } else { Command.pwdOption = ""; }
     }
     
     @FXML private void pwdtxtFieldOnMouseClicked(MouseEvent event)
@@ -4720,6 +4738,7 @@ version = new Version(ui);
 //	    }
 	    settingPassword = true;
 	}
+	if (pwdField.getText().length() > 0) { if (pwdtxtField.isVisible()) { Command.pwdOption = "-p \"" + pwdtxtField.getText() + "\""; } else { Command.pwdOption = "-pp"; } } else { Command.pwdOption = ""; }
     }
     
     private void setFont(TextField field)
@@ -4793,5 +4812,35 @@ version = new Version(ui);
     private void authorLabelOnMouseExited(MouseEvent event)
     {
 	Platform.runLater(() -> { authorLabel.setTextFill(Color.GREY); });
+    }
+
+    @FXML
+    private void commandLabelOnMouseEntered(MouseEvent event)
+    {
+	Platform.runLater(() -> 
+	{
+//	    commandLabel.setTextFill(Color.WHITE);
+	    commandLabel.setStyle("-fx-background-insets: 10; -fx-text-fill: white; -fx-border-radius:5; -fx-border-color: white;");
+	});
+    }
+
+    @FXML
+    private void commandLabelOnMouseExited(MouseEvent event)
+    {
+	Platform.runLater(() ->
+	{
+//	    commandLabel.setTextFill(Color.GREY);
+	    commandLabel.setStyle("-fx-background-insets: 10; -fx-text-fill: grey; -fx-border-radius:5; -fx-border-color: grey;");
+	});
+    }
+
+    @FXML
+    private void commandLabelOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); tab.getSelectionModel().select(1); log("Command-line (DOS Prompt / Terminal) command:\r\n\r\n", false, true, true, false, false);
+	if	((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles == 0))	{  }
+	else if ((targetFCPathList.encryptableFiles == 0) && (targetFCPathList.decryptableFiles > 0))	{ log(Command.getCommandLine(false, true) + "\r\n", false, true, false, false, false); }
+	else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles == 0))	{ log(Command.getCommandLine(true, false) + "\r\n", false, true, false, false, false); }
+	else if ((targetFCPathList.encryptableFiles > 0) && (targetFCPathList.decryptableFiles > 0))	{ log(Command.getCommandLine(true, true) + "\r\n", false, true, false, false, false); }
     }
  }
