@@ -27,6 +27,7 @@ import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.*;
 import java.util.Calendar;
+import java.util.logging.*;
 import javax.net.ssl.*;
 
 public class Version
@@ -502,6 +503,7 @@ public class Version
     {
         String identifierExpected = PRODUCTNAME;
 	
+	Configuration configuration = new Configuration(ui);
 	loop: for(String WEBSITEURLSTRING:WEBSITEURLSTRINGARRAY)
 	{
 	    checkOnlineFailed = false;
@@ -532,6 +534,19 @@ public class Version
 		}
 	    } else { ui.log("Error: openWebSite Empty website url: " + WEBSITEURLSTRING + "\r\n", false, true, true, true, false); }
 	}
+    }
+    
+    synchronized public static void openLogDir(UI ui)
+    {
+	Configuration configuration = new Configuration(ui);
+	Thread openLogDirThread;
+	openLogDirThread = new Thread(() ->
+	{
+	    try { Desktop.getDesktop().open(configuration.getLogDirPath().toFile()); } catch (IOException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }
+	});
+	openLogDirThread.setName("openLogDirThread");
+	openLogDirThread.setDaemon(true);
+	openLogDirThread.start();
     }
     
     public boolean latestVersionIsKnown()	    { return latestVersionIsKnown; }    

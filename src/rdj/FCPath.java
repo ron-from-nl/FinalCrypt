@@ -138,10 +138,10 @@ public class FCPath
 	returnString += "Is Key:                " + isKey + "\r\n";
 	returnString += "Valid Key:             " + isValidKey + "\r\n";
 	returnString += "\r\n";
-	returnString += "Decrypted:             " + isDecrypted + "\r\n";
+	returnString += "Unencrypted:           " + isDecrypted + "\r\n";
 	returnString += "Encryptable:           " + isEncryptable + "\r\n";
 //	returnString += "New Encrypted:         " + isNewEncrypted + "\r\n";
-	returnString += "UnEncryptable:         " + isUnEncryptable + "\r\n";
+	returnString += "Unencryptable:         " + isUnEncryptable + "\r\n";
 	returnString += "\r\n";
 //	returnString += "Has FCToken:           " + hasFCToken + "\r\n";
 	returnString += "Encrypted:             " + isEncrypted + "\r\n";
@@ -149,11 +149,11 @@ public class FCPath
 //	returnString += "Authenticated:         " + isAuthenticated + "\r\n";
 	returnString += "Decryptable:           " + isDecryptable + "\r\n";
 //	returnString += "New Decrypted:         " + isNewDecrypted + "\r\n";
-	returnString += "UnDecryptable:         " + isUnDecryptable + "\r\n";
+	returnString += "Undecryptable:         " + isUnDecryptable + "\r\n";
 	returnString += "\r\n";
-	returnString += "Key Create:            " + needsWriteAutoKey + "\r\n";
-	returnString += "Key Match:             " + matchedReadAutoKey + "\r\n";    // Has a matching correlated key
-	returnString += "Key Missing:           " + unmatchedReadAutoKey + "\r\n";  // Has a missing correlated key
+	returnString += "Create Key:            " + needsWriteAutoKey + "\r\n";
+	returnString += "Match Key:             " + matchedReadAutoKey + "\r\n";    // Has a matching correlated key
+	returnString += "Missing Key:           " + unmatchedReadAutoKey + "\r\n";  // Has a missing correlated key
 	returnString += "\r\n";
 
 	return returnString;

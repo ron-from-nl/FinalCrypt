@@ -436,7 +436,7 @@
                                        <children>
                                           <Label fx:id="unencryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="4.0" layoutY="1.0" onMouseClicked="#unencryptableLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list unencryptable files">
+                                                <Tooltip fx:id="unencryptableLabelToolTip" text="Click to list unencryptable files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -451,7 +451,7 @@
                                        <children>
                                           <Label fx:id="encryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="3.0" onMouseClicked="#encryptedLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list encrypted files">
+                                                <Tooltip fx:id="encryptedLabelToolTip" text="Click to list encrypted files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -466,7 +466,7 @@
                                        <children>
                                           <Label fx:id="decryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="1.0" onMouseClicked="#decryptableLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list decryptable files">
+                                                <Tooltip fx:id="decryptableLabelToolTip" text="Click to list decryptable files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -515,7 +515,7 @@
                                        <children>
                                           <Label fx:id="invalidFilesLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" onMouseClicked="#invalidFilesLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list invalid files">
+                                                <Tooltip fx:id="invalidFilesLabelToolTip" text="Click to list invalid files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -556,7 +556,7 @@
                                        <children>
                                           <Label fx:id="encryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" onMouseClicked="#encryptableLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list encryptable files">
+                                                <Tooltip fx:id="encryptableLabelToolTip" text="Click to list encryptable files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -641,7 +641,7 @@
                                        <children>
                                           <Label fx:id="decryptedLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="-1.0" layoutY="-4.0" onMouseClicked="#decryptedLabelOnMouseClicked" prefHeight="27.0" prefWidth="61.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list decrypted files">
+                                                <Tooltip fx:id="decryptedLabelToolTip" text="Click to list decrypted files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -726,7 +726,7 @@
                                        <children>
                                           <Label fx:id="undecryptableLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="9.0" layoutY="-2.0" onMouseClicked="#undecryptableLabelOnMouseClicked" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="0" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <tooltip>
-                                                <Tooltip text="Click to list undecryptable files">
+                                                <Tooltip fx:id="undecryptableLabelToolTip" text="Click to list undecryptable files">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font></Tooltip>
@@ -1052,6 +1052,7 @@
                                   <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="1206.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
+                                    <ColumnConstraints hgrow="NEVER" maxWidth="125.0" minWidth="125.0" percentWidth="0.0" prefWidth="125.0" />
                                   <ColumnConstraints hgrow="NEVER" maxWidth="150.0" minWidth="150.0" percentWidth="0.0" prefWidth="150.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="10.0" minWidth="10.0" percentWidth="0.0" prefWidth="10.0" />
                                     <ColumnConstraints hgrow="NEVER" maxWidth="20.0" minWidth="20.0" percentWidth="0.0" prefWidth="20.0" />
@@ -1072,7 +1073,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="3" GridPane.hgrow="NEVER">
+                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="4" GridPane.hgrow="NEVER">
                                        <children>
                                           <Label fx:id="authorLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#authorLabelOnMouseClicked" onMouseEntered="#authorLabelOnMouseEntered" onMouseExited="#authorLabelOnMouseExited" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="author" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1087,7 +1088,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                                        <children>
                                           <Label fx:id="supportLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="28.0" layoutY="3.0" onMouseClicked="#supportLabelOnMouseClicked" onMouseEntered="#supportLabelOnMouseEntered" onMouseExited="#supportLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Support" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1099,7 +1100,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
                                        <children>
                                           <Label fx:id="updateLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="34.0" layoutY="3.0" onMouseClicked="#updateLabelOnMouseClicked" onMouseEntered="#updateLabelOnMouseEntered" onMouseExited="#updateLabelOnMouseExited" prefHeight="20.0" prefWidth="100.0" styleClass="text_color_low" text="Update" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
@@ -1111,7 +1112,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6">
                                        <children>
                                           <Label fx:id="commandLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="-35.0" onMouseClicked="#commandLabelOnMouseClicked" onMouseEntered="#commandLabelOnMouseEntered" onMouseExited="#commandLabelOnMouseExited" prefHeight="20.0" prefWidth="65.0" style="-fx-border-radius: 5; -fx-border-color: GREY;" styleClass="text_color_low" text="&gt;_" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <cursor>
@@ -1127,6 +1128,18 @@
                                                    </font>
                                                 </Tooltip>
                                              </tooltip>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                                       <children>
+                                          <Label fx:id="logsLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" onMouseClicked="#logsLabelOnMouseClicked" onMouseEntered="#logsLabelOnMouseEntered" onMouseExited="#logsLabelOnMouseExited" prefHeight="20.0" prefWidth="125.0" styleClass="text_color_low" text="Logs" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
                                           </Label>
                                        </children>
                                     </AnchorPane>

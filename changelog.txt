@@ -1,3 +1,9 @@
+Date: 2020-01-13 Version: 6.3.2
+
+Added Open FileManager with FinalCrypt "Logs" dir
+Fixed un-responding "Click to list invalid files"
+Added translation for several list files ToolTips
+
 Date: 2019-12-25 Version: 6.3.1
 
 Added file-changes detection skipping to next file

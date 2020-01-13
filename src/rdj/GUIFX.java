@@ -250,6 +250,22 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private Tooltip keyWriteLabelToolTip;
     @FXML   private ListView<String> selectLanguage;
     @FXML   private Tooltip passwordHeaderLabelToolTip;
+
+    @FXML private Tooltip languageLabelTooltip;
+    @FXML private Label supportLabel;
+    @FXML private Label updateLabel;
+    @FXML private Label commandLabel;
+    @FXML private Tooltip commandLabelToolTip;
+
+    @FXML private Tooltip unencryptableLabelToolTip;
+    @FXML private Tooltip encryptedLabelToolTip;
+    @FXML private Tooltip decryptableLabelToolTip;
+    @FXML private Tooltip invalidFilesLabelToolTip;
+    @FXML private Tooltip encryptableLabelToolTip;
+    @FXML private Tooltip decryptedLabelToolTip;
+    @FXML private Label logsLabel;
+    @FXML private Tooltip undecryptableLabelToolTip;
+
 //    @FXML   private ToggleButton encryptionModeToggleButton;
 //    @FXML   private Tooltip encryptionModeToolTip;
 //    @FXML   private AnchorPane encryptionModeAnchorPane;
@@ -601,18 +617,8 @@ public class GUIFX extends Application implements UI, Initializable
     private int keyToggleButtonCounter;
     public static LanguageList languagesList;
 //    private ArrayList<String> languageNamesList;    
-    @FXML
-    private Tooltip languageLabelTooltip;
     private String pauseDescription;
     private String stopDescription;
-    @FXML
-    private Label supportLabel;
-    @FXML
-    private Label updateLabel;
-    @FXML
-    private Label commandLabel;
-    @FXML
-    private Tooltip commandLabelToolTip;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -664,6 +670,17 @@ public class GUIFX extends Application implements UI, Initializable
 	targetUnencryptableNameLabel.setText(bundle.getString("116"));
 	totalFilesNameLabel.setText(bundle.getString("125"));
 	invalidFilesNameLabel.setText(bundle.getString("064"));
+
+	invalidFilesLabelToolTip.setText(bundle.getString("147"));
+	
+	decryptedLabelToolTip.setText(bundle.getString("148"));
+	encryptableLabelToolTip.setText(bundle.getString("149"));	
+	unencryptableLabelToolTip.setText(bundle.getString("150"));
+	encryptedLabelToolTip.setText(bundle.getString("151"));
+	decryptableLabelToolTip.setText(bundle.getString("152"));
+	undecryptableLabelToolTip.setText(bundle.getString("153"));
+	logsLabel.setText(bundle.getString("154"));
+	
 	keyWriteNameLabel.setText(bundle.getString("080"));
 	keyMatchNameLabel.setText(bundle.getString("074"));
 	keyMissingNameLabel.setText(bundle.getString("076"));
@@ -1318,6 +1335,7 @@ public class GUIFX extends Application implements UI, Initializable
 //		    checkUpdateButton.setDisable(false);
 //		    supportButton.setDisable(false);
 
+		    logsLabel.setDisable(false);
 		    supportLabel.setDisable(false);
 		    updateLabel.setDisable(false);
 		    // ============================================================================================================================
@@ -2970,7 +2988,7 @@ version = new Version(ui);
 		    if (targetFCPathList.unwritableFiles > 0)	{ unwritableList = filter(targetFCPathList,(FCPath fcPath) -> (! fcPath.isWritable) && (fcPath.type == FCPath.FILE)); } else { unwritableList = null; }
 		    if (targetFCPathList.hiddenFiles > 0)	{ hiddenList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden); } else { hiddenList = null; }
 
-		    if ((targetFCPathList.files - targetFCPathList.validFiles) > 0) { invalidFilesList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.INVALID); } else { invalidFilesList = null; }
+		    if ((targetFCPathList.files - targetFCPathList.validFiles) > 0) { invalidFilesList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isValidFile == false); } else { invalidFilesList = null; }
 
 		    if (targetFCPathList.writeAutoKeyFiles > 0)	    { writeAutoKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.needsWriteAutoKey); } else { writeAutoKeyList = null; }
 		    if (targetFCPathList.matchedAutoKeyFiles > 0)   { readAutoKeyList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey); } else { readAutoKeyList = null; }
@@ -4782,63 +4800,46 @@ version = new Version(ui);
 	keyLabel.setVisible(true);
     }
 
-    @FXML
-    private void supportLabelOnMouseClicked(MouseEvent event)
+    @FXML private void logsLabelOnMouseEntered(MouseEvent event)    { Platform.runLater(() -> { logsLabel.setTextFill(Color.WHITE); }); }
+    @FXML private void logsLabelOnMouseExited(MouseEvent event)	    { Platform.runLater(() -> { logsLabel.setTextFill(Color.GREY); }); }
+    @FXML private void logsLabelOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	Thread shareThread; shareThread = new Thread(() ->
+	{
+	    Version.openLogDir(guifx);
+	});
+	shareThread.setName("shareThread");
+	shareThread.setDaemon(true);
+	shareThread.start();
+    }
+
+    @FXML private void supportLabelOnMouseClicked(MouseEvent event)
     {
 	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	openSupport("supportButtonOnAction",selectedLocale, false);
     }
 
-    @FXML
-    private void updateLabelOnMouseClicked(MouseEvent event)
+    @FXML private void updateLabelOnMouseClicked(MouseEvent event)
     {
 	Platform.runLater(() -> { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); });
 	Platform.runLater(() -> { checkUpdate( true ); });
     }
 
-    @FXML
-    private void supportLabelOnMouseEntered(MouseEvent event)
-    {
-	Platform.runLater(() -> { supportLabel.setTextFill(Color.WHITE); });
-    }
-
-    @FXML
-    private void supportLabelOnMouseExited(MouseEvent event)
-    {
-	Platform.runLater(() -> { supportLabel.setTextFill(Color.GREY); });
-    }
-
-    @FXML
-    private void updateLabelOnMouseEntered(MouseEvent event)
-    {
-	Platform.runLater(() -> { updateLabel.setTextFill(Color.WHITE); });
-    }
-
-    @FXML
-    private void updateLabelOnMouseExited(MouseEvent event)
-    {
-	Platform.runLater(() -> { updateLabel.setTextFill(Color.GREY); });
-    }
-
-    @FXML
-    private void authorLabelOnMouseEntered(MouseEvent event)
-    {
-	Platform.runLater(() -> { authorLabel.setTextFill(Color.WHITE); });
-    }
-    
-    @FXML
-    private void authorLabelOnMouseExited(MouseEvent event)
-    {
-	Platform.runLater(() -> { authorLabel.setTextFill(Color.GREY); });
-    }
+    @FXML private void supportLabelOnMouseEntered(MouseEvent event) { Platform.runLater(() -> { supportLabel.setTextFill(Color.WHITE); }); }
+    @FXML private void supportLabelOnMouseExited(MouseEvent event)  { Platform.runLater(() -> { supportLabel.setTextFill(Color.GREY); }); }
+    @FXML private void updateLabelOnMouseEntered(MouseEvent event)  { Platform.runLater(() -> { updateLabel.setTextFill(Color.WHITE); }); }
+    @FXML private void updateLabelOnMouseExited(MouseEvent event)   { Platform.runLater(() -> { updateLabel.setTextFill(Color.GREY); }); }
+    @FXML private void authorLabelOnMouseEntered(MouseEvent event)  { Platform.runLater(() -> { authorLabel.setTextFill(Color.WHITE); }); }
+    @FXML private void authorLabelOnMouseExited(MouseEvent event)   { Platform.runLater(() -> { authorLabel.setTextFill(Color.GREY); }); }
 
     @FXML
     private void commandLabelOnMouseEntered(MouseEvent event)
     {
 	Platform.runLater(() -> 
 	{
-//	    commandLabel.setTextFill(Color.WHITE);
 	    commandLabel.setStyle("-fx-background-insets: 10; -fx-text-fill: white; -fx-border-radius:5; -fx-border-color: white;");
 	});
     }
@@ -4848,7 +4849,6 @@ version = new Version(ui);
     {
 	Platform.runLater(() ->
 	{
-//	    commandLabel.setTextFill(Color.GREY);
 	    commandLabel.setStyle("-fx-background-insets: 10; -fx-text-fill: grey; -fx-border-radius:5; -fx-border-color: grey;");
 	});
     }

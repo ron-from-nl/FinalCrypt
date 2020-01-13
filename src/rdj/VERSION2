@@ -1,4 +1,4 @@
-[Version] =		{6.3.1}
+[Version] =		{6.3.2}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,12 +26,11 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 1}
+[Update Notes] =	{Update 2}
 [Update Notes] =	{}
-[Update Notes] =	{Added file-changes detection skipping to next file}
-[Update Notes] =	{If the selected files changed by any other process}
-[Update Notes] =	{then it will be detected and skip to the next file}
-[Update Notes] =	{With the new Print Command this update is critical}
+[Update Notes] =	{Added Open FileManager with FinalCrypt "Logs" dir}
+[Update Notes] =	{Fixed un-responding "Click to list invalid files"}
+[Update Notes] =	{Added translation for several list files ToolTips}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
