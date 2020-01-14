@@ -4047,7 +4047,7 @@ version = new Version(ui);
 //	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/
 	Thread openAuthorThread; openAuthorThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("https://www.finalcrypt.org/faq.php#P1")); }
+	    try {  Desktop.getDesktop().browse(new URI("https://www.finalcrypt.org/faq.php#p1")); }
 	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	});
@@ -4856,7 +4856,7 @@ version = new Version(ui);
     @FXML
     private void commandLabelOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); tab.getSelectionModel().select(1); log("Command-line (DOS Prompt / Terminal) command:\r\n\r\n", false, true, true, false, false);
+	new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); tab.getSelectionModel().select(1); log("Command-line (DOS Prompt / Terminal) command:\r\n\r\n", false, true, false, false, false);
 	log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false);
     }
  }
