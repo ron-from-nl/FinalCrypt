@@ -1,3 +1,9 @@
+Date: 2020-02-18 Version: 6.3.3
+
+Fixed browser opening platform unsupported error log
+Cleaned up log with regards to check & open websites
+Fixed hang on repeated clicking wikipedia hyperlinks
+
 Date: 2020-01-13 Version: 6.3.2
 
 Added Open FileManager with FinalCrypt "Logs" dir

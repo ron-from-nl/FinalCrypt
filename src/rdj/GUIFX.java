@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -1801,7 +1801,7 @@ public class GUIFX extends Application implements UI, Initializable
 		{
 		    Platform.runLater(() ->
 		    {
-version = new Version(ui);
+			version = new Version(ui);
 			version.checkCurrentlyInstalledVersion(GUIFX.this);
 			version.checkLatestOnlineVersion(GUIFX.this);
 			prefs.putLong("Update Checked", now); flushPrefs(prefs); 
@@ -4047,9 +4047,11 @@ version = new Version(ui);
 //	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/
 	Thread openAuthorThread; openAuthorThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("https://www.finalcrypt.org/faq.php#p1")); }
-	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().browse(new URI(\"\")); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    String url = "https://www.finalcrypt.org/faq.php#p1";
+	    try {  Desktop.getDesktop().browse(new URI(url)); }
+	    catch (URISyntaxException ex)		{ log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex)			{ log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (UnsupportedOperationException ex)	{ log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
 	});
 	openAuthorThread.setName("openAuthorThread");
 	openAuthorThread.setDaemon(true);

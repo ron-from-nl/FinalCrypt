@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  * 
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -386,7 +386,7 @@ public class CreateOTPKey extends Application implements Initializable
 		else if (( remainder > 0 ) && ( remainder < bufferSize ))   { randomBuffer = ByteBuffer.allocate(remainder.intValue()); randomBuffer.clear(); }
 		else							    { inputEnded = true; }
 		//		    getFCRandomBuffer(UI ui,		    int size, boolean extraSeed, boolean encrypt,    boolean print)
-		randomBuffer = TRNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print);
+		randomBuffer = RNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print);
 		
     //          Write Device (randomBuffer3 became randomBuffer1)
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))))
@@ -478,34 +478,42 @@ public class CreateOTPKey extends Application implements Initializable
 
     @FXML private void complianceLabelOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-	Thread otpKeyURLThread;
-	otpKeyURLThread = new Thread(() ->
+	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    try {  Desktop.getDesktop().browse(new URI(FIP140_2_URL_STRING)); }
-	    catch (URISyntaxException ex) { statusLabel1.setText(ex.getMessage()); }
-	    catch (IOException ex) { statusLabel1.setText(ex.getMessage()); }
-	});
-	otpKeyURLThread.setName("otpKeyURLThread");
-	otpKeyURLThread.setDaemon(true);
-	otpKeyURLThread.start();
+	    new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	    Thread complianceURLThread;
+	    complianceURLThread = new Thread(() ->
+	    {
+		try {  Desktop.getDesktop().browse(new URI(FIP140_2_URL_STRING)); }
+		catch (URISyntaxException ex)		{ statusLabel1.setText(ex.getMessage()); }
+		catch (IOException ex)			{ statusLabel1.setText(ex.getMessage()); }
+		catch (UnsupportedOperationException ex){ statusLabel1.setText(ex.getMessage() + " " + FIP140_2_URL_STRING ); }
+	    });
+	    complianceURLThread.setName("complianceURLThread");
+	    complianceURLThread.setDaemon(true);
+	    complianceURLThread.start();
+	}});
     }
 
     @FXML
     private void otpRulesOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-	Thread otpKeyURLThread;
-	otpKeyURLThread = new Thread(() ->
+	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    try {  Desktop.getDesktop().browse(new URI(ONE_TIME_PAD_URL_STRING)); }
-	    catch (URISyntaxException ex) { statusLabel1.setText(ex.getMessage()); }
-	    catch (IOException ex) { statusLabel1.setText(ex.getMessage()); }
-	});
-	otpKeyURLThread.setName("otpKeyURLThread");
-	otpKeyURLThread.setDaemon(true);
-	otpKeyURLThread.start();
+	    new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	    Thread otpRulesURLThread;
+	    otpRulesURLThread = new Thread(() ->
+	    {
+		try {  Desktop.getDesktop().browse(new URI(ONE_TIME_PAD_URL_STRING)); }
+		catch (URISyntaxException ex)		{ statusLabel1.setText(ex.getMessage()); }
+		catch (IOException ex)			{ statusLabel1.setText(ex.getMessage()); }
+		catch (UnsupportedOperationException ex){ statusLabel1.setText(ex.getMessage() + " " + ONE_TIME_PAD_URL_STRING); }
+	    });
+	    otpRulesURLThread.setName("otpRulesURLThread");
+	    otpRulesURLThread.setDaemon(true);
+	    otpRulesURLThread.start();
+	}});
     }
 }

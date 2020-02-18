@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  * 
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -157,9 +157,11 @@ public class Support extends Application implements Initializable
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("https://www.facebook.com/share.php?u=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
-	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    String url = "https://www.facebook.com/share.php?u=http://www.finalcrypt.org/";
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
 	    closeWindow();
 	});
 	shareThread.setName("shareThread");
@@ -173,9 +175,11 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
-	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    String url = "https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/";
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
 	    closeWindow();
 	});
 	shareThread.setName("shareThread");
@@ -189,9 +193,11 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/")); prefs.put("Shared", "Yes"); }
-	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    String url = "https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/";
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
 	    closeWindow();
 	});
 	shareThread.setName("shareThread");
@@ -205,9 +211,11 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    try {  Desktop.getDesktop().browse(new URI("http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption")); prefs.put("Shared", "Yes"); }
-	    catch (URISyntaxException ex) { guifx.log("Error: URISyntaxException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-	    catch (IOException ex) { guifx.log("Error: IOException: Desktop.getDesktop().open(file); " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    String url = "http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption";
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
 	    closeWindow();
 	});
 	shareThread.setName("shareThread");

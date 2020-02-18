@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -79,7 +79,7 @@ public class Version
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
     private static final String[] WEBSITEURLSTRINGARRAY =		{
-									     "http://www.finalcrypt.org/"									// tested
+									    "http://www.finalcrypt.org/"									// tested
 									    ,"https://www.finalcrypt.org/"									// tested
 									    ,"http://finalcrypt.000webhostapp.com/"								// tested
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
@@ -510,30 +510,39 @@ public class Version
 	    if (! WEBSITEURLSTRING.isEmpty())
 	    {
 		remoteContent = "";
-		ui.log("Check Website: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
+		ui.log("Website: " + WEBSITEURLSTRING + " ", false, true, true, false, false);
 
 		if (WEBSITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, WEBSITEURLSTRING); } else { remoteContent = httpGetRequest(ui, WEBSITEURLSTRING); }
 				
-		if ((remoteContent != null) && (! checkOnlineFailed))
+		if (! checkOnlineFailed)
 		{
-		    if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
+		    if (remoteContent != null)
 		    {
-			ui.log("Open Website: " + WEBSITEURLSTRING + "\r\n", false, true, true, false, false);
-			Thread openWebSiteThread;
-			openWebSiteThread = new Thread(() ->
+			if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
 			{
-			    try { try {  Desktop.getDesktop().browse(new URI(WEBSITEURLSTRING)); }
-			    catch (URISyntaxException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }}
-			    catch (IOException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }
-			});
-			openWebSiteThread.setName("openWebSiteThread");
-			openWebSiteThread.setDaemon(true);
-			openWebSiteThread.start();
-			break;
-		    }
+			    ui.log("Opening Browser\r\n", false, true, true, false, false);
+			    Thread openWebSiteThread;
+			    openWebSiteThread = new Thread(() ->
+			    {
+				try {  Desktop.getDesktop().browse(new URI(WEBSITEURLSTRING)); }
+				catch (URISyntaxException ex)		{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
+				catch (IOException ex)			{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
+				catch (UnsupportedOperationException ex){ ui.log(ex.getMessage() + " " + WEBSITEURLSTRING + "\r\n", true, true, true, true, false); }
+			    });
+			    openWebSiteThread.setName("openWebSiteThread");
+			    openWebSiteThread.setDaemon(true);
+			    openWebSiteThread.start();
+			    break;
+			} else { ui.log("Invalid\r\n", false, true, true, true, false); }
+		    } else { ui.log("Empty\r\n", false, true, true, true, false); }
+		}
+		else
+		{
+		    ui.log("Opening Browser Failed!\r\n", false, true, true, true, false);
 		}
 	    } else { ui.log("Error: openWebSite Empty website url: " + WEBSITEURLSTRING + "\r\n", false, true, true, true, false); }
 	}
+	ui.log("\r\n", false, true, true, true, false);
     }
     
     synchronized public static void openLogDir(UI ui)

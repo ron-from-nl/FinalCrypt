@@ -1,4 +1,4 @@
-[Version] =		{6.3.2}
+[Version] =		{6.3.3}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,11 +26,11 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 2}
+[Update Notes] =	{Update 3}
 [Update Notes] =	{}
-[Update Notes] =	{Added Open FileManager with FinalCrypt "Logs" dir}
-[Update Notes] =	{Fixed un-responding "Click to list invalid files"}
-[Update Notes] =	{Added translation for several list files ToolTips}
+[Update Notes] =	{Fixed browser opening platform unsupported error log}
+[Update Notes] =	{Cleaned up log with regards to check & open websites}
+[Update Notes] =	{Fixed hang on repeated clicking wikipedia hyperlinks}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

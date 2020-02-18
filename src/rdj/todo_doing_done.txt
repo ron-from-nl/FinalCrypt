@@ -8,9 +8,7 @@ Backup Files.createLink(link, target);
 =================================== Doing ===================================
 
 Blanc Window in Mojave
-Overrule intro animation delay
 User Action Wizzard
-Add click to list number translation
 
 =============================== Don't forget ================================
 

@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  *
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License

@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ronuitzaandam@gmail.com).
+ * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
  * 
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -22,8 +22,9 @@ package rdj;
 import java.nio.*;
 import java.security.*;
 
-public class TRNG
+public class RNG
 {
+//  Random streams scrambler
     public static ByteBuffer getFCRandomBuffer(UI ui, int size, boolean extraSeed, boolean encrypt, boolean print)
     {
 	if ( encrypt )
@@ -41,10 +42,11 @@ public class TRNG
 	}
     }
     
+//  java.security.SecureRandom RNG
     private static ByteBuffer getRandomBuffer(UI ui, int size, boolean extraSeed, boolean print)
     {
 	byte[] randomBytes = new byte[size]; ByteBuffer randomBuffer = ByteBuffer.allocate(size); randomBuffer.clear();
-	
+
 	SecureRandom random = new SecureRandom();
 	if ( extraSeed )
 	{
@@ -60,6 +62,25 @@ public class TRNG
 	random.nextBytes(randomBytes);
 	
 	randomBuffer.put(randomBytes); randomBuffer.flip();
+	return randomBuffer;
+    }
+
+//  Random Bit Generator
+    private static ByteBuffer getRandomBuffer2(UI ui, int size, boolean extraSeed, boolean print)
+    {
+	byte[] randomBytes = new byte[size]; ByteBuffer randomBuffer = ByteBuffer.allocate(size); randomBuffer.clear(); byte rngByte = 0;
+	for (int x=0; x < size; x++)
+	{
+	    for (int b=1; b <= 8; b++)
+	    {
+//		rngByte = (byte) (rngByte << 1); rngByte += (int)(System.nanoTime() & 0x00000001); # Bad randomness at end
+		rngByte = (byte) (rngByte << 1); rngByte += (int)(Math.round(Math.random()) & 0x00000001);
+	    }
+//	    randomBytes[x] = rngByte;
+	    randomBuffer.put(rngByte);
+	}
+//	randomBuffer.put(randomBytes);
+	randomBuffer.flip();
 	return randomBuffer;
     }
     
