@@ -8,6 +8,7 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="FinalCrypt" default="default" basedir=".">
+<property name="deploy.icon.native" value="finalcrypt-icon.png"/>
     <description>Builds, tests, and runs the project FinalCrypt.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--

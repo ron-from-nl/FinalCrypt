@@ -28,9 +28,12 @@
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 3}
 [Update Notes] =	{}
-[Update Notes] =	{Fixed browser opening platform unsupported error log}
-[Update Notes] =	{Cleaned up log with regards to check & open websites}
-[Update Notes] =	{Fixed hang on repeated clicking wikipedia hyperlinks}
+[Update Notes] =	{Finally added a proper icon for Windows, Mac and Linux}
+[Update Notes] =	{}
+[Update Notes] =	{Updating FinalCrypt users please take some extra steps}
+[Update Notes] =	{Windows: remove & add icon from task-bar to renew icon}
+[Update Notes] =	{Mac OSX: remove & add icon from the dock to renew icon}
+[Update Notes] =	{Linux:   Logoff/on desktop session again to renew icon}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

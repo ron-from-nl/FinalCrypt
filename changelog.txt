@@ -1,3 +1,12 @@
+Date: 2020-02-22 Version: 6.3.4
+
+Finally added a proper icon for Windows, Mac and Linux
+
+Updating FinalCrypt users please take some extra steps
+Windows: remove & add icon from task-bar to renew icon
+Mac OSX: remove & add icon from the dock to renew icon
+Linux:   Logoff/on desktop session again to renew icon
+
 Date: 2020-02-18 Version: 6.3.3
 
 Fixed browser opening platform unsupported error log

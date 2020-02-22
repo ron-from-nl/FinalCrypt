@@ -19,6 +19,7 @@ Set version on file:					Version
 Set version on file:					Version2
 Update file:						changelog
 Update file:						manpage
+Update file:						build.xml UNIX: finalcrypt-icon.png Win:  finalcrypt-icon.ico
  
 =================================== Done ====================================
 
