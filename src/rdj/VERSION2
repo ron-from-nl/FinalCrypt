@@ -1,4 +1,4 @@
-[Version] =		{6.3.4}
+[Version] =		{6.3.5}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,9 +26,10 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 4}
+[Update Notes] =	{Update 5}
 [Update Notes] =	{}
-[Update Notes] =	{Finally added a proper icon for Windows, Mac and Linux}
+[Update Notes] =	{FinalCrypt got its final Icon for Windows, Mac & Linux}
+[Update Notes] =	{A heavy duty metal padlock with embossed characters FC}
 [Update Notes] =	{}
 [Update Notes] =	{Updating FinalCrypt users please take some extra steps}
 [Update Notes] =	{Windows: remove & add icon from task-bar to renew icon}

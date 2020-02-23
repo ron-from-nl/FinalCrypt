@@ -1,11 +1,16 @@
-Date: 2020-02-22 Version: 6.3.4
+Date: 2020-02-23 Version: 6.3.5
 
-Finally added a proper icon for Windows, Mac and Linux
+FinalCrypt got its final Icon for Windows, Mac & Linux
+A heavy duty metal padlock with embossed characters FC
 
 Updating FinalCrypt users please take some extra steps
 Windows: remove & add icon from task-bar to renew icon
 Mac OSX: remove & add icon from the dock to renew icon
 Linux:   Logoff/on desktop session again to renew icon
+
+Date: 2020-02-22 Version: 6.3.4
+
+Finally added a proper icon for Windows, Mac and Linux
 
 Date: 2020-02-18 Version: 6.3.3
 
