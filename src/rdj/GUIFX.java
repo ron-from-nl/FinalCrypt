@@ -4047,7 +4047,8 @@ public class GUIFX extends Application implements UI, Initializable
 //	new Sound().play(this, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC); /*checkUpdate();*/
 	Thread openAuthorThread; openAuthorThread = new Thread(() ->
 	{
-	    String url = "https://www.finalcrypt.org/faq.php#p1";
+//	    String url = "https://www.finalcrypt.org/faq.php#p1";
+	    String url = "http://www.finalcrypt.org/about.php";
 	    try {  Desktop.getDesktop().browse(new URI(url)); }
 	    catch (URISyntaxException ex)		{ log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex)			{ log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }

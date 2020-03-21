@@ -1,3 +1,7 @@
+Date: 2020-03-21 Version: 6.3.6
+
+Incorporate FinalCrypt's new website about page link
+
 Date: 2020-02-23 Version: 6.3.5
 
 FinalCrypt got its final Icon for Windows, Mac & Linux
