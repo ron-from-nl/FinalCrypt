@@ -1818,11 +1818,11 @@ public class GUIFX extends Application implements UI, Initializable
 
 			if (version.latestVersionIsKnown())
 			{
-			    if (( ! version.versionIsDifferent() ) && ( userActivated ))		    { alertCurrentVersionIsUp2Date(); }
-			    else { if (version.versionCanBeUpdated())				    { alertCurrentVersionCanBeUpdated(); }
-				   else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
+			    if (( ! version.versionIsDifferent() ) && ( userActivated ))	 { alertCurrentVersionIsUp2Date(); }
+			    else { if (version.versionCanBeUpdated())				 { alertCurrentVersionCanBeUpdated(); }
+			    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
 			}
-			else									    { alertlatestVersionUnknown(); }
+			else									 { alertlatestVersionUnknown(); }
 
 	    //	    After all check update processing comes an optional alert	    
 			if (
