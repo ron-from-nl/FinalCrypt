@@ -69,6 +69,7 @@ public class CLUI implements UI
     protected FCPathList<FCPath> encryptableList;
     protected FCPathList<FCPath> readAutoKeyList;
     protected FCPathList<FCPath> writeAutoKeyList;
+    protected FCPathList<FCPath> missingAutoKeyList;
 
     protected FCPathList<FCPath> encryptedList; 
     protected FCPathList<FCPath> decryptableList;
@@ -572,10 +573,11 @@ public class CLUI implements UI
 	    symlinkList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.type == FCPath.SYMLINK);							// else { symlinkList = null; }
 	    unreadableList =	    filter(targetFCPathList,(FCPath fcPath) -> (! fcPath.isReadable) && (fcPath.type == FCPath.FILE));				// else { unreadableList = null; }
 	    unwritableList =	    filter(targetFCPathList,(FCPath fcPath) -> (! fcPath.isWritable) && (fcPath.type == FCPath.FILE));				// else { unwritableList = null; }
-	    hiddenList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden);								// else { hiddenList = null; }
+	    hiddenList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.isHidden);									// else { hiddenList = null; }
 
 	    readAutoKeyList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.matchedReadAutoKey);							// else { readAutoKeyList = null; }
 	    writeAutoKeyList =	    filter(targetFCPathList,(FCPath fcPath) -> fcPath.needsWriteAutoKey);							// else { writeAutoKeyList = null; }
+	    missingAutoKeyList =    filter(targetFCPathList,(FCPath fcPath) -> fcPath.unmatchedReadAutoKey);							// else { missingAutoKeyList = null; }
 
 	    // Create Key Device
 	    if (keyFCPath.type == FCPath.FILE)
@@ -1006,6 +1008,7 @@ public class CLUI implements UI
 	    results += "11. " + prefix + " " + undecryptableList.unDecryptableFiles + " undecryptable (" + Validate.getHumanSize(undecryptableList.unDecryptableFilesSize,1,"Bytes") + ")\r\n";
 	    results += "12. " + prefix + " " + readAutoKeyList.matchedAutoKeyFiles + " key matched files (" + Validate.getHumanSize(readAutoKeyList.matchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	    results += "13. " + prefix + " " + writeAutoKeyList.writeAutoKeyFiles + " key write files (" + Validate.getHumanSize(writeAutoKeyList.writeAutoKeyFilesSize,1,"Bytes") + ")\r\n";
+	    results += "14. " + prefix + " " + missingAutoKeyList.unmatchedAutoKeyFiles + " key missing files (" + Validate.getHumanSize(missingAutoKeyList.unmatchedAutoKeyFilesSize,1,"Bytes") + ")\r\n";
 	    results += "\r\n";
 
 	    if (interactive) { results += "What list would you like to see ? "; }
@@ -1160,7 +1163,7 @@ class TestListReaderThread extends Thread
 	    if ( (clui.readAutoKeyList != null) && (clui.readAutoKeyList.size() > 0) ) { clui.log("\r\nMatched Key Files:\r\n\r\n", false, true, true, false, false);
 	    for (Iterator it = clui.readAutoKeyList.iterator(); it.hasNext();)
 	    {
-			FCPath fcPath = (FCPath) it.next();
+		FCPath fcPath = (FCPath) it.next();
 		Path autoKeyPath = null;
 		if (fcPath.isDecrypted) { autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit"); }
 		else			{ autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "")); }
@@ -1177,6 +1180,20 @@ class TestListReaderThread extends Thread
 		Path autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit");
 		clui.log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
 	    } clui.log("\r\n", false, true, true, false, false); } else { }
+	}
+	else if ( clui.testAnswer.trim().toLowerCase().equals("14") )
+	{
+	    clui.testListAborted = true;
+	    if ( (clui.missingAutoKeyList != null) && (clui.missingAutoKeyList.size() > 0) ) { clui.log("\r\nMissing Key Files:\r\n\r\n", false, true, true, false, false);
+	    
+	    for (FCPath fcPath : clui.missingAutoKeyList)
+	    {
+		Path autoKeyPath = null;
+		if (fcPath.isDecrypted) { autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "") + ".bit"); }
+		else			{ autoKeyPath = Paths.get(clui.keyFCPath.path.toAbsolutePath().toString(), fcPath.path.toAbsolutePath().toString().replace(":", "")); }
+		clui.log(autoKeyPath.toAbsolutePath().toString() + "\r\n", false, true, true, false, false);
+	    }
+	    clui.log("\r\n", false, true, true, false, false); } else { }
 	}
 	else if ( clui.testAnswer.trim().toLowerCase().length() == 0 )    { clui.testListAborted = true; System.exit(0); }
 	else if ( clui.testAnswer.toLowerCase().equals("\r\n"))	    { clui.testListAborted = true; System.exit(0); }

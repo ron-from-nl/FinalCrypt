@@ -1,4 +1,4 @@
-[Version] =		{6.3.6}
+[Version] =		{6.3.7}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,9 +26,10 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 6}
+[Update Notes] =	{Update 7}
 [Update Notes] =	{}
-[Update Notes] =	{Incorporate FinalCrypt's new website about page link}
+[Update Notes] =	{Added option print missing keys to the Command Line}
+[Update Notes] =	{Synced backup website links with check update links}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

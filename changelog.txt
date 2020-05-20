@@ -1,3 +1,8 @@
+Date: 2020-05-20 Version: 6.3.7
+
+Added option print missing keys to the Command Line
+Synced backup website links with check update links
+
 Date: 2020-03-21 Version: 6.3.6
 
 Incorporate FinalCrypt's new website about page link

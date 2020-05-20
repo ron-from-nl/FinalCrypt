@@ -38,7 +38,7 @@ public class Version
     private static final String PRODUCTNAME =				"FinalCrypt";
     private static final String COMMANDLINE =				"java -cp " + PRODUCTNAME.toLowerCase() + ".jar rdj.CLUI";
     private static       String fcInterface =				"";
-    private static final String AUTHOR =				"Ron de Jong";
+    private static final String AUTHOR =					"Ron de Jong";
     private static final String AUTHOREMAIL =				"ron@finalcrypt.org";
     private static final String EMAIL =					"info@finalcrypt.org";
     private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
