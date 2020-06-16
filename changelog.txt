@@ -1,3 +1,7 @@
+Date: 2020-06-16 Version: 6.3.8
+
+Added finalcrypt.com support and check update links
+
 Date: 2020-05-20 Version: 6.3.7
 
 Added option print missing keys to the Command Line

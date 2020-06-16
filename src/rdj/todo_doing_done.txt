@@ -20,9 +20,9 @@ Set version on file:					Version2
 Update file:						changelog
 Update file:						manpage
 Update file:						build.xml
-							    MacOS:   finalcrypt-icon.icns
-							    Windows: finalcrypt-icon.ico
-							    Linux:   finalcrypt-icon.png
+							    MacOS:   finalcrypt-icon.icns   FinalCrypt_mac.zip
+							    Windows: finalcrypt-icon.ico    FinalCrypt_win.zip
+							    Linux:   finalcrypt-icon.png    FinalCrypt.zip
  
 =================================== Done ====================================
 

@@ -81,6 +81,8 @@ public class Version
     private static final String[] WEBSITEURLSTRINGARRAY =		{
 									     "http://www.finalcrypt.org/"									// tested
 									    ,"https://www.finalcrypt.org/"									// tested
+									    ,"http://www.finalcrypt.com/"									// tested
+									    ,"https://www.finalcrypt.com/"									// tested
 									    ,"http://finalcrypt.000webhostapp.com/"								// tested
 									    ,"https://finalcrypt.000webhostapp.com/"								// tested
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
@@ -95,6 +97,8 @@ public class Version
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
 									     "https://www.finalcrypt.org/VERSION2"								// tested
 									    ,"http://www.finalcrypt.org/VERSION2"								// tested
+									    ,"https://www.finalcrypt.com/VERSION2"								// tested
+									    ,"http://www.finalcrypt.com/VERSION2"								// tested
 									    ,"https://finalcrypt.000webhostapp.com/VERSION2"							// tested
 									    ,"http://finalcrypt.000webhostapp.com/VERSION2"							// tested
 									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"		// tested

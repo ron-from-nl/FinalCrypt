@@ -76,4 +76,4 @@ Key Device Examples (Linux):
             java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
 
-FinalCrypt 6.3.7 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2020
+FinalCrypt 6.3.8 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2020
