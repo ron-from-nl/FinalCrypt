@@ -78,13 +78,25 @@ public class Version
     private static InputStream istream =				null;
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
-    private static final String[] WEBSITEURLSTRINGARRAY =		{
+    public static final String[] WEBSITEURLSTRINGARRAY =		{
 									     "http://www.finalcrypt.org/"									// tested
 									    ,"https://www.finalcrypt.org/"									// tested
 									    ,"http://www.finalcrypt.com/"									// tested
 									    ,"https://www.finalcrypt.com/"									// tested
-									    ,"http://finalcrypt.000webhostapp.com/"								// tested
-									    ,"https://finalcrypt.000webhostapp.com/"								// tested
+									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
+									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"						// tested
+									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/files/"						// tested
+									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"						// tested
+									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"					// tested
+									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"						// tested
+									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"			// tested
+									};
+
+    public static final String[] DOWNLOADSITEURLSTRINGARRAY =		{
+									     "http://www.finalcrypt.org/project-6.php"									// tested
+									    ,"https://www.finalcrypt.org/project-6.php"									// tested
+									    ,"http://www.finalcrypt.com/project-6.php"									// tested
+									    ,"https://www.finalcrypt.com/project-6.php"									// tested
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
 									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"						// tested
 									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/files/"						// tested
@@ -99,8 +111,6 @@ public class Version
 									    ,"http://www.finalcrypt.org/VERSION2"								// tested
 									    ,"https://www.finalcrypt.com/VERSION2"								// tested
 									    ,"http://www.finalcrypt.com/VERSION2"								// tested
-									    ,"https://finalcrypt.000webhostapp.com/VERSION2"							// tested
-									    ,"http://finalcrypt.000webhostapp.com/VERSION2"							// tested
 									    ,"https://sourceforge.net/p/finalcrypt/code/ci/master/tree/src/rdj/VERSION2?format=raw"		// tested
 									    ,"https://raw.githubusercontent.com/ron-from-nl/FinalCrypt/master/src/rdj/VERSION2"			// tested
 									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/scm/blobs/master/src/rdj/VERSION2?export=raw"	// tested
@@ -506,20 +516,20 @@ public class Version
         return returnString;
     }
 
-    synchronized public static void openWebSite(UI ui)
+    synchronized public static void openWebSite(UI ui, String[] SITEURLSTRINGARRAY)
     {
         String identifierExpected = PRODUCTNAME;
 	
 	Configuration configuration = new Configuration(ui);
-	loop: for(String WEBSITEURLSTRING:WEBSITEURLSTRINGARRAY)
+	loop: for(String SITEURLSTRING:SITEURLSTRINGARRAY)
 	{
 	    checkOnlineFailed = false;
-	    if (! WEBSITEURLSTRING.isEmpty())
+	    if (! SITEURLSTRING.isEmpty())
 	    {
 		remoteContent = "";
-		ui.log("Website: " + WEBSITEURLSTRING + " ", false, true, true, false, false);
+		ui.log("Website: " + SITEURLSTRING + " ", false, true, true, false, false);
 
-		if (WEBSITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, WEBSITEURLSTRING); } else { remoteContent = httpGetRequest(ui, WEBSITEURLSTRING); }
+		if (SITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, SITEURLSTRING); } else { remoteContent = httpGetRequest(ui, SITEURLSTRING); }
 				
 		if (! checkOnlineFailed)
 		{
@@ -531,10 +541,10 @@ public class Version
 			    Thread openWebSiteThread;
 			    openWebSiteThread = new Thread(() ->
 			    {
-				try {  Desktop.getDesktop().browse(new URI(WEBSITEURLSTRING)); }
+				try {  Desktop.getDesktop().browse(new URI(SITEURLSTRING)); }
 				catch (URISyntaxException ex)		{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
 				catch (IOException ex)			{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
-				catch (UnsupportedOperationException ex){ ui.log(ex.getMessage() + " " + WEBSITEURLSTRING + "\r\n", true, true, true, true, false); }
+				catch (UnsupportedOperationException ex){ ui.log(ex.getMessage() + " " + SITEURLSTRING + "\r\n", true, true, true, true, false); }
 			    });
 			    openWebSiteThread.setName("openWebSiteThread");
 			    openWebSiteThread.setDaemon(true);
@@ -547,7 +557,7 @@ public class Version
 		{
 		    ui.log("Opening Browser Failed!\r\n", false, true, true, true, false);
 		}
-	    } else { ui.log("Error: openWebSite Empty website url: " + WEBSITEURLSTRING + "\r\n", false, true, true, true, false); }
+	    } else { ui.log("Error: openWebSite Empty website url: " + SITEURLSTRING + "\r\n", false, true, true, true, false); }
 	}
 	ui.log("\r\n", false, true, true, true, false);
     }

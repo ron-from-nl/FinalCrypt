@@ -1890,7 +1890,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
-	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC); Version.openWebSite(this); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
     
     private void alertCurrentVersionIsDevelopement()
@@ -1918,7 +1918,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
-	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
     
     private void alertlatestVersionUnknown()

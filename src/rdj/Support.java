@@ -229,7 +229,7 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    Version.openWebSite(guifx);
+	    Version.openWebSite(guifx, Version.WEBSITEURLSTRINGARRAY);
 	    closeWindow();
 	});
 	shareThread.setName("shareThread");

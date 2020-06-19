@@ -862,7 +862,7 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("            <-k \"keydir\">                                                   The directory that holds your keys. Keep SECRET!\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            <-t / -b>                                                       Target items you want to encrypt. Individual (-t) or by batch (-b).\r\n", false, true, false, false, false);
+        log("            <-t / -b>                                                       Target items to encrypt. Individual (-t) by batch (-b).\r\n", false, true, false, false, false);
         log("            <[-t \"file/dir\"]>                                               Target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
         log("            <[-b \"batchfile\"]>                                              Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);

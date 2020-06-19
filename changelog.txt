@@ -1,6 +1,7 @@
-Date: 2020-06-16 Version: 6.3.8
+Date: 2020-06-20 Version: 6.3.8
 
-Added finalcrypt.com support and check update links
+Added new backup mirror to support & check updates
+Improved open "Download Software" pages on updates
 
 Date: 2020-05-20 Version: 6.3.7
 

@@ -28,7 +28,8 @@
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 8}
 [Update Notes] =	{}
-[Update Notes] =	{Added finalcrypt.com support and check update links}
+[Update Notes] =	{Added new backup mirror to support & check updates}
+[Update Notes] =	{Improved open "Download Software" pages on updates}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
