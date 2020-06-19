@@ -27,8 +27,8 @@ Mode:
 Options:
 
             [-h] [--help]                                                   Print help page.
-            [--password]          -p 'password'                             Optional password (non-interactive).
-            [--password-prompt]   -pp                                       Optional password (safe interactive prompt).
+            [--password]          -p 'password'                             Optional password parameter http://www.finalcrypt.org/faq.php#t22
+            [--password-prompt]   -pp                                       Optional password prompt http://www.finalcrypt.org/faq.php#t22
             [--key-chksum]        -k "key_file"                             Calculate key checksum.
             [--no-key-size]                                                 Allow key-size less than the default minimum of 140 bytes.
             [-d] [--debug]                                                  Enables debugging mode.
@@ -58,8 +58,8 @@ Parameters:
 
             <-k "keydir">                                                   The directory that holds your keys. Keep SECRET!
 
-            <-t / -b>                                                       Target items you want to encrypt. Individual (-t) or by batch (-b).
+            <-t / -b>                                                       Target items to encrypt. Individual (-t) by batch (-b).
             <[-t "file/dir"]>                                               Target items (files or directories) you want to encrypt (recursive).
             <[-b "batchfile"]>                                              Batchfile with targetfiles you want to encrypt (only files).
 
-FinalCrypt 6.3.8 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2020
+FinalCrypt 6.3.8 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2020
