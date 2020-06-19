@@ -825,8 +825,8 @@ public class CLUI implements UI
 	log("Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            [-h] [--help]                                                   Print help page.\r\n", false, true, false, false, false);
-        log("            [--password]          -p \'password\'                             Optional password (non-interactive).\r\n", false, true, false, false, false);
-        log("            [--password-prompt]   -pp                                       Optional password (safe interactive prompt).\r\n", false, true, false, false, false);
+        log("            [--password]          -p \'password\'                             Optional password parameter http://www.finalcrypt.org/faq.php#t22\r\n", false, true, false, false, false);
+        log("            [--password-prompt]   -pp                                       Optional password prompt http://www.finalcrypt.org/faq.php#t22\r\n", false, true, false, false, false);
 	log("            [--key-chksum]        -k \"key_file\"                             Calculate key checksum.\r\n", false, true, false, false, false);
         log("            [--no-key-size]                                                 Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes.\r\n", false, true, false, false, false);
         log("            [-d] [--debug]                                                  Enables debugging mode.\r\n", false, true, false, false, false);
