@@ -10,7 +10,17 @@
 <project name="FinalCrypt" default="default" basedir=".">
 <!--<property name="deploy.icon.native" value="finalcrypt-icon.ico"/>-->
 <!--<property name="deploy.icon.native" value="finalcrypt-icon.icns"/>-->
+
+<!--
+MacOS:   finalcrypt-icon.icns   FinalCrypt_mac.zip
+Windows: finalcrypt-icon.ico    FinalCrypt_win.zip
+Linux:   finalcrypt-icon.png    FinalCrypt.zip
+-->
+
+<!--<property name="deploy.icon.native" value="finalcrypt-icon.icns"/>-->
+<!--<property name="deploy.icon.native" value="finalcrypt-icon.ico"/>-->
 <property name="deploy.icon.native" value="finalcrypt-icon.png"/>
+
     <description>Builds, tests, and runs the project FinalCrypt.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
