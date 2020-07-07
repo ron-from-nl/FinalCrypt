@@ -107,8 +107,13 @@ public class Version
 									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"			// tested
 									};
 
+//  Emulate bad server response
+//  nc -l -p 8080
+//  "http://localhost:8080/VERSION2"
+    
     private static final String[] REMOTEVERSIONFILEURLSTRINGARRAY =	{
 									     "https://www.finalcrypt.org/VERSION2"								// tested
+//									    ,"http://localhost:8080/VERSION2"									// tested
 									    ,"http://www.finalcrypt.org/VERSION2"								// tested
 									    ,"https://www.finalcrypt.com/VERSION2"								// tested
 									    ,"http://www.finalcrypt.com/VERSION2"								// tested
@@ -412,7 +417,7 @@ public class Version
 	    
 	    if (remoteVERSION2FileString.startsWith("https://")) { remoteContent = httpsGetRequest(ui, remoteVERSION2FileString); } else { remoteContent = httpGetRequest(ui, remoteVERSION2FileString); }
 	    
-//	    ui.test("\r\nNEXT\r\n");
+//	    ui.test("Remote Content: " + remoteContent + "\r\n\r\n");
 	    if ((remoteContent != null) && (! checkOnlineFailed))
 	    {
 		String[] lines = remoteContent.split("\n"); // VERSION2 file was create on linux with unix newlines \n

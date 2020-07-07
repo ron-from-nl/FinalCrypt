@@ -1791,65 +1791,47 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkUpdate(boolean userActivated)
     {
-//        Platform.runLater(() ->
-//	{
-	    Thread pleaseShareThread = new Thread(new Runnable()
-	    {
-		@Override
-		@SuppressWarnings({"static-access"})
-		public void run()
-		{
-		    Platform.runLater(() ->
-		    {
-			version = new Version(ui);
-			version.checkCurrentlyInstalledVersion(GUIFX.this);
-			version.checkLatestOnlineVersion(GUIFX.this);
-			prefs.putLong("Update Checked", now); flushPrefs(prefs); 
-			String[] lines = version.getUpdateStatus().split("\r\n");
-			for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
+	version = new Version(this);
+	version.checkCurrentlyInstalledVersion(GUIFX.this);
+	version.checkLatestOnlineVersion(GUIFX.this);
+	prefs.putLong("Update Checked", now); flushPrefs(prefs); 
+	String[] lines = version.getUpdateStatus().split("\r\n");
+	for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
 
-			// Just for testing purposes (uncomment)
-			// alertCurrentVersionIsUp2Date();
-			// alertCurrentVersionCanBeUpdated();
-			// alertCurrentVersionIsDevelopement();
-			// alertlatestVersionUnknown();
-			// latestAlertMessage();
-			//// currentAlertMessage(); // Should never be tested and used in production
+	// Just for testing purposes (uncomment)
+	// alertCurrentVersionIsUp2Date();
+	// alertCurrentVersionCanBeUpdated();
+	// alertCurrentVersionIsDevelopement();
+	// alertlatestVersionUnknown();
+	// latestAlertMessage();
+	//// currentAlertMessage(); // Should never be tested and used in production
 
-			if (version.latestVersionIsKnown())
-			{
-			    if (( ! version.versionIsDifferent() ) && ( userActivated ))	 { alertCurrentVersionIsUp2Date(); }
-			    else { if (version.versionCanBeUpdated())				 { alertCurrentVersionCanBeUpdated(); }
-			    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
-			}
-			else									 { alertlatestVersionUnknown(); }
+	if (version.latestVersionIsKnown())
+	{
+	    if (( ! version.versionIsDifferent() ) && ( userActivated ))	 { alertCurrentVersionIsUp2Date(); }
+	    else { if (version.versionCanBeUpdated())				 { alertCurrentVersionCanBeUpdated(); }
+	    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
+	}
+	else									 { alertlatestVersionUnknown(); }
 
-	    //	    After all check update processing comes an optional alert	    
-			if (
-				( true ) // Leave to "true" to enable online alerts
-				&& ( version.getLatestAlertSubjectString() != null)
-				&& ( ! version.getLatestAlertSubjectString().isEmpty())
-				&& ( version.getLatestAlertString() != null)
-				&& ( ! version.getLatestAlertString().isEmpty())
-			    )   // Only display Alert in VERSION2 file
-			{ latestAlertMessage(); }
+//	    After all check update processing comes an optional alert	    
+	if (
+		( true ) // Leave to "true" to enable online alerts
+		&& ( version.getLatestAlertSubjectString() != null)
+		&& ( ! version.getLatestAlertSubjectString().isEmpty())
+		&& ( version.getLatestAlertString() != null)
+		&& ( ! version.getLatestAlertString().isEmpty())
+	    )   // Only display Alert in VERSION2 file
+	{ latestAlertMessage(); }
 
-			if (
-				( false ) // Leave to "false" Only set to true to test an alert
-				&& ( version.getCurrentAlertSubjectString() != null)
-				&& ( ! version.getCurrentAlertSubjectString().isEmpty())
-				&& ( version.getCurrentAlertString() != null)
-				&& ( ! version.getCurrentAlertString().isEmpty())
-			    )   // Only display Alert in VERSION2 file
-			{ currentAlertMessage(); }
-		    });
-					}
-	    });
-	    pleaseShareThread.setName("pleaseShareThread");
-	    pleaseShareThread.setDaemon(true);
-	    pleaseShareThread.start();
-
-//	});
+	if (
+		( false ) // Leave to "false" Only set to true to test an alert
+		&& ( version.getCurrentAlertSubjectString() != null)
+		&& ( ! version.getCurrentAlertSubjectString().isEmpty())
+		&& ( version.getCurrentAlertString() != null)
+		&& ( ! version.getCurrentAlertString().isEmpty())
+	    )   // Only display Alert in VERSION2 file
+	{ currentAlertMessage(); }
     }
     
     private void alertCurrentVersionIsUp2Date()
