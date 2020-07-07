@@ -15,8 +15,8 @@ User Action Wizzard
 Disable test messages					UI.test()
 Update Languages on FAQ					GUIFX line 1070
 Set version						nbproject/project.properties application.implementation.version=1.2.3
-Set version on file:					Version
-Set version on file:					Version2
+Set version on file:					VERSION
+Set version on file:					VERSION2
 Update file:						changelog
 Update file:						manpage
 Update file:						build.xml

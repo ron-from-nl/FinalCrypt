@@ -70,6 +70,7 @@ public class Version
     private static final String USER_NAME =				System.getProperty("user.name");
     private static final String USER_HOME =				System.getProperty("user.home");
     private static final String USER_DIR =				System.getProperty("user.dir");
+    private static final int	HTTP_CONNECT_TIMEOUT =			3000;
     
     private static String currentOverallVersionString =			"";
     private static String latestOverallVersionString =			"";
@@ -335,7 +336,7 @@ public class Version
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); return null; }
 	if (url == null) { checkOnlineFailed = true; ui.log("Error: httpGetRequest InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
 	HttpURLConnection httpConnection = null;
-	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
+	try { httpConnection = (HttpURLConnection) url.openConnection(); httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
 	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); return null; }
         httpConnection.setRequestProperty("User-Agent", userAgent);
         int responseCode = 0;
@@ -368,8 +369,8 @@ public class Version
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
 	if (url == null) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
-	HttpsURLConnection httpConnection = null;	
-	try { httpConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
+	HttpsURLConnection httpConnection = null;
+	try { httpConnection = (HttpsURLConnection) url.openConnection(); httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpsGetRequest IOException: url.openConnection()" + ex.getCause() + "\r\n", false, true, true, true, false); }
 	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpsGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\")" + ex.getCause() + "\r\n", false, true, true, true, false); }
         httpConnection.setRequestProperty("User-Agent", userAgent);
 	httpConnection.setRequestProperty("Referer", Version.WEBSITEURISTRING);
