@@ -3,6 +3,8 @@ Date: 2020-07-07 Version: 6.3.9
 Added 3 Sec HTTP Timeout to speedup HTTP(S) connect
 This also improves all other HTTP Connect Responses
 General, Support, Update, Download or Share Webpage
+This fixes FinalCrypt's unresponsiveness at startup
+when the webservers of the hosting are unresponsive
 
 Date: 2020-06-20 Version: 6.3.8
 
