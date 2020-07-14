@@ -112,10 +112,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Timer;
+import java.util.concurrent.*;
 import java.util.function.Predicate;
 import java.util.prefs.*;
 import java.util.stream.Collectors;
 import javafx.collections.*;
+import javafx.concurrent.*;
 import javax.management.InstanceNotFoundException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
@@ -1328,10 +1330,10 @@ public class GUIFX extends Application implements UI, Initializable
 //		    catch (IOException ex) { log("Hmmm" + ex.getMessage(), true, true, true, false, false); }
 		
 
-		    // // First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
+//		    First time if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
 		    prevsval1 = prefs.get("Initialized", "Unknown"); if (! prevsval1.equals("Yes")) {prefs.put("Initialized", "Yes"); flushPrefs(prefs); } else {  }
 
-		    // keyButton.setDisable(false);
+//		    keyButton.setDisable(false);
 //		    checkUpdateButton.setDisable(false);
 //		    supportButton.setDisable(false);
 
@@ -1381,9 +1383,9 @@ public class GUIFX extends Application implements UI, Initializable
 		    });
 		    sysmonFadeTransition.play();
 
-    //		Last Update Checked
+//		    Last Update Checked
 		    long updateChecked = 0; // Epoch date
-    //		long updateCheckPeriod = 1000L*20L; // Just to test auto update function
+//		    long updateCheckPeriod = 1000L*20L; // Just to test auto update function
 		    long updateCheckPeriod = 1000L*60L*60L*24L; // Update period 1 Day
 		    now = Calendar.getInstance().getTimeInMillis(); // Epoch date
 		    prevsval1 = prefs.get("Update Checked", "Unknown"); // if no val then "Unknown" prefs location registry: HKEY_CURRENT_USER\Software\JavaSoft\Prefs
@@ -1791,47 +1793,74 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void checkUpdate(boolean userActivated)
     {
-	version = new Version(this);
-	version.checkCurrentlyInstalledVersion(GUIFX.this);
-	version.checkLatestOnlineVersion(GUIFX.this);
-	prefs.putLong("Update Checked", now); flushPrefs(prefs); 
-	String[] lines = version.getUpdateStatus().split("\r\n");
-	for (String line: lines) { log(line + "\r\n", true, true, true, false, false); }
-
-	// Just for testing purposes (uncomment)
-	// alertCurrentVersionIsUp2Date();
-	// alertCurrentVersionCanBeUpdated();
-	// alertCurrentVersionIsDevelopement();
-	// alertlatestVersionUnknown();
-	// latestAlertMessage();
-	//// currentAlertMessage(); // Should never be tested and used in production
-
-	if (version.latestVersionIsKnown())
+	Platform.runLater(() ->
 	{
-	    if (( ! version.versionIsDifferent() ) && ( userActivated ))	 { alertCurrentVersionIsUp2Date(); }
-	    else { if (version.versionCanBeUpdated())				 { alertCurrentVersionCanBeUpdated(); }
-	    else if ( (version.versionIsDevelopment() ) && ( userActivated ) )   { alertCurrentVersionIsDevelopement(); } }
-	}
-	else									 { alertlatestVersionUnknown(); }
+	    log("Checking update...\r\n\r\n", true, true, false, false, false);
+	});
 
-//	    After all check update processing comes an optional alert	    
-	if (
-		( true ) // Leave to "true" to enable online alerts
-		&& ( version.getLatestAlertSubjectString() != null)
-		&& ( ! version.getLatestAlertSubjectString().isEmpty())
-		&& ( version.getLatestAlertString() != null)
-		&& ( ! version.getLatestAlertString().isEmpty())
-	    )   // Only display Alert in VERSION2 file
-	{ latestAlertMessage(); }
+	try
+	{               
+	    Task<Integer> task = new Task()
+	    {
+		@Override protected Integer call() throws Exception
+		{
+		    version = new Version(guifx);
+		    version.checkCurrentlyInstalledVersion(GUIFX.this);
+		    version.checkLatestOnlineVersion(GUIFX.this);
+		    prefs.putLong("Update Checked", now); flushPrefs(prefs); 
+		    String[] lines = version.getUpdateStatus().split("\r\n");
+		    log(lines[0] + "\r\n", true, false, false, false, false);
+		    for (String line: lines) { log(line + "\r\n", false, true, true, false, false); }
 
-	if (
-		( false ) // Leave to "false" Only set to true to test an alert
-		&& ( version.getCurrentAlertSubjectString() != null)
-		&& ( ! version.getCurrentAlertSubjectString().isEmpty())
-		&& ( version.getCurrentAlertString() != null)
-		&& ( ! version.getCurrentAlertString().isEmpty())
-	    )   // Only display Alert in VERSION2 file
-	{ currentAlertMessage(); }
+		    return 1;
+		}
+	    };
+
+	    task.setOnRunning((succeesesEvent) ->   { /*log("Running...\r\n\r\n", true, true, false, false, false);*/ });
+	    task.setOnSucceeded((succeededEvent) -> 
+	    {
+		if (version.latestVersionIsKnown())
+		{
+		    if (( ! version.versionIsDifferent() ) && ( userActivated ))	    { alertCurrentVersionIsUp2Date(); }
+		    else
+		    {
+			if	(version.versionCanBeUpdated())				    { alertCurrentVersionCanBeUpdated(); }
+			else if ( (version.versionIsDevelopment() ) && ( userActivated ) )  { alertCurrentVersionIsDevelopement(); }
+		    }
+		}
+		else									 { alertlatestVersionUnknown(); }
+
+//	    	    After all check update processing comes an optional alert	    
+		if (
+			( true ) // Leave to "true" to enable online alerts
+			&& ( version.getLatestAlertSubjectString() != null)
+			&& ( ! version.getLatestAlertSubjectString().isEmpty())
+			&& ( version.getLatestAlertString() != null)
+			&& ( ! version.getLatestAlertString().isEmpty())
+		    )   // Only display Alert in VERSION2 file
+		{ latestAlertMessage(); }
+
+		if (
+			( false ) // Leave to "false" Only set to true to test an alert
+			&& ( version.getCurrentAlertSubjectString() != null)
+			&& ( ! version.getCurrentAlertSubjectString().isEmpty())
+			&& ( version.getCurrentAlertString() != null)
+			&& ( ! version.getCurrentAlertString().isEmpty())
+		    )   // Only display Alert in VERSION2 file
+		{ currentAlertMessage(); }
+
+//		Just for testing purposes (uncomment)
+//		alertCurrentVersionIsUp2Date();
+//		alertCurrentVersionCanBeUpdated();
+//		alertCurrentVersionIsDevelopement();
+//		alertlatestVersionUnknown();
+//		latestAlertMessage();
+//		currentAlertMessage(); // Should never be tested and used in production
+	    });
+
+	    ExecutorService executorService = Executors.newFixedThreadPool(1); executorService.execute(task); executorService.shutdown();
+        } catch (NumberFormatException e) { log("Error: checkUpdate: NumberFormatException\r\n", true, true, true, true, false); }
+
     }
     
     private void alertCurrentVersionIsUp2Date()
@@ -1877,30 +1906,33 @@ public class GUIFX extends Application implements UI, Initializable
     
     private void alertCurrentVersionIsDevelopement()
     {
-	new Sound().play(this, Audio.SND_ALERT,Audio.AUDIO_CODEC);
+//	Platform.runLater(() ->
+//	{
+	    new Sound().play(this, Audio.SND_ALERT,Audio.AUDIO_CODEC);
 
-	String alertString = "";
-	Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
+	    String alertString = "";
+	    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, alertString, ButtonType.YES, ButtonType.NO);
 
-	DialogPane dialogPane = alert.getDialogPane();
-	dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
-	dialogPane.getStyleClass().add("myDialog");
+	    DialogPane dialogPane = alert.getDialogPane();
+	    dialogPane.getStylesheets().add(getClass().getResource("myInfoAlerts.css").toExternalForm());
+	    dialogPane.getStyleClass().add("myDialog");
 
-	alert.setTitle(confirmation);
-			       
-	alert.setHeaderText(you_are_using_a_development_version);
-	alert.setResizable(true);
-	
-	String	content = "";
-	content += this_is_a_development_version + ":    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
-	content += version.getCurrentReleaseString() + "\r\n";
-	content += "=====================================================\r\n\r\n";
-	content += would_you_like_to_download + "        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
-	alert.setContentText(content);
-	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-	alert.showAndWait();
+	    alert.setTitle(confirmation);
 
-	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+	    alert.setHeaderText(you_are_using_a_development_version);
+	    alert.setResizable(true);
+
+	    String	content = "";
+	    content += this_is_a_development_version + ":    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
+	    content += version.getCurrentReleaseString() + "\r\n";
+	    content += "=====================================================\r\n\r\n";
+	    content += would_you_like_to_download + "        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
+	    alert.setContentText(content);
+	    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	    alert.showAndWait();
+
+	    if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+//	});
     }
     
     private void alertlatestVersionUnknown()

@@ -1,4 +1,4 @@
-[Version] =		{6.3.9}
+[Version] =		{6.3.10}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -26,13 +26,10 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 9}
+[Update Notes] =	{Update 10}
 [Update Notes] =	{}
-[Update Notes] =	{Added 3 Sec HTTP Timeout to speedup HTTP(S) connect}
-[Update Notes] =	{This also improves all other HTTP Connect Responses}
-[Update Notes] =	{General, Support, Update, Download or Share Webpage}
-[Update Notes] =	{This fixes FinalCrypt's unresponsiveness at startup}
-[Update Notes] =	{when the webservers of the hosting are unresponsive}
+[Update Notes] =	{Improved displaying "Check Update" (startup) status}
+[Update Notes] =	{This improves user expectation on all check updates}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
