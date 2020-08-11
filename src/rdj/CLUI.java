@@ -1085,7 +1085,7 @@ class TestListReaderThread extends Thread
 	if (clui.testAnswer.isEmpty())
 	{	    
 	    clui.log(clui.getScanResults(true), false, true, true, false, false); // Leave Error file to: true
-	    try(Scanner in = new Scanner(System.in)) { clui.testAnswer = in.nextLine().trim(); }
+	    try(Scanner in = new Scanner(System.in)) { if ( in.hasNext() ) { clui.testAnswer = in.nextLine().trim(); }}
 	}
 	
 	clui.log("\r\n", false, false, true, false, false); // Simulate read input enter on logfile as seen on screen
