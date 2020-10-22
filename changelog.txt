@@ -1,3 +1,10 @@
+Date: 2020-10-22 Version: 6.3.11
+
+Some minor Command-Line User-Interface improvements
+Fixed errors on non interactive --test option usage
+Fixed Command-Line User-Interface  print formatting
+Added Version Upgrade and Update dates to this info
+
 Date: 2020-07-14 Version: 6.3.10
 
 Improved displaying "Check Update" (startup) status

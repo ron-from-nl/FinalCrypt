@@ -41,7 +41,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
-import java.util.logging.*;
 
 public class Configuration
 {    
@@ -57,6 +56,7 @@ public class Configuration
     private final Calendar currentTimeCalendar;
     private final String timeStampString;
     private final String timeString;
+    private final String PRODUCT = "GravitySimulator3D";
 
     public Configuration(UI ui)
     {

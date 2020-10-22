@@ -1,4 +1,4 @@
-[Version] =		{6.3.10}
+[Version] =		{6.3.11}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -6,14 +6,14 @@
 [Alert Subject] =	{}
 [Alert Message] =	{}
 [] = {} ================================================================
-[Version Notes] =	{Version 6}
+[Version Notes] =	{Version 6 (2019-12-08)}
 [Version Notes] =	{}
 [Version Notes] =	{International version with all major Languages}
 [Version Notes] =	{Improved User Interface & File Manager behavior}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 3}
+[Upgrade Notes] =	{Upgrade 3 (2019-12-25)}
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Added "Click to print Command(-line)" button to GUI}
 [Upgrade Notes] =	{Command-line commands can be used to fully automate}
@@ -26,10 +26,12 @@
 [Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
 [Upgrade Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 10}
+[Update Notes] =	{Update 11 (2020-10-22)}
 [Update Notes] =	{}
-[Update Notes] =	{Improved displaying "Check Update" (startup) status}
-[Update Notes] =	{This improves user expectation on all check updates}
+[Update Notes] =	{Some minor Command-Line User-Interface improvements}
+[Update Notes] =	{Fixed errors on non interactive --test option usage}
+[Update Notes] =	{Fixed Command-Line User-Interface  print formatting}
+[Update Notes] =	{Added Version Upgrade and Update dates to this info}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
