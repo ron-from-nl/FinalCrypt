@@ -57,12 +57,16 @@ public class Support extends Application implements Initializable
     @FXML private ImageView twitterImageView;
     @FXML private ImageView linkedInImageView;
     @FXML private ImageView pinterestImageView;
-    @FXML private ImageView finalcryptImageView;
+    @FXML private ImageView homeImageView;
+    @FXML private ImageView supportImageView;
+    @FXML private ImageView emailImageView;
+    @FXML private ImageView videoImageView;
 
 //  private ImageView instagramImageView;
     
-    private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
+    private Preferences prefs;
     private ResourceBundle bundle;
+    private Version version;
 
 //    public Support(boolean exitAppOnClose)
 //    {
@@ -131,11 +135,28 @@ public class Support extends Application implements Initializable
 	twitterImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/twitter.png")));
 	linkedInImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/linkedin.png")));
 	pinterestImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/pinterest.png")));
-	finalcryptImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt.png")));
-    }    
+	homeImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt.png")));
+	supportImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/support.png")));
+	emailImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/email.png")));
+	videoImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/video.png")));
+    }
 
-    public void setGUI(GUIFX guifx) { this.guifx = guifx; }
-        
+    public void setGUI(GUIFX ui)
+    {
+	guifx = ui;
+	version = new Version(guifx);
+	version.checkLocalVersion(guifx);
+	prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
+    }
+
+    public void setSupportState()
+    {
+	String val = prefs.get("Shared", "Unknown");
+	if	(val.equals("Unknown"))	    { setSupportButtonsDisabledState(true); }
+	else if (val.equals("No"))	    { setSupportButtonsDisabledState(true); }
+	else if (val.equals("Yes"))	    { setSupportButtonsDisabledState(false); }
+	else				    { setSupportButtonsDisabledState(true); }
+    }
     private void closeWindow()
     {
 	Platform.runLater(() ->
@@ -150,6 +171,12 @@ public class Support extends Application implements Initializable
         launch(args);
     }
 
+    private void flushPrefs(Preferences prefsParam)
+    {
+//	guifx.test("flushPrefs: " + prefsParam.name() + "\r\n");
+	try { prefsParam.flush(); } catch (BackingStoreException ex) { guifx.log("Error: flushPrefs(..) " + ex.getMessage() + "\r\n", true, true, true, true ,false); }
+    }
+    
     @FXML private void facebookImageViewOnMouseClicked(MouseEvent event)
     {
 	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
@@ -158,7 +185,8 @@ public class Support extends Application implements Initializable
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String url = "https://www.facebook.com/share.php?u=http://www.finalcrypt.org/";
-	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    setSupportButtonsDisabledState(false);
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
@@ -176,7 +204,8 @@ public class Support extends Application implements Initializable
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String url = "https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/";
-	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    setSupportButtonsDisabledState(false);
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
@@ -194,7 +223,8 @@ public class Support extends Application implements Initializable
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String url = "https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/";
-	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    setSupportButtonsDisabledState(false);
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
@@ -205,6 +235,7 @@ public class Support extends Application implements Initializable
 	shareThread.start();
     }
 
+    
     @FXML private void pinterestImageViewOnMouseClicked(MouseEvent event)
     {
 	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
@@ -212,7 +243,8 @@ public class Support extends Application implements Initializable
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String url = "http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption";
-	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); }
+	    setSupportButtonsDisabledState(false);
+	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (IOException ex)			{ guifx.log("Error: IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	    catch (UnsupportedOperationException ex)	{ guifx.log(ex.getMessage() + " " + url + "\r\n", true, true, true, true, false); }
@@ -223,17 +255,99 @@ public class Support extends Application implements Initializable
 	shareThread.start();
     }
 
-    @FXML private void finalcryptImageViewOnMouseClicked(MouseEvent event)
+//  ============================================================================
+    
+    public boolean getSupportButtonsDisabledState()
+    {
+	boolean bool = homeImageView.isDisabled();
+//	guifx.test("getSupportButtonsDisabledState(" + Boolean.toString(bool)+ ")" + "\r\n");
+	return bool;
+    }
+    public void setSupportButtonsDisabledState(boolean bool)
+    {
+//		false (enable support)
+	if ( (! bool) && (getSupportButtonsDisabledState()))
+	{
+	    Thread getSupportThread; getSupportThread = new Thread(() ->
+	    {
+//		guifx.test("setSupportButtonsDisabledState(" + Boolean.toString(bool)+ ")" + "\r\n");
+		homeImageView.setDisable(bool); homeImageView.setOpacity(1);
+		videoImageView.setDisable(bool); videoImageView.setOpacity(1);
+		supportImageView.setDisable(bool); supportImageView.setOpacity(1);
+		emailImageView.setDisable(bool); emailImageView.setOpacity(1);
+	    });
+	    getSupportThread.setName("getSupportThread");
+	    getSupportThread.setDaemon(true);
+	    getSupportThread.start();
+	}
+//		   true (disable support)
+	else if ( (bool) && (! getSupportButtonsDisabledState()))
+	{
+	    Thread setSupportThread; setSupportThread = new Thread(() ->
+	    {
+//		guifx.test("setSupportButtonsDisabledState(" + Boolean.toString(bool)+ ")" + "\r\n");
+		homeImageView.setDisable(bool); homeImageView.setOpacity(0.2);
+		videoImageView.setDisable(bool); videoImageView.setOpacity(0.2);
+		supportImageView.setDisable(bool); supportImageView.setOpacity(0.2);
+		emailImageView.setDisable(bool); emailImageView.setOpacity(0.2);
+	    });
+	    setSupportThread.setName("setSupportThread");
+	    setSupportThread.setDaemon(true);
+	    setSupportThread.start();
+	}
+    }    
+    
+    @FXML private void homeImageViewOnMouseClicked(MouseEvent event)
     {
 	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
-	Thread shareThread; shareThread = new Thread(() ->
-	{
-	    Version.openWebSite(guifx, Version.WEBSITEURLSTRINGARRAY);
-	    closeWindow();
-	});
-	shareThread.setName("shareThread");
-	shareThread.setDaemon(true);
-	shareThread.start();
-    }        
+	Thread homeOpenThread; homeOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.HOMEPAGEURLSTRINGARRAY,"GET"); closeWindow(); });
+	homeOpenThread.setName("homeOpenThread");
+	homeOpenThread.setDaemon(true);
+	homeOpenThread.start();
+    }
+
+    @FXML private void videoImageViewOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	Thread videoOpenThread; videoOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.VIDEOPAGEURLSTRINGARRAY,"HEAD"); closeWindow(); });
+	videoOpenThread.setName("videoOpenThread");
+	videoOpenThread.setDaemon(true);
+	videoOpenThread.start();
+    }
+
+    @FXML private void supportImageViewOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	Thread supportOpenThread; supportOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.SUPPORTPAGEURLSTRINGARRAY,"GET"); closeWindow(); });
+	supportOpenThread.setName("supportOpenThread");
+	supportOpenThread.setDaemon(true);
+	supportOpenThread.start();
+    }
+
+    @FXML private void emailImageViewOnMouseClicked(MouseEvent event)
+    {
+	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	
+	String to = Version.SUPPORTEMAIL;
+	String cc = "";
+	String subject = Version.encode2URL(guifx, Version.getProductName() + " User Support");
+	String bodyText = "";
+	bodyText += "Hi " + Version.AUTHOR_FIRSTNAME + ",\r\n\r\nWrite your message here...\r\n\r\n--\r\nRegards,\r\n\r\nYour name please\r\n\r\n";
+	bodyText += "================================================================================\r\n";
+	bodyText += "============================= " + Version.PRODUCTNAME + " Support Info ==========================\r\n";
+	bodyText += "================================================================================\r\n\r\n";
+	bodyText += Version.getLogHeader(this.getClass().getSimpleName(), version, new Configuration(guifx));
+	bodyText += "================================================================================\r\n";
+
+	String body = Version.encode2URL(guifx, bodyText);
+//									     openEmail(UI ui, String mailto,	String cc,	String subject, String body)
+	Thread emailOpenThread; emailOpenThread = new Thread(() -> { Version.openEmail(guifx, to,		"",		subject,	body); closeWindow(); });
+	emailOpenThread.setName("emailOpenThread");
+	emailOpenThread.setDaemon(true);
+	emailOpenThread.start();
+    }
 }

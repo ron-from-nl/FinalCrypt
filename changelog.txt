@@ -1,3 +1,8 @@
+Date: 2020-11-02 Version: 6.4.2
+
+Improved support added to Graphical User Interface
+Improved default browser-page opening launch speed
+
 Date: 2020-10-22 Version: 6.3.11
 
 Some minor Command-Line User-Interface improvements
@@ -148,7 +153,7 @@ Date: 2019-12-02 Version: 5.6.8
 Major performance improvement on file encryption
 Much faster user interface responses and display
 Performance increase 700% encrypting small files
-Non critical I/O cache enabled on logging system  
+Non critical I/O cache enabled on logging system
 
 Date: 2019-11-27 Version: 5.6.7
 
@@ -337,7 +342,7 @@ Major Upgrade Java8-u212 security & stability updates
 Please UN-Install FinalCrypt before installing v4.8.0
 The FinalCrypt Windows Portable upgraded to Java8-u201
 Right click FinalCrypt WinStartMenu remove FinalCrypt
-Nearly doubled the "Create Key" Write Throughput Perf 
+Nearly doubled the "Create Key" Write Throughput Perf
 Bugfix refreshing directories in both file managers
 Improved auto resize Info & Dialog Alert Windows
 

@@ -510,7 +510,6 @@ public class GUIFX extends Application implements UI, Initializable
     private Stage supportStage;
     private CreateOTPKey createOTPKey;
     private Support support;
-    private final Preferences prefs = Preferences.userRoot().node(Version.getProductName());
     private long now;
     private boolean isCalculatingCheckSum;
     private long lastRawModeClicked;
@@ -621,6 +620,7 @@ public class GUIFX extends Application implements UI, Initializable
 //    private ArrayList<String> languageNamesList;    
     private String pauseDescription;
     private String stopDescription;
+    private Preferences prefs;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -791,6 +791,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
 	
+	version = new Version(this);
+	version.checkLocalVersion(this);
+	prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
+	
 	if (writeLanguage)	{  prefs.put("Locale_Language", locale.getLanguage()); prefs.put("Locale_Country", locale.getCountry()); flushPrefs(prefs); }
 	if (redrawFileChoosers)	{  updateFileChoosers(true, firsttime, false, true, firsttime, false); }
 	if (checkFileChoosers)	{ updateFileChoosers(false, firsttime, true, false, firsttime, true); }	
@@ -798,6 +802,7 @@ public class GUIFX extends Application implements UI, Initializable
 
     private void flushPrefs(Preferences prefsParam)
     {
+//	test("flushPrefs: " + prefsParam.name() + "\r\n");
 	try { prefsParam.flush(); } catch (BackingStoreException ex) { log("Error: flushPrefs(..) " + ex.getMessage() + "\r\n", true, true, true, true ,false); }
     }
     
@@ -826,6 +831,10 @@ public class GUIFX extends Application implements UI, Initializable
         
 	this.stage.show();
 
+	version = new Version(this);
+	version.checkLocalVersion(this);
+	prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
+
 	this.stage.setOnCloseRequest((WindowEvent e) ->
 	{
 	    Platform.runLater(() ->
@@ -834,7 +843,8 @@ public class GUIFX extends Application implements UI, Initializable
 
 //		Shared
 		String val = prefs.get("Shared", "Unknown");
-		if (val.equals("Unknown"))
+		
+		if	(val.equals("Unknown"))
 		{
 		    prefs.put("Shared", "No");
 		    flushPrefs(prefs);
@@ -884,9 +894,9 @@ public class GUIFX extends Application implements UI, Initializable
 	Platform.runLater(() ->
 	{
 	    version = new Version(ui);
-	    version.checkCurrentlyInstalledVersion(ui);
-	    this.stage.setTitle(Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
-	    fadeInMessage = version.getCurrentlyInstalledOverallVersionString();
+	    version.checkLocalVersion(ui);
+	    this.stage.setTitle(Version.getProductName() + " " + version.getLocalOverallVersionString());
+	    fadeInMessage = version.getLocalOverallVersionString();
 	});
     }
 
@@ -1088,6 +1098,11 @@ public class GUIFX extends Application implements UI, Initializable
 	// Only use this line to print all installed languages when new languages have been added
 //	for (String name: getInstalledLanguageNamesList((LanguageList<Language>) languagesList, false)) { test(name + ", "); } test("\r\nNumber of installed Languages: " + getInstalledLanguageNamesList((LanguageList<Language>)languagesList, true).size() + "\r\n");
 
+	version = new Version(this);
+	version.checkLocalVersion(this);
+	
+	prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
+	
 	prevsval1 = prefs.get("Locale_Language", "Unknown");
 	prevsval2 = prefs.get("Locale_Country", "Unknown");
 	
@@ -1119,8 +1134,8 @@ public class GUIFX extends Application implements UI, Initializable
 	support = new Support();
 	try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	support.controller.switchLanguage(selectedLocale);
-	support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
-
+	support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller	
+	
 	// First time selection Key Directory
 	Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
 	//		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
@@ -1130,9 +1145,9 @@ public class GUIFX extends Application implements UI, Initializable
 	targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
         configuration = new Configuration(ui);
         version = new Version(ui);
-        version.checkCurrentlyInstalledVersion(this);
+        version.checkLocalVersion(this);
 
-	statusLabel.setText(welcome_to + " " + Version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString());
+	statusLabel.setText(welcome_to + " " + Version.getProductName() + " " + version.getLocalOverallVersionString());
 
 //	Set the corner arrows
 
@@ -1271,7 +1286,7 @@ public class GUIFX extends Application implements UI, Initializable
 	Platform.runLater(() ->
 	{	    
 // GDK Error
-	    Version ver = new Version(ui); ver.checkCurrentlyInstalledVersion(ui);
+//	    Version ver = new Version(ui); ver.checkLocalVersion(ui);
 	    
 	    fadeInMessage = Version.getProductName();
 	    textLabelTimeline.play();
@@ -1805,8 +1820,8 @@ public class GUIFX extends Application implements UI, Initializable
 		@Override protected Integer call() throws Exception
 		{
 		    version = new Version(guifx);
-		    version.checkCurrentlyInstalledVersion(GUIFX.this);
-		    version.checkLatestOnlineVersion(GUIFX.this);
+		    version.checkLocalVersion(GUIFX.this);
+		    version.checkLatestVersion(GUIFX.this);
 		    prefs.putLong("Update Checked", now); flushPrefs(prefs); 
 		    String[] lines = version.getUpdateStatus().split("\r\n");
 		    log(lines[0] + "\r\n", true, false, false, false, false);
@@ -1842,10 +1857,10 @@ public class GUIFX extends Application implements UI, Initializable
 
 		if (
 			( false ) // Leave to "false" Only set to true to test an alert
-			&& ( version.getCurrentAlertSubjectString() != null)
-			&& ( ! version.getCurrentAlertSubjectString().isEmpty())
-			&& ( version.getCurrentAlertString() != null)
-			&& ( ! version.getCurrentAlertString().isEmpty())
+			&& ( version.getLocalAlertSubjectString() != null)
+			&& ( ! version.getLocalAlertSubjectString().isEmpty())
+			&& ( version.getLocalAlertString() != null)
+			&& ( ! version.getLocalAlertString().isEmpty())
 		    )   // Only display Alert in VERSION2 file
 		{ currentAlertMessage(); }
 
@@ -1875,8 +1890,8 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.setTitle(information);
 	alert.setHeaderText(versionUp2DateHeader);
 	alert.setResizable(true);
-	String	content = versionUp2DateContent + ": (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
-		content += version.getCurrentReleaseString();
+	String	content = versionUp2DateContent + ": (" + Version.getProductName() + " v" +version.getLocalOverallVersionString() + ")\r\n\r\n";
+		content += version.getLocalReleaseString();
 	alert.setContentText(content);
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
@@ -1886,7 +1901,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void alertCurrentVersionCanBeUpdated()
     {
 	new Sound().play(this, Audio.SND_ALERT,Audio.AUDIO_CODEC);
-							       String alertString = Version.getProductName() + " v" + version.getCurrentlyInstalledOverallVersionString() + " " + canbeupdatedtoversion + ": " + version.getLatestOnlineOverallVersionString() + "\r\n\r\n";
+							       String alertString = Version.getProductName() + " v" + version.getLocalOverallVersionString() + " " + canbeupdatedtoversion + ": " + version.getLatestOnlineOverallVersionString() + "\r\n\r\n";
 	if (! version.getLatestReleaseString().isEmpty())	    { alertString += version.getLatestReleaseString() + "\r\n"; }
 								      alertString += wouldYouLikeToDownload + " (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 
@@ -1901,7 +1916,7 @@ public class GUIFX extends Application implements UI, Initializable
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
-	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+	if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_OPEN,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADPAGEURLSTRINGARRAY, "GET"); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
     }
     
     private void alertCurrentVersionIsDevelopement()
@@ -1923,15 +1938,15 @@ public class GUIFX extends Application implements UI, Initializable
 	    alert.setResizable(true);
 
 	    String	content = "";
-	    content += this_is_a_development_version + ":    (" + Version.getProductName() + " v" +version.getCurrentlyInstalledOverallVersionString() + ")\r\n\r\n";
-	    content += version.getCurrentReleaseString() + "\r\n";
+	    content += this_is_a_development_version + ":    (" + Version.getProductName() + " v" +version.getLocalOverallVersionString() + ")\r\n\r\n";
+	    content += version.getLocalReleaseString() + "\r\n";
 	    content += "=====================================================\r\n\r\n";
 	    content += would_you_like_to_download + "        (" + Version.getProductName() + " v" + version.getLatestOnlineOverallVersionString() + ") ?\r\n";
 	    alert.setContentText(content);
 	    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	    alert.showAndWait();
 
-	    if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADSITEURLSTRINGARRAY); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
+	    if (alert.getResult() == ButtonType.YES) { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); Version.openWebSite(this, Version.DOWNLOADPAGEURLSTRINGARRAY, "GET"); } else { new Sound().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); }
 //	});
     }
     
@@ -1983,9 +1998,9 @@ public class GUIFX extends Application implements UI, Initializable
 	dialogPane.getStyleClass().add("myDialog");
 
 	alert.setTitle(information);
-	alert.setHeaderText(version.getCurrentAlertSubjectString());
+	alert.setHeaderText(version.getLocalAlertSubjectString());
 	alert.setResizable(true);
-	alert.setContentText(version.getCurrentAlertString());
+	alert.setContentText(version.getLocalAlertString());
 	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 	alert.showAndWait();
 
@@ -3535,6 +3550,7 @@ public class GUIFX extends Application implements UI, Initializable
 			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
 			supportStage.show();
 			support.controller.setExitAppOnClose(exitAppOnClose);
+			support.controller.setSupportState();
 		    });
 		}
 	    });

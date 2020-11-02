@@ -27,21 +27,26 @@ import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.*;
 import java.util.Calendar;
+import java.util.logging.*;
 import javax.net.ssl.*;
 
 public class Version
 {
     private static boolean checkOnlineFailed;
+    private static URI mailtoURI;
     private UI ui;
     private static final String COMPANYNAME =				"Private Person";
-    private static final String PRODUCTNAME =				"FinalCrypt";
+    public  static final String PRODUCTNAME =				"FinalCrypt";
     private static final String COMMANDLINE =				"java -cp " + PRODUCTNAME.toLowerCase() + ".jar rdj.CLUI";
     private static       String fcInterface =				"";
-    private static final String AUTHOR =				"Ron de Jong";
-    private static final String AUTHOREMAIL =				"ron@finalcrypt.org";
-    private static final String EMAIL =					"info@finalcrypt.org";
-    private static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
-    private static final String LICENSE_DESCRIPTION =			"License 2017-" + Calendar.getInstance().get(Calendar.YEAR);
+    public  static final String AUTHOR_FIRSTNAME =			"Ron";
+    public  static final String AUTHOR_LASTNAME =			"de Jong";
+    public  static final String AUTHOR =				AUTHOR_FIRSTNAME + " " + AUTHOR_LASTNAME;
+    public  static final String AUTHOREMAIL =				"ron@finalcrypt.org";
+    public  static final String EMAIL =					"info@finalcrypt.org";
+    public  static final String SUPPORTEMAIL =				"support@finalcrypt.org";
+    public  static final String LICENSE =				"Creative Commons License: (CC BY-NC-ND 4.0)";
+    public  static final String LICENSE_DESCRIPTION =			"License 2017-" + Calendar.getInstance().get(Calendar.YEAR);
     
     private static final String OS_NAME =				System.getProperty("os.name");
     private static final String OS_VERSION =				System.getProperty("os.version");
@@ -71,14 +76,15 @@ public class Version
     private static final String USER_DIR =				System.getProperty("user.dir");
     private static final int	HTTP_CONNECT_TIMEOUT =			3000;
     
-    private static String currentOverallVersionString =			"";
+    private static String localOverallVersionString =			"";
+    private static String localOverallVersionPrefString =		"";
     private static String latestOverallVersionString =			"";
-    private static int currentVersionTotal =				0;
+    private static int localVersionTotal =				0;
     private static int latestVersionTotal =				0;
     private static InputStream istream =				null;
     private static final String LOCALVERSIONFILEURLSTRING =		"VERSION2";
     private static       String localContent =				"";
-    public static final String[] WEBSITEURLSTRINGARRAY =		{
+    public static final String[] HOMEPAGEURLSTRINGARRAY =		{
 									     "http://www.finalcrypt.org/"									// tested
 									    ,"https://www.finalcrypt.org/"									// tested
 									    ,"http://www.finalcrypt.com/"									// tested
@@ -92,7 +98,7 @@ public class Version
 									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"			// tested
 									};
 
-    public static final String[] DOWNLOADSITEURLSTRINGARRAY =		{
+    public static final String[] DOWNLOADPAGEURLSTRINGARRAY =		{
 									     "http://www.finalcrypt.org/project-6.php"								// tested
 									    ,"https://www.finalcrypt.org/project-6.php"								// tested
 									    ,"http://www.finalcrypt.com/project-6.php"								// tested
@@ -100,6 +106,28 @@ public class Version
 									    ,"https://sourceforge.net/projects/finalcrypt/files/"						// tested
 									    ,"https://github.com/ron-from-nl/FinalCrypt/releases/"						// tested
 									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/files/"						// tested
+									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"						// tested
+									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"					// tested
+									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"						// tested
+									    ,"http://www.google.com/search?q=finalcrypt+homepage&oq=finalcrypt+homepage"			// tested
+									};
+
+    public static final String[] VIDEOPAGEURLSTRINGARRAY =		{
+									     "http://www.finalcrypt.org/video/how_does_finalcrypt_work.mp4"					// tested
+									    ,"https://www.finalcrypt.org/video/how_does_finalcrypt_work.mp4"					// tested
+									    ,"http://www.finalcrypt.com/video/how_does_finalcrypt_work.mp4"					// tested
+									    ,"https://www.finalcrypt.com/video/how_does_finalcrypt_work.mp4"					// tested
+									    ,"https://youtu.be/MRKREuF_ovI"									// tested
+									};
+
+    public static final String[] SUPPORTPAGEURLSTRINGARRAY =		{
+									     "http://www.finalcrypt.org/project-7.php"								// tested
+									    ,"https://www.finalcrypt.org/project-7.php"								// tested
+									    ,"http://www.finalcrypt.com/project-7.php"								// tested
+									    ,"https://www.finalcrypt.com/project-7.php"								// tested
+									    ,"https://sourceforge.net/projects/finalcrypt/support"						// tested
+									    ,"https://github.com/ron-from-nl/FinalCrypt/issues"							// tested
+									    ,"https://osdn.net/users/finalcrypt/pf/FinalCrypt/ticket/"						// tested
 									    ,"http://www.majorgeeks.com/files/details/finalcrypt.html"						// tested
 									    ,"http://sites.google.com/site/ronuitholland/home/finalcrypt/"					// tested
 									    ,"http://duckduckgo.com/?q=finalcrypt+homepage&t=h_&ia=web"						// tested
@@ -129,43 +157,51 @@ public class Version
     public static final String REMOTEPACKAGEDOWNLOADURISTRING =		"http://www.finalcrypt.org/project-6.php";
 
     private static URL remoteURL = null;
-    private static ReadableByteChannel currentVersionByteChannel =		null;
+    private static ReadableByteChannel localVersionByteChannel =		null;
     private static ReadableByteChannel latestVersionByteChannel =		null;
     private static ByteBuffer byteBufferLocal; 
     private static ByteBuffer byteBufferRemote; 
     
-    private static boolean currentVersionIsKnown =				false;
+    private static boolean localVersionIsKnown =				false;
     private static boolean latestVersionIsKnown =				false;
     private static boolean updateAvailable =					false;
     private static String[] localFields;
     private static String[] localValues;
     private static String[] remoteFields;
     private static String[] remoteValues;
-    private static String currentReleaseString;
+    private static String localReleaseString;
     private static String latestReleaseString;
 //    private static String latestReleaseNotesString;
 //    private static String latestReleaseMessageString;
 
     private static String latestAlertSubjectString;
     private static String latestAlertString;
-    private static String currentAlertSubjectString;
-    private static String currentAlertString;
+    private static String localAlertSubjectString;
+    private static String localAlertString;
 //    private static String latestAlertMessageString;
-    public static int currentInstalledVersion;
+    public static int localVersion;
     public static int latestRemoteVersion;
+    private int localUpgrade;
+    private int localUpdate;
+    private String localUpdateNotes = "";
+    private String localVersionNotes = "";
+    private String localUpgradeNotes = "";
+    private String latestUpdateNotes = "";
+    private String latestVersionNotes = "";
+    private String latestUpgradeNotes = "";
 
     public Version(UI ui)
     {
         this.ui = ui;
-	currentReleaseString = ""; // Replacing below 2 lines
+	localReleaseString = ""; // Replacing below 2 lines
 	latestReleaseString = ""; // Replacing below 2 lines
 //	latestReleaseNotesString = "";
 //	latestReleaseMessageString = "";
 
 	latestAlertSubjectString = "";
 	latestAlertString = "";
-	currentAlertSubjectString = "";
-	currentAlertString = "";
+	localAlertSubjectString = "";
+	localAlertString = "";
 //	latestAlertMessageString = "";
     }
     
@@ -174,7 +210,7 @@ public class Version
 	fcInterface = classname;
 
 	String env = "";	
-	env +=    "Welcome to:              " + PRODUCTNAME + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n";
+	env +=    "Welcome to:              " + PRODUCTNAME + " " + version.getLocalOverallVersionString() + "\r\n";
 	env += "\r\n";
 	env +=    "Interface:               " + fcInterface + "\r\n";
 	env +=    "Author:                  " + AUTHOR + "\r\n";
@@ -244,19 +280,19 @@ public class Version
 	return env;
     }
 
-    synchronized public String checkCurrentlyInstalledVersion(UI ui)
+    synchronized public String checkLocalVersion(UI ui)
     {
         istream = getClass().getResourceAsStream(LOCALVERSIONFILEURLSTRING);
 	
 //      Read the local VERSION file
-        currentOverallVersionString = "Unknown";
-        currentVersionByteChannel = newChannel(istream);
+        localOverallVersionString = "Unknown";
+        localVersionByteChannel = newChannel(istream);
         byteBufferLocal = ByteBuffer.allocate(100000); byteBufferLocal.clear(); localContent = "";
         
-	try { while(currentVersionByteChannel.read(byteBufferLocal) > 0) { byteBufferLocal.flip(); while(byteBufferLocal.hasRemaining()){localContent += (char) byteBufferLocal.get();}}}
-	catch (IOException ex) { ui.log("Error: Version.checkCurrentlyInstalledVersion IOException: Channel.read(..): " + ex.getMessage()+"\r\n", true, true, true, true, false); }
+	try { while(localVersionByteChannel.read(byteBufferLocal) > 0) { byteBufferLocal.flip(); while(byteBufferLocal.hasRemaining()){localContent += (char) byteBufferLocal.get();}}}
+	catch (IOException ex) { ui.log("Error: Version.checkLocalInstalledVersion IOException: Channel.read(..): " + ex.getMessage()+"\r\n", true, true, true, true, false); }
         
-	try { currentVersionByteChannel.close(); } catch (IOException ex) { ui.log("Error: Version.checkCurrentlyInstalledVersion IOException: Channel.close(..) " +ex.getMessage()+"\r\n", true, true, true, true, false); }        
+	try { localVersionByteChannel.close(); } catch (IOException ex) { ui.log("Error: Version.checkLocallyInstalledVersion IOException: Channel.close(..) " +ex.getMessage()+"\r\n", true, true, true, true, false); }        
 
 //        localContent.replaceAll("\\p{C}", "?");
 //	String[] lines = localContent.split(System.getProperty("line.separator"));
@@ -288,42 +324,61 @@ public class Version
 //		    ui.test("LField: " + localFields[x] + " LValue: " + localValues[x] + "\r\n");
 		    if (localFields[x].toLowerCase().equals("Version".toLowerCase()))
 		    {
-			currentOverallVersionString = localValues[x];
-			String currentVersionString = currentOverallVersionString.substring(0, currentOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
-			String currentUpgradeString = currentOverallVersionString.substring(currentOverallVersionString.indexOf("."), currentOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
-			String currentUpdateString = currentOverallVersionString.substring(currentOverallVersionString.lastIndexOf("."), currentOverallVersionString.length()).replaceAll("[^\\d]", "");
-			currentInstalledVersion = Integer.parseInt(currentVersionString); int currentUpgrade = Integer.parseInt(currentUpgradeString); int currentUpdate = Integer.parseInt(currentUpdateString);
-			currentVersionTotal = (currentInstalledVersion * 100) + (currentUpgrade * 10) + (currentUpdate * 1);
-			currentOverallVersionString = currentVersionString + "." + currentUpgradeString + "." + currentUpdateString;
+			localOverallVersionString = localValues[x];
+			String localVersionString = localOverallVersionString.substring(0, localOverallVersionString.indexOf(".")).replaceAll("[^\\d]", "");
+			String localUpgradeString = localOverallVersionString.substring(localOverallVersionString.indexOf("."), localOverallVersionString.lastIndexOf(".")).replaceAll("[^\\d]", "");
+			String localUpdateString = localOverallVersionString.substring(localOverallVersionString.lastIndexOf("."), localOverallVersionString.length()).replaceAll("[^\\d]", "");
+			
+			localVersion = Integer.parseInt(localVersionString);
+			localUpgrade = Integer.parseInt(localUpgradeString);
+			localUpdate = Integer.parseInt(localUpdateString);
+			
+			localVersionTotal = (localVersion * 100) + (localUpgrade * 10) + (localUpdate * 1);
+			localOverallVersionString = localVersionString + "." + localUpgradeString + "." + localUpdateString;
+			localOverallVersionPrefString = "-" + localVersionString + "-" + localUpgradeString;
 //			ui.test("currentOverallVersionString: " + currentOverallVersionString + "\r\n");
-			currentVersionIsKnown = true;
+			localVersionIsKnown = true;
 		    }
-		    if (localFields[x].toLowerCase().equals("Version Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
-		    if (localFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
-		    if (localFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	{ currentReleaseString +=	localValues[x] + "\r\n"; }
 		    
-		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ currentAlertSubjectString =	localValues[x]; }
-		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ currentAlertString +=		localValues[x] + "\r\n"; }
+		    if (localFields[x].toLowerCase().equals("Version Notes".toLowerCase()))	{ localVersionNotes +=	localValues[x] + "\r\n"; }
+		    if (localFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))	{ localUpgradeNotes +=	localValues[x] + "\r\n"; }
+		    if (localFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	{ localUpdateNotes +=	localValues[x] + "\r\n"; }
+		    
+		    if (localFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))	{ localAlertSubjectString =	localValues[x]; }
+		    if (localFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	{ localAlertString +=		localValues[x] + "\r\n"; }
 		}
 	    }
-	    if ((currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentOverallVersionString.length()>0)&&(currentVersionIsKnown)) { return currentOverallVersionString; }
+	    if (
+			(localVersionNotes.length()>0)
+		    &&	(localUpgradeNotes.length()>0)
+		    &&	(localVersionNotes.length()>0)
+		    &&	(localVersionIsKnown)
+		)
+	    {
+		localReleaseString += localUpdateNotes;
+		localReleaseString += "\r\n";
+		localReleaseString += localUpgradeNotes;
+		localReleaseString += "\r\n";
+		localReleaseString += localVersionNotes;
+		return localOverallVersionString;
+	    }
 	}
 	
 	return "Could not check your current version (VERSION2 file missing?)";
     }
 
-    private static String encodeValue(UI ui, String value)
+    public static String encode2URL(UI ui, String value)
     {       
 	String returnValue = "";
-	try { returnValue = URLEncoder.encode(value, StandardCharsets.UTF_8.toString()); }
-	catch (UnsupportedEncodingException ex) { ui.log("Error: Version.checkLatestOnlineVersion URLEncoder.encode(" + value +") (URL Encoding?)\r\n", false, true, true, true, false); }
+	try { returnValue = URLEncoder.encode(value, StandardCharsets.UTF_8.toString()).replace("+", "%20"); }
+	catch (UnsupportedEncodingException ex) { ui.log("Error: Version.encodeValue URLEncoder.encode(" + value +") (URL Encoding?)\r\n", false, true, true, true, false); }
 	return returnValue;
     }
     
     private static String getUserAgent(String connType)
     {       
 	String userAgent = "";
-	userAgent += getProductName() + "/" + getCurrentlyInstalledOverallVersionString() + " " + fcInterface + " " + connType;
+	userAgent += getProductName() + "/" + getLocalOverallVersionString() + " " + fcInterface + " " + connType;
 	userAgent += " (" + OS_NAME + " " + OS_VERSION + "; " + OS_ARCH + "; ";
 	userAgent += JAVA_VENDOR + " " + JAVA_VERSION + " " + CLASS_VERSION;// + "; ";
 //	userAgent += JAVA_VM_NAME + " " + JAVA_VM_VERSION + ")";
@@ -332,7 +387,7 @@ public class Version
     }
     
     
-    public static String httpGetRequest(UI ui, String urlString)
+    public static String httpGetRequest(UI ui, String urlString, String requestMethod)
     {
 	String userAgent = getUserAgent("(HTTP)");
 	
@@ -343,7 +398,7 @@ public class Version
 	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
 	httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
 	httpConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
-	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
+	try { httpConnection.setRequestMethod(requestMethod); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
         httpConnection.setRequestProperty("User-Agent", userAgent);
 	
         int responseCode = 0;
@@ -370,7 +425,7 @@ public class Version
         return null;
     }
     
-    public static String httpsGetRequest(UI ui, String urlString)
+    public static String httpsGetRequest(UI ui, String urlString, String requestMethod)
     {
 	String userAgent = getUserAgent("(HTTPS)");
 	
@@ -378,10 +433,11 @@ public class Version
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
 	if (url == null) { checkOnlineFailed = true; ui.log("Error: InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
 	HttpsURLConnection httpConnection = null;
+	
 	try { httpConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
 	httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT); 
 	httpConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
-	try { httpConnection.setRequestMethod("GET"); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
+	try { httpConnection.setRequestMethod(requestMethod); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
         httpConnection.setRequestProperty("User-Agent", userAgent);
 	httpConnection.setRequestProperty("Referer", Version.WEBSITEURISTRING);
 	
@@ -410,7 +466,7 @@ public class Version
         return null;
     }
     
-    synchronized public static String checkLatestOnlineVersion(UI ui)
+    synchronized public String checkLatestVersion(UI ui)
     {
 //      Read the remote VERSION file
 	
@@ -430,7 +486,7 @@ public class Version
 	    logThread.setDaemon(true);
 	    logThread.start();
 	    
-	    if (remoteVERSION2FileString.startsWith("https://")) { remoteContent = httpsGetRequest(ui, remoteVERSION2FileString); } else { remoteContent = httpGetRequest(ui, remoteVERSION2FileString); }
+	    if (remoteVERSION2FileString.startsWith("https://")) { remoteContent = httpsGetRequest(ui, remoteVERSION2FileString, "GET"); } else { remoteContent = httpGetRequest(ui, remoteVERSION2FileString, "GET"); }
 	    
 //	    ui.test("Remote Content: " + remoteContent + "\r\n\r\n");
 	    if ((remoteContent != null) && (! checkOnlineFailed))
@@ -476,15 +532,29 @@ public class Version
 				    latestOverallVersionString = latestVersionString + "." + latestUpgradeString + "." + latestUpdateString;
 				    latestVersionIsKnown = true;
 				}
-				if (remoteFields[x].toLowerCase().equals("Version Notes".toLowerCase()))    { latestReleaseString +=	    remoteValues[x] + "\r\n"; }
-				if (remoteFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))    { latestReleaseString +=	    remoteValues[x] + "\r\n"; }
-				if (remoteFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	    { latestReleaseString +=	    remoteValues[x] + "\r\n"; }
+				
+				if (remoteFields[x].toLowerCase().equals("Version Notes".toLowerCase()))    { latestVersionNotes +=	remoteValues[x] + "\r\n"; }
+				if (remoteFields[x].toLowerCase().equals("Upgrade Notes".toLowerCase()))    { latestUpgradeNotes +=	remoteValues[x] + "\r\n"; }
+				if (remoteFields[x].toLowerCase().equals("Update Notes".toLowerCase()))	    { latestUpdateNotes +=	remoteValues[x] + "\r\n"; }
 				
 				if (remoteFields[x].toLowerCase().equals("Alert Subject".toLowerCase()))    { latestAlertSubjectString =    remoteValues[x]; }
 				if (remoteFields[x].toLowerCase().equals("Alert Notes".toLowerCase()))	    { latestAlertString +=	    remoteValues[x] + "\r\n"; }
 			    }
 			}
-			if ((latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestOverallVersionString.length()>0)&&(latestVersionIsKnown)) { return latestOverallVersionString; }
+			if (
+				    (latestVersionNotes.length()>0)
+				&&  (latestUpgradeNotes.length()>0)
+				&&  (latestUpdateNotes.length()>0)
+				&&  (latestVersionIsKnown)
+			    )
+			{
+			    latestReleaseString += latestUpdateNotes;
+			    latestReleaseString += "\r\n";
+			    latestReleaseString += latestUpgradeNotes;
+			    latestReleaseString += "\r\n";
+			    latestReleaseString += latestVersionNotes;
+			    return latestOverallVersionString;
+			}
 		    } continue;
 		} continue;
 	    } continue;
@@ -497,47 +567,48 @@ public class Version
     }
 
     public static String getLatestOnlineOverallVersionString()		{ return latestOverallVersionString; }
-    public static String getCurrentlyInstalledOverallVersionString()	{ return currentOverallVersionString; }
-    public static String getCurrentReleaseString()			{ return currentReleaseString; }
+    public static String getLocalOverallVersionString()			{ return localOverallVersionString; }
+    public static String getLocalOverallVersionPrefString()		{ return localOverallVersionPrefString; }
+    public static String getLocalReleaseString()			{ return localReleaseString; }
     public static String getLatestReleaseString()			{ return latestReleaseString; }
 //    public static String getLatestReleaseNotesString()		{ return latestReleaseNotesString; }
 //    public static String getLatestVersionMessageString()		{ return latestReleaseMessageString; }
 
     public static String getLatestAlertSubjectString()			{ return latestAlertSubjectString; }
-    public static String getLatestAlertString()			{ return latestAlertString; }
+    public static String getLatestAlertString()				{ return latestAlertString; }
     
-    public static String getCurrentAlertSubjectString()		{ return currentAlertSubjectString; }
-    public static String getCurrentAlertString()			{ return currentAlertString; }
-//    public String getLatestAlertMessageString()		{ return latestAlertMessageString; }
+    public static String getLocalAlertSubjectString()			{ return localAlertSubjectString; }
+    public static String getLocalAlertString()				{ return localAlertString; }
+//    public String getLatestAlertMessageString()			{ return latestAlertMessageString; }
 
     public String getUpdateStatus() 
     {
         String returnString = "";
-        if (( currentVersionIsKnown) && ( latestVersionIsKnown))
+        if (( localVersionIsKnown) && ( latestVersionIsKnown))
         {
-            if      (currentVersionTotal < latestVersionTotal)
+            if      (localVersionTotal < latestVersionTotal)
             {
-                returnString += getProductName() + " " + currentOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
+                returnString += getProductName() + " " + localOverallVersionString + " can be updated to version: " + latestOverallVersionString + " at: " + REMOTEPACKAGEDOWNLOADURISTRING + "\r\n"; 
 		if (! getLatestReleaseString().isEmpty())	    { returnString += getLatestReleaseString() + "\r\n"; }
             } 
-            else if (currentVersionTotal > latestVersionTotal)
+            else if (localVersionTotal > latestVersionTotal)
             {
-                returnString += getProductName() + " " + currentOverallVersionString + " is a development version!\r\n";
+                returnString += getProductName() + " " + localOverallVersionString + " is a development version!\r\n";
             } 
             else
             {
-                returnString += getProductName() + " " + currentOverallVersionString + " is up to date\r\n";
+                returnString += getProductName() + " " + localOverallVersionString + " is up to date\r\n";
             } 
         }
         else
         {
-            if (!currentVersionIsKnown)   { returnString = "Could not retrieve the locally installed " + Version.getProductName() + " Version\r\n"; }
-            if (!latestVersionIsKnown)    { returnString = "Could not retrieve the latest online " + Version.getProductName() + " Version\r\n"; }
+            if (!localVersionIsKnown)	{ returnString = "Could not retrieve the locally installed " + Version.getProductName() + " Version\r\n"; }
+            if (!latestVersionIsKnown)  { returnString = "Could not retrieve the latest online " + Version.getProductName() + " Version\r\n"; }
         }
         return returnString;
     }
 
-    synchronized public static void openWebSite(UI ui, String[] SITEURLSTRINGARRAY)
+    synchronized public static void openWebSite(UI ui, String[] SITEURLSTRINGARRAY, String requestMethod)
     {
         String identifierExpected = PRODUCTNAME;
 	
@@ -550,29 +621,30 @@ public class Version
 		remoteContent = "";
 		ui.log("Website: " + SITEURLSTRING + "\r\n", false, true, true, false, false);
 
-		if (SITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, SITEURLSTRING); } else { remoteContent = httpGetRequest(ui, SITEURLSTRING); }
+		if (SITEURLSTRING.startsWith("https://")) { remoteContent = httpsGetRequest(ui, SITEURLSTRING, requestMethod); } else { remoteContent = httpGetRequest(ui, SITEURLSTRING, requestMethod); }
 				
 		if (! checkOnlineFailed)
 		{
 		    if (remoteContent != null)
 		    {
-			if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ))
+//			ui.test("remoteContent: " + remoteContent + "\r\n");
+			if ( (remoteContent.toLowerCase().contains(identifierExpected.toLowerCase()) ) || SITEURLSTRING.endsWith(".mp4"))
 			{
 			    ui.log("Opening Browser\r\n", false, true, true, false, false);
 			    Thread openWebSiteThread;
 			    openWebSiteThread = new Thread(() ->
 			    {
 				try {  Desktop.getDesktop().browse(new URI(SITEURLSTRING)); }
-				catch (URISyntaxException ex)		{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
-				catch (IOException ex)			{ ui.log(ex.getMessage() + "\r\n", true, true, true, true, false); }
-				catch (UnsupportedOperationException ex){ ui.log(ex.getMessage() + " " + SITEURLSTRING + "\r\n", true, true, true, true, false); }
+				catch (URISyntaxException ex)		{ ui.log("Version.openWebSite() Desktop.getDesktop().browse URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+				catch (IOException ex)			{ ui.log("Version.openWebSite() Desktop.getDesktop().browse IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+				catch (UnsupportedOperationException ex){ ui.log("Version.openWebSite() Desktop.getDesktop().browse UnsupportedOperationException: " + ex.getMessage() + " " + SITEURLSTRING + "\r\n", true, true, true, true, false); }
 			    });
 			    openWebSiteThread.setName("openWebSiteThread");
 			    openWebSiteThread.setDaemon(true);
 			    openWebSiteThread.start();
 			    break;
-			} else { ui.log("Invalid\r\n", false, true, true, true, false); }
-		    } else { ui.log("Empty\r\n", false, true, true, true, false); }
+			} else { ui.log("Invalid webpage content\r\n", false, true, true, true, false); }
+		    } else { ui.log("Empty webpage\r\n", false, true, true, true, false); }
 		}
 		else
 		{
@@ -589,17 +661,31 @@ public class Version
 	Thread openLogDirThread;
 	openLogDirThread = new Thread(() ->
 	{
-	    try { Desktop.getDesktop().open(configuration.getLogDirPath().toFile()); } catch (IOException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }
+	    try { Desktop.getDesktop().open(configuration.getLogDirPath().toFile()); } catch (IOException ex) { ui.log("Version.openEmail() Desktop.getDesktop().open(() IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
 	});
 	openLogDirThread.setName("openLogDirThread");
 	openLogDirThread.setDaemon(true);
 	openLogDirThread.start();
     }
     
+    synchronized public static void openEmail(UI ui, String mailto, String cc, String subject, String body)
+    {
+	Configuration configuration = new Configuration(ui);
+	Thread openEmailThread;
+	String mailTo = SUPPORTEMAIL;
+	final String mailURIStr = String.format("mailto:%s?subject=%s&cc=%s&body=%s", mailTo, subject, cc, body);
+	try {  mailtoURI = new URI(mailURIStr); } catch (URISyntaxException ex) { ui.log(ex.getMessage(), true, true, true, true, false); }
+	
+	openEmailThread = new Thread(() ->  { try { Desktop.getDesktop().mail(mailtoURI); } catch (IOException ex) { ui.log("Version.openEmail() Desktop.getDesktop().mail(() IOException: " + ex.getMessage() + "\r\n", true, true, true, true, false); } });
+	openEmailThread.setName("openEmailThread");
+	openEmailThread.setDaemon(true);
+	openEmailThread.start();
+    }
+    
     public boolean latestVersionIsKnown()	    { return latestVersionIsKnown; }    
-    public boolean versionIsDifferent()		    { if ((latestVersionIsKnown) && ( currentVersionTotal != latestVersionTotal )) { return true; } else { return false; } }
-    public boolean versionCanBeUpdated()	    { if ((latestVersionIsKnown) && ( currentVersionTotal < latestVersionTotal ))  { return true; } else { return false; } }
-    public boolean versionIsDevelopment()	    { if ((latestVersionIsKnown) && ( currentVersionTotal > latestVersionTotal ))  { return true; } else { return false; } }    
+    public boolean versionIsDifferent()		    { if ((latestVersionIsKnown) && ( localVersionTotal != latestVersionTotal )) { return true; } else { return false; } }
+    public boolean versionCanBeUpdated()	    { if ((latestVersionIsKnown) && ( localVersionTotal < latestVersionTotal ))  { return true; } else { return false; } }
+    public boolean versionIsDevelopment()	    { if ((latestVersionIsKnown) && ( localVersionTotal > latestVersionTotal ))  { return true; } else { return false; } }    
 
     public static String getLicenseDescription()    { return LICENSE_DESCRIPTION; }
     public static String getLicense()		    { return LICENSE; }

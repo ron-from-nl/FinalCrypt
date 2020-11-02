@@ -1,4 +1,4 @@
-[Version] =		{6.3.11}
+[Version] =		{6.4.2}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -11,27 +11,14 @@
 [Version Notes] =	{International version with all major Languages}
 [Version Notes] =	{Improved User Interface & File Manager behavior}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
-[Version Notes] =	{}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 3 (2019-12-25)}
+[Upgrade Notes] =	{Upgrade 4 (2020-11-02)}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{Added "Click to print Command(-line)" button to GUI}
-[Upgrade Notes] =	{Command-line commands can be used to fully automate}
-[Upgrade Notes] =	{Select your Key Dir & Files like you would normally}
-[Upgrade Notes] =	{Show / hide password influences the printed command}
-[Upgrade Notes] =	{The Print Command button will appear at lower right}
-[Upgrade Notes] =	{The printed command is equivalent to the GUI action}
-[Upgrade Notes] =	{This update is particular for all ICT professionals}
-[Upgrade Notes] =	{}
-[Upgrade Notes] =	{FinalCrypt now supports 75 languages (homepage FAQ)}
-[Upgrade Notes] =	{}
+[Upgrade Notes] =	{Improved support added to Graphical User Interface}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 11 (2020-10-22)}
+[Update Notes] =	{Update 2 (2020-11-02)}
 [Update Notes] =	{}
-[Update Notes] =	{Some minor Command-Line User-Interface improvements}
-[Update Notes] =	{Fixed errors on non interactive --test option usage}
-[Update Notes] =	{Fixed Command-Line User-Interface  print formatting}
-[Update Notes] =	{Added Version Upgrade and Update dates to this info}
+[Update Notes] =	{Improved default browser-page opening launch speed}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

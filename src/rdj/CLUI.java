@@ -145,7 +145,7 @@ public class CLUI implements UI
         Path outputFilePath = null;
         configuration = new Configuration(this);
         version = new Version(this);
-        version.checkCurrentlyInstalledVersion(this);
+        version.checkLocalVersion(this);
 
         String pattern = "glob:*";
         
@@ -198,9 +198,9 @@ public class CLUI implements UI
 //            else if (  args[paramCnt].equals("--dec"))                                                              { finalCrypt.setDec(true); }
 //            else if (  args[paramCnt].equals("--hex"))                                                              { finalCrypt.setHex(true); }
 //            else if (  args[paramCnt].equals("--chr"))                                                              { finalCrypt.setChr(true); }
-            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProductName() + " " + version.getCurrentlyInstalledOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
+            else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProductName() + " " + version.getLocalOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProductName() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
-            else if (  args[paramCnt].equals("--check-update"))                                                     { version.checkLatestOnlineVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
+            else if (  args[paramCnt].equals("--check-update"))                                                     { version.checkLatestVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
             else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
             else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
 
@@ -866,7 +866,7 @@ public class CLUI implements UI
         log("            <[-t \"file/dir\"]>                                           Target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
         log("            <[-b \"batchfile\"]>                                          Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkLocalVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);
     }
 
@@ -950,7 +950,7 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log(Version.getProductName() + " " + version.checkCurrentlyInstalledVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
+        log(Version.getProductName() + " " + version.checkLocalVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(0);
     }
 
