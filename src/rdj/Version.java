@@ -205,79 +205,173 @@ public class Version
 //	latestAlertMessageString = "";
     }
     
-    public static String getLogHeader(String classname, Version version, Configuration configuration)
+    public static String getSysEnv(String classname, Version version, Configuration configuration)
     {
 	fcInterface = classname;
 
-	String env = "";	
-	env +=    "Welcome to:              " + PRODUCTNAME + " " + version.getLocalOverallVersionString() + "\r\n";
-	env += "\r\n";
-	env +=    "Interface:               " + fcInterface + "\r\n";
-	env +=    "Author:                  " + AUTHOR + "\r\n";
-	env +=    "Email:                   " + AUTHOREMAIL + "\r\n";
-	env +=    "Logfiles:                " + configuration.getLogDirPath().toString() + "\r\n";
-	env +=    "Command line:            " + COMMANDLINE + " --help\r\n";
-	env +=    "License:                 " + LICENSE + "\r\n";
-	env += "\r\n";
-	env +=    "OS Name:                 " + OS_NAME + "\r\n";
-	env +=    "OS Architecture:         " + OS_ARCH + "\r\n";
-	env +=    "OS Version:              " + OS_VERSION + "\r\n";
-	env +=    "OS Time:                 " + configuration.getTime() + "\r\n";
-	env +=    "File Encoding:           " + FILE_ENCODING + "\r\n";
-	env += "\r\n";
-	env +=    "Processors:              " + PROCESSORS + "\r\n";
-	env +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1,"Bytes") + "\r\n";
-//	env +=    "Total   Memory:          " + TOT_MEM + "\r\n";
-	env +=    "Maximum Memory:          " + Validate.getHumanSize(MAX_MEM, 1,"Bytes") + "\r\n";
-	env +=    "Free    Memory:          " + Validate.getHumanSize(FREE_MEM, 1,"Bytes") + "\r\n";
-	env +=    "Used    Memory:          " + Validate.getHumanSize(USED_MEM, 1,"Bytes") + "\r\n";
-	env += "\r\n";
-	env +=    "Java Version:            " + JAVA_VERSION + "\r\n";
-	env +=    "Java Vendor:             " + JAVA_VENDOR + "\r\n";
-	env +=    "Java Home:               " + JAVA_HOME + "\r\n";
-	env +=    "Java_VM_Name:            " + JAVA_VM_NAME + "\r\n";
-	env +=    "Java_VM_Version:         " + JAVA_VM_VERSION + "\r\n";
-	env +=    "Java_Runtime_Version:    " + JAVA_RUNTIME_VERSION + "\r\n";
-	env +=    "Class Version:           " + CLASS_VERSION + "\r\n";
-	env += "\r\n";
-	env +=    "User Country:            " + USER_COUNTRY + "\r\n";
-	env +=    "User Language:           " + USER_LANGUAGE + "\r\n";
-	env +=    "User Name:               " + USER_NAME + "\r\n";
-	env +=    "User Home:               " + USER_HOME + "\r\n";
-	env +=    "User Dir:                " + USER_DIR + "\r\n";
-	env +=    "User Agent:              " + getUserAgent("") + "\r\n";
-	env += "\r\n";
-	env +=    "Action Symbols           ";
-	env += FinalCrypt.UTF8_CREATE_SYMBOL + " = " +		FinalCrypt.UTF8_CREATE_DESC + " | ";
-	env += FinalCrypt.UTF8_READ_SYMBOL + " = " +		FinalCrypt.UTF8_READ_DESC + " | ";
-	env += FinalCrypt.UTF8_WRITE_SYMBOL + " = " +		FinalCrypt.UTF8_WRITE_DESC + " | ";
-	env += FinalCrypt.UTF8_ENCRYPT_SYMBOL + " = " +		FinalCrypt.UTF8_ENCRYPT_DESC + " | ";
-	env += FinalCrypt.UTF8_DECRYPT_SYMBOL + " = " +		FinalCrypt.UTF8_DECRYPT_DESC + " | ";
-	env += FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " = " +	FinalCrypt.UTF8_XOR_NOMAC_DESC + " | ";
-	env += FinalCrypt.UTF8_SHRED_SYMBOL + " = " +		FinalCrypt.UTF8_SHRED_DESC + " | ";
-	env += FinalCrypt.UTF8_CLONE_SYMBOL + " = " +		FinalCrypt.UTF8_CLONE_DESC + " | ";
-	env += FinalCrypt.UTF8_DELETE_SYMBOL + " = " +		FinalCrypt.UTF8_DELETE_DESC + " | ";
-	env += FinalCrypt.UTF8_PAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_PAUSE_DESC + " | ";
-	env += FinalCrypt.UTF8_UNPAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_UNPAUSE_DESC + " | ";
-	env += FinalCrypt.UTF8_STOP_SYMBOL + " = " +		FinalCrypt.UTF8_STOP_DESC + " ";
-	env += "\r\n";
-	env +=    "Data   Symbols           ";
-	env += FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " = " +	FinalCrypt.UTF8_OLD_TARGET_DESC + " | ";
-	env += FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " = " +	FinalCrypt.UTF8_NEW_TARGET_DESC + " | ";
-	env += FinalCrypt.UTF8_MAC_SYMBOL + " = " +		FinalCrypt.UTF8_MAC_DESC + " | ";
-	env += FinalCrypt.UTF8_KEY_SYMBOL + " = " +		FinalCrypt.UTF8_KEY_DESC + " | ";
-	env += FinalCrypt.UTF8_ATTRIB_SYMBOL + " = " +		FinalCrypt.UTF8_ATTRIB_DESC + " ";
-	env += "\r\n";
-	env +=	  "Status Symbols           ";
-	env += FinalCrypt.UTF8_SUCCEEDED_SYMBOL + " = " +	FinalCrypt.UTF8_SUCCEEDED_DESC + " | ";
-	env += FinalCrypt.UTF8_SUCCESSUNKNOWN_SYMBOL + " = " +	FinalCrypt.UTF8_SUCCESSUNKNOWN_DESC + " | ";
-	env += FinalCrypt.UTF8_UNSUCCEEDED_SYMBOL + " = " +	FinalCrypt.UTF8_UNSUCCEEDED_DESC + " | ";
-	env += FinalCrypt.UTF8_UNENCRYPTABLE_SYMBOL + " = " +	FinalCrypt.UTF8_UNENCRYPTABLE_DESC + " | ";
-	env += FinalCrypt.UTF8_UNDECRYPTABLE_SYMBOL + " = " +	FinalCrypt.UTF8_UNDECRYPTABLE_DESC + " ";
-	env += "\r\n";
-	env += "\r\n";
+	String content = "";
+	content += getSysEnvWelcome(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvHeader(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvOS(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvSystem(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvJava(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvUser(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvCaption(classname, version, configuration);
+	content += "\r\n";
+	content += "\r\n";
 	
-	return env;
+	return content;
+    }
+
+    public static String getSysEnvEmail(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";
+	content += getSysEnvHeader(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvOS(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvSystem(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvJava(classname, version, configuration);
+	content += "\r\n";
+	content += getSysEnvUser(classname, version, configuration);
+	content += "\r\n";
+	
+	return content;
+    }
+
+    public static String getSysEnvWelcome(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "Welcome to:              " + PRODUCTNAME + " " + version.getLocalOverallVersionString() + "\r\n";
+	return content;
+    }
+
+    public static String getSysEnvHeader(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "Interface:               " + fcInterface + "\r\n";
+	content +=    "Author:                  " + AUTHOR + "\r\n";
+	content +=    "Email:                   " + AUTHOREMAIL + "\r\n";
+	content +=    "Logfiles:                " + configuration.getLogDirPath().toString() + "\r\n";
+	content +=    "Command line:            " + COMMANDLINE + " --help\r\n";
+	content +=    "License:                 " + LICENSE + "\r\n";
+	return content;
+    }
+
+    public static String getLogDirPath(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content += configuration.getLogDirPath().toString();
+	return content;
+    }
+
+    public static String getSysEnvOS(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "OS Name:                 " + OS_NAME + "\r\n";
+	content +=    "OS Architecture:         " + OS_ARCH + "\r\n";
+	content +=    "OS Version:              " + OS_VERSION + "\r\n";
+	content +=    "OS Time:                 " + configuration.getTime() + "\r\n";
+	content +=    "File Encoding:           " + FILE_ENCODING + "\r\n";
+	return content;
+    }
+
+    public static String getSysEnvSystem(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "Processors:              " + PROCESSORS + "\r\n";
+	content +=    "Total   Memory:          " + Validate.getHumanSize(TOT_MEM, 1,"Bytes") + "\r\n";
+//	env +=    "Total   Memory:          " + TOT_MEM + "\r\n";
+	content +=    "Maximum Memory:          " + Validate.getHumanSize(MAX_MEM, 1,"Bytes") + "\r\n";
+	content +=    "Free    Memory:          " + Validate.getHumanSize(FREE_MEM, 1,"Bytes") + "\r\n";
+	content +=    "Used    Memory:          " + Validate.getHumanSize(USED_MEM, 1,"Bytes") + "\r\n";
+	return content;
+    }
+
+    public static String getSysEnvJava(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "Java Version:            " + JAVA_VERSION + "\r\n";
+	content +=    "Java Vendor:             " + JAVA_VENDOR + "\r\n";
+	content +=    "Java Home:               " + JAVA_HOME + "\r\n";
+	content +=    "Java_VM_Name:            " + JAVA_VM_NAME + "\r\n";
+	content +=    "Java_VM_Version:         " + JAVA_VM_VERSION + "\r\n";
+	content +=    "Java_Runtime_Version:    " + JAVA_RUNTIME_VERSION + "\r\n";
+	content +=    "Class Version:           " + CLASS_VERSION + "\r\n";
+	return content;
+    }
+
+    public static String getSysEnvUser(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "User Country:            " + USER_COUNTRY + "\r\n";
+	content +=    "User Language:           " + USER_LANGUAGE + "\r\n";
+	content +=    "User Name:               " + USER_NAME + "\r\n";
+	content +=    "User Home:               " + USER_HOME + "\r\n";
+	content +=    "User Dir:                " + USER_DIR + "\r\n";
+	content +=    "User Agent:              " + getUserAgent("") + "\r\n";
+	return content;
+    }
+
+    public static String getSysEnvCaption(String classname, Version version, Configuration configuration)
+    {
+	fcInterface = classname;
+
+	String content = "";	
+	content +=    "Action Symbols           ";
+	content += FinalCrypt.UTF8_CREATE_SYMBOL + " = " +		FinalCrypt.UTF8_CREATE_DESC + " | ";
+	content += FinalCrypt.UTF8_READ_SYMBOL + " = " +		FinalCrypt.UTF8_READ_DESC + " | ";
+	content += FinalCrypt.UTF8_WRITE_SYMBOL + " = " +		FinalCrypt.UTF8_WRITE_DESC + " | ";
+	content += FinalCrypt.UTF8_ENCRYPT_SYMBOL + " = " +		FinalCrypt.UTF8_ENCRYPT_DESC + " | ";
+	content += FinalCrypt.UTF8_DECRYPT_SYMBOL + " = " +		FinalCrypt.UTF8_DECRYPT_DESC + " | ";
+	content += FinalCrypt.UTF8_XOR_NOMAC_SYMBOL + " = " +	FinalCrypt.UTF8_XOR_NOMAC_DESC + " | ";
+	content += FinalCrypt.UTF8_SHRED_SYMBOL + " = " +		FinalCrypt.UTF8_SHRED_DESC + " | ";
+	content += FinalCrypt.UTF8_CLONE_SYMBOL + " = " +		FinalCrypt.UTF8_CLONE_DESC + " | ";
+	content += FinalCrypt.UTF8_DELETE_SYMBOL + " = " +		FinalCrypt.UTF8_DELETE_DESC + " | ";
+	content += FinalCrypt.UTF8_PAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_PAUSE_DESC + " | ";
+	content += FinalCrypt.UTF8_UNPAUSE_SYMBOL + " = " +		FinalCrypt.UTF8_UNPAUSE_DESC + " | ";
+	content += FinalCrypt.UTF8_STOP_SYMBOL + " = " +		FinalCrypt.UTF8_STOP_DESC + " ";
+	content += "\r\n";
+	content +=    "Data   Symbols           ";
+	content += FinalCrypt.UTF8_OLD_TARGET_SYMBOL + " = " +	FinalCrypt.UTF8_OLD_TARGET_DESC + " | ";
+	content += FinalCrypt.UTF8_NEW_TARGET_SYMBOL + " = " +	FinalCrypt.UTF8_NEW_TARGET_DESC + " | ";
+	content += FinalCrypt.UTF8_MAC_SYMBOL + " = " +		FinalCrypt.UTF8_MAC_DESC + " | ";
+	content += FinalCrypt.UTF8_KEY_SYMBOL + " = " +		FinalCrypt.UTF8_KEY_DESC + " | ";
+	content += FinalCrypt.UTF8_ATTRIB_SYMBOL + " = " +		FinalCrypt.UTF8_ATTRIB_DESC + " ";
+	content += "\r\n";
+	content +=	  "Status Symbols           ";
+	content += FinalCrypt.UTF8_SUCCEEDED_SYMBOL + " = " +	FinalCrypt.UTF8_SUCCEEDED_DESC + " | ";
+	content += FinalCrypt.UTF8_SUCCESSUNKNOWN_SYMBOL + " = " +	FinalCrypt.UTF8_SUCCESSUNKNOWN_DESC + " | ";
+	content += FinalCrypt.UTF8_UNSUCCEEDED_SYMBOL + " = " +	FinalCrypt.UTF8_UNSUCCEEDED_DESC + " | ";
+	content += FinalCrypt.UTF8_UNENCRYPTABLE_SYMBOL + " = " +	FinalCrypt.UTF8_UNENCRYPTABLE_DESC + " | ";
+	content += FinalCrypt.UTF8_UNDECRYPTABLE_SYMBOL + " = " +	FinalCrypt.UTF8_UNDECRYPTABLE_DESC + " ";
+	content += "\r\n";
+	content += "\r\n";
+	
+	return content;
     }
 
     synchronized public String checkLocalVersion(UI ui)

@@ -1198,7 +1198,7 @@ public class GUIFX extends Application implements UI, Initializable
 	
         authorLabel.setText("Author: " + Version.getAuthor());
 //	log(getRuntimeEnvironment(), false, true, true, false ,false);
-	log(Version.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
+	log(Version.getSysEnv(this.getClass().getSimpleName(), version, configuration), false, true, true, false ,false);
 
 //      cpuIndicator
         mBeanServer = ManagementFactory.getPlatformMBeanServer();

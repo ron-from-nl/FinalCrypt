@@ -1,4 +1,4 @@
-[Version] =		{6.4.2}
+[Version] =		{6.4.3}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -16,9 +16,10 @@
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Improved support added to Graphical User Interface}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 2 (2020-11-02)}
+[Update Notes] =	{Update 3 (2020-11-09)}
 [Update Notes] =	{}
-[Update Notes] =	{Improved default browser-page opening launch speed}
+[Update Notes] =	{Improved Support Email Message with Email Button}
+[Update Notes] =	{Updated a number of deprecated social media links}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}

@@ -184,7 +184,10 @@ public class Support extends Application implements Initializable
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String url = "https://www.facebook.com/share.php?u=http://www.finalcrypt.org/";
+	    String urlTarget	    = "https://www.facebook.com/share.php";
+	    String param1	    = "?u=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
+	    String url = urlTarget + param1;
+
 	    setSupportButtonsDisabledState(false);
 	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -203,7 +206,12 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String url = "https://twitter.com/share?original_referer=/&amp;text=FinalCrypt%20-%20THE%20WORLD'S%20MOST%20UNBREAKABLE%20ENCRYPTION&amp;url=http://www.finalcrypt.org/";
+	    String urlTarget	    = "https://twitter.com/intent/tweet";
+	    String param1	    = "?text=" + Version.encode2URL(guifx, "FinalCrypt - Unbreakable OTP Encryption independent from Governments & Industries");
+	    String param2	    = "&url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
+	    String param3 = "&hashtags=FinalCrypt%2CEncryption";
+	    String url = urlTarget + param1 + param2 + param3;
+
 	    setSupportButtonsDisabledState(false);
 	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -222,7 +230,11 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String url = "https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/";
+	    String urlTarget	    = "https://www.linkedin.com/cws/share";
+	    String param1	    = "&url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
+	    String url = urlTarget + param1;
+
+//	    String url = "https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/";
 	    setSupportButtonsDisabledState(false);
 	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -242,7 +254,10 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String url = "http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption";
+	    String urlTarget	    = "https://pin.it/72kLWc2";
+	    String url = urlTarget;
+
+//	    String url = "http://pinterest.com/pin/create/button/?url=http://www.finalcrypt.org/&amp;media=http://www.finalcrypt.org/FinalCrypt_Encrypt.png&amp;description=Free%20File%20Encryption";
 	    setSupportButtonsDisabledState(false);
 	    try {  Desktop.getDesktop().browse(new URI(url)); prefs.put("Shared", "Yes"); flushPrefs(prefs); }
 	    catch (URISyntaxException ex)		{ guifx.log("Error: URISyntaxException: " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -336,11 +351,13 @@ public class Support extends Application implements Initializable
 	String cc = "";
 	String subject = Version.encode2URL(guifx, Version.getProductName() + " User Support");
 	String bodyText = "";
-	bodyText += "Hi " + Version.AUTHOR_FIRSTNAME + ",\r\n\r\nWrite your message here...\r\n\r\n--\r\nRegards,\r\n\r\nYour name please\r\n\r\n";
+	String attachLine1 = "You might want to attach logfiles from: \"" + Version.getLogDirPath(this.getClass().getSimpleName(), version, new Configuration(guifx))+ "\".";
+	String attachLine2 = "Logfiles help to see what happened and eases and speed up support.";
+	bodyText += "Hi " + Version.AUTHOR_FIRSTNAME + ",\r\n\r\nYour message...\r\n\r\n" + attachLine1 + "\r\n" + attachLine2 + "\r\n\r\n--\r\nRegards,\r\n\r\nYour name please\r\n\r\n";
 	bodyText += "================================================================================\r\n";
-	bodyText += "============================= " + Version.PRODUCTNAME + " Support Info ==========================\r\n";
+	bodyText += "======================== " + Version.PRODUCTNAME + " System Support Info ========================\r\n";
 	bodyText += "================================================================================\r\n\r\n";
-	bodyText += Version.getLogHeader(this.getClass().getSimpleName(), version, new Configuration(guifx));
+	bodyText += Version.getSysEnvEmail(this.getClass().getSimpleName(), version, new Configuration(guifx));
 	bodyText += "================================================================================\r\n";
 
 	String body = Version.encode2URL(guifx, bodyText);

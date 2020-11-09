@@ -160,7 +160,7 @@ public class CLUI implements UI
 
         // Validate Parameters
 	
-	log(Version.getLogHeader(this.getClass().getSimpleName(), version, configuration), false, false, true, false ,false);
+	log(Version.getSysEnv(this.getClass().getSimpleName(), version, configuration), false, false, true, false ,false);
 	
 	if (args.length == 0 ) { log("\r\nWarning: No parameters entered!\r\n", false, true, true, false, false); usagePrompt(true); } 
 	
