@@ -230,8 +230,9 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String urlTarget	    = "https://www.linkedin.com/cws/share";
-	    String param1	    = "&url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
+//	    
+	    String urlTarget	    = "https://www.linkedin.com/sharing/share-offsite/";
+	    String param1	    = "?url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
 	    String url = urlTarget + param1;
 
 //	    String url = "https://www.linkedin.com/cws/share?url=http://www.finalcrypt.org/";
