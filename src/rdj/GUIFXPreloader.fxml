@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="200.0" maxWidth="1260.0" minHeight="200.0" minWidth="1260.0" mouseTransparent="true" prefHeight="200.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rdj.GUIFXPreloader">
+   <children>
+      <StackPane prefHeight="200.0" prefWidth="1260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Pane prefHeight="150.0" prefWidth="602.0" style="-fx-background-color: #222222;" />
+            <VBox prefHeight="203.0" prefWidth="1260.0">
+               <children>
+                  <Pane maxHeight="180.0" maxWidth="1260.0" minHeight="180.0" minWidth="1260.0" prefHeight="180.0" prefWidth="1260.0" style="-fx-background-color: #222222;">
+                     <children>
+                        <ImageView fx:id="bgImageView" fitHeight="180.0" fitWidth="1260.0" pickOnBounds="true">
+                           <image>
+                              <Image url="@images/finalcrypt-splash.png" />
+                           </image>
+                        </ImageView>
+                        <ProgressBar fx:id="progressBar" disable="true" layoutX="14.0" layoutY="160.0" maxHeight="10.0" minHeight="10.0" opacity="0.5" prefHeight="10.0" prefWidth="1232.0" progress="0.0" />
+                     </children>
+                  </Pane>
+                  <AnchorPane prefHeight="21.0" prefWidth="1229.0">
+                     <children>
+                        <Label fx:id="statusLabel" alignment="CENTER" layoutY="-1.0" prefHeight="20.0" prefWidth="1260.0" text="Starting up..." textFill="GREY" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

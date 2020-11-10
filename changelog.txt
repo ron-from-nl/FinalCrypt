@@ -1,5 +1,6 @@
 Date: 2020-11-10 Version: 6.4.3
 
+Added new splash window during FinalCrypt startup
 Improved Support Email Messages with Email Button
 Updated a number of deprecated social media links
 
