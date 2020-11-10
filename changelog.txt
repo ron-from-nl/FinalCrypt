@@ -1,6 +1,7 @@
 Date: 2020-11-09 Version: 6.4.3
 
-Improved Support Email Message with Email Button
+Improved Support Email Messages with Email Button
+Added nice splash image during FinalCrypt startup
 Updated a number of deprecated social media links
 
 Please don't look away FinalCrypt needs your help
