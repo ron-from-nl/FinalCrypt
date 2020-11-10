@@ -206,10 +206,10 @@ public class Support extends Application implements Initializable
 	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
-	    String urlTarget	    = "https://twitter.com/intent/tweet";
-	    String param1	    = "?text=" + Version.encode2URL(guifx, "FinalCrypt - Unbreakable OTP Encryption independent from Governments & Industries");
-	    String param2	    = "&url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
-	    String param3 = "&hashtags=FinalCrypt%2CEncryption";
+	    String urlTarget	= "https://twitter.com/intent/tweet";
+	    String param1	= "?text=" + Version.encode2URL(guifx, "FinalCrypt - Unbreakable OTP Encryption independent from Governments & Industries");
+	    String param2	= "&url=" + Version.encode2URL(guifx, "http://www.finalcrypt.org/");
+	    String param3	= "&hashtags=FinalCrypt%2CEncryption";
 	    String url = urlTarget + param1 + param2 + param3;
 
 	    setSupportButtonsDisabledState(false);
