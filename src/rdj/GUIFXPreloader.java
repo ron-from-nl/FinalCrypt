@@ -19,9 +19,7 @@
 
 package rdj;
 
-import java.io.*;
 import java.net.URL;
-import java.nio.file.*;
 import java.util.*;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -29,6 +27,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -51,7 +50,7 @@ public class GUIFXPreloader extends Application implements UI, Initializable
     @FXML private Label statusLabel;
 
     public GUIFXPreloader controller;    
-    private String windowTitle = "Title";
+    private String windowTitle = "Preloader";
 //    private Configuration configuration;
     private GUIFX guifx;
 
@@ -64,12 +63,25 @@ public class GUIFXPreloader extends Application implements UI, Initializable
 	controller = loader.getController();
 	scene = new Scene((Parent)loader.getRoot());        
 	preloaderStage = stage;
+	preloaderStage.centerOnScreen();
 	preloaderStage.setAlwaysOnTop(true);
 	preloaderStage.initStyle(StageStyle.TRANSPARENT);
 	preloaderStage.setScene(scene);
 	preloaderStage.setTitle(windowTitle);
 	preloaderStage.setResizable(false);
+
 	preloaderStage.show();
+	double screenWidth  =	Screen.getPrimary().getVisualBounds().getWidth();
+	double screenHeight =	Screen.getPrimary().getVisualBounds().getHeight();
+	
+	double stageWidth   =	root.getBoundsInParent().getWidth();
+	double stageHeight  =	root.getBoundsInParent().getHeight();
+	
+	double stageXPos = (screenWidth / 2.0) - (stageWidth / 2.0);
+	double stageYPos = (screenHeight / 2.0) - (stageHeight / 2.0);
+
+        preloaderStage.setX(stageXPos);
+        preloaderStage.setY(stageYPos);	
     }
     
     @Override public void initialize(URL url, ResourceBundle rb)
