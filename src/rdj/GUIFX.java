@@ -44,16 +44,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -65,7 +61,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
-import javafx.event.*;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -117,7 +112,6 @@ import java.util.stream.Collectors;
 import javafx.collections.*;
 import javafx.concurrent.*;
 import javafx.event.Event;
-import javafx.geometry.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -139,9 +133,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private ProgressBar fileProgressBar;
     @FXML   private Label statusLabel;    
     @FXML   private SwingNode keyFileSwingNode;
-    @FXML   private Object root;
-//    private ToggleButton pauseToggleButton;
-//    private Button stopButton;
+    @FXML   private Object mainRoot;
     @FXML   private Label authorLabel;
     @FXML   private SwingNode targetFileSwingNode;
     @FXML   private Button decryptButton;
@@ -339,8 +331,6 @@ public class GUIFX extends Application implements UI, Initializable
     private final double LOAD_LOW_MS_TIMEOUT =		5000.0d;
     private boolean	 animation_Is_Enabled =		true;
     
-//    private final Color DIM =				Color.DIMGREY;
-//    private final Color	INFO =				Color.LIGHTGREY;
     private final Color DIM =				Color.DIMGREY;
     private final Color	INFO =				Color.LIGHTGREY;
     private final Color	NOTICE =			Color.YELLOW;
@@ -435,7 +425,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 	userGuidanceLabel.setTextFill(textLabelGradient2);
     }));
-    private Stage stage;
+    private Stage mainStage;
 
     private FinalCrypt finalCrypt;
     private UI ui;
@@ -537,7 +527,7 @@ public class GUIFX extends Application implements UI, Initializable
     private double userloadPercTest;
     private double userMemPercTest;
     private double throughputPercTest;
-    private Scene scene;
+    private Scene mainScene;
     
     private PropertyChangeListener[] keyListener;
     private JToggleButton tgtDetailViewButton;
@@ -625,7 +615,9 @@ public class GUIFX extends Application implements UI, Initializable
     private String pauseDescription;
     private String stopDescription;
     private Preferences prefs;
-    private GUIFXPreloader preloader;
+    private Stage preloaderStage;
+    private Group preloaderRootGroup;
+    private Scene preloaderScene;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -811,141 +803,149 @@ public class GUIFX extends Application implements UI, Initializable
 	try { prefsParam.flush(); } catch (BackingStoreException ex) { log("Error: flushPrefs(..) " + ex.getMessage() + "\r\n", true, true, true, true ,false); }
     }
     
-    public void setPreloader(GUIFXPreloader loader) { preloader = loader; }
-
     @Override
     public void start(Stage stage) throws Exception
     {
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.0, "Init " + this.getClass().getName() + " Stage..."); }); }
+	Image image = new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt-splash-small.png"));
+	ImageView imageView = new ImageView();
+	imageView.setImage(image);
+	imageView.setPreserveRatio(true);
+	preloaderStage = new Stage();
+	preloaderStage.initStyle(StageStyle.TRANSPARENT);
+	preloaderRootGroup = new Group(imageView);
+	preloaderRootGroup.setStyle("-fx-background-color: transparent;");
+	preloaderScene = new Scene(preloaderRootGroup, 640, 90);
+	preloaderScene.setFill(Color.TRANSPARENT);
+	preloaderStage.setTitle("Displaying Image");
+	preloaderStage.setScene(preloaderScene);
+	preloaderStage.setAlwaysOnTop(true);
+	preloaderStage.setResizable(false);
+
+	double pl_screenWidth  =	Screen.getPrimary().getVisualBounds().getWidth();
+	double pl_screenHeight =	Screen.getPrimary().getVisualBounds().getHeight();
+	double pl_stageWidth   =	preloaderRootGroup.getBoundsInLocal().getWidth(); // preloaderRoot.getBoundsInLocal().getHeight() doesn't work with CSS 
+	double pl_stageHeight  =	preloaderRootGroup.getBoundsInLocal().getHeight();
+	double pl_stageXPos    =	((pl_screenWidth / 2.0) - (pl_stageWidth / 2.0));
+	double pl_stageYPos    =	((pl_screenHeight / 2.0) - (pl_stageHeight / 2.0));
+
+	preloaderStage.setX(pl_stageXPos);
+	preloaderStage.setY(pl_stageYPos);
+	preloaderRootGroup.setOpacity(0);
+	preloaderStage.show();
 	
-	ui = this;
-        guifx = this;
-        this.stage = stage;
-	this.stage.initStyle(StageStyle.DECORATED);
-        this.stage.setTitle(Version.getProductName());
-        this.stage.setMinWidth(1366);
-        this.stage.setMinHeight(700);
-        this.stage.setMaximized(true);
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.1, "Init " + this.getClass().getName() + " Stage completed"); }); }
+	Timeline fadeinPreloaderTimeline = new Timeline();
+	KeyFrame key1 = new KeyFrame(Duration.millis(1000),
+		       new KeyValue (preloaderRootGroup.opacityProperty(), 1)); 
+	fadeinPreloaderTimeline.getKeyFrames().add(key1);
+	fadeinPreloaderTimeline.play();
 
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.1, "Load " + this.getClass().getName() + " FXML Form..."); }); }
-        root = FXMLLoader.load(getClass().getResource("GUIFX.fxml"));
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.2, "Load " + this.getClass().getName() + " FXML Form completed"); }); }
-	scene = new Scene((Parent)root);
-	        
-        this.stage.setScene(scene);
-
-//        try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); }
-//        try { UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); } // dead lock on BSD
-
-//        setUserAgentStylesheet(STYLESHEET_CASPIAN); // JavaFX2 Stylesheet
+	mainStage = stage;
 	
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.2, "Set  " + this.getClass().getName() + " Stylesheet: Modena"); }); }
-        setUserAgentStylesheet(STYLESHEET_MODENA); // JavaFX8 Stylesheet
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.3, "Set  " + this.getClass().getName() + " Stylesheet: Modena"); }); }
-        
-
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.3, "Load  " + this.getClass().getName() + " Version object..."); }); }
-	version = new Version(this);
-	version.checkLocalVersion(this);
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.4, "Load  " + this.getClass().getName() + " Version object completed"); }); }
-
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.4, "Get  " + Version.getProductName() + " preferences..."); }); }
-	prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.4, "Get  " + Version.getProductName() + " preferences completed"); }); }
-
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.4, "Set  " + this.getClass().getName() + " setOnCloseRequest event..."); }); }
-	this.stage.setOnCloseRequest((WindowEvent e) ->
+//	Just to delay mainStage and give the preloaderStage more time to arrise
+	Timeline mainStageDelayTimeline = new Timeline(new KeyFrame( Duration.millis(1000), ae ->
 	{
+	    ui = this;
+	    guifx = this;
+	    mainStage.initStyle(StageStyle.DECORATED);
+	    mainStage.setTitle(Version.getProductName());
+	    mainStage.setMinWidth(1366);
+	    mainStage.setMinHeight(700);
+	    mainStage.setMaximized(true);
+
+	    try { mainRoot = FXMLLoader.load(getClass().getResource("GUIFX.fxml")); mainScene = new Scene((Parent)mainRoot); } catch (IOException ex) { log("Error: GUIFX.start(..) Exception: FXMLLoader.load(\"GUIFX.fxml\"): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+	    mainStage.setScene(mainScene);
+	    mainStage.setAlwaysOnTop(false);
+
+    //        try { UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); }
+    //        try { UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel"); }catch(Exception e){ System.out.println("Exception: setLookAndFeel: " + e.getMessage()); } // dead lock on BSD
+
+    //        setUserAgentStylesheet(STYLESHEET_CASPIAN); // JavaFX2 Stylesheet
+
+	    setUserAgentStylesheet(STYLESHEET_MODENA); // JavaFX8 Stylesheet
+	    version = new Version(this);
+	    version.checkLocalVersion(this);
+	    prefs = Preferences.userRoot().node(Version.getProductName() + version.getLocalOverallVersionPrefString());
+	    mainStage.setOnCloseRequest((WindowEvent e) ->
+	    {
+		Platform.runLater(() ->
+		{
+		    if ( Audio.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
+
+    //		Shared
+		    String val = prefs.get("Shared", "Unknown");
+
+		    if	(val.equals("Unknown"))
+		    {
+			prefs.put("Shared", "No");
+			flushPrefs(prefs);
+
+    //		    openSupport("setOnCloseRequest", selectedLocale, true);
+
+			supportStage = new Stage();
+			support = new Support();
+			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			support.controller.switchLanguage(selectedLocale);
+			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+			supportStage.show();
+			support.controller.setExitAppOnClose(true);
+
+		    }
+		    else if (val.equals("No"))
+		    {
+    //		    openSupport("setOnCloseRequest",selectedLocale, true);
+
+			supportStage = new Stage();
+			support = new Support();
+			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			support.controller.switchLanguage(selectedLocale);
+			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+			supportStage.show();
+			support.controller.setExitAppOnClose(true);
+		    }
+		    else if (val.equals("Yes"))		{ System.exit(0); }
+		    else
+		    {
+			prefs.put("Shared", "No");
+			flushPrefs(prefs);
+
+    //		    openSupport("setOnCloseRequest",selectedLocale, true);
+
+			supportStage = new Stage();
+			support = new Support();
+			try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
+			support.controller.switchLanguage(selectedLocale);
+			support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
+			supportStage.show();
+			support.controller.setExitAppOnClose(true);
+		    }
+		});
+	    });
+	    mainStage.show();
+
 	    Platform.runLater(() ->
 	    {
-		if ( Audio.sound_Is_Enabled ) { new Sound().play(this, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC); }
-
-//		Shared
-		String val = prefs.get("Shared", "Unknown");
-		
-		if	(val.equals("Unknown"))
-		{
-		    prefs.put("Shared", "No");
-		    flushPrefs(prefs);
-		    
-//		    openSupport("setOnCloseRequest", selectedLocale, true);
-
-		    supportStage = new Stage();
-		    support = new Support();
-		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-		    support.controller.switchLanguage(selectedLocale);
-		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
-		    supportStage.show();
-		    support.controller.setExitAppOnClose(true);
-
-		}
-		else if (val.equals("No"))
-		{
-//		    openSupport("setOnCloseRequest",selectedLocale, true);
-		    
-		    supportStage = new Stage();
-		    support = new Support();
-		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-		    support.controller.switchLanguage(selectedLocale);
-		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
-		    supportStage.show();
-		    support.controller.setExitAppOnClose(true);
-		}
-		else if (val.equals("Yes"))		{ System.exit(0); }
-		else
-		{
-		    prefs.put("Shared", "No");
-		    flushPrefs(prefs);
-
-//		    openSupport("setOnCloseRequest",selectedLocale, true);
-
-		    supportStage = new Stage();
-		    support = new Support();
-		    try { support.start(supportStage); } catch (Exception ex) { log("Error: Exception: support.start(supportStage): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
-		    support.controller.switchLanguage(selectedLocale);
-		    support.controller.setGUI(guifx); // Parse parameters onto global controller references always through controller
-		    supportStage.show();
-		    support.controller.setExitAppOnClose(true);
-		}
+		version = new Version(ui);
+		version.checkLocalVersion(ui);
+		mainStage.setTitle(Version.getProductName() + " " + version.getLocalOverallVersionString());
+		fadeInMessage = version.getLocalOverallVersionString();
 	    });
-	});
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.5, "Set  " + this.getClass().getName() + " setOnCloseRequest event completed"); }); }
 
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.5, "Show " + this.getClass().getName() + " Stage..."); }); }
-	this.stage.show();
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.6, "Show " + this.getClass().getName() + " Stage completed"); }); }
-
-	Platform.runLater(() ->
-	{
-	    if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.6, "Load " + Version.getProductName() + " Version..."); }); }
-	    version = new Version(ui);
-	    if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(0.7, "Load " + Version.getProductName() + " Version completed"); }); }
-	    version.checkLocalVersion(ui);
-	    this.stage.setTitle(Version.getProductName() + " " + version.getLocalOverallVersionString());
-	    fadeInMessage = version.getLocalOverallVersionString();
-	    if ( preloader != null ) { Platform.runLater(() -> { preloader.setProgressStatus(1.0, "Closing " + preloader.getClass().getName() + " "); }); }
-	});
-	
-	if ( preloader != null ) { Platform.runLater(() -> { preloader.closeWindow(); }); } else { log("Error: GUIFX.Preloader null", true, true, true, true, false); }
+	    Timeline fadeoutPreloaderTimeline = new Timeline(new KeyFrame( Duration.millis(1000), ae1 ->
+	    {
+		Timeline dimTimeline = new Timeline();
+		KeyFrame key4 = new KeyFrame(Duration.millis(1000),
+			       new KeyValue (preloaderRootGroup.opacityProperty(), 0)); 
+		dimTimeline.getKeyFrames().add(key4);
+		dimTimeline.setOnFinished((ae2) -> preloaderStage.close());
+		dimTimeline.play();
+	    } )); fadeoutPreloaderTimeline.play();	
+	    
+	} )); mainStageDelayTimeline.play();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-//	Platform.runLater(() ->
-//	{
-//	    Stage splashStage = new Stage();
-//	    splashStage.setTitle("Whatever");
-//	    FlowPane root2 = new FlowPane();
-//	    root2.setAlignment(Pos.CENTER);
-//	    Scene scene2 = new Scene(root2,300,200);
-//	    scene2.setFill(Paint.valueOf("red"));
-//	    root2.getChildren().add(new Button("New Stage"));
-//	    splashStage.setScene(scene2);
-//	    splashStage.show();
-//	});
-
 	showDashboard(false);
 	enableClocks(false, true, true); 
 	
@@ -1081,11 +1081,7 @@ public class GUIFX extends Application implements UI, Initializable
 	sysmon.setFill(Color.valueOf("#888888"));
 	sysmon.fillText(VOICE_ON_SYMBOL, sysmonOffSetX + 120, 20);
 	
-	
-	welcome();	
-//	Platform.runLater(() ->
-//	{
-//	});
+	Platform.runLater(() -> { welcome(); });
     }
     
     private ArrayList<String> getInstalledLanguageNamesList(LanguageList<Language> languageList, boolean sparse)
@@ -1134,7 +1130,6 @@ public class GUIFX extends Application implements UI, Initializable
     private void welcome()
     {		
 	languagesList = new LanguageList(this); // Defines all known & installed Languages from the iso639.txt file
-//	languageNamesList = new ArrayList<String>(); // Just a list to sort the languagename for the choicebox
 //
 	// Fill the choicebox with the sorted languageNameList
 	for (String name: getInstalledLanguageNamesList((LanguageList<Language>) languagesList, false)) { selectLanguage.getItems().add(name); }
@@ -1437,7 +1432,7 @@ public class GUIFX extends Application implements UI, Initializable
 			new Sound().play(this, Audio.SND_SELECTKEY,Audio.AUDIO_CODEC);
 			systemMonitorTestTimeline.play();
 			
-			regrabFCFocusOnOSX(500);
+			regrabFCFocusOnOSX(500);			
 		    });
 		    sysmonFadeTransition.play();
 
@@ -3605,7 +3600,7 @@ public class GUIFX extends Application implements UI, Initializable
     
 //  ================================================= BEGIN UPDATE PROGRESS ===========================================================
 
-    public void setStageTitle(String title) { Platform.runLater(() -> { guifx.stage.setTitle(title); });}
+    public void setStageTitle(String title) { Platform.runLater(() -> { guifx.mainStage.setTitle(title); });}
     
     public void statusDirect(String status) { statusLabel.setText(status); }
 

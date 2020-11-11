@@ -27,7 +27,6 @@ import static java.nio.channels.Channels.newChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.*;
 import java.util.Calendar;
-import java.util.logging.*;
 import javax.net.ssl.*;
 
 public class Version
