@@ -834,7 +834,7 @@ public class GUIFX extends Application implements UI, Initializable
 	preloaderStage.show();
 	
 	Timeline fadeinPreloaderTimeline = new Timeline();
-	KeyFrame key1 = new KeyFrame(Duration.millis(1000),
+	KeyFrame key1 = new KeyFrame(Duration.millis(500),
 		       new KeyValue (preloaderRootGroup.opacityProperty(), 1)); 
 	fadeinPreloaderTimeline.getKeyFrames().add(key1);
 	fadeinPreloaderTimeline.play();
@@ -842,7 +842,7 @@ public class GUIFX extends Application implements UI, Initializable
 	mainStage = stage;
 	
 //	Just to delay mainStage and give the preloaderStage more time to arrise
-	Timeline mainStageDelayTimeline = new Timeline(new KeyFrame( Duration.millis(1000), ae ->
+	Timeline mainStageDelayTimeline = new Timeline(new KeyFrame( Duration.millis(500), ae ->
 	{
 	    ui = this;
 	    guifx = this;
@@ -930,15 +930,15 @@ public class GUIFX extends Application implements UI, Initializable
 		fadeInMessage = version.getLocalOverallVersionString();
 	    });
 
-	    Timeline fadeoutPreloaderTimeline = new Timeline(new KeyFrame( Duration.millis(1000), ae1 ->
+	    Timeline preloaderFadeoutDelayTimeline = new Timeline(new KeyFrame( Duration.millis(500), ae1 ->
 	    {
-		Timeline dimTimeline = new Timeline();
+		Timeline preloaderFadeoutTimeline = new Timeline();
 		KeyFrame key4 = new KeyFrame(Duration.millis(1000),
 			       new KeyValue (preloaderRootGroup.opacityProperty(), 0)); 
-		dimTimeline.getKeyFrames().add(key4);
-		dimTimeline.setOnFinished((ae2) -> preloaderStage.close());
-		dimTimeline.play();
-	    } )); fadeoutPreloaderTimeline.play();	
+		preloaderFadeoutTimeline.getKeyFrames().add(key4);
+		preloaderFadeoutTimeline.setOnFinished((ae2) -> preloaderStage.close());
+		preloaderFadeoutTimeline.play();
+	    } )); preloaderFadeoutDelayTimeline.play();	
 	    
 	} )); mainStageDelayTimeline.play();
     }
