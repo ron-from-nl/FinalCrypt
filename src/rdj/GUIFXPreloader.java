@@ -1,5 +1,5 @@
 /*
- * CC BY-NC-ND 4.0 2017 Ron de Jong (ron@finalcrypt.org)
+ * CC BY-NC-ND 4.0 2020 Ron de Jong (ron@finalcrypt.org)
  * 
  * This is free software; you can redistribute it 
  * under the terms of the Creative Commons License
@@ -27,12 +27,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.*;
 import javafx.util.*;
@@ -55,42 +53,32 @@ public class GUIFXPreloader extends Application implements UI, Initializable
     private GUIFX guifx;
 
     @Override public void start(Stage stage) throws Exception
-    {
-//        configuration = new Configuration(this);
-
+    {	
 	loader = new FXMLLoader(getClass().getResource("GUIFXPreloader.fxml"));
 	root = loader.load();
 	controller = loader.getController();
-	scene = new Scene((Parent)loader.getRoot());        
+	scene = new Scene((Parent)loader.getRoot());
 	preloaderStage = stage;
-	preloaderStage.centerOnScreen();
-	preloaderStage.setAlwaysOnTop(true);
-	preloaderStage.initStyle(StageStyle.TRANSPARENT);
 	preloaderStage.setScene(scene);
-	preloaderStage.setTitle(windowTitle);
+	preloaderStage.setAlwaysOnTop(true);
+	preloaderStage.initStyle(StageStyle.UNDECORATED);
 	preloaderStage.setResizable(false);
 
-	preloaderStage.show();
 	double screenWidth  =	Screen.getPrimary().getVisualBounds().getWidth();
 	double screenHeight =	Screen.getPrimary().getVisualBounds().getHeight();
-	
 	double stageWidth   =	root.getBoundsInParent().getWidth();
 	double stageHeight  =	root.getBoundsInParent().getHeight();
-	
-	double stageXPos = (screenWidth / 2.0) - (stageWidth / 2.0);
-	double stageYPos = (screenHeight / 2.0) - (stageHeight / 2.0);
+	double stageXPos    =	((screenWidth / 2.0) - (stageWidth / 2.0));
+	double stageYPos    =	((screenHeight / 2.0) - (stageHeight / 2.0));
 
         preloaderStage.setX(stageXPos);
         preloaderStage.setY(stageYPos);	
+
+	preloaderStage.show();
     }
     
     @Override public void initialize(URL url, ResourceBundle rb)
     {	
-	bgImageView.setImage(new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt-splash.png")));
-	bgImageView.autosize();
-
-	guiFXPreloader = this;
-	
 	guifx = new GUIFX();
 	guifx.setPreloader(this);
 
@@ -102,7 +90,6 @@ public class GUIFXPreloader extends Application implements UI, Initializable
 		try { guifx.start(guifxStage); } catch (Exception ex)
 		{
 		    log("Error: GUIFXPreloader Exception guifx.start(guifxStage)\r\n", true, false, false, true, true);
-//		    log(ex.getStackTrace().toString() + "\r\nguifx.start(guifxStage)\r\n", false, false, true, true, true);
 		}
 	    });
 	    
@@ -114,13 +101,11 @@ public class GUIFXPreloader extends Application implements UI, Initializable
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    progressBar.setProgress(val);
-//	    if (val >= 1.0) { closeWindow(); }
 	}});
     }
 
     protected void setStatus(String val)
     {
-	guifx.setPreloader(guiFXPreloader);
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    statusLabel.setText(val);
@@ -129,7 +114,6 @@ public class GUIFXPreloader extends Application implements UI, Initializable
     
     protected void setProgressStatus(double val, String status)
     {
-	guifx.setPreloader(this);
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    setProgress(val);
@@ -155,7 +139,6 @@ public class GUIFXPreloader extends Application implements UI, Initializable
     @Override public void test(String message)
     {
 	log(message, true, true, true, false, false);
-//	if ( message != null ) { log(message, true, true, true, false, false); } else {  }
     }
 
     @Override synchronized public void log(String message, boolean status, boolean log, boolean logfile, boolean errfile, boolean print)
