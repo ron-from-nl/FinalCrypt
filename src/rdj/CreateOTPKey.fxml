@@ -65,17 +65,17 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label fx:id="otpRulesLabel" alignment="CENTER" layoutX="-4.0" layoutY="128.0" onMouseClicked="#otpRulesOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="Click here to read about how to use Manual One-Time Pad Keys securely" textAlignment="CENTER" textFill="YELLOW" underline="true">
+                        <Label fx:id="otpRulesLabel" alignment="CENTER" layoutX="-4.0" layoutY="128.0" onMouseClicked="#otpRulesOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand; -fx-font-family: Liberation Sans; -fx-font-size: 14;" text="Click here to read about how to use Manual One-Time Pad Keys securely" textAlignment="CENTER" textFill="YELLOW" underline="true">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Label>
-                        <Label fx:id="otpRulesLabel2" alignment="CENTER" layoutX="-4.0" layoutY="110.0" prefHeight="18.0" prefWidth="707.0" text="Creating Manual OTP Keys isn't needed as FinalCrypt supports Auto Key" textAlignment="CENTER" textFill="RED">
+                        <Label fx:id="otpRulesLabel2" alignment="CENTER" layoutX="-4.0" layoutY="110.0" prefHeight="18.0" prefWidth="707.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 14;" text="Creating Manual OTP Keys isn't needed as FinalCrypt supports Auto Key" textAlignment="CENTER" textFill="RED">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Label>
-                        <Label fx:id="complianceLabel" alignment="CENTER" layoutX="-4.0" layoutY="74.0" onMouseClicked="#complianceLabelOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand;" text="FinalCrypt One-time Pad keys comply to FIPS 140-2 and RFC 1750" textAlignment="CENTER" textFill="#aaaaaa" underline="true">
+                        <Label fx:id="complianceLabel" alignment="CENTER" layoutX="-4.0" layoutY="74.0" onMouseClicked="#complianceLabelOnMouseClicked" prefHeight="18.0" prefWidth="707.0" style="-fx-cursor: hand; -fx-font-fam: Liberation Sans; -fx-font-size: 14;" text="FinalCrypt One-time Pad keys comply to FIPS 140-2 and RFC 1750" textAlignment="CENTER" textFill="#aaaaaa" underline="true">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -98,7 +98,7 @@
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="700.0" text="Create One-Time Pad Key" textAlignment="CENTER" textFill="#e9f4ff" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="69.0" prefWidth="700.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 18;" text="Create One-Time Pad Key" textAlignment="CENTER" textFill="#e9f4ff" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <font>
                         <Font size="36.0" />
                      </font>

@@ -22,7 +22,7 @@
                      <children>
                         <VBox prefHeight="326.0" prefWidth="690.0">
                            <children>
-                              <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="690.0" minHeight="70.0" prefHeight="70.0" prefWidth="690.0" style="-fx-background-color: #222222; -fx-font-family: Liberation Sans; -fx-font-size: 60;" text="No Advertisement" textAlignment="CENTER" textFill="WHITE">
+                              <Label fx:id="headerLabel" alignment="CENTER" contentDisplay="CENTER" maxHeight="70.0" maxWidth="690.0" minHeight="70.0" prefHeight="70.0" prefWidth="690.0" style="-fx-background-color: #222222; -fx-font-family: Liberation Sans; -fx-font-size: 18;" text="No Advertisement" textAlignment="CENTER" textFill="WHITE">
                                  <font>
                                     <Font size="36.0" />
                                  </font>
@@ -30,12 +30,12 @@
                                     <Glow level="1.0" />
                                  </effect>
                               </Label>
-                              <Label fx:id="line1Label" alignment="CENTER" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 32;" text="Protect your family and friends ?" textAlignment="CENTER" textFill="#222222">
+                              <Label fx:id="line1Label" alignment="CENTER" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 18;" text="Protect your family and friends ?" textAlignment="CENTER" textFill="#222222">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="line2Label" alignment="CENTER" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 31;" text="Share FinalCrypt on Social Media" textAlignment="CENTER" textFill="#222222">
+                              <Label fx:id="line2Label" alignment="CENTER" maxHeight="40.0" maxWidth="690.0" minHeight="40.0" minWidth="670.0" prefHeight="40.0" prefWidth="690.0" style="-fx-font-family: Liberation Sans; -fx-font-size: 18;" text="Share FinalCrypt on Social Media" textAlignment="CENTER" textFill="#222222">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
