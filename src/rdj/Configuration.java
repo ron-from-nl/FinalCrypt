@@ -101,8 +101,5 @@ public class Configuration
     public Path	    getErrFilePath()	{return errorFilePath;}
     public String   getTime()		{return timeString;}
     
-    private void println(String string)
-    {
-        System.out.println(string);
-    }
+    private void println(String string) { System.out.println(string); }
 }

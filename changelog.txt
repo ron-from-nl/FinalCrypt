@@ -1,3 +1,9 @@
+Date: 2020-11-14 Version: 6.5.0
+
+Upgraded the Java Runtime Engine to version 1.8.0-271
+This update improves overal performance and security!
+A portable FinalCrypt version for Apple OSX was added
+
 Date: 2020-11-11 Version: 6.4.3
 
 Added nice splash image to FinalCrypt GUI startup

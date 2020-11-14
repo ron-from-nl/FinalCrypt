@@ -1,4 +1,4 @@
-[Version] =		{6.4.3}
+[Version] =		{6.5.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -12,18 +12,17 @@
 [Version Notes] =	{Improved User Interface & File Manager behavior}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 4 (2020-11-02)}
+[Upgrade Notes] =	{Upgrade 5 (2020-11-02)}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{Improved support added to Graphical User Interface}
+[Upgrade Notes] =	{Upgraded the Java Runtime Engine to version 1.8.0-271}
+[Upgrade Notes] =	{This update improves overal performance and security!}
+[Upgrade Notes] =	{A portable FinalCrypt version for Apple OSX was added}
+
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3 (2020-11-11)}
+[Update Notes] =	{Update 0 (2020-11-11)}
 [Update Notes] =	{}
-[Update Notes] =	{Added nice splash image to FinalCrypt GUI startup}
-[Update Notes] =	{Improved Support Email Messages with Email Button}
-[Update Notes] =	{Updated a number of deprecated social media links}
-[Update Notes] =	{}
-[Update Notes] =	{Please don't look away FinalCrypt needs your help}
-[Update Notes] =	{Please help by sharing FinalCrypt on Social Media}
+[Update Notes] =	{* Please don't look away FinalCrypt needs your help *}
+[Update Notes] =	{* Please help by sharing FinalCrypt on Social Media *}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
