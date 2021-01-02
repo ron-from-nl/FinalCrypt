@@ -51,10 +51,11 @@ public class Audio
     public static final String SND_SELECT =			    "/rdj/audio/sounds/select";
     public static final String SND_SELECTINVALID =		    "/rdj/audio/sounds/select_invalid";
     public static final String SND_SELECTKEY =			    "/rdj/audio/sounds/select_key";
+    public static final String SND_SHUTDOWN =			    "/rdj/audio/sounds/shutdown";
     public static final String SND_SOUND_DISABLED =		    "/rdj/audio/sounds/sound_disabled";
     public static final String SND_SOUND_ENABLED =		    "/rdj/audio/sounds/sound_enabled";
-    public static final String SND_SHUTDOWN =			    "/rdj/audio/sounds/shutdown";
-    public static final String SND_STARTUP =			    "/rdj/audio/sounds/startup";
+//    public static final String SND_STARTUP =			    "/rdj/audio/sounds/startup";
+    public static final String SND_TYPEWRITE =			    "/rdj/audio/sounds/typewriter";
 
     public static final String VOI_CLONE_KEY_DEVICE =		    "/rdj/audio/voice/clone_key_device";
     public static final String VOI_CONFIRM_PASS_WITH_ENTER =	    "/rdj/audio/voice/confirm_password_with_enter";
@@ -77,4 +78,42 @@ public class Audio
 
     public  static boolean sound_Is_Enabled =			    true;
     public  static boolean voice_Is_Enabled =			    true;
+
+    public static final String[] soundArray = {SND_ALARM,SND_ALERT,SND_BUTTON,SND_DECRYPTFILES,SND_ENCRYPTFILES,SND_ERROR,SND_INPUT_FAIL,SND_INPUT_OK,SND_KEYPRESS,SND_MESSAGE,SND_OFF,SND_ON,SND_OPEN,SND_READY,SND_SELECT,SND_SELECTINVALID,SND_SELECTKEY,SND_SOUND_DISABLED,SND_SOUND_ENABLED,SND_SHUTDOWN,SND_TYPEWRITE};
+
+    public static String getSound(int sound) { if ((sound >= 0) && (sound < soundArray.length)) { return soundArray[sound]; } else { return SND_TYPEWRITE; } }
+    public static String getSounds()
+    {
+	String returnString = "\r\n";
+	for (int x=0; x<soundArray.length;x++)
+	{
+	    returnString += x + ".  " + soundArray[x] + "\r\n";
+	}
+	return returnString;
+    }
+    
+    public static void main(String[] args)
+    {
+	if	(args.length == 0)  { usage("Error: no parameter", true); }
+	else if (args.length == 1)
+	{
+	    if ( args[0].equalsIgnoreCase("--list") ) { System.out.println(getSounds()); }
+	    else { usage("Error: invalid parameter: \"" + args[0] + "\"", true); }
+	}
+	else			    { new TypeWriter().usage("Too many parameters", true); }	
+    }
+
+    protected static void usage(String errorMessage, boolean error)
+    {
+	if ( errorMessage.length() > 0 )
+	{
+	    System.out.println("\r\n");
+	    System.out.println(errorMessage + "\r\n");
+	}
+
+	System.out.println("\r\n");
+	System.out.println("Usage: java -cp finalcrypt.jar rdj/Audio --list # List available sounds\r\n");
+	System.out.println("\r\n");
+        System.exit(error ? 1 : 0);
+    }
 }

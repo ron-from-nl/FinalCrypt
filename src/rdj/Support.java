@@ -179,8 +179,8 @@ public class Support extends Application implements Initializable
     
     @FXML private void facebookImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 //	play(SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
@@ -202,8 +202,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void twitterImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String urlTarget	= "https://twitter.com/intent/tweet";
@@ -226,8 +226,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void linkedInImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 //	    
@@ -251,8 +251,8 @@ public class Support extends Application implements Initializable
     
     @FXML private void pinterestImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread shareThread; shareThread = new Thread(() ->
 	{
 	    String urlTarget	    = "https://pin.it/72kLWc2";
@@ -315,8 +315,8 @@ public class Support extends Application implements Initializable
     
     @FXML private void homeImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread homeOpenThread; homeOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.HOMEPAGEURLSTRINGARRAY,"GET"); closeWindow(); });
 	homeOpenThread.setName("homeOpenThread");
 	homeOpenThread.setDaemon(true);
@@ -325,8 +325,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void videoImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread videoOpenThread; videoOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.VIDEOPAGEURLSTRINGARRAY,"HEAD"); closeWindow(); });
 	videoOpenThread.setName("videoOpenThread");
 	videoOpenThread.setDaemon(true);
@@ -335,8 +335,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void supportImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	Thread supportOpenThread; supportOpenThread = new Thread(() -> { Version.openWebSite(guifx, Version.SUPPORTPAGEURLSTRINGARRAY,"GET"); closeWindow(); });
 	supportOpenThread.setName("supportOpenThread");
 	supportOpenThread.setDaemon(true);
@@ -345,8 +345,8 @@ public class Support extends Application implements Initializable
 
     @FXML private void emailImageViewOnMouseClicked(MouseEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	
 	String to = Version.SUPPORTEMAIL;
 	String cc = "";

@@ -169,6 +169,7 @@ public class CLUI implements UI
 //          Options
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
+	    else if (  args[paramCnt].equals("--typewriter"))							    { typewriter(args); }
             else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disabledMAC = true; FCPath.KEY_SIZE_MIN = 1; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--scan"))							            { scan=true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
@@ -819,6 +820,8 @@ public class CLUI implements UI
         log("            <--create-keydev>     -k \"key_file\"      -t \"target\"        Create Key Device (only unix).\r\n", false, true, false, false, false);
         log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"  Create OTP Key File.\r\n", false, true, false, false, false);
         log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\" Clone Key Device (only unix).\r\n", false, true, false, false, false);
+        log("            <--typewriter>                                              Print to screen like a typewriter.\r\n", false, true, false, false, false);
+        log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table.\r\n", false, true, false, false, false);
         log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table.\r\n", false, true, false, false, false);
         log("            [--delete-gpt]        -t \"target_device\"                    Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
@@ -950,8 +953,31 @@ public class CLUI implements UI
         log("            java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
+	log("Typewriter Examples (Print to screen like a typewriter):\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            Usage: java -cp finalcrypt.jar rdj/TypeWriter -t \"text to write\" [-s sound-nr|\"file\"] [-min delay_ms] [-max delay_ms]\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/Audio --list # List available sounds\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"type at steady pace\" -min 100\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"type at random pace\" -min 20 -max 100\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"\" -min 1000\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"\\n\" -min 1000\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"built-in sound\" -s 8 -min 20 -max 100\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/TypeWriter -t \"ext sound file\" -s file.wav -min 20 -max 100\r\n", false, true, false, false, false);
+        log("\r\n", false, true, false, false, false);
         log(Version.getProductName() + " " + version.checkLocalVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(0);
+    }
+
+    private static String reformat(String text) { return text.replace("\\t", "\t").replace("\\b", "\b").replace("\\n", "\n").replace("\\r", "\r").replace("\\f", "\f"); }
+    private void typewriter(String[] args)
+    {
+	String[] newargs = new String[args.length-1];
+	for (int x=1; x<args.length;x++) { newargs[x-1] = args[x]; }
+	new TypeWriter(newargs);
+	System.exit(0);
     }
 
     @Override public void processGraph(int value) {  }

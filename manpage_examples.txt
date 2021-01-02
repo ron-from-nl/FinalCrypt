@@ -76,4 +76,18 @@ Key Device Examples (Linux):
             java -cp finalcrypt.jar rdj/CLUI --encrypt -k /dev/sdc1 -t myfile
             java -cp finalcrypt.jar rdj/CLUI --decrypt -k /dev/sdc1 -t myfile
 
-FinalCrypt 6.5.0 - Author: Ron de Jong <info@finalcrypt.org> - Copyright: © 2017-2020
+Typewriter Examples (Print to screen like a typewriter):
+
+            Usage: java -cp finalcrypt.jar rdj/TypeWriter -t "text to write" [-s sound-nr|"file"] [-min delay_ms] [-max delay_ms]
+
+            java -cp finalcrypt.jar rdj/Audio --list # List available sounds
+
+            java -cp finalcrypt.jar rdj/TypeWriter -t "type at steady pace" -min 100
+            java -cp finalcrypt.jar rdj/TypeWriter -t "type at random pace" -min 20 -max 100
+            java -cp finalcrypt.jar rdj/TypeWriter -t "" -min 1000
+            java -cp finalcrypt.jar rdj/TypeWriter -t "\n" -min 1000
+
+            java -cp finalcrypt.jar rdj/TypeWriter -t "built-in sound" -s 8 -min 20 -max 100
+            java -cp finalcrypt.jar rdj/TypeWriter -t "ext sound file" -s file.wav -min 20 -max 100
+
+FinalCrypt 6.6.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021

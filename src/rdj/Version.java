@@ -484,23 +484,31 @@ public class Version
     {
 	String userAgent = getUserAgent("(HTTP)");
 	
+//	URL
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); return null; }
 	if (url == null) { checkOnlineFailed = true; ui.log("Error: httpGetRequest InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
-	HttpURLConnection httpConnection = null;
-	try { httpConnection = (HttpURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
-	httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
-	httpConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
-	try { httpConnection.setRequestMethod(requestMethod); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
-        httpConnection.setRequestProperty("User-Agent", userAgent);
+
+//	Connect
+	HttpURLConnection httpURLConnection = null;
+	try { httpURLConnection = (HttpURLConnection) url.openConnection(); }
+	catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
+
+//	Connection Settings
+	httpURLConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+	httpURLConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
+        httpURLConnection.setRequestProperty("User-Agent", userAgent);
+	try { httpURLConnection.setRequestMethod(requestMethod); }
+	catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
 	
-        int responseCode = 0;
-	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: httpGetRequest IOException: httpConnection.getResponseCode(): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
+//	ResponseCodes
+	int responseCode = 0;
+	try { responseCode = httpURLConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: httpGetRequest IOException: httpConnection.getResponseCode(): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
 
 	if ((responseCode >= 200) && (responseCode < 400))
 	{
             BufferedReader responseReader = null;
-	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: new InputStreamReader(httpConnection.getInputStream()): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
+	    try { responseReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: new InputStreamReader(httpConnection.getInputStream()): " + ex.getMessage() + "\r\n", false, true, true, true, false); return null; }
              
             String responseLine;
             StringBuffer response = new StringBuffer();
@@ -511,7 +519,7 @@ public class Version
 	    } } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.readLine(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
 	    try { responseReader.close(); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: httpGetRequest IOException: responseReader.close(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
 	    
-	    httpConnection.disconnect();
+	    httpURLConnection.disconnect();
 	    
             return response.toString();
         } else { checkOnlineFailed = true; ui.log("Error: httpGetRequest HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
@@ -522,37 +530,45 @@ public class Version
     {
 	String userAgent = getUserAgent("(HTTPS)");
 	
+//	URL
 	URL url = null;
 	try { url = new URL(urlString);	} catch (MalformedURLException ex) { checkOnlineFailed = true; ui.log("Error: MalformedURLException: new URL(" + urlString +") (URL Typo?)\r\n", false, true, true, true, false); }	
 	if (url == null) { checkOnlineFailed = true; ui.log("Error: InvalidURL: url = new URL(" + urlString +"); (URL Typo?)\r\n", false, true, true, true, false); return null; }	
-	HttpsURLConnection httpConnection = null;
+
+//	Connect
+	HttpsURLConnection httpsURLConnection = null;	
+	try { httpsURLConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
+
+//	Connection Settings
+	httpsURLConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT); 
+	httpsURLConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
+	try { httpsURLConnection.setRequestMethod(requestMethod); }
+	catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: ProtocolException: httpsURLConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
+        httpsURLConnection.setRequestProperty("User-Agent", userAgent);
+	httpsURLConnection.setRequestProperty("Referer", Version.WEBSITEURISTRING);
 	
-	try { httpConnection = (HttpsURLConnection) url.openConnection(); } catch (IOException ex){ checkOnlineFailed = true; ui.log("Error: IOException: url.openConnection(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
-	httpConnection.setConnectTimeout(HTTP_CONNECT_TIMEOUT); 
-	httpConnection.setReadTimeout(HTTP_CONNECT_TIMEOUT);
-	try { httpConnection.setRequestMethod(requestMethod); } catch (ProtocolException ex) { checkOnlineFailed = true; ui.log("Error: ProtocolException: httpConnection.setRequestMethod(\"GET\"): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
-        httpConnection.setRequestProperty("User-Agent", userAgent);
-	httpConnection.setRequestProperty("Referer", Version.WEBSITEURISTRING);
-	
+//	ResponseCodes
         int responseCode = 0;
-	try { responseCode = httpConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: IOException: httpConnection.getResponseCode(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
+	try { responseCode = httpsURLConnection.getResponseCode(); } catch (IOException ex) {checkOnlineFailed = true;  ui.log("Error: IOException: httpsURLConnection.getResponseCode(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
 
 	if ((responseCode >= 200) && (responseCode < 400))
 	{
- 
             BufferedReader responseReader = null;
-	    try { responseReader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: IOException: new InputStreamReader(httpConnection.getInputStream()): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
+	    try { responseReader = new BufferedReader(new InputStreamReader(httpsURLConnection.getInputStream())); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: IOException: new InputStreamReader(httpsURLConnection.getInputStream()): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
              
             String responseLine;
             StringBuffer response = new StringBuffer();
  
-	    try { while ((responseLine = responseReader.readLine()) != null)
+	    try
 	    {
-		response.append(responseLine + "\n");
-	    } } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: IOException: responseReader.readLine() " + ex.getCause() + "\r\n", false, true, true, true, false); }
+		while ((responseLine = responseReader.readLine()) != null)
+		{
+		    response.append(responseLine + "\n");
+		} 
+	    } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: IOException: responseReader.readLine() " + ex.getCause() + "\r\n", false, true, true, true, false); }
 	    try { responseReader.close(); } catch (IOException ex) { checkOnlineFailed = true; ui.log("Error: IOException: responseReader.close(): " + ex.getMessage() + "\r\n", false, true, true, true, false); }
  
- 	    httpConnection.disconnect();
+ 	    httpsURLConnection.disconnect();
 
 	    return response.toString();
         } else { checkOnlineFailed = true; ui.log("Error: HTTP Response Code: " + responseCode + "\r\n", false, true, true, true, false); }
@@ -566,20 +582,28 @@ public class Version
 	latestVersionIsKnown = false;
         latestOverallVersionString = "Unknown";
 	    
-	loop: for(String remoteVERSION2FileString:REMOTEVERSIONFILEURLSTRINGARRAY)
+//	Loop through array
+	loop: for(String remoteVERSION2FileURLString:REMOTEVERSIONFILEURLSTRINGARRAY)
 	{	    
 	    checkOnlineFailed = false;
 	    
 	    Thread logThread;
 	    logThread = new Thread(() ->
 	    {
-		ui.log("Fetch: " + remoteVERSION2FileString + "\r\n", false, true, true, false, false);
+		ui.log("Fetch: " + remoteVERSION2FileURLString + "\r\n", false, true, true, false, false);
 	    });
 	    logThread.setName("logThread");
 	    logThread.setDaemon(true);
 	    logThread.start();
 	    
-	    if (remoteVERSION2FileString.startsWith("https://")) { remoteContent = httpsGetRequest(ui, remoteVERSION2FileString, "GET"); } else { remoteContent = httpGetRequest(ui, remoteVERSION2FileString, "GET"); }
+	    if (remoteVERSION2FileURLString.startsWith("https://"))
+	    {
+		remoteContent = httpsGetRequest(ui, remoteVERSION2FileURLString, "GET");
+	    }
+	    else
+	    {
+		remoteContent = httpGetRequest(ui, remoteVERSION2FileURLString, "GET");
+	    }
 	    
 //	    ui.test("Remote Content: " + remoteContent + "\r\n\r\n");
 	    if ((remoteContent != null) && (! checkOnlineFailed))

@@ -170,7 +170,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    if ( filenameTextField.getText().matches(regex) ) { filenameTextField.setText(filenameTextField.getText().replaceAll(regex, "")); }
 	    else
 	    {
-		new Sound().play(guifx, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC);
+		new AudioPlayer().play(guifx, Audio.SND_KEYPRESS,Audio.AUDIO_CODEC);
 		filenameTextField.setText(filenameTextField.getText().replaceAll(regex, ""));
 	    } 
 
@@ -250,8 +250,8 @@ public class CreateOTPKey extends Application implements Initializable
         
     @FXML   private void increaseButtonOnAction(ActionEvent event) { changeSize(1); }
     @FXML   private void decreaseButtonOnAction(ActionEvent event) { changeSize(-1); }
-    @FXML   private void increaseButtonOnMousePressed(MouseEvent event) { new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC); changeSizeRepeaterOn(1); }
-    @FXML   private void decreaseButtonOnMousePressed(MouseEvent event) { new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC); changeSizeRepeaterOn(-1); }
+    @FXML   private void increaseButtonOnMousePressed(MouseEvent event) { new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC); changeSizeRepeaterOn(1); }
+    @FXML   private void decreaseButtonOnMousePressed(MouseEvent event) { new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC); changeSizeRepeaterOn(-1); }
     @FXML   private void increaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
     @FXML   private void decreaseButtonOnMouseReleased(MouseEvent event) { changeSizeRepeaterOff(); }
 
@@ -308,7 +308,7 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void createButtonAction(ActionEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	filenameTextField.setDisable(true);
 	filesizeLabel.setDisable(true);
 	filesizeTextField.setDisable(true);
@@ -376,7 +376,7 @@ public class CreateOTPKey extends Application implements Initializable
 	    }; updateProgressTaskTimer = new java.util.Timer(); updateProgressTaskTimer.schedule(updateProgressTask, 0L, 200L);
 
 
-	    new Sound().play(guifx, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_ENCRYPTFILES,Audio.AUDIO_CODEC);
 
 	    write1loop: while ( (totalTranfered < filesizeInBytes) && (! inputEnded ))
 	    {
@@ -439,13 +439,13 @@ public class CreateOTPKey extends Application implements Initializable
     @FXML
     private void cancelButtonAction(ActionEvent event)
     {
-	new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
 	    if (repeaterTimeline != null) { repeaterTimeline.stop(); statusLabel1.setText("Canceled"); } else { statusLabel1.setText("Closing"); }
 	    statusLabel1.setVisible(true);
 	    
-	    new Sound().play(guifx, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_INPUT_FAIL,Audio.AUDIO_CODEC);
 
 	    repeaterTimeline = new Timeline(new KeyFrame( Duration.millis(100), ae -> closeWindow() ));
 	    repeaterTimeline.setCycleCount(1);
@@ -458,7 +458,7 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    new Sound().play(guifx, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_SHUTDOWN,Audio.AUDIO_CODEC);
 	    guifx.updateFileChoosers(true, false, true, true, false, true); // Basically FileChoosers ComponentAlteration as guifx.updateFileChoosers(true, true); hanged sometimes.
 	    Stage stage = (Stage) cancelButton.getScene().getWindow(); stage.close();		
 	}});
@@ -480,8 +480,8 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	    new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	    Thread complianceURLThread;
 	    complianceURLThread = new Thread(() ->
 	    {
@@ -501,8 +501,8 @@ public class CreateOTPKey extends Application implements Initializable
     {
 	Platform.runLater(new Runnable(){ @Override public void run()
 	{
-	    new Sound().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
-	    new Sound().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    new AudioPlayer().play(guifx, Audio.SND_OPEN,Audio.AUDIO_CODEC);
 	    Thread otpRulesURLThread;
 	    otpRulesURLThread = new Thread(() ->
 	    {

@@ -1,3 +1,16 @@
+Date: 2021-01-02 Version: 6.6.0
+
+A typewriter was added to help command-line tutors
+The typewriter prints to screen like a human types
+
+We learn better when we see a moving mouse pointer
+We also learn better by seeing typed command-lines
+
+This typewriter can be used for any scripting demo
+
+Please don't look away FinalCrypt needs your help
+Please help by sharing FinalCrypt on Social Media
+
 Date: 2020-11-14 Version: 6.5.0
 
 Upgraded the Java Runtime Engine to version 1.8.0-271
@@ -9,9 +22,6 @@ Date: 2020-11-11 Version: 6.4.3
 Added nice splash image to FinalCrypt GUI startup
 Improved Support Email Messages with Email Button
 Updated a number of deprecated social media links
-
-Please don't look away FinalCrypt needs your help
-Please help by sharing FinalCrypt on Social Media
 
 Date: 2020-11-02 Version: 6.4.2
 
