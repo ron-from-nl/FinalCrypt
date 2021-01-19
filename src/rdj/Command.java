@@ -20,14 +20,15 @@ package rdj;
 
 public class Command
 {
-    public static String command =	Version.getCommandLine();
-    public static String scanMode =	"--scan";
-    public static String encryptMode =	"--encrypt";
-    public static String decryptMode =	"--decrypt";    
-    public static String pwdOption =	"";
-    public static String options =	"";
-    public static String keyParam =	"";
-    public static String tgtParams =	"";
+    public static String command =	    Version.getCommandLine();
+    public static String scanMode =	    "--scan";
+    public static String encryptMode =	    "--encrypt";
+    public static String decryptMode =	    "--decrypt";    
+    public static String reuseKeysOption =  "";
+    public static String pwdOption =	    "";
+    public static String options =	    "";
+    public static String keyParam =	    "";
+    public static String tgtParams =	    "";
     
     public static String getCommandLine(boolean encrypt, boolean decrypt)
     {
@@ -45,12 +46,13 @@ public class Command
     {
 	String result = "";
 
-	if ( command.length() > 0 )	{ result += command + " "; }
-	if ( runningMode.length() > 0 )	{ result += runningMode + " "; }
-	if ( pwdOption.length() > 0 )	{ result += pwdOption + " "; }
-	if ( options.length() > 0 )	{ result += options + " "; }
-	if ( keyParam.length() > 0 )	{ result += keyParam + " "; }
-	if ( tgtParams.length() > 0 )	{ result += tgtParams; }
+	if ( command.length() > 0 )	    { result += command + " "; }
+	if ( runningMode.length() > 0 )	    { result += runningMode + " "; }
+	if ( reuseKeysOption.length() > 0 ) { result += reuseKeysOption + " "; }
+	if ( pwdOption.length() > 0 )	    { result += pwdOption + " "; }
+	if ( options.length() > 0 )	    { result += options + " "; }
+	if ( keyParam.length() > 0 )	    { result += keyParam + " "; }
+	if ( tgtParams.length() > 0 )	    { result += tgtParams; }
 
 	return result;
     }

@@ -4943,6 +4943,6 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private void reuseKeyCheckBoxOnAction(ActionEvent event)
     {
 	finalCrypt.reuseKeys = reuseKeyCheckBox.isSelected();
-	if (reuseKeyCheckBox.isSelected()) { reuseKeyCheckBox.setOpacity(1.0); } else { reuseKeyCheckBox.setOpacity(0.15); }
+	if (reuseKeyCheckBox.isSelected()) { reuseKeyCheckBox.setOpacity(1.0); Command.reuseKeysOption = "--reuse-keys"; } else { reuseKeyCheckBox.setOpacity(0.15); Command.reuseKeysOption = ""; }
     }
  }
