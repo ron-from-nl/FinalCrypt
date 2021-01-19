@@ -90,4 +90,4 @@ Typewriter Examples (Print to screen like a typewriter):
             java -cp finalcrypt.jar rdj/TypeWriter -t "built-in sound" -s 8 -min 20 -max 100
             java -cp finalcrypt.jar rdj/TypeWriter -t "ext sound file" -s file.wav -min 20 -max 100
 
-FinalCrypt 6.6.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021
+FinalCrypt 6.7.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021

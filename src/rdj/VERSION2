@@ -1,4 +1,4 @@
-[Version] =		{6.6.0}
+[Version] =		{6.7.0}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -12,15 +12,18 @@
 [Version Notes] =	{Improved User Interface & File Manager behavior}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 6 (2021-01-02)}
+[Upgrade Notes] =	{Upgrade 7 (2021-01-18)}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{A typewriter was added to help command-line tutors}
-[Upgrade Notes] =	{The typewriter prints to screen like a human types}
+[Upgrade Notes] =	{Added "Reuse Keys" to quicly view and re-encrypt}
+[Upgrade Notes] =	{to prevent unchanged files  from being backed-up}
+[Upgrade Notes] =	{Keys just won't be deleted and reused to encrypt}
+[Upgrade Notes] =	{Strictly use on files that remain 100% unchanged}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{We learn better when we see a moving mouse pointer}
-[Upgrade Notes] =	{We also learn better by seeing typed command-lines}
+[Upgrade Notes] =	{Reuse Keys can be found to the right of key info}
+[Upgrade Notes] =	{It's unchecked by default and made inconspicuous}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{This typewriter can be used for any scripting demo}
+[Upgrade Notes] =	{Reuse Keys function breaks 1 out of 4 OTP rules!}
+[Upgrade Notes] =	{Only use knowing the risk and what you are doing}
 
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 0 (2021-01-02)}

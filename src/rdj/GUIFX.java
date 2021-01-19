@@ -133,7 +133,7 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML   private ProgressBar fileProgressBar;
     @FXML   private Label statusLabel;    
     @FXML   private SwingNode keyFileSwingNode;
-    @FXML   private Object mainRoot;
+    private Object mainRoot;
     @FXML   private Label authorLabel;
     @FXML   private SwingNode targetFileSwingNode;
     @FXML   private Button decryptButton;
@@ -618,6 +618,12 @@ public class GUIFX extends Application implements UI, Initializable
     private Stage preloaderStage;
     private Group preloaderRootGroup;
     private Scene preloaderScene;
+    @FXML
+    private CheckBox reuseKeyCheckBox;
+    @FXML
+    private Tooltip reuseKeyCheckBoxToolTip;
+    @FXML
+    private AnchorPane root;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -785,6 +791,7 @@ public class GUIFX extends Application implements UI, Initializable
 	stopDescription=bundle.getString("102");
 	
 	commandLabelToolTip.setText(bundle.getString("146"));
+	reuseKeyCheckBoxToolTip.setText(bundle.getString("155"));
 
 	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
 	
@@ -2490,6 +2497,7 @@ public class GUIFX extends Application implements UI, Initializable
 	checksumHeader.setVisible(show);
 	showPasswordCheckBox.setVisible(show);
 	keyImageView.setVisible(show);
+	reuseKeyCheckBox.setVisible(show);
     }
     
     synchronized private void keyFileChooserPropertyCheck(boolean controlled) // getFCPath, checkModeReady
@@ -2575,6 +2583,7 @@ public class GUIFX extends Application implements UI, Initializable
 			keyImageView.setOpacity(0.8);
 
 			showKeyPanel(true);
+			if (keyFCPath.type == FCPath.FILE)  { reuseKeyCheckBox.setVisible(false); } else { reuseKeyCheckBox.setVisible(true); }
 
 			tgtFileChooserPropertyCheck(true);
 		    }
@@ -4929,5 +4938,11 @@ public class GUIFX extends Application implements UI, Initializable
     {
 	new AudioPlayer().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); tab.getSelectionModel().select(1); log("Command-line (DOS Prompt / Terminal) command:\r\n\r\n", false, true, false, false, false);
 	log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false);
+    }
+
+    @FXML   private void reuseKeyCheckBoxOnAction(ActionEvent event)
+    {
+	finalCrypt.reuseKeys = reuseKeyCheckBox.isSelected();
+	if (reuseKeyCheckBox.isSelected()) { reuseKeyCheckBox.setOpacity(1.0); } else { reuseKeyCheckBox.setOpacity(0.15); }
     }
  }

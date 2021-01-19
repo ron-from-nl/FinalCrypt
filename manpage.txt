@@ -2,7 +2,7 @@ Usage:      java -cp finalcrypt.jar rdj/CLUI   <Mode>  [options] <Parameters>
 
 Examples:
 
-            java -cp finalcrypt.jar rdj/CLUI --examples                 Print commandline examples.
+            java -cp finalcrypt.jar rdj/CLUI --examples                 Print commandline examples
 
             java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k "key_dir" -t "target_dir" -t "target_file" # Test Encrypt (Auto Key Mode)
             java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k "key_dir" -t "target_dir" -t "target_file" # Test Decrypt (Auto Key Mode)
@@ -15,53 +15,55 @@ Examples:
 
 Mode:
 
-            <--scan>              -k "key_dir"       -t "target"        Print scan results and quit.
-            <--encrypt>           -k "key_dir"       -t "target"        Encrypt Targets.
-            <--decrypt>           -k "key_dir"       -t "target"        Decrypt Targets.
-            <--create-keydev>     -k "key_file"      -t "target"        Create Key Device (only unix).
-            <--create-keyfile>    -K "key_file"      -S "Size (bytes)"  Create OTP Key File.
-            <--clone-keydev>      -k "source_device" -t "target_device" Clone Key Device (only unix).
-            <--typewriter>                                              Print to screen like a typewriter.
-            [--print-gpt]         -t "target_device"                    Print GUID Partition Table.
-            [--print-gpt]         -t "target_device"                    Print GUID Partition Table.
-            [--delete-gpt]        -t "target_device"                    Delete GUID Partition Table (DATA LOSS!).
+            <--scan>              -k "key_dir"       -t "target"        Print scan results and quit
+            <--encrypt>           -k "key_dir"       -t "target"        Encrypt Targets
+            <--decrypt>           -k "key_dir"       -t "target"        Decrypt Targets
+            <--create-keydev>     -k "key_file"      -t "target"        Create Key Device (only unix)
+            <--create-keyfile>    -K "key_file"      -S "Size (bytes)"  Create OTP Key File
+            <--clone-keydev>      -k "source_device" -t "target_device" Clone Key Device (only unix)
+            <--typewriter>                                              Print to screen like a typewriter
+            [--print-gpt]         -t "target_device"                    Print GUID Partition Table
+            [--print-gpt]         -t "target_device"                    Print GUID Partition Table
+            [--delete-gpt]        -t "target_device"                    Delete GUID Partition Table (DATA LOSS!)
 
 Options:
 
-            [-h] [--help]                                               Print help page.
+            [-h] [--help]                                               Print help page
             [--password]          -p 'password'                         Optional password parameter http://www.finalcrypt.org/faq.php#t22
             [--password-prompt]   -pp                                   Optional password prompt http://www.finalcrypt.org/faq.php#t22
-            [--key-chksum]        -k "key_file"                         Calculate key checksum.
-            [--no-key-size]                                             Allow key-size less than the default minimum of 140 bytes.
-            [-d] [--debug]                                              Enables debugging mode.
-            [-v] [--verbose]                                            Enables verbose mode.
-            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely).
-            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!).
+            [--key-chksum]        -k "key_file"                         Calculate key checksum
+            [--no-key-size]                                             Allow key-size less than the default minimum of 140 bytes
+            [-d] [--debug]                                              Enables debugging mode
+            [-v] [--verbose]                                            Enables verbose mode
+            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)
+            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)
+            [--reuse-keys]                                              Reuse Keys (Breaks OTP rule so only use if you know what you do)
             [--disable-MAC]                                             Disable MAC - (not compatible with MAC encrypted files!)
-            [--version]                                                 Print FinalCrypt version.
-            [--license]                                                 Print FinalCrypt license.
-            [--check-update]                                            Check for online updates.
-            [-s size]                                                   Changes default I/O buffer size (size = KiB) (default 1024 KiB).
+            [--version]                                                 Print FinalCrypt version
+            [--license]                                                 Print FinalCrypt license
+            [--check-update]                                            Check for online updates
+            [-s size]                                                   Changes default I/O buffer size (size = KiB) (default 1024 KiB)
             [-S size]                                                   OTP Key File Size (size = bytes). See --create-keyfile 
+            [--urlencode]         "text to encode"                      Encode plain text to URL safe text
 
 Test Options:
 
-            [--test]                                                    Test run without executing (also prints statistics at the end).
-            [--test "answer"]                                           Same but then with non interactive answer (c,1-13) included.
-            [-pd] [--password-dictionary]  "dict_file"                  Brute force test plain text passwords from dictionary file.
+            [--test]                                                    Test run without executing (also prints statistics at the end)
+            [--test "answer"]                                           Same but then with non interactive answer (c,1-13) included
+            [-pd] [--password-dictionary]  "dict_file"                  Brute force test plain text passwords from dictionary file
 
 Filtering Options:
 
-            [-w 'wildcard']                                             File wildcard INCLUDE filter. Uses: "Globbing Patterns Syntax".
-            [-W 'wildcard']                                             File wildcard EXCLUDE filter. Uses: "Globbing Patterns Syntax".
+            [-w 'wildcard']                                             File wildcard INCLUDE filter. Uses: "Globbing Patterns Syntax"
+            [-W 'wildcard']                                             File wildcard EXCLUDE filter. Uses: "Globbing Patterns Syntax"
             [-r 'regex']                                                File regular expression filter. Advanced filename filter!
 
 Parameters:
 
             <-k "keydir">                                               The directory that holds your keys. Keep SECRET!
 
-            <-t / -b>                                                   Target items to encrypt. Individual (-t) by batch (-b).
-            <[-t "file/dir"]>                                           Target items (files or directories) you want to encrypt (recursive).
-            <[-b "batchfile"]>                                          Batchfile with targetfiles you want to encrypt (only files).
+            <-t / -b>                                                   Target items to encrypt. Individual (-t) by batch (-b)
+            <[-t "file/dir"]>                                           Target items (files or directories) you want to encrypt (recursive)
+            <[-b "batchfile"]>                                          Batchfile with targetfiles you want to encrypt (only files)
 
-FinalCrypt 6.6.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021
+FinalCrypt 6.7.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021

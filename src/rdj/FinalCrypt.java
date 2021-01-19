@@ -76,7 +76,7 @@ public class FinalCrypt extends Thread
     private static double   filesBytesPerMilliSecond = 0;
     private final long UPDATE_PROGRESS_TIMERTASK_PERIOD = 100L;
 //
-    public static final String UTF8_UNSUCCEEDED_SYMBOL =		    "U";
+    public static final String UTF8_UNSUCCEEDED_SYMBOL =	    "U";
     public static final String UTF8_UNSUCCEEDED_DESC =		    "Unsucceeded";
     
     public static final String UTF8_SUCCESSUNKNOWN_SYMBOL =	    "?";
@@ -92,7 +92,7 @@ public class FinalCrypt extends Thread
     public static final String UTF8_UNDECRYPTABLE_DESC =	    "Undecryptable";
 
     public static final String UTF8_KEY_DESC =			    "Key";
-    public static final String UTF8_KEY_SYMBOL =			    "K";
+    public static final String UTF8_KEY_SYMBOL =		    "K";
     
     public static final String UTF8_OLD_TARGET_DESC =		    "Old Target";
     public static final String UTF8_OLD_TARGET_SYMBOL =		    "O";
@@ -101,7 +101,7 @@ public class FinalCrypt extends Thread
     public static final String UTF8_NEW_TARGET_SYMBOL =		    "N";
     
     public static final String UTF8_MAC_DESC =			    "Message Authentication Code (MAC)";
-    public static final String UTF8_MAC_SYMBOL =			    "M";
+    public static final String UTF8_MAC_SYMBOL =		    "M";
         
     public static final String UTF8_ATTRIB_SYMBOL =		    "A";
     public static final String UTF8_ATTRIB_DESC =		    "File Attributes";
@@ -144,7 +144,8 @@ public class FinalCrypt extends Thread
     public static final String UTF8_UNPAUSE_DESC =		    "UnPause";
     public static final String UTF8_STOP_DESC =			    "Stop";
 
-    public static boolean disabledMAC = false; // Disable Message Authentication Mode DANGEROUS
+    public static boolean disabledMAC =				    false;	// Disable Message Authentication Mode DANGEROUS
+    public boolean reuseKeys =					    false;	// Reuse Keys (Breaks OTP rules so only use if you know what you are doing)
     
     private static String pwd = ""; // abc = 012
     private static int pwdPos = 0;
@@ -433,7 +434,7 @@ public class FinalCrypt extends Thread
 		if (! test)
 		{
 		    if ( (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Detects Auto Key Mode
-		    {		    
+		    {
 			if (encryptMode) // During encryption keys have to be created when non existing
 			{
 //			    ui.test("\r\n Encrypting keySourceFCPath: " + keySourceFCPath.path.toAbsolutePath().toString() + "\r\n");
@@ -450,6 +451,7 @@ public class FinalCrypt extends Thread
 			    try { Files.createDirectories(autoKeyPath.getParent()); } catch (IOException ex) { ui.log("Error: Files.createDirectories(..): " + ex.getMessage() + "\r\n", true, true, true, true, false); break; }
 
 //			    if ( dynamicKeyFCPath.size < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) ) // Only append extra key data when key is smaller than data file
+			    if ((! reuseKeys) || (Files.notExists(dynamicKeyFCPath.path)))
 			    { // Allways write a new full size key
 				if ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize) { bufferSize =  (int) ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ); }
 
@@ -808,7 +810,7 @@ public class FinalCrypt extends Thread
 			    {
 				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
-			    if (( ! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Only delete key on succesfull decrypt, never on encryption
+			    if (( ! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir)) // Only delete key on succesfull decrypt, never on encryption
 			    {
 				deleted = false;
 				try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -914,7 +916,7 @@ public class FinalCrypt extends Thread
 
 
 //			Delete the key file after decryption
-			if ((! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) )
+			if ((! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) && (!reuseKeys))
 			{
 			    deleted = false;
 			    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex)    { ui.log("Error: Files.deleteIfExists(" + dynamicKeyFCPath.path.toAbsolutePath().toString() + "): " + ex.getMessage() + "\r\n", true, true, true, true, false); continue encryptTargetloop; }
@@ -960,7 +962,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, dynamicKeyFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();

@@ -321,6 +321,19 @@
                                           <Label fx:id="keyHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="190.0" styleClass="dashboard_generic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="17">
+                                       <children>
+                                          <CheckBox fx:id="reuseKeyCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#reuseKeyCheckBoxOnAction" opacity="0.15" styleClass="dashboard_generic" textAlignment="CENTER" visible="false" AnchorPane.rightAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip fx:id="reuseKeyCheckBoxToolTip" text="Reuse Key (only use if you know what you are doing)\r\n\r\nReuse Key can be used in case you want to quick view and reencrypt without making changes to the original file to prevent unnecessary backups">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip>
+                                          </CheckBox>
+                                       </children>
+                                    </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.rowIndex="2">
                                        <children>
                                           <Label fx:id="keySizeHeaderLabel" alignment="CENTER_RIGHT" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="2.0" layoutY="-6.0" prefHeight="30.0" prefWidth="61.0" styleClass="dashboard_generic" text=" " AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

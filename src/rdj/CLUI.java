@@ -20,8 +20,10 @@
 package rdj;
 
 import java.io.*;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.*;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -31,6 +33,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.*;
 import java.util.stream.Collectors;
 import static rdj.GUIFX.getHexString;
 
@@ -170,6 +173,7 @@ public class CLUI implements UI
             if      (( args[paramCnt].equals("-h")) || ( args[paramCnt].equals("--help") ))                         { usage(false); }
 	    else if (  args[paramCnt].equals("--examples"))							    { examples(); }
 	    else if (  args[paramCnt].equals("--typewriter"))							    { typewriter(args); }
+            else if (  args[paramCnt].equals("--reuse-keys"))							    { finalCrypt.reuseKeys = true; }
             else if (  args[paramCnt].equals("--disable-MAC"))							    { finalCrypt.disabledMAC = true; FCPath.KEY_SIZE_MIN = 1; encryptModeNeeded = true; }
             else if (  args[paramCnt].equals("--scan"))							            { scan=true; }
             else if (  args[paramCnt].equals("--encrypt"))							    { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { encrypt = true; kfsetneeded = true; tfsetneeded = true; } }
@@ -202,7 +206,19 @@ public class CLUI implements UI
             else if (  args[paramCnt].equals("--version"))                                                          { log(version.getProductName() + " " + version.getLocalOverallVersionString() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--license"))                                                          { log(version.getProductName() + " " + Version.getLicense() + "\r\n", false, true, true, false, false); System.exit(0); }
             else if (  args[paramCnt].equals("--check-update"))                                                     { version.checkLatestVersion(this); 	    String[] lines = version.getUpdateStatus().split("\r\n"); for (String line: lines) { log(line + "\r\n", false, true, true, false, false); } System.exit(0); }
-            else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
+            else if ((  args[paramCnt].equals("--urlencode")) && (paramCnt == 0))
+	    {
+		if (args.length == 2)
+		{
+		    if (! args[paramCnt+1].isEmpty())
+		    {
+			try { log( URLEncoder.encode(args[paramCnt+1], StandardCharsets.UTF_8.toString()).replace("+", "%20") + "\r\n", false, true, false, false, false); }
+			catch (UnsupportedEncodingException ex) { log("Error: Version.encodeValue URLEncoder.encode(" + args[paramCnt+1] +") (URL Encoding?)\r\n", false, true, true, true, false); }		
+			System.exit(0);
+		    } else { log( "Please specify one text parameter: \"example text\"\r\n", false, true, false, false, false); System.exit(1); }
+		} else { log( "Please specify one text parameter: \"example text\"\r\n", false, true, false, false, false); System.exit(1); }
+	    }
+	    else if (( args[paramCnt].equals("-s")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { finalCrypt.setBufferSize(Integer.valueOf( args[paramCnt + 1] ) * 1024 ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-b size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
             else if (( args[paramCnt].equals("-S")) && (!args[paramCnt+1].isEmpty()) )				    { if ( validateIntegerString(args[paramCnt + 1]) ) { filesizeInBytes = Long.valueOf( args[paramCnt + 1] ); paramCnt++; } else { log("\r\nWarning: Invalid Option Value [-S size]" + "\r\n", false, true, true, false, false); usagePrompt(true); }}
 
 //	    Mode parameters
@@ -801,7 +817,7 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("Examples:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            java -cp finalcrypt.jar rdj/CLUI --examples                 Print commandline examples.\r\n", false, true, false, false, false);
+        log("            java -cp finalcrypt.jar rdj/CLUI --examples                 Print commandline examples\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --encrypt --test -k \"key_dir\" -t \"target_dir\" -t \"target_file\" # Test Encrypt (Auto Key Mode)\r\n", false, true, false, false, false);
         log("            java -cp finalcrypt.jar rdj/CLUI --decrypt --test -k \"key_dir\" -t \"target_dir\" -t \"target_file\" # Test Decrypt (Auto Key Mode)\r\n", false, true, false, false, false);
@@ -814,60 +830,62 @@ public class CLUI implements UI
         log("\r\n", false, true, false, false, false);
         log("Mode:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            <--scan>              -k \"key_dir\"       -t \"target\"        Print scan results and quit.\r\n", false, true, false, false, false);
-        log("            <--encrypt>           -k \"key_dir\"       -t \"target\"        Encrypt Targets.\r\n", false, true, false, false, false);
-        log("            <--decrypt>           -k \"key_dir\"       -t \"target\"        Decrypt Targets.\r\n", false, true, false, false, false);
-        log("            <--create-keydev>     -k \"key_file\"      -t \"target\"        Create Key Device (only unix).\r\n", false, true, false, false, false);
-        log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"  Create OTP Key File.\r\n", false, true, false, false, false);
-        log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\" Clone Key Device (only unix).\r\n", false, true, false, false, false);
-        log("            <--typewriter>                                              Print to screen like a typewriter.\r\n", false, true, false, false, false);
-        log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table.\r\n", false, true, false, false, false);
-        log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table.\r\n", false, true, false, false, false);
-        log("            [--delete-gpt]        -t \"target_device\"                    Delete GUID Partition Table (DATA LOSS!).\r\n", false, true, false, false, false);
+        log("            <--scan>              -k \"key_dir\"       -t \"target\"        Print scan results and quit\r\n", false, true, false, false, false);
+        log("            <--encrypt>           -k \"key_dir\"       -t \"target\"        Encrypt Targets\r\n", false, true, false, false, false);
+        log("            <--decrypt>           -k \"key_dir\"       -t \"target\"        Decrypt Targets\r\n", false, true, false, false, false);
+        log("            <--create-keydev>     -k \"key_file\"      -t \"target\"        Create Key Device (only unix)\r\n", false, true, false, false, false);
+        log("            <--create-keyfile>    -K \"key_file\"      -S \"Size (bytes)\"  Create OTP Key File\r\n", false, true, false, false, false);
+        log("            <--clone-keydev>      -k \"source_device\" -t \"target_device\" Clone Key Device (only unix)\r\n", false, true, false, false, false);
+        log("            <--typewriter>                                              Print to screen like a typewriter\r\n", false, true, false, false, false);
+        log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table\r\n", false, true, false, false, false);
+        log("            [--print-gpt]         -t \"target_device\"                    Print GUID Partition Table\r\n", false, true, false, false, false);
+        log("            [--delete-gpt]        -t \"target_device\"                    Delete GUID Partition Table (DATA LOSS!)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
 	log("Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            [-h] [--help]                                               Print help page.\r\n", false, true, false, false, false);
+        log("            [-h] [--help]                                               Print help page\r\n", false, true, false, false, false);
         log("            [--password]          -p \'password\'                         Optional password parameter http://www.finalcrypt.org/faq.php#t22\r\n", false, true, false, false, false);
         log("            [--password-prompt]   -pp                                   Optional password prompt http://www.finalcrypt.org/faq.php#t22\r\n", false, true, false, false, false);
-	log("            [--key-chksum]        -k \"key_file\"                         Calculate key checksum.\r\n", false, true, false, false, false);
-        log("            [--no-key-size]                                             Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes.\r\n", false, true, false, false, false);
-        log("            [-d] [--debug]                                              Enables debugging mode.\r\n", false, true, false, false, false);
-        log("            [-v] [--verbose]                                            Enables verbose mode.\r\n", false, true, false, false, false);
-        log("            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely).\r\n", false, true, false, false, false);
-        log("            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!).\r\n", false, true, false, false, false);
+	log("            [--key-chksum]        -k \"key_file\"                         Calculate key checksum\r\n", false, true, false, false, false);
+        log("            [--no-key-size]                                             Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes\r\n", false, true, false, false, false);
+        log("            [-d] [--debug]                                              Enables debugging mode\r\n", false, true, false, false, false);
+        log("            [-v] [--verbose]                                            Enables verbose mode\r\n", false, true, false, false, false);
+        log("            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)\r\n", false, true, false, false, false);
+        log("            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)\r\n", false, true, false, false, false);
+        log("            [--reuse-keys]                                              Reuse Keys (Breaks OTP rule so only use if you know what you do)\r\n", false, true, false, false, false);
         log("            [--disable-MAC]                                             Disable MAC - (not compatible with MAC encrypted files!)\r\n", false, true, false, false, false);
-        log("            [--version]                                                 Print " + version.getProductName() + " version.\r\n", false, true, false, false, false);
-        log("            [--license]                                                 Print " + version.getProductName() + " license.\r\n", false, true, false, false, false);
-        log("            [--check-update]                                            Check for online updates.\r\n", false, true, false, false, false);
-//        log("            [--txt]                                                     Print text calculations.\r\n", false, true, false, false, false);
-//        log("            [--bin]                                                     Print binary calculations.\r\n", false, true, false, false, false);
-//        log("            [--dec]                                                     Print decimal calculations.\r\n", false, true, false, false, false);
-//        log("            [--hex]                                                     Print hexadecimal calculations.\r\n", false, true, false, false, false);
-//        log("            [--chr]                                                     Print character calculations.\r\n", false, true, false, false, false);
-//        log("                                                                        Warning: The above Print options slows encryption severely.\r\n", false, true, false, false, false);
-        log("            [-s size]                                                   Changes default I/O buffer size (size = KiB) (default 1024 KiB).\r\n", false, true, false, false, false);
+        log("            [--version]                                                 Print " + version.getProductName() + " version\r\n", false, true, false, false, false);
+        log("            [--license]                                                 Print " + version.getProductName() + " license\r\n", false, true, false, false, false);
+        log("            [--check-update]                                            Check for online updates\r\n", false, true, false, false, false);
+//        log("            [--txt]                                                     Print text calculations\r\n", false, true, false, false, false);
+//        log("            [--bin]                                                     Print binary calculations\r\n", false, true, false, false, false);
+//        log("            [--dec]                                                     Print decimal calculations\r\n", false, true, false, false, false);
+//        log("            [--hex]                                                     Print hexadecimal calculations\r\n", false, true, false, false, false);
+//        log("            [--chr]                                                     Print character calculations\r\n", false, true, false, false, false);
+//        log("                                                                        Warning: The above Print options slows encryption severely\r\n", false, true, false, false, false);
+        log("            [-s size]                                                   Changes default I/O buffer size (size = KiB) (default 1024 KiB)\r\n", false, true, false, false, false);
         log("            [-S size]                                                   OTP Key File Size (size = bytes). See --create-keyfile \r\n", false, true, false, false, false);
+        log("            [--urlencode]         \"text to encode\"                      Encode plain text to URL safe text\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Test Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            [--test]                                                    Test run without executing (also prints statistics at the end).\r\n", false, true, false, false, false);
-        log("            [--test \"answer\"]                                           Same but then with non interactive answer (c,1-13) included.\r\n", false, true, false, false, false);
-	log("            [-pd] [--password-dictionary]  \"dict_file\"                  Brute force test plain text passwords from dictionary file.\r\n", false, true, false, false, false);
+        log("            [--test]                                                    Test run without executing (also prints statistics at the end)\r\n", false, true, false, false, false);
+        log("            [--test \"answer\"]                                           Same but then with non interactive answer (c,1-13) included\r\n", false, true, false, false, false);
+	log("            [-pd] [--password-dictionary]  \"dict_file\"                  Brute force test plain text passwords from dictionary file\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Filtering Options:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            [-w \'wildcard\']                                             File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
-        log("            [-W \'wildcard\']                                             File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\".\r\n", false, true, false, false, false);
+        log("            [-w \'wildcard\']                                             File wildcard INCLUDE filter. Uses: \"Globbing Patterns Syntax\"\r\n", false, true, false, false, false);
+        log("            [-W \'wildcard\']                                             File wildcard EXCLUDE filter. Uses: \"Globbing Patterns Syntax\"\r\n", false, true, false, false, false);
         log("            [-r \'regex\']                                                File regular expression filter. Advanced filename filter!\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("Parameters:\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log("            <-k \"keydir\">                                               The directory that holds your keys. Keep SECRET!\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
-        log("            <-t / -b>                                                   Target items to encrypt. Individual (-t) by batch (-b).\r\n", false, true, false, false, false);
-        log("            <[-t \"file/dir\"]>                                           Target items (files or directories) you want to encrypt (recursive).\r\n", false, true, false, false, false);
-        log("            <[-b \"batchfile\"]>                                          Batchfile with targetfiles you want to encrypt (only files).\r\n", false, true, false, false, false);
+        log("            <-t / -b>                                                   Target items to encrypt. Individual (-t) by batch (-b)\r\n", false, true, false, false, false);
+        log("            <[-t \"file/dir\"]>                                           Target items (files or directories) you want to encrypt (recursive)\r\n", false, true, false, false, false);
+        log("            <[-b \"batchfile\"]>                                          Batchfile with targetfiles you want to encrypt (only files)\r\n", false, true, false, false, false);
         log("\r\n", false, true, false, false, false);
         log(Version.getProductName() + " " + version.checkLocalVersion(this) + " - Author: " + Version.getAuthor() + " <" + Version.getEmail() + "> - CC BY-NC-ND 4.0: " + Version.getLicenseDescription() + "\r\n\r\n", false, true, false, false, false);
         System.exit(error ? 1 : 0);

@@ -1,3 +1,16 @@
+Date: 2021-01-19 Version: 6.7.0
+
+Added "Reuse Keys" to quicly view and re-encrypt
+to prevent unchanged files  from being backed-up
+Keys just won't be deleted and reused to encrypt
+Strictly use on files that remain 100% unchanged
+
+Reuse Keys can be found to the right of key info
+It's unchecked by default and made inconspicuous
+
+Reuse Keys function breaks 1 out of 4 OTP rules!
+Only use knowing the risk and what you are doing
+
 Date: 2021-01-02 Version: 6.6.0
 
 A typewriter was added to help command-line tutors
