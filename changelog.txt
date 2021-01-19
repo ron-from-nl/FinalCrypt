@@ -1,6 +1,6 @@
 Date: 2021-01-19 Version: 6.7.0
 
-Added "Reuse Keys" to quicly view and re-encrypt
+Added "Reuse Keys" to quickly view and reencrypt
 to prevent unchanged files  from being backed-up
 Keys just won't be deleted and reused to encrypt
 Strictly use on files that remain 100% unchanged

@@ -14,7 +14,7 @@
 [] = {} ----------------------------------------------------------------
 [Upgrade Notes] =	{Upgrade 7 (2021-01-18)}
 [Upgrade Notes] =	{}
-[Upgrade Notes] =	{Added "Reuse Keys" to quicly view and re-encrypt}
+[Upgrade Notes] =	{Added "Reuse Keys" to quickly view and reencrypt}
 [Upgrade Notes] =	{to prevent unchanged files  from being backed-up}
 [Upgrade Notes] =	{Keys just won't be deleted and reused to encrypt}
 [Upgrade Notes] =	{Strictly use on files that remain 100% unchanged}
