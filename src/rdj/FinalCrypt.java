@@ -678,7 +678,7 @@ public class FinalCrypt extends Thread
 			{
 			    ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_NEW_TARGET_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			}
-			if ((encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) ) // Only delete key on failed encrypt, never on decryption
+			if ((encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) && (! reuseKeys)) // Only delete key on failed encrypt, never on decryption
 			{
 			    deleted = false;
 			    try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
@@ -810,7 +810,7 @@ public class FinalCrypt extends Thread
 			    {
 				ui.log(" " + UTF8_STOP_SYMBOL + " " + UTF8_DELETE_SYMBOL + UTF8_OLD_TARGET_SYMBOL + UTF8_UNSUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
-			    if (( ! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir)) // Only delete key on succesfull decrypt, never on encryption
+			    if (( ! encryptMode) && (keySourceFCPath.type == FCPath.DIRECTORY) && (keySourceFCPath.isValidKeyDir) && (! reuseKeys)) // Only delete key on succesfull decrypt, never on encryption
 			    {
 				deleted = false;
 				try { deleted = Files.deleteIfExists(dynamicKeyFCPath.path); } catch (IOException ex) { ui.log("Error: Files.deleteIfExists(dynamicKeyFCPath): " + ex.getMessage() + "\r\n", true, true, true, true, false); }

@@ -1,4 +1,4 @@
-[Version] =		{6.7.0}
+[Version] =		{6.7.1}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -24,11 +24,10 @@
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Reuse Keys function breaks 1 out of 4 OTP rules!}
 [Upgrade Notes] =	{Only use knowing the risk and what you are doing}
-
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 0 (2021-01-02)}
+[Update Notes] =	{Update 1 (2021-01-20)}
 [Update Notes] =	{}
-[Update Notes] =	{No update, only upgrade}
+[Update Notes] =	{Also implemented reusekey on user-stopped phases}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
