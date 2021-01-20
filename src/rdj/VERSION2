@@ -27,7 +27,7 @@
 [] = {} ----------------------------------------------------------------
 [Update Notes] =	{Update 1 (2021-01-20)}
 [Update Notes] =	{}
-[Update Notes] =	{Also implemented reusekey on user-stopped phases}
+[Update Notes] =	{Also implemented reusekeys on user-stopped phase}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
