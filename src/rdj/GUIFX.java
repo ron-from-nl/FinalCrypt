@@ -855,8 +855,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    guifx = this;
 	    mainStage.initStyle(StageStyle.DECORATED);
 	    mainStage.setTitle(Version.getProductName());
-	    mainStage.setMinWidth(1366);
-	    mainStage.setMinHeight(700);
+	    mainStage.setMinWidth(800);
+	    mainStage.setMinHeight(600);
 	    mainStage.setMaximized(true);
 
 	    try { mainRoot = FXMLLoader.load(getClass().getResource("GUIFX.fxml")); mainScene = new Scene((Parent)mainRoot); } catch (IOException ex) { log("Error: GUIFX.start(..) Exception: FXMLLoader.load(\"GUIFX.fxml\"): " + ex.getMessage() + "\r\n", true, true, true, true, false); }
