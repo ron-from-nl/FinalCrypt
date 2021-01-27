@@ -794,7 +794,7 @@ public class CLUI implements UI
 	usageReaderThread.start();
 	while (usageReaderTimeoutThread.isAlive()) { try { Thread.sleep(100); } catch (InterruptedException ex) { } }
 	log("\r\n\r\n", false, true, false, false, false);
-	System.exit(1);
+        System.exit(error ? 1 : 0);
     }
     
     private void testListPrompt()

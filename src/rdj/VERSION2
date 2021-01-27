@@ -12,7 +12,7 @@
 [Version Notes] =	{Improved User Interface & File Manager behavior}
 [Version Notes] =	{Improved UserGuidance, Display & Button Layout}
 [] = {} ----------------------------------------------------------------
-[Upgrade Notes] =	{Upgrade 7 (2021-01-18)}
+[Upgrade Notes] =	{Upgrade 7 (2021-01-19)}
 [Upgrade Notes] =	{}
 [Upgrade Notes] =	{Added "Reuse Keys" to quickly view and reencrypt}
 [Upgrade Notes] =	{to prevent unchanged files  from being backed-up}
