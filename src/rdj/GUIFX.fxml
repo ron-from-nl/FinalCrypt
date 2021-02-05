@@ -270,7 +270,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <Label fx:id="reuseKeysLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#reuseKeysLabelOnMouseClicked" prefHeight="30.0" prefWidth="30.0" text="♺" textAlignment="CENTER" textFill="#303030" translateX="15.0" GridPane.columnIndex="17" GridPane.valignment="BASELINE">
+                                    <Label fx:id="reuseKeysLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#reuseKeysLabelOnMouseClicked" prefHeight="30.0" prefWidth="30.0" text="♺" textAlignment="CENTER" textFill="#303030" translateX="15.0" visible="false" GridPane.columnIndex="17" GridPane.valignment="BASELINE">
                                        <font>
                                           <Font size="24.0" />
                                        </font>
