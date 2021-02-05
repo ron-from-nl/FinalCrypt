@@ -118,6 +118,22 @@
                                              <children>
                                                 <GridPane alignment="CENTER" layoutX="39.0" layoutY="50.0" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="769.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
+                                                         <children>
+                                                            <Button fx:id="keyFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" disable="true" maxHeight="20.0" mnemonicParsing="false" onAction="#keyFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" text="Delete" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                                                               <tooltip>
+                                                                  <Tooltip fx:id="keyFileDeleteButton2ToolTip" text="Delete selected item(s)">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </Tooltip>
+                                                               </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Button>
+                                                         </children>
+                                                      </AnchorPane>
                                                       <AnchorPane prefHeight="25.0" prefWidth="321.0" GridPane.columnIndex="1">
                                                          <children>
                                                             <Label fx:id="keyLabel1" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" prefHeight="25.0" prefWidth="296.0" style="-fx-font-size: 16;" styleClass="text_color_standard" text="Select One-Time Pad Key Dir" textAlignment="CENTER" textFill="LIGHTGRAY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -137,22 +153,6 @@
                                                                   <Cursor fx:constant="HAND" />
                                                                </cursor>
                                                             </Label>
-                                                         </children>
-                                                      </AnchorPane>
-                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
-                                                         <children>
-                                                            <Button fx:id="keyFileDeleteButton2" alignment="CENTER" contentDisplay="CENTER" disable="true" maxHeight="20.0" mnemonicParsing="false" onAction="#keyFileDeleteButton2OnAction" prefHeight="20.0" prefWidth="78.0" text="Delete" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-                                                               <tooltip>
-                                                                  <Tooltip fx:id="keyFileDeleteButton2ToolTip" text="Delete selected item(s)">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </Tooltip>
-                                                               </tooltip>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Button>
                                                          </children>
                                                       </AnchorPane>
                                                       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowSpan="2">
@@ -237,7 +237,7 @@
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" percentWidth="6.0" />
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="6.0" />
                                     <ColumnConstraints />
                                 </columnConstraints>
                                 <rowConstraints>
@@ -252,6 +252,36 @@
                                     <RowConstraints maxHeight="15.0" minHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
+                                    <AnchorPane prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                                       <children>
+                                          <Label fx:id="keyHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" prefHeight="15.0" styleClass="dashboard_generic" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                                       <children>
+                                          <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" contentDisplay="CENTER" focusTraversable="false" prefHeight="15.0" textAlignment="CENTER" textFill="#808080" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <tooltip>
+                                                <Tooltip fx:id="keyNameLabelTooltip">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Tooltip>
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <Label fx:id="reuseKeysLabel" alignment="TOP_CENTER" contentDisplay="CENTER" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#reuseKeysLabelOnMouseClicked" prefHeight="30.0" prefWidth="30.0" text="♺" textAlignment="CENTER" textFill="#303030" translateX="15.0" GridPane.columnIndex="17" GridPane.valignment="BASELINE">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip fx:id="reuseKeysLabelToolTip" text="Reuse Key (only use if you know what you are doing)\r\n\r\nReuse Key can be used in case you want to quick view and reencrypt without making changes to the original file to prevent unnecessary backups">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Tooltip>
+                                       </tooltip>
+                                    </Label>
                                     <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="44.0" GridPane.rowIndex="1">
                                        <children>
                                           <Label fx:id="targetWarningNameLabel" alignment="BASELINE_LEFT" contentDisplay="CENTER" layoutX="15.0" layoutY="8.0" prefHeight="15.0" prefWidth="70.0" styleClass="dashboard_generic" text="Skipping" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -314,24 +344,6 @@
                                              <font>
                                                 <Font size="10.0" />
                                              </font></Label>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.columnSpan="2">
-                                       <children>
-                                          <Label fx:id="keyHeaderLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="63.0" layoutY="-5.0" prefHeight="15.0" prefWidth="190.0" styleClass="dashboard_generic" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="17">
-                                       <children>
-                                          <CheckBox fx:id="reuseKeyCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#reuseKeyCheckBoxOnAction" opacity="0.15" styleClass="dashboard_generic" textAlignment="CENTER" visible="false" AnchorPane.rightAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip fx:id="reuseKeyCheckBoxToolTip" text="Reuse Key (only use if you know what you are doing)\r\n\r\nReuse Key can be used in case you want to quick view and reencrypt without making changes to the original file to prevent unnecessary backups">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Tooltip>
-                                             </tooltip>
-                                          </CheckBox>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="16" GridPane.rowIndex="2">
@@ -415,18 +427,6 @@
                                              <font>
                                                 <Font size="10.0" />
                                              </font></Label>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane maxHeight="15.0" minHeight="15.0" prefHeight="15.0" prefWidth="172.0" scaleX="0.9" GridPane.columnIndex="16" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                       <children>
-                                          <Label fx:id="keyNameLabel" alignment="CENTER" cache="true" cacheHint="SPEED" focusTraversable="false" layoutX="66.0" prefHeight="15.0" prefWidth="190.0" textFill="#808080" textOverrun="CENTER_ELLIPSIS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <tooltip>
-                                                <Tooltip fx:id="keyNameLabelTooltip">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Tooltip>
-                                             </tooltip></Label>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="6">
@@ -1086,18 +1086,15 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="4" GridPane.hgrow="NEVER">
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                        <children>
-                                          <Label fx:id="authorLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#authorLabelOnMouseClicked" onMouseEntered="#authorLabelOnMouseEntered" onMouseExited="#authorLabelOnMouseExited" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="author" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <font>
-                                                <Font name="Open Sans" size="12.0" />
-                                             </font>
-                                             <padding>
-                                                <Insets left="5.0" right="5.0" />
-                                             </padding>
+                                          <Label fx:id="logsLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" onMouseClicked="#logsLabelOnMouseClicked" onMouseEntered="#logsLabelOnMouseEntered" onMouseExited="#logsLabelOnMouseExited" prefHeight="20.0" prefWidth="125.0" styleClass="text_color_low" text="Logs" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
                                           </Label>
                                        </children>
                                     </AnchorPane>
@@ -1125,9 +1122,25 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
+                                    <AnchorPane prefHeight="25.0" prefWidth="300.0" GridPane.columnIndex="4" GridPane.hgrow="NEVER">
+                                       <children>
+                                          <Label fx:id="authorLabel" alignment="BASELINE_RIGHT" cache="true" cacheHint="SPEED" contentDisplay="RIGHT" focusTraversable="false" maxHeight="15.0" minHeight="15.0" onMouseClicked="#authorLabelOnMouseClicked" onMouseEntered="#authorLabelOnMouseEntered" onMouseExited="#authorLabelOnMouseExited" prefHeight="25.0" prefWidth="234.0" styleClass="text_color_low" text="author" textAlignment="RIGHT" textFill="#aaaaaa" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <font>
+                                                <Font name="Open Sans" size="12.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="5.0" right="5.0" />
+                                             </padding>
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" />
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6">
                                        <children>
-                                          <Label fx:id="commandLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="-35.0" onMouseClicked="#commandLabelOnMouseClicked" onMouseEntered="#commandLabelOnMouseEntered" onMouseExited="#commandLabelOnMouseExited" prefHeight="20.0" prefWidth="65.0" style="-fx-border-radius: 5; -fx-border-color: GREY;" styleClass="text_color_low" text="&gt;_" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label fx:id="commandLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" onMouseClicked="#commandLabelOnMouseClicked" onMouseEntered="#commandLabelOnMouseEntered" onMouseExited="#commandLabelOnMouseExited" prefHeight="20.0" prefWidth="65.0" style="-fx-border-radius: 5; -fx-border-color: GREY;" styleClass="text_color_low" text="&gt;_" textAlignment="CENTER" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
@@ -1141,18 +1154,6 @@
                                                    </font>
                                                 </Tooltip>
                                              </tooltip>
-                                          </Label>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
-                                       <children>
-                                          <Label fx:id="logsLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" onMouseClicked="#logsLabelOnMouseClicked" onMouseEntered="#logsLabelOnMouseEntered" onMouseExited="#logsLabelOnMouseExited" prefHeight="20.0" prefWidth="125.0" styleClass="text_color_low" text="Logs" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <font>
-                                                <Font size="12.0" />
-                                             </font>
                                           </Label>
                                        </children>
                                     </AnchorPane>

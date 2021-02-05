@@ -263,6 +263,9 @@ public class GUIFX extends Application implements UI, Initializable
     @FXML private Tooltip decryptedLabelToolTip;
     @FXML private Label logsLabel;
     @FXML private Tooltip undecryptableLabelToolTip;
+    @FXML  private AnchorPane root;
+    @FXML  private Label reuseKeysLabel;
+    @FXML  private Tooltip reuseKeysLabelToolTip;
 
 //    @FXML   private ToggleButton encryptionModeToggleButton;
 //    @FXML   private Tooltip encryptionModeToolTip;
@@ -427,7 +430,7 @@ public class GUIFX extends Application implements UI, Initializable
     }));
     private Stage mainStage;
 
-    private FinalCrypt finalCrypt;
+    private FinalCrypt finalcrypt;
     private UI ui;
     private GUIFX guifx;
     
@@ -618,12 +621,6 @@ public class GUIFX extends Application implements UI, Initializable
     private Stage preloaderStage;
     private Group preloaderRootGroup;
     private Scene preloaderScene;
-    @FXML
-    private CheckBox reuseKeyCheckBox;
-    @FXML
-    private Tooltip reuseKeyCheckBoxToolTip;
-    @FXML
-    private AnchorPane root;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -791,7 +788,7 @@ public class GUIFX extends Application implements UI, Initializable
 	stopDescription=bundle.getString("102");
 	
 	commandLabelToolTip.setText(bundle.getString("146"));
-	reuseKeyCheckBoxToolTip.setText(bundle.getString("155"));
+	reuseKeysLabelToolTip.setText(bundle.getString("155"));
 
 	tgtFileChooser.setLocale(locale); keyFileChooser.setLocale(locale);
 	
@@ -1008,7 +1005,7 @@ public class GUIFX extends Application implements UI, Initializable
         keyFileChooser.addActionListener( (java.awt.event.ActionEvent evt) -> { keyFileChooserActionPerformed(evt); });
         Timeline timeline = new Timeline(new KeyFrame( Duration.millis(200), ae -> { keyFileSwingNode.setContent(keyFileChooser); } )); timeline.play(); // Delay keyFileChooser to give 1st focus to targetFileChooser
 
-        finalCrypt = new FinalCrypt(this); finalCrypt.start();
+        finalcrypt = new FinalCrypt(this); finalcrypt.start();
 	
 	
 	pwdField.setContextMenu(new ContextMenu()); // Getting rid of the mouse paste function. Actionlistener does not pickup on pasted passwords through mouse
@@ -1185,7 +1182,7 @@ public class GUIFX extends Application implements UI, Initializable
 	// First time selection Key Directory
 	Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
 	//		     getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-	keyFCPath = Validate.getFCPath( this,		 "",	keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+	keyFCPath = Validate.getFCPath(this,		 "",	keyPath,          true,      keyPath, finalcrypt.disabledMAC,          true);
 
 	
 	targetFCPathList = new FCPathList<FCPath>(); updateDashboard(targetFCPathList);
@@ -1241,6 +1238,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    bottomrightLabel.setText(arrows.substring(4, 6));
 	    bottomleftLabel.setText(arrows.substring(6, 8));
 	}
+	reuseKeysLabel.setVisible(false);
+	reuseKeysLabel.setDisable(false);
 	
         authorLabel.setText("Author: " + Version.getAuthor());
 //	log(getRuntimeEnvironment(), false, true, true, false ,false);
@@ -1606,7 +1605,7 @@ public class GUIFX extends Application implements UI, Initializable
     private void updateSystemMonitor()
     {
 	double userLoadPerc = getUserLoadPerc(); String userLoadString = CPU_SYMBOL + " " + cpu_workload + " (" + Stats.getDecimal(userLoadPerc,0) + "%)"; MemStats memStats = getMemStats();
-	double throughputPerc = ((megaBytesPerSecond) / (finalCrypt.io_Throughput_Ceiling / 100)); String throughputString = STORAGE_SYMBOL + " " + storage_io_throughput + " (" + Stats.getDecimal((throughputPerc * (finalCrypt.io_Throughput_Ceiling / 100)),1) + " MiB/S)";
+	double throughputPerc = ((megaBytesPerSecond) / (finalcrypt.io_Throughput_Ceiling / 100)); String throughputString = STORAGE_SYMBOL + " " + storage_io_throughput + " (" + Stats.getDecimal((throughputPerc * (finalcrypt.io_Throughput_Ceiling / 100)),1) + " MiB/S)";
 	displaySystemMonitor(userLoadPerc, userLoadString, memStats.usedMemPerc, memStats.memStatsString, throughputPerc, throughputString);
     }
     
@@ -2079,14 +2078,14 @@ public class GUIFX extends Application implements UI, Initializable
 		    {
 			new AudioPlayer().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
 //			play(SND_INPUT_OK, AUDIO_CODEC);
-			ArrayList<Path> pathList = finalCrypt.getPathList(tgtFileChooser.getSelectedFiles());
+			ArrayList<Path> pathList = finalcrypt.getPathList(tgtFileChooser.getSelectedFiles());
 //			boolean delete = true;
 			boolean returnpathlist = false;
 			String pattern1 = "glob:*";
 
 			tab.getSelectionModel().select(1);
 			log("\r\nDeleting selecttion started\r\n\r\n", true, true, true, false, false);
-			finalCrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
+			finalcrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
 			updateFileChoosers(true, false, true, true, false, true); // targetFileDeleteButtonActionPerformed()
 		    }
@@ -2120,17 +2119,17 @@ public class GUIFX extends Application implements UI, Initializable
 		    if (keyFileChooser.getSelectedFiles().length > 0)
 		    {
 			new AudioPlayer().play(this, Audio.SND_INPUT_OK,Audio.AUDIO_CODEC);
-			ArrayList<Path> pathList = finalCrypt.getPathList(keyFileChooser.getSelectedFiles());
+			ArrayList<Path> pathList = finalcrypt.getPathList(keyFileChooser.getSelectedFiles());
 //			boolean delete = true;
 			boolean returnpathlist = false;
 			String pattern1 = "glob:*";
 
 			tab.getSelectionModel().select(1);
 			log("\r\nDeleting selecttion started\r\n\r\n", true, true, true, false, false);
-			finalCrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
+			finalcrypt.deleteSelection(pathList, keyFCPath, MySimpleFCFileVisitor.DELETE, returnpathlist, pattern1, false);
 			log("\r\nDeleting selection finished\r\n\r\n", true, true, true, false, false);
 			//					Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath,    boolean disabledMAC,	boolean report)
-			Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,         false,         path, finalCrypt.disabledMAC,         true);
+			Path path = Paths.get("."); keyFCPath = Validate.getFCPath(ui,	     "",      path,         false,         path, finalcrypt.disabledMAC,         true);
 			updateFileChoosers(true, false, true, true, false, true); // keyFileDeleteButtonActionPerformed()
 		    }
 		}
@@ -2188,12 +2187,12 @@ public class GUIFX extends Application implements UI, Initializable
 	    if (keyFCPath == null)
 	    {
 //							Validate.getFCPath(UI ui, String caller, Path path, boolean isKey, Path keyPath,    boolean disabledMAC,	boolean report)
-		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(   ui,	     "",      path,         false,         path, finalCrypt.disabledMAC,         true);
+		Path path = Paths.get("."); keyFCPath = Validate.getFCPath(ui,	     "",      path,         false,         path, finalcrypt.disabledMAC,         true);
 	    }
 	    Path targetPath = tgtFileChooser.getSelectedFile().toPath();
 	    
 //					   getFCPath(UI ui,  String caller,  Path path,  boolean isKey,   Path keyPath,    boolean disabledMAC,	boolean report)
-	    FCPath targetFCPath = Validate.getFCPath(this,		"", targetPath,		 false, keyFCPath.path,	finalCrypt.disabledMAC,		  true);
+	    FCPath targetFCPath = Validate.getFCPath(this,		"", targetPath,		 false, keyFCPath.path,	finalcrypt.disabledMAC,		  true);
 	    
 	    if ((targetFCPath.type == FCPath.DEVICE) || (targetFCPath.type == FCPath.DEVICE_PROTECTED))
 	    {
@@ -2420,7 +2419,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
 		    pwdField.setDisable(true);
 		    pwdtxtField.setDisable(true);
-		    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		    finalcrypt.setPwd(pwdField.getText()); finalcrypt.setPwdBytes(pwdField.getText()); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 		    keyImageView.setOpacity(0.8);
 
 		    updateDashboardTask = new TimerTask() { @Override public void run() { updateDashboard(targetFCPathList2); }};
@@ -2443,7 +2442,7 @@ public class GUIFX extends Application implements UI, Initializable
 			Thread buildSelectionThread = new Thread(() -> // Relaxed interruptable thread
 			{
     //				 buildSelection(UI ui, ArrayList<Path> pathList, FCPath keyFCPath, FCPathList<FCPath> targetFCPathList, boolean symlink, String pattern, boolean negatePattern,	   boolean disabledMAC, boolean status)
-			    Validate.buildSelection(ui,		 targetPathList,	keyFCPath,	     targetFCPathList2,		symlink,	pattern,	 negatePattern,	finalCrypt.disabledMAC,		false);
+			    Validate.buildSelection(ui,		 targetPathList,	keyFCPath,	     targetFCPathList2,		symlink,	pattern,	 negatePattern,	finalcrypt.disabledMAC,		false);
 			}); buildSelectionThread.setName("buildSelectionThread"); buildSelectionThread.setDaemon(true); buildSelectionThread.start();
 		    })); timeline.play();
 		}
@@ -2497,7 +2496,7 @@ public class GUIFX extends Application implements UI, Initializable
 	checksumHeader.setVisible(show);
 	showPasswordCheckBox.setVisible(show);
 	keyImageView.setVisible(show);
-	reuseKeyCheckBox.setVisible(show);
+	reuseKeysLabel.setVisible(show);
     }
     
     synchronized private void keyFileChooserPropertyCheck(boolean controlled) // getFCPath, checkModeReady
@@ -2538,7 +2537,7 @@ public class GUIFX extends Application implements UI, Initializable
 		}
 
 		// Set Buffer Size
-		finalCrypt.setBufferSize(finalCrypt.getBufferSizeDefault());
+		finalcrypt.setBufferSize(finalcrypt.getBufferSizeDefault());
 
 		// Validate KeyFile
 		if ((keyFileChooser != null) && (keyFileChooser.getSelectedFile() != null) && (keyFileChooser.getSelectedFiles().length == 1))
@@ -2553,7 +2552,7 @@ public class GUIFX extends Application implements UI, Initializable
 			keyPath = keyFileChooser.getCurrentDirectory().toPath();
 		    }
     //				       getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+		    keyFCPath = Validate.getFCPath(this,	   "",	  keyPath,          true,      keyPath, finalcrypt.disabledMAC,          true);
 
     //  ============================================================================================================================
     //  ============================================== Validate Key Selected =======================================================
@@ -2577,13 +2576,13 @@ public class GUIFX extends Application implements UI, Initializable
 			if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
 			pwdField.setDisable(false);
 			pwdtxtField.setDisable(false);
-			finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+			finalcrypt.setPwd(pwdField.getText()); finalcrypt.setPwdBytes(pwdField.getText()); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 
 			keyImageView.setImage(KEY_FILE_IMAGE);
 			keyImageView.setOpacity(0.8);
 
 			showKeyPanel(true);
-			if (keyFCPath.type == FCPath.FILE)  { reuseKeyCheckBox.setVisible(false); } else { reuseKeyCheckBox.setVisible(true); }
+			if (keyFCPath.type == FCPath.FILE)  { reuseKeysLabel.setVisible(false); } else { reuseKeysLabel.setVisible(true); }
 
 			tgtFileChooserPropertyCheck(true);
 		    }
@@ -2601,7 +2600,7 @@ public class GUIFX extends Application implements UI, Initializable
 			    if ((showPasswordCheckBox.isVisible()) && (pwdField.getText().length() == 0)) { passwordHeaderLabel.setText(password_optional); } else { passwordHeaderLabel.setText(password_set); }
 			    pwdField.setDisable(false);
 			    pwdtxtField.setDisable(false);
-			    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+			    finalcrypt.setPwd(pwdField.getText()); finalcrypt.setPwdBytes(pwdField.getText()); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 
 			    keyImageView.setImage(KEY_MAP_IMAGE);
 			    keyImageView.setOpacity(0.8);
@@ -2676,7 +2675,7 @@ public class GUIFX extends Application implements UI, Initializable
 
 		    Path keyPath = keyFileChooser.getCurrentDirectory().toPath();
     //					 getFCPath(UI ui, String caller,  Path path, boolean isKey, Path keyPath,    boolean disabledMAC, boolean report)
-		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalCrypt.disabledMAC,          true);
+		    keyFCPath = Validate.getFCPath(this,		   "",	  keyPath,          true,      keyPath, finalcrypt.disabledMAC,          true);
 
 		    if ((keyFCPath.type == FCPath.DIRECTORY) && (keyFCPath.isValidKeyDir))
 		    {
@@ -3039,7 +3038,7 @@ public class GUIFX extends Application implements UI, Initializable
 		    }
 		    
 		    // Decryptable Files
-		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalCrypt.disabledMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
+		    if ((targetFCPathList.decryptableFiles > 0) && ( ! finalcrypt.disabledMAC) ) // Prevents destruction! Non-MAC Mode encrypting MAC encrypted files (in stead of default decryption)
 		    {
 			new AudioPlayer().play(this, Audio.SND_SELECT,Audio.AUDIO_CODEC);
 			decryptableList = filter(targetFCPathList,(FCPath fcPath) -> fcPath.isDecryptable);
@@ -3374,9 +3373,9 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    @Override public void run()
 	    {
-		if (finalCrypt.processRunning)
+		if (finalcrypt.processRunning)
 		{
-		    finalCrypt.setStopPending(true);
+		    finalcrypt.setStopPending(true);
 		    try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
 		    log("\r\nEncryption User Interrupted...\r\n", false, true, true, false, false);
 		}
@@ -3396,7 +3395,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
 	}
 	else { pwd = ""; }
-	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwd, pwdBytes, false);
+	finalcrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, true, pwd, pwdBytes, false);
     }
 
     @FXML
@@ -3433,9 +3432,9 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    @Override public void run()
 	    {
-		if (finalCrypt.processRunning)
+		if (finalcrypt.processRunning)
 		{
-		    finalCrypt.setStopPending(true);
+		    finalcrypt.setStopPending(true);
 		    try{ Thread.sleep(2000); } catch (InterruptedException ex) {}
 		    log("\r\nDecryption User Interrupted...\r\n", false, true, true, false, false);
 		}
@@ -3457,7 +3456,7 @@ public class GUIFX extends Application implements UI, Initializable
 	    pwdBytes = GPT.hex2Bytes(getHexString(hashBytes,2));
 	}
 	else { pwd = ""; }
-	finalCrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwd, pwdBytes, open);
+	finalcrypt.encryptSelection(targetSourceFCPathList, filteredTargetSourceFCPathList, keyFCPath, false, pwd, pwdBytes, open);
     }
 
     @FXML private void keyLabelOnMouseClicked(MouseEvent event)	{ new AudioPlayer().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC); createOTPKeyFile(); }
@@ -3509,7 +3508,7 @@ public class GUIFX extends Application implements UI, Initializable
 //		keyImageView.setImage(KEY_FILE_IMAGE);
 		keyImageView.setOpacity(0.8);
 
-		finalCrypt.setPwd(""); finalCrypt.setPwdBytes(""); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+		finalcrypt.setPwd(""); finalcrypt.setPwdBytes(""); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 	    });
 
 	    Platform.runLater(() ->
@@ -3794,8 +3793,8 @@ public class GUIFX extends Application implements UI, Initializable
 	    megaBytesPerSecond = bytesPerMiliSecondParam;
 	    
 	    // update ProgressBars
-	    if (finalCrypt.getVerbose()) { log("Progress File : " + filesProgressPercent / 100.0  + " factor", false, false, false, false, true); }
-	    if (finalCrypt.getVerbose()) { log("Progress Files: " + fileProgressPercent / 100.0 + " factor", false, false, false, false, true); }
+	    if (finalcrypt.getVerbose()) { log("Progress File : " + filesProgressPercent / 100.0  + " factor", false, false, false, false, true); }
+	    if (finalcrypt.getVerbose()) { log("Progress Files: " + fileProgressPercent / 100.0 + " factor", false, false, false, false, true); }
 	    fileProgressBar.setProgress((double)fileProgressPercent / 100.0); // percent needs to become factor in this gui
 	    filesProgressBar.setProgress((double)filesProgressPercent / 100.0); // percent needs to become factor in this gui
 	    updateDashboard(targetFCPathList);
@@ -4066,7 +4065,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    // Atomic
 	    processPausing = ! processPausing;
-	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalCrypt.setPausing(processPausing); } else { DeviceController.setPausing(processPausing); }
+	    if ((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)) { finalcrypt.setPausing(processPausing); } else { DeviceController.setPausing(processPausing); }
 
 	    // UI
 	    Platform.runLater(() ->
@@ -4101,7 +4100,7 @@ public class GUIFX extends Application implements UI, Initializable
 	{
 	    if (((processRunningMode == ENCRYPT_MODE) || (processRunningMode == DECRYPT_MODE)))
 	    {
-		finalCrypt.setStopPending(true);
+		finalcrypt.setStopPending(true);
 		if (processPausing) { pauseProcess(true); }
 	    }
 	    else
@@ -4813,7 +4812,7 @@ public class GUIFX extends Application implements UI, Initializable
 	}
 	else
 	{
-	    finalCrypt.setPwd(pwdField.getText()); finalCrypt.setPwdBytes(pwdField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+	    finalcrypt.setPwd(pwdField.getText()); finalcrypt.setPwdBytes(pwdField.getText()); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 	    pwdtxtField.setText(pwdField.getText());
 	    pwdtxtFieldTooltip.setText(pwdField.getText());
 	    setFont(pwdField);setFont(pwdtxtField);
@@ -4843,7 +4842,7 @@ public class GUIFX extends Application implements UI, Initializable
 	}
 	else
 	{
-	    finalCrypt.setPwd(pwdtxtField.getText()); finalCrypt.setPwdBytes(pwdtxtField.getText()); finalCrypt.resetPwdPos(); finalCrypt.resetPwdBytesPos();
+	    finalcrypt.setPwd(pwdtxtField.getText()); finalcrypt.setPwdBytes(pwdtxtField.getText()); finalcrypt.resetPwdPos(); finalcrypt.resetPwdBytesPos();
 	    pwdField.setText(pwdtxtField.getText());
 	    pwdtxtFieldTooltip.setText(pwdtxtField.getText());
 	    setFont(pwdField);setFont(pwdtxtField);
@@ -4940,9 +4939,25 @@ public class GUIFX extends Application implements UI, Initializable
 	log(Command.getCommandLine(!encryptButton.isDisabled(), !decryptButton.isDisabled()) + "\r\n", false, true, false, false, false);
     }
 
-    @FXML   private void reuseKeyCheckBoxOnAction(ActionEvent event)
+    @FXML
+    private void reuseKeysLabelOnMouseClicked(MouseEvent event)
     {
-	finalCrypt.reuseKeys = reuseKeyCheckBox.isSelected();
-	if (reuseKeyCheckBox.isSelected()) { reuseKeyCheckBox.setOpacity(1.0); Command.reuseKeysOption = "--reuse-keys"; } else { reuseKeyCheckBox.setOpacity(0.15); Command.reuseKeysOption = ""; }
+	Platform.runLater(() ->
+	{
+	    new AudioPlayer().play(this, Audio.SND_BUTTON,Audio.AUDIO_CODEC);
+	    if (!finalcrypt.reuseKeys)
+	    {
+		finalcrypt.reuseKeys = true;
+		Command.reuseKeysOption = "--reuse-keys";
+		reuseKeysLabel.setTextFill(Color.ORANGE);
+		new AudioPlayer().play(this, Audio.SND_ALERT,Audio.AUDIO_CODEC);
+	    }
+	    else
+	    {
+		finalcrypt.reuseKeys = false;
+		Command.reuseKeysOption = "";
+		reuseKeysLabel.setTextFill(Paint.valueOf("#303030"));
+	    }
+	});
     }
  }
