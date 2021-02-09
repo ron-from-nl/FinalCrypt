@@ -1,3 +1,8 @@
+Date: 2021-02-09 Version: 6.7.4
+
+Updated to the latest JVM version: 1.8.0_281-b09
+Added 32bit portable version for Linux & Windows
+
 Date: 2021-02-05 Version: 6.7.3
 
 Set orange alert-status on reuse-keys activation

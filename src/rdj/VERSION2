@@ -1,4 +1,4 @@
-[Version] =		{6.7.3}
+[Version] =		{6.7.4}
 [] = {} ================================================================
 [Release Notes] =	{You are using a very old version of FinalCrypt}
 [Release Message] =	{Please visit the website & download the latest}
@@ -25,10 +25,10 @@
 [Upgrade Notes] =	{Reuse Keys function breaks 1 out of 4 OTP rules!}
 [Upgrade Notes] =	{Only use knowing the risk and what you are doing}
 [] = {} ----------------------------------------------------------------
-[Update Notes] =	{Update 3 (2021-02-05)}
+[Update Notes] =	{Update 4 (2021-02-09)}
 [Update Notes] =	{}
-[Update Notes] =	{Set orange alert-status on reuse-keys activation}
-[Update Notes] =	{This alert-status discourages non-experts users!}
+[Update Notes] =	{Updated to the latest JVM version: 1.8.0_281-b09}
+[Update Notes] =	{Added 32bit portable version for Linux & Windows}
 [] = {} --------------------------------------------------------------------------------------------------------
 [Alert Subject_] =	{}
 [Alert Notes_] =	{}
