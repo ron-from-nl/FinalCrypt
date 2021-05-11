@@ -621,6 +621,8 @@ public class GUIFX extends Application implements UI, Initializable
     private Stage preloaderStage;
     private Group preloaderRootGroup;
     private Scene preloaderScene;
+    private Image preloaderImage;
+    private ImageView preloaderImageView;
     
     private String getPauseDescription() { return pauseDescription; }
     private String getStopDescription() { return stopDescription; }
@@ -810,13 +812,13 @@ public class GUIFX extends Application implements UI, Initializable
     @Override
     public void start(Stage stage) throws Exception
     {
-	Image image = new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt-splash-small.png"));
-	ImageView imageView = new ImageView();
-	imageView.setImage(image);
-	imageView.setPreserveRatio(true);
+	preloaderImage = new Image(getClass().getResourceAsStream("/rdj/images/finalcrypt-splash-small.png"));
+	preloaderImageView = new ImageView();
+	preloaderImageView.setImage(preloaderImage);
+	preloaderImageView.setPreserveRatio(true);
 	preloaderStage = new Stage();
 	preloaderStage.initStyle(StageStyle.TRANSPARENT);
-	preloaderRootGroup = new Group(imageView);
+	preloaderRootGroup = new Group(preloaderImageView);
 	preloaderRootGroup.setStyle("-fx-background-color: transparent;");
 	preloaderScene = new Scene(preloaderRootGroup, 640, 90);
 	preloaderScene.setFill(Color.TRANSPARENT);
@@ -836,7 +838,7 @@ public class GUIFX extends Application implements UI, Initializable
 	preloaderStage.setY(pl_stageYPos);
 	preloaderRootGroup.setOpacity(0);
 	preloaderStage.show();
-	
+
 	Timeline fadeinPreloaderTimeline = new Timeline();
 	KeyFrame key1 = new KeyFrame(Duration.millis(500),
 		       new KeyValue (preloaderRootGroup.opacityProperty(), 1)); 

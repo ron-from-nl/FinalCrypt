@@ -37,8 +37,8 @@ Options:
             [-v] [--verbose]                                            Enables verbose mode
             [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)
             [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)
-            [--reuse-keys]                                              Reuse Keys (Breaks OTP rule so only use if you know what you do)
-            [--disable-MAC]                                             Disable MAC - (not compatible with MAC encrypted files!)
+            [--reuse-keys]                                              Reuse Keys only works in MAC Mode (experts only, breaks OTP rule)
+            [--disable-MAC]                                             Non MAC Mode - Please see http://www.finalcrypt.org/faq.php#t25
             [--version]                                                 Print FinalCrypt version
             [--license]                                                 Print FinalCrypt license
             [--check-update]                                            Check for online updates
@@ -66,4 +66,4 @@ Parameters:
             <[-t "file/dir"]>                                           Target items (files or directories) you want to encrypt (recursive)
             <[-b "batchfile"]>                                          Batchfile with targetfiles you want to encrypt (only files)
 
-FinalCrypt 6.7.4 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021
+FinalCrypt 6.8.0 - Author: Ron de Jong <info@finalcrypt.org> - CC BY-NC-ND 4.0: License 2017-2021

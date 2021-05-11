@@ -1,3 +1,16 @@
+Date: 2021-05-11 Version: 6.8.0
+
+Added "Non MAC Mode" to "Auto Key Mode" 4 pro's
+"Non MAC Mode" already worked in "Man Key Mode"
+"Non MAC Mode" is available on the command line
+"Non MAC Mode" is used by cryptographic experts
+
+Corrected Non Mac Mode key size (deducting MAC size
+This update makes it impossible to distinct between
+Non MAC encrypted files and corresponding key files
+
+Please see http://www.finalcrypt.org/faq.php#t25
+
 Date: 2021-02-09 Version: 6.7.4
 
 Updated to the latest JVM version: 1.8.0_281-b09
@@ -6,7 +19,7 @@ Added 32bit portable version for Linux & Windows
 Date: 2021-02-05 Version: 6.7.3
 
 Set orange alert-status on reuse-keys activation
-This alert-status discourages non-experts users!
+This alert-status discourages non-expert users!!
 
 Date: 2021-01-27 Version: 6.7.2
 

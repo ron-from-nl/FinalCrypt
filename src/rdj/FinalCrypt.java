@@ -451,9 +451,29 @@ public class FinalCrypt extends Thread
 			    try { Files.createDirectories(autoKeyPath.getParent()); } catch (IOException ex) { ui.log("Error: Files.createDirectories(..): " + ex.getMessage() + "\r\n", true, true, true, true, false); break; }
 
 //			    if ( dynamicKeyFCPath.size < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) ) // Only append extra key data when key is smaller than data file
-			    if ((! reuseKeys) || (Files.notExists(dynamicKeyFCPath.path)))
-			    { // Allways write a new full size key
-				if ( ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) < bufferSize) { bufferSize =  (int) ( newTargetSourceFCPath.size + FCPath.MAC_SIZE ); }
+			    
+//			    if (disabledMAC)
+//			    {
+//				ui.test("\r\n");
+//				ui.test("targetDestinPath: " + targetDestinPath.toAbsolutePath().toString() + "\r\n");
+//				ui.test("dynamicKeyFCPath: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + "\r\n");
+//				ui.test("dynamicKeyFCPath.bit: " + Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString() + ".bit\r\n"));
+//				ui.test("\r\n");
+//				if (Files.notExists(Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString() + ".bit"))) { ui.test("\r\nnot exist\r\n"); } else { ui.test("\r\nexist\r\n"); }
+//			    }
+			    
+			    if (
+				    ((!disabledMAC) && (! reuseKeys))
+				    ||
+				    ((!disabledMAC) && (Files.notExists(dynamicKeyFCPath.path)))
+				    ||
+				    ( (disabledMAC) && ((Files.notExists(Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString() + ".bit")))))  // If a similarly named key file exists then probably it belongs to the corresponding data file, but there's no way of knowing certain in Non MAC Mode
+				)
+			    { // Write a new appropriate size key
+				// in Non MAC Mode dynamicKeyFCPath.path is a newly to be created file and its size depends on the MAC Mode used (MAC or Non MAC) 
+				if (!disabledMAC) { dynamicKeyFCPath.size = newTargetSourceFCPath.size + FCPath.MAC_SIZE; } else { dynamicKeyFCPath.size = newTargetSourceFCPath.size; }
+				
+				if ( ( dynamicKeyFCPath.size ) < bufferSize) { bufferSize =  (int) ( dynamicKeyFCPath.size ); }
 
 				boolean inputEnded = false;
 				long writeKeyFileChannelPosition = 0L;
@@ -467,7 +487,7 @@ public class FinalCrypt extends Thread
 				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL + " \"" + targetDestinPath.toAbsolutePath().toString() + "\" ", true, false, false, false, false);
 				ui.log(UTF8_CREATE_SYMBOL + UTF8_KEY_SYMBOL, false, true, true, false, false);
 
-				write1loop: while ( (totalTranfered < ( newTargetSourceFCPath.size + FCPath.MAC_SIZE )) && (! inputEnded ))
+				write1loop: while ( (totalTranfered < ( dynamicKeyFCPath.size )) && (! inputEnded ))
 				{
 				    while (pausing)     { try { Thread.sleep(100); } catch (InterruptedException ex) {  } }
 				    
@@ -491,8 +511,8 @@ public class FinalCrypt extends Thread
 					filesBytesPerMilliSecond = 0d;
 					break encryptTargetloop;
 				    }
-				    
-				    remainder = (( newTargetSourceFCPath.size + FCPath.MAC_SIZE ) - totalTranfered);
+
+				    remainder = (( dynamicKeyFCPath.size ) - totalTranfered);
 
 				    if ( remainder >= bufferSize )				{ randomBuffer = ByteBuffer.allocate(bufferSize); randomBuffer.clear(); }
 				    else if (( remainder > 0 ) && ( remainder < bufferSize ))	{ randomBuffer = ByteBuffer.allocate(remainder.intValue()); randomBuffer.clear(); }
@@ -528,6 +548,18 @@ public class FinalCrypt extends Thread
 				ui.log(UTF8_SUCCEEDED_SYMBOL + " ", false, true, true, false, false);
 			    }
 			    
+			    if (disabledMAC) // If a similarly named key file exists then probably it belongs to the corresponding data file, but there's no way of knowing certain in Non MAC Mode
+			    {
+//				ui.test("Testing dynamicKeyFCPath: " + Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString() + ".bit") + "\r\n");
+				if (Files.exists(Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString() + ".bit")))
+				{
+				    dynamicKeyFCPath.path = Paths.get(dynamicKeyFCPath.path.toAbsolutePath().toString()+".bit");
+//				    ui.test("\r\n");
+//				    ui.test("targetDestinPath: " + targetDestinPath.toAbsolutePath().toString() + "\r\n");
+//				    ui.test("dynamicKeyFCPath: " + dynamicKeyFCPath.path.toAbsolutePath().toString() + "\r\n");
+//				    ui.test("\r\n");
+				}
+			    }
 			}
 			else // Decryptmode
 			{
@@ -545,11 +577,15 @@ public class FinalCrypt extends Thread
 		    else // Manual Key Mode
 		    {
 			dynamicKeyFCPath = keySourceFCPath.clone(keySourceFCPath); // Makes sure that the validKey KeySourceFCPath is copied to dynamicKeyFCPath
-		    }
+		    }		    
 		}
 
 		// =================================================================================================================================================================
 		// Auto Key Mode End
+		// =================================================================================================================================================================
+
+		// =================================================================================================================================================================
+		// Encrypt Write MAC / Decrypt Read MAC (for checksum)
 		// =================================================================================================================================================================
 
 		long readTargetSourceChannelPosition = 0;	long writeTargetDestChannelTransfered = 0;
@@ -626,9 +662,9 @@ public class FinalCrypt extends Thread
 		}
 		
 		
-//___________________________________________________________________________________________________________________________________________________________
-//
-//			Encryptor I/O Block
+		// =================================================================================================================================================================
+		// Encrypt File after MAC
+		// =================================================================================================================================================================
 
 		pwdPos = 0;
 		pwdBytesPos = 0;

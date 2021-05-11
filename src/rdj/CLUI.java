@@ -42,6 +42,7 @@ import static rdj.GUIFX.getHexString;
 echo -n -e \\x05 > myfile # 00000101
 echo -n -e \\x03 > mykey  # 00000011
 java -cp finalcrypt.jar rdj/CLUI --encrypt --print --no-key-size --disable-MAC -k mykey -t myfile
+java -cp finalcrypt.jar rdj/CLUI --encrypt --print --no-key-size --disable-MAC -k mykey -t myfile.bit
 
 */
 
@@ -852,8 +853,8 @@ public class CLUI implements UI
         log("            [-v] [--verbose]                                            Enables verbose mode\r\n", false, true, false, false, false);
         log("            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)\r\n", false, true, false, false, false);
-        log("            [--reuse-keys]                                              Reuse Keys (Breaks OTP rule so only use if you know what you do)\r\n", false, true, false, false, false);
-        log("            [--disable-MAC]                                             Disable MAC - (not compatible with MAC encrypted files!)\r\n", false, true, false, false, false);
+        log("            [--reuse-keys]                                              Reuse Keys only works in MAC Mode (experts only, breaks OTP rule)\r\n", false, true, false, false, false);
+        log("            [--disable-MAC]                                             Non MAC Mode - Please see http://www.finalcrypt.org/faq.php#t25\r\n", false, true, false, false, false);
         log("            [--version]                                                 Print " + version.getProductName() + " version\r\n", false, true, false, false, false);
         log("            [--license]                                                 Print " + version.getProductName() + " license\r\n", false, true, false, false, false);
         log("            [--check-update]                                            Check for online updates\r\n", false, true, false, false, false);

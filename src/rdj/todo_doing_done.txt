@@ -67,3 +67,23 @@ JDK 8 all the items in java.util.prefs:
 //	    executorservice.submit(runnable);
 //	    try { executorservice.awaitTermination((long)(randomVal / 2), TimeUnit.MILLISECONDS); } catch (InterruptedException ex) {  }
 //	    executorservice.shutdown();
+
+
+
+	try
+	{               
+	    Task<Integer> myTask = new Task()
+	    {
+		@Override protected Integer call() throws Exception
+		{
+		    return 1;
+		}
+	    };
+
+	    myTask.setOnRunning((succeesesEvent) ->   { /*log("Running...\r\n\r\n", true, true, false, false, false);*/ });
+	    myTask.setOnSucceeded((succeededEvent) -> 
+	    {
+	    });
+
+	    ExecutorService executorService = Executors.newFixedThreadPool(1); executorService.execute(myTask); executorService.shutdown();
+        } catch (NumberFormatException e) { log("Error: checkUpdate: NumberFormatException\r\n", true, true, true, true, false); }
