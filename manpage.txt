@@ -35,7 +35,9 @@ Options:
             [--no-key-size]                                             Allow key-size less than the default minimum of 140 bytes
             [-d] [--debug]                                              Enables debugging mode
             [-v] [--verbose]                                            Enables verbose mode
-            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)
+            [--print]                                                   Print all bytes binary, hexdec,  dec & char vertical   (slow!!!)
+            [--print-virtical]                                          Print all bytes binary, hexdec,  dec & char vertical   (slow!!!)
+            [--print-horizontal]                                        Print all bytes binary, hexdec,  dec & char horizontal (slow!!!)
             [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)
             [--reuse-keys]                                              Reuse Keys only works in MAC Mode (experts only, breaks OTP rule)
             [--disable-MAC]                                             Non MAC Mode - Please see http://www.finalcrypt.org/faq.php#t25
