@@ -386,7 +386,7 @@ public class CreateOTPKey extends Application implements Initializable
 		else if (( remainder > 0 ) && ( remainder < bufferSize ))   { randomBuffer = ByteBuffer.allocate(remainder.intValue()); randomBuffer.clear(); }
 		else							    { inputEnded = true; }
 		//		    getFCRandomBuffer(UI ui,		    int size, boolean extraSeed, boolean encrypt,    boolean print)
-		randomBuffer = RNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print);
+		randomBuffer = RNG.getFCRandomBuffer(guifx, randomBuffer.capacity(),		   true,	    true, FinalCrypt.print_vertical);
 		
     //          Write Device (randomBuffer3 became randomBuffer1)
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, FinalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))))

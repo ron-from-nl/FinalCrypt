@@ -196,7 +196,9 @@ public class CLUI implements UI
             else if (( args[paramCnt].equals("--no-key-size") ))						    { FCPath.KEY_SIZE_MIN = 1; }
             else if (  args[paramCnt].equals("--print-gpt"))                                                        { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { printgpt = true; kfsetneeded = false; tfsetneeded = true; } }
             else if (  args[paramCnt].equals("--delete-gpt"))                                                       { if ((!encrypt)&&(!decrypt)&&(!createManualKeyDev)&&(!clonekeydev)&&(!printgpt)&&(!deletegpt)) { deletegpt = true; kfsetneeded = false; tfsetneeded = true; } }
-            else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint(true); }
+            else if (( args[paramCnt].equals("--print") ))							    { finalCrypt.setPrint_Vertical(true); }
+            else if (( args[paramCnt].equals("--print-vertical") ))						    { finalCrypt.setPrint_Vertical(true); }
+            else if (( args[paramCnt].equals("--print-horizontal") ))						    { finalCrypt.setPrint_Horizontal(true); }
             else if (( args[paramCnt].equals("-v")) || ( args[paramCnt].equals("--verbose") ))                      { finalCrypt.setVerbose(true); verbose = true; }
             else if (( args[paramCnt].equals("-l")) || ( args[paramCnt].equals("--symlink") ))			    { finalCrypt.setSymlink(true); symlink = true; }
 //            else if (  args[paramCnt].equals("--txt"))                                                              { finalCrypt.setTXT(true); }
@@ -386,7 +388,7 @@ public class CLUI implements UI
 		
 //              Randomize raw key or write raw key straight to partition
 		//		    getFCRandomBuffer(UI ui,		    int size, boolean extraSeed, boolean encrypt,	   boolean print)
-		randomBuffer = RNG.getFCRandomBuffer(   ui, randomBuffer.capacity(),		   true,	    true, finalCrypt.getPrint());
+		randomBuffer = RNG.getFCRandomBuffer(   ui, randomBuffer.capacity(),		   true,	    true, finalCrypt.getPrint_Vertical());
 
 //              Write Device
 		try (final SeekableByteChannel writeKeyFileChannel = Files.newByteChannel(keyPath, finalCrypt.getEnumSet(EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE))))
@@ -851,7 +853,9 @@ public class CLUI implements UI
         log("            [--no-key-size]                                             Allow key-size less than the default minimum of " + FCPath.KEY_SIZE_MIN + " bytes\r\n", false, true, false, false, false);
         log("            [-d] [--debug]                                              Enables debugging mode\r\n", false, true, false, false, false);
         log("            [-v] [--verbose]                                            Enables verbose mode\r\n", false, true, false, false, false);
-        log("            [--print]                                                   Print all bytes binary, hexdec & char (slows encryption severely)\r\n", false, true, false, false, false);
+        log("            [--print]                                                   Print all bytes binary, hexdec,  dec & char vertical   (slow!!!)\r\n", false, true, false, false, false);
+        log("            [--print-virtical]                                          Print all bytes binary, hexdec,  dec & char vertical   (slow!!!)\r\n", false, true, false, false, false);
+        log("            [--print-horizontal]                                        Print all bytes binary, hexdec,  dec & char horizontal (slow!!!)\r\n", false, true, false, false, false);
         log("            [-l] [--symlink]                                            Include symlinks (can cause double encryption! Not recommended!)\r\n", false, true, false, false, false);
         log("            [--reuse-keys]                                              Reuse Keys only works in MAC Mode (experts only, breaks OTP rule)\r\n", false, true, false, false, false);
         log("            [--disable-MAC]                                             Non MAC Mode - Please see http://www.finalcrypt.org/faq.php#t25\r\n", false, true, false, false, false);

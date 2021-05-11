@@ -44,7 +44,7 @@ public class FinalCrypt extends Thread
     public static boolean verbose = false;
 //    private boolean debug = false, print = false, symlink = false, txt = false, bin = false, dec = false, hex = false, chr = false, dry = false;
     private boolean symlink = false, txt = false, test = false;
-    protected static boolean print = false, bin = false, dec = false, hex = false, chr = false;
+    protected static boolean print_horizontal = false, print_vertical = false, bin = false, dec = false, hex = false, chr = false;
 
     private final int BUFFERSIZEDEFAULT = (1 * 1024 * 1024); // 1MB BufferSize overall better performance
     private int bufferSize = BUFFERSIZEDEFAULT; // Default 1MB
@@ -154,7 +154,8 @@ public class FinalCrypt extends Thread
     private static int pwdBytesPos = 0;
     
     public static final String HASH_ALGORITHM_NAME =		    "SHA-256"; // SHA-1 SHA-256 SHA-384 SHA-512
-    private static String printString;
+    private static String printVerticalString;
+    private static String printHorizontalString;
 
     public static final double IO_THROUGHPUT_CEILING_DEFAULT =	    10d; // (MiB/S) Dynamic 100% ceiling
     public static double io_Throughput_Ceiling =		    IO_THROUGHPUT_CEILING_DEFAULT;
@@ -192,7 +193,8 @@ public class FinalCrypt extends Thread
     
 //    public boolean getDebug()                                               { return debug; }
     public boolean getVerbose()                                             { return verbose; }
-    public boolean getPrint()                                               { return print; }
+    public boolean getPrint_Horizontal()                                    { return print_horizontal; }
+    public boolean getPrint_Vertical()                                      { return print_vertical; }
     public boolean getSymlink()                                             { return symlink; }
     public boolean getTXT()                                                 { return txt; }
     public boolean getBin()                                                 { return bin; }
@@ -207,7 +209,8 @@ public class FinalCrypt extends Thread
     
 //    public void setDebug(boolean debug)                                     { this.debug = debug; }
     public void setVerbose(boolean verbose)                                 { FinalCrypt.verbose = verbose; }
-    public void setPrint(boolean print)                                     { FinalCrypt.print = print; }
+    public void setPrint_Horizontal(boolean print_horizontal)               { FinalCrypt.print_horizontal = print_horizontal; }
+    public void setPrint_Vertical(boolean print_vertical)                   { FinalCrypt.print_vertical = print_vertical; }
     public void setSymlink(boolean symlink)                                 { this.symlink = symlink; }
     public void setTXT(boolean txt)                                         { this.txt = txt; }
     public void setBin(boolean bin)                                         { FinalCrypt.bin = bin; }
@@ -394,14 +397,27 @@ public class FinalCrypt extends Thread
 //                        readTargetDestinStat.setFileBytesProcessed(0);    readTargetDestinStat.setFileBytesTotal(filesize);
 		wrteTargetSourceStat.setFileBytesProcessed(0);		    wrteTargetSourceStat.setFileBytesTotal(newTargetSourceFCPath.size);
 		// Prints printByte Header ones
-		if ( print )
+		if ( print_vertical )
 		{		    
-		    printString = "\r\n";
-		    printString += " -----------------------------------------------------------\r\n";
-		    printString += "|       Input       |         Key       |      Output       |\r\n";
-		    printString += "|-------------------|-------------------|-------------------|\r\n";
-		    printString += "| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n";
-		    printString += "|-------------------|-------------------|-------------------|\r\n";
+		    printVerticalString = "\r\n";
+		    printVerticalString += "|--------|-------------------|\r\n";
+		    printVerticalString += "|        | bin      hx dec c |\r\n";
+		    printVerticalString += "|--------|-------------------|\r\n";
+//		    printVerticalString += "| Input  |                   |\r\n";
+//		    printVerticalString += "| Key    |                   |\r\n";
+//		    printVerticalString += "| Output |                   |\r\n";
+//		    printVerticalString += " ----------------------------\r\n";
+		}
+		
+		if ( print_horizontal )
+		{		    
+		    printHorizontalString = "\r\n";
+//		    printHorizontalString += " -----------------------------------------------------------\r\n";
+		    printHorizontalString += "|-------------------|-------------------|-------------------|\r\n";
+		    printHorizontalString += "|       Input       |         Key       |      Output       |\r\n";
+		    printHorizontalString += "|-------------------|-------------------|-------------------|\r\n";
+		    printHorizontalString += "| bin      hx dec c | bin      hx dec c | bin      hx dec c |\r\n";
+		    printHorizontalString += "|-------------------|-------------------|-------------------|\r\n";
 		}
 //___________________________________________________________________________________________________________________________________________________________
 //
@@ -520,7 +536,7 @@ public class FinalCrypt extends Thread
 
 				    // Randomize raw key or write raw key straight to partition
 				    //			getFCRandomBuffer(UI ui,			int size, boolean extraSeed, boolean encrypt, boolean print)
-				    randomBuffer = RNG.getFCRandomBuffer(   ui, randomBuffer.capacity(),	       true,		true,	      print);
+				    randomBuffer = RNG.getFCRandomBuffer(ui, randomBuffer.capacity(),	       true,		true,	      print_vertical);
 
 				    // Write Device (randomBuffer3 became randomBuffer1)
 				    wrteKeyStat.setFileStartEpoch();
@@ -979,10 +995,17 @@ public class FinalCrypt extends Thread
 		    ui.log(fileStatusLine + "\r\n", true, true, true, false, false);		    
 		}
 
-		if ( print )
+		if ( print_vertical )
 		{
-		    printString += " -----------------------------------------------------------\r\n"; // Footer
-		    ui.log(printString + "\r\n", true, true, true, false, false);
+//		    printVerticalString += " ----------------------------\r\n"; // Footer
+		    ui.log(printVerticalString + "\r\n", true, true, true, false, false);
+		}
+		
+		if ( print_horizontal )
+		{
+		    printHorizontalString += "|-------------------|-------------------|-------------------|\r\n";
+////		    printHorizontalString += " -----------------------------------------------------------\r\n"; // Footer
+		    ui.log(printHorizontalString + "\r\n", true, true, true, false, false);
 		}
 
 		allDataStats.addFilesProcessed(1);
@@ -998,7 +1021,7 @@ public class FinalCrypt extends Thread
 	    newTargetSourceFCPath = Validate.getFCPath(ui,            "", targetDestinPath,		  false, dynamicKeyFCPath.path,		disabledMAC,	   verbose);
 	    if ( newTargetSourceFCPath.isEncrypted ) { newTargetSourceFCPath.isNewEncrypted = true; } else { newTargetSourceFCPath.isNewDecrypted = true; }
 	    targetSourceFCPathList.updateStat(oldTargetSourceFCPath, newTargetSourceFCPath); ui.fileProgress();
-        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
+        } // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop // End Encrypt Files Loop
 	
 	filesBytesPerMilliSecond = 0.0;
         allDataStats.setAllDataEndNanoTime(); allDataStats.clock();
@@ -1122,7 +1145,11 @@ public class FinalCrypt extends Thread
 	    }
 		
 	    
-	    if ((printEnabled) && ( print )) { printString += getByteString(targetSourceByte, keySourceByte, targetDestinByte); }
+	    if (printEnabled)
+	    {
+		if ( print_vertical )	{ printVerticalString += getByteString(targetSourceByte, keySourceByte, targetDestinByte, true); }
+		if ( print_horizontal )	{ printHorizontalString += getByteString(targetSourceByte, keySourceByte, targetDestinByte, false); }
+	    }
 	}
         targetDestinBuffer.flip();
 		
@@ -1315,7 +1342,7 @@ public class FinalCrypt extends Thread
     }
 
 //    private static void logByte(byte dataByte, byte keyByte, byte outputByte)
-    private static String getByteString(byte dataByte, byte keyByte, byte outputByte)
+    private static String getByteString(byte dataByte, byte keyByte, byte outputByte, boolean vertical)
     {
         String datbin = getBinaryString(dataByte);
         String dathex = getHexString(dataByte, "2");
@@ -1331,16 +1358,28 @@ public class FinalCrypt extends Thread
         String outhex = getHexString(outputByte, "2");
         String outdec = getDecString(outputByte);
         String outchr = getChar(outputByte);
-        
-//	System.out.print(datbin + " " +  dathex + " " + datdec + " " + datchr + " | ");
-//        System.out.print(cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | ");
-//        System.out.print(outbin + " " +  outhex + " " + outdec + " " + outchr + " |");
 
+	if ( vertical ) { return getVirticalByteString(datbin, dathex, datdec, datchr, cphbin, cphhex, cphdec, cphchr, outbin, outhex, outdec, outchr); }
+	else		{ return getHorizontalByteString(datbin, dathex, datdec, datchr, cphbin, cphhex, cphdec, cphchr, outbin, outhex, outdec, outchr); }
+    }
+    
+    private static String getVirticalByteString(String datbin, String dathex, String datdec, String datchr, String keybin, String keyhex, String keydec, String keychr, String outbin, String outhex, String outdec, String outchr)
+    {
+	String returnString = "";
+	returnString += "| Input  | " + datbin + " " +  dathex + " " + datdec + " " + datchr + " |\r\n";
+	returnString += "| Key    | " + keybin + " " +  keyhex + " " + keydec + " " + keychr + " |\r\n";
+	returnString += "| Output | " + outbin + " " +  outhex + " " + outdec + " " + outchr + " |\r\n";
+	returnString += "|--------|-------------------|\r\n";
+	return returnString;
+    }
+
+    private static String getHorizontalByteString(String datbin, String dathex, String datdec, String datchr, String keybin, String keyhex, String keydec, String keychr, String outbin, String outhex, String outdec, String outchr)
+    {
 	String returnString = "| ";
 	returnString += datbin + " " +  dathex + " " + datdec + " " + datchr + " | ";
-	returnString += cphbin + " " +  cphhex + " " + cphdec + " " + cphchr + " | ";
+	returnString += keybin + " " +  keyhex + " " + keydec + " " + keychr + " | ";
 	returnString += outbin + " " +  outhex + " " + outdec + " " + outchr + " | \r\n";
-
+//	returnString += "|-------------------|-------------------|-------------------|\r\n";
 	return returnString;
     }
     
